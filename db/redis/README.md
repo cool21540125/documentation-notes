@@ -43,3 +43,14 @@ keys       mem      clients blocked requests            connections
 ### 列出所有 keys
 $# keys '*'
 ```
+
+
+# Note
+
+所謂 `persistent storage`, 資料會存放到 `VOLUME /data`, 也就是說可以使用 `-v ./redis_data:/data`.
+
+當 Container 停掉之後, 會嘗試把 in memory 的資料寫入到此 volume 位置, 裡頭會有一個 `dump.rdb` 的檔案, 下次啟動後, 此資料會被 redis 載入
+
+所以資料不會遺失哦!!
+
+關於更多 Redis Persistence, [參考官網](https://redis.io/topics/persistence#redis-persistence)

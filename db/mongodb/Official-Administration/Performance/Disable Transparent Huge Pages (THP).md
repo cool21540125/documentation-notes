@@ -3,7 +3,7 @@
 ![HugePage](../../img/huge_page.png)
 
 
-## THP(Transparent Huge Pages, 透明大頁面) 觀念
+## THP(Transparent Huge Pages, 透明大頁面)
 
 - 實務上, THP 啟用時, DB 負載通常表現不佳 (cause they tend to have sparse rather than coutigous memory access patterns)
 - THP 是一種 Linux 記憶體管理系統. 藉由使用較大的 memory page 來處理大量內存, 進而減少減少 Translation Lookaside Buffer(TLB) 查找開銷

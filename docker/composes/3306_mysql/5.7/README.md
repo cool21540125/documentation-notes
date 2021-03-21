@@ -23,3 +23,8 @@ MYSQL_PASSWORD=
 
 MYSQL_ROOT_PASSWORD_FILE=./secret_file
 ```
+
+
+# entrypoint
+
+Docker Image `mysql:5.7` 預設啟動方式為 `docker-entrypoint.sh mysqld`

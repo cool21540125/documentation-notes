@@ -108,7 +108,7 @@ PERT   | Program Evaluation and Review Technique     | 專案管理        | [PE
 POC    | Proof of Concept                            | DevOps          |
 SEO    | Search Engine Optimization                  | FrontEnd        |
 SLA    | Service Level Agreement                     | 服務層級協定     | 
-SPOF   | Single Point Of Failure                     | 單點失效         |
+SPF    | Single Point of Failure                     | 單點失效         | SPoF
 SSG    | Static Site Generator                       | FrontEnd        | 前端框架產生器, ex: Hugo, Hexo, MkDocs
 SSL    | Secure Sockets Layer                        | 資安            |
 SSO    | Single Sign-On                              | 集中驗證         | 單點登錄

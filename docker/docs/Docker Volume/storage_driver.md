@@ -76,12 +76,13 @@ CONTAINER ID    IMAGE         COMMAND      CREATED   STATUS   PORTS   NAMES     
 - size: the amount of data (on disk) that is used for the writable layer of each container
 - virtual size: the amount of data used for the read-only image data used by the container plus the container’s writable layer size. Multiple containers may share some or all read-only image data. Two containers started from the same image share 100% of the read-only data, while two containers with different images which have layers in common share those common layers. Therefore, you can’t just total the virtual sizes. This over-estimates the total disk usage by a potentially non-trivial amount.
 
+- Docker 使用 `AUFS` 文件系統(焚層疊加儲存) 進行文件管理
+  - Image 是只存在於 *Readable Layer* 的文件
+  - Container 則是 Image 的 running Instance(實例文件 儲存在 *Writable Layer*)
 
-> 官方寫的這邊, [Sharing promotes smaller images](https://docs.docker.com/storage/storagedriver/#sharing-promotes-smaller-images), 我看不懂... 裡頭寫說, Docker host storage area在 `/var/lib/docker/<storage-driver>/layers/`, (其中, \<storage-driver> 預設為 `aufs`)但我的資料夾底下, 沒有 `aufs`...
-
-FIXME: ↑改天通了再回來改這個...
 
 ## 範例~
+
 > 為了方便觀察, 先把其他所有 `Docker image` 及 `Docker Container` 都砍掉
 
 以下可直接 Copy-Paste
