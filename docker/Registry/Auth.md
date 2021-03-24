@@ -1,0 +1,1 @@
+# [Docker Registry v2 authentication](https://docs.docker.com/registry/spec/auth/)

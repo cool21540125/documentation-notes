@@ -1,4 +1,4 @@
-# Install registry
+# 搭建私有 Registry
 
 - 2020/04/12
 - [DockerHub-registry](https://hub.docker.com/_/registry?tab=description)

@@ -1,0 +1,1 @@
+# [Docker Registry HTTP API V2](https://docs.docker.com/registry/spec/api/)

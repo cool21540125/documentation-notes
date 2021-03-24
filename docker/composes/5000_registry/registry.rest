@@ -1,9 +1,0 @@
-
-@RegistryHost=https://index.docker.io
-
-### 拿到 401
-GET {{RegistryHost}}/v2/_catalog
-
-
-### https://docs.docker.com/registry/spec/auth/token/ 範例 - 拿到 token
-GET https://auth.docker.io/token?service=registry.docker.io&scope=repository:samalba/my-app:pull,push
