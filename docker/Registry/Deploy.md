@@ -62,9 +62,11 @@ $# curl -X GET https://${MyRegistryHost}/v2/_catalog -H "Authorization: Basic ${
 
 ## Docker Registry 1 與 2
 
-2020/04 的現在, Registry 最新為 2.7 版
+2020/04 的現在, Registry 最新為 2.7.1 版
 
-Docker Distribution 專案, 實作了 Docker Registry 2.0 的規範, 與 1.0 版(當時為 Docker Registry 專案)變成了兩個獨立的專案了(應該吧). 若 CentOS7 要使用 yum 來安裝的話, 需要使用 `yum install -y docker-distribution`, 才能安裝 Registry 2.0 版
+Docker Distribution 專案, 實作了 Docker Registry 2.0 的規範, 與 1.0 版(當時為 Docker Registry 專案)變成了兩個獨立的專案了. 
+
+若 CentOS7 要使用 yum 來安裝的話, 需要使用 `yum install -y docker-distribution`, 才能安裝 Registry 2.0 版
 
 
 ## 如果不做 https, 只是區網內部自己人使用

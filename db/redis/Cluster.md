@@ -47,6 +47,14 @@
 - Node C `hash slots`: 10001 ~ 16383
 
 
+```bash
+### 可能的指令, 但沒確認過
+redis-cli -p 6379 cluster addslots {0..5461}
+redis-cli -p 6380 cluster addslots {5462..10922}
+redis-cli -p 6381 cluster addslots {10923..16383}
+```
+
+
 ## Redis Cluster master-slave model
 
 

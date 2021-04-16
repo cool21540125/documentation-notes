@@ -7,9 +7,9 @@ services:
     hostname: db
     restart: always
     volumes:
+      - "/etc/localtime:/etc/localtime:ro"
       - "./mysql/init/:/docker-entrypoint-initdb.d/"
       - "./mysql/conf.d/:/etc/mysql/conf.d/:rw"
-      - "/etc/localtime:/etc/localtime:ro"
       - "zabbix_db:/var/lib/mysql"
       - "zabbix_db_log:/var/log/mysql"
     environment:

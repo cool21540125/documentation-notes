@@ -1,7 +1,12 @@
 // Linux 的話放在 /etc/docker/daemon.json
 {
+    "registry-mirrors": [],
+    "insecure-registries": [],
+    "debug": false,
+    "experimental": false,
     // logging-driver - https://docs.docker.com/config/containers/logging/configure/
-    "log-driver": "syslog",
+    // "log-driver": "json-file",  
+    // ↑ 此為預設
     "data-root": "/data/docker",
     "features": {
         "buildkit": true

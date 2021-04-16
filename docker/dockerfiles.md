@@ -192,9 +192,8 @@ RUN echo $VERSION > image_version
 
 #### [ENV](https://docs.docker.com/engine/reference/builder/#env)
 
-ENV 這階段, 定義了以後, 會存活於 Image building time 的所有階段. 並且在 Container runtime 也會存在
-
-相較之下, `ARG` 只會在 Image building time 存在, Image 建置完成後就不存在了
+- 定義 `ENV` 以後, 此變數存活於 **Image Building Time** &&  **Container Runtime**
+- 相對的, 定義 `ARG` 以後, 此變數只存活於 **Image Building Time**
 
 ENV 的寫法:
 - `ENV NAME=tony`
@@ -291,6 +290,8 @@ docker run --rm demo_arg whoami
 
 
 #### [Environment replacement](https://docs.docker.com/engine/reference/builder/#environment-replacement)
+
+ENV 與 ARG 複合變化:
 
 ------
 
