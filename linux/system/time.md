@@ -1,29 +1,73 @@
 # Linux 系統時間
 
-- 2018/08/18
+- 2021/04/20
 
 
+查看 時區、時間、日期 的各種方式
 
-## date
+```bash
+### CentOS Linux release 7.9.2009 (Core), 以下資訊大多數來自同一台
 
-```sh
-$ date
-Mon Jul 23 21:34:56 CST 2018
+### date
+$# date  # 依照主機的時區, 顯示時間
+Tue Apr 20 11:58:04 CST 2021
+$# date +%F
+2021-04-20
+$# date +%R
+11:58
+$# date +'%:z %Z'  # 可看時區
++08:00 CST
 
-$ date +%F
-2018-07-23
+###
+$# timedatectl
+      Local time: Tue 2021-04-20 11:58:04 CST
+  Universal time: Tue 2021-04-20 03:58:04 UTC
+        RTC time: Tue 2021-04-20 03:58:05
+       Time zone: Asia/Shanghai (CST, +0800)
+     NTP enabled: yes
+NTP synchronized: yes
+ RTC in local TZ: no
+      DST active: n/a
 
-$ date +%R
-21:35
+### 若沒有 timedatectl 指令, 可藉由此方式查詢時區
+$# ll /etc/localtime
+lrwxrwxrwx. 1 root root 35 Feb  4 11:28 /etc/localtime -> ../usr/share/zoneinfo/Asia/Shanghai
+# 改變時區方式:
+#  sudo ln -sf /usr/share/zoneinfo/Asia/Taipei /etc/localtime
+
+# Debian base 才有這東西 (CentOS 沒有!)
+$# cat /etc/timezone
+/UTC
+
+$# echo $TZ
+# 沒東西
+
+### 外部 API 也可查 (依照 IP 判斷)
+$# curl https://ipapi.co/timezone
+Asia/Taipei
+
+
+### 後面不接任和參數, 回傳硬體時間
+$# hwclock
+Tue 20 Apr 2021 12:18:22 PM CST  -0.705587 seconds
+
+### 使用 ntpdate 校時
+$# ntpdate
+20 Apr 12:19:01 ntpdate[31601]: no servers can be used, exiting
 ```
 
 
-## timedatectl
 
-系統開機時, 會去抓取 RTC(local hardware clock), 但硬體時間不准阿~ 所以通常會啟動 `chronyd` 來與 NTP Server 作時間校正, 但如果在封閉網路內的話(連不出去@@), 則需要到設定檔 `/etc/chrony.conf` 更改時間校正的 Server IP
+
+
+## 時間校正
+
+系統開機時, 會去抓取 RTC(local hardware clock), 但硬體時間不一定準
+
+所以通常會啟動 `chronyd` 來與 **NTP Server** 作時間校正, 但如果在封閉網路內的話(連不出去@@), 則需要到設定檔 `/etc/chrony.conf` 更改時間校正的 Server IP
 
 ```sh
-$ timedatectl
+$# timedatectl
       Local time: Wed 2018-08-15 18:54:33 CST   # 目前時區 時間
   Universal time: Wed 2018-08-15 10:54:33 UTC   # UTC 時間
         RTC time: Wed 2018-08-15 10:54:33       # 硬體時間
@@ -36,9 +80,9 @@ NTP synchronized: no
 # Microsoft 開機時, 抓取的時間都是抓 BIOS 的 Local Time
 
 # 更改 timezone -> America/New_York
-$ timedatectl set-timezone America/New_York
+$# timedatectl set-timezone America/New_York
 
-$ $ timedatectl
+$# timedatectl
       Local time: Wed 2018-08-15 07:00:00 EDT
   Universal time: Wed 2018-08-15 11:00:00 UTC
         RTC time: Wed 2018-08-15 11:00:00
@@ -54,24 +98,19 @@ NTP synchronized: yes
                   Sun 2018-11-04 01:59:59 EDT
                   Sun 2018-11-04 01:00:00 EST
 
-$ timedatectl list-timezones  # 看所有時區
+$# timedatectl list-timezones  # 看所有時區
 Africa/Abidjan
 Africa/Accra
 Africa/Addis_Ababa
 Africa/Algiers
-#...425個時區@@
+#...400多個時區
 
 # 更改時間
-$ timedatectl set-time 09:00:00
+$# timedatectl set-time 09:00:00
+
+# 可互動式來設定時區
+$# tzselect
 ```
-
-
-## tzselect - 可互動式來設定時區
-
-```sh
-$ tzselect
-```
-
 
 
 # chronyd
@@ -80,10 +119,10 @@ $ tzselect
 
 ```sh
 # 校時服務
-$ systemctl status chronyd
+$# systemctl status chronyd
 
 # (不會看...)
-$ chronyc sources -v
+$# chronyc sources -v
 210 Number of sources = 2
 
   .-- Source mode  '^' = server, '=' = peer, '#' = local clock.
@@ -101,5 +140,6 @@ MS Name/IP address         Stratum Poll Reach LastRx Last sample
 # 上面倒數第二行的「*」是目前時間校時鎖定的 Server
 
 # 把系統時間寫入到 BIOS
-$ sudo hwclock -w
+$# sudo hwclock -w
+# 如果是雙系統或是虛擬機, 需要慎用!!
 ```
