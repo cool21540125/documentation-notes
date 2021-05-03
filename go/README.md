@@ -1,0 +1,1 @@
+- `Go routine` 是個輕量版的 thread, Golang 用它來 enable `concurrency`

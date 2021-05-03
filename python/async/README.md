@@ -3,9 +3,9 @@
 如果一支程式經常 存取磁碟 (CPU總是得等待磁碟回覆才能接著作事), 那表示這支程式是 `I/O bound` 的程式碼. 改善效率的解法, 把此程式改成 `非同步 (async)`, 改完後, 此程式就變成 `非阻斷 (nonblocking)`, 可以大幅增進效能. (`非同步(async) 架構`, 有時候也被稱為 `事件驅動(event-driven) 架構`)
 
 非同步的架構分為三類:
-1. 多工 (multiplexed async architecture)
+1. 多工 (multiplexed async architecture) - 像是多線程, 稱為 平行 Parallel
 2. 事件 (callback-based)
-3. 協程 (coroutine-based)
+3. 協程 (coroutine-based) - 併行 Concurrent
 
 ## 1. 多工 multiplexed
 
