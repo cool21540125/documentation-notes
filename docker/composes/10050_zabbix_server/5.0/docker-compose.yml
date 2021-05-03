@@ -1,0 +1,122 @@
+version: "3.8"
+
+services:
+  zabbix_db:
+    image: mysql:5.7
+    container_name: zabbix_db
+    hostname: db
+    restart: always
+    volumes:
+      - "./mysql/conf.d/:/etc/mysql/conf.d/:rw"
+      - "/etc/localtime:/etc/localtime:ro"
+      - "zabbix_db:/var/lib/mysql"
+      - "zabbix_db_log:/var/log/mysql"
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: zabbix
+      MYSQL_USER: zabbix
+      MYSQL_PASSWORD: ${USER_PASSWORD}
+    ports:
+      - "3306:3306"
+    # networks:
+    #   zabbix_net:
+        # ipv4_address: 172.30.0.10
+    stop_grace_period: 10s
+
+  zabbix_server:
+    image: zabbix_server:5.0.10
+    build:
+      context: ./server
+      dockerfile: Dockerfile
+    container_name: zabbix_server
+    hostname: server
+    restart: always
+    ports:
+      # - "10050:10050"
+      - "10051:10051"
+    volumes:
+      - "/etc/localtime:/etc/localtime:ro"
+      - "./server/zabbix:/etc/zabbix:rw"
+      - "zabbix_server_log:/var/log/zabbix"
+    environment:
+      DB_SERVER_HOST: zabbix_db
+      DB_SERVER_PORT: 3306
+      MYSQL_DATABASE: zabbix
+      MYSQL_USER: zabbix
+      MYSQL_PASSWORD: ${USER_PASSWORD}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+    env_file:
+      - .env_srv
+    depends_on:
+      - zabbix_db
+    networks:
+      zabbix_net:
+    stop_grace_period: 5s
+    # sysctls:
+    #   - net.ipv4.ip_local_port_range=1024 65000
+    #   - net.ipv4.conf.all.accept_redirects=0
+    #   - net.ipv4.conf.all.secure_redirects=0
+    #   - net.ipv4.conf.all.send_redirects=0
+
+#   zabbix_web:
+#     image: zabbix_web:4.0.27
+#     build:
+#       context: ./web
+#       dockerfile: Dockerfile
+#     container_name: zabbix_web
+#     hostname: web
+#     restart: always
+#     ports:
+#       - "8080:8080"
+#     volumes:
+#       - "/etc/localtime:/etc/localtime:ro"
+#     environment:
+#       ZBX_SERVER_HOST: zabbix_server
+#       DB_SERVER_HOST: zabbix_db
+#       MYSQL_DATABASE: zabbix
+#       MYSQL_USER: zabbix
+#       MYSQL_PASSWORD: ${USER_PASSWORD}
+#       PHP_TZ: Asia/Taipei
+#       ZBX_SERVER_NAME: ${ZBX_SERVER_NAME}
+#     networks:
+#       - zabbix_net
+#     depends_on: 
+#       - zabbix_server
+
+#   # zabbix_agent:
+#   #   image: zabbix_agent:4.0.27
+#   #   build:
+#   #     context: ./agent
+#   #     dockerfile: Dockerfile
+#   #   container_name: zabbix_agent
+#   #   hostname: demo_agent
+#   #   restart: always
+#   #   ports:
+#   #     - "10050:10050"
+#   #   volumes:
+#   #     - "/etc/localtime:/etc/localtime:ro"
+#   #     - "./agent/conf.d/:/etc/zabbix/zabbix_agentd.d/:rw"
+#   #     - "./agent/agent_bin/:/etc/zabbix/agent_bin/:rw"
+#   #   environment: 
+#   #     ZBX_SERVER_HOST: zabbix_server
+#   #     ZBX_PASSIVESERVERS: zabbix_server
+#   #     ZBX_ACTIVESERVERS: zabbix_server:10051
+#   #     ZBX_TIMEOUT: 4
+
+# networks:
+#   zabbix_net:
+#     name: zabbix_net
+#     driver: bridge
+#     ipam:
+#       config:
+#         - subnet: 172.30.0.0/16
+
+volumes:
+  # zabbix_server:
+  #   name: zabbix_server
+  # zabbix_server_log:
+  #   name: zabbix_server_log
+  zabbix_db:
+    name: zabbix_db
+  zabbix_db_log:
+    name: zabbix_db_log
