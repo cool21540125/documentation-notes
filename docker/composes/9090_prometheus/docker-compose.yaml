@@ -1,0 +1,24 @@
+version: "3"
+services:
+  prometheus:
+    image: prom/prometheus:v2.26.0
+    container_name: prom
+    hostname: prom
+    restart: always
+    volumes: 
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+      - /etc/localtime:/etc/localtime
+      - ./prom.volume_dir:/prometheus
+    networks:
+      - net_prom
+    ports:
+     - 9090:9090
+    command: ["--config.file=/etc/prometheus/prometheus.yml"]
+
+volumes:
+  prometheus:
+    name: data_prometheus
+
+networks:
+  net_prom:
+    name: net_prom

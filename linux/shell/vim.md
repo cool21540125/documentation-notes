@@ -9,6 +9,7 @@
 ```sh
 $ vi ~/.vimrc
 
+
 set expandtab
 set tabstop=4
 set shiftwidth=4
@@ -137,6 +138,10 @@ Ctrl + E        view pane down
 :set bg=light
 
 
+### 改變 win & unix 格式
+:set fileformat:unix
+
+
 ### 搜尋
 /cfg            尋找 「cfg」關鍵字
 /\ccfg          不分大小寫, 搜尋「cfg」
@@ -205,5 +210,6 @@ darkblue.vim  delek.vim    elflord.vim  koehler.vim  murphy.vim   peachpuff.vim 
 # 使用 xxx theme
 $ vim ~/.vimrc
 colo evening
+color desert
 syntax on
 ```
