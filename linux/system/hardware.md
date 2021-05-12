@@ -31,6 +31,18 @@ video                  24400  2 i915,nouveau
 i2c_core               40756  8 drm,i915,i2c_i801,i2c_hid,drm_kms_helper,i2c_algo_bit,nouveau,videodev
 ```
 
+若沒有 iostat 指令工具, 需要安裝 `yum install sysstat`
+
+```bash
+### iostat
+iostat
+# -c: 只顯示 CPU 狀態     (不可與 -d 混用) (預設通通顯示)
+# -d: 只顯示 Storage 狀態 (不可與 -c 混用) (預設通通顯示)
+# -k: 預設顯示 block, -k 可改成 kb size
+# -m: 預設顯示 block, -m 可改成 mb size
+# -t: 顯示日期時間
+```
+
 
 ## 常見的硬體裝置, 在 Linux 中的檔名
 
