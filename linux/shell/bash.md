@@ -156,6 +156,16 @@ echo $?
 ```
 
 
+```bash
+### 判斷資料夾是否存在
+if [ -d "/data" ]; then
+	echo 'Exists'
+else
+  echo 'No such dir'
+fi
+```
+
+
 ### 變數取代
 
 ```sh
@@ -204,7 +214,7 @@ echo $1 $2 $3
 # ↑ set 指令用來設定 位置參數
 ```
 
-`set -- xxx "$@"` 裡的 `--` 是一種標準, 用來表示不要把跟隨在 `xxx` 後面的 `"$@"` 當成 option
+`set -- xxx "$@"` 裡的 `--` 是一種標準, 用來表示不要把跟隨在 `xxx` 後面的 `"$@"` 當成 option (而是當作 params)
 
 如範例, 因此將會把 `redis-server` 放到 $1 $2 之前
 
@@ -215,6 +225,25 @@ echo $1 $2 $3
 ```bash
 set -- redis-server "$@"
 ```
+
+
+範例1:
+
+[Registry](https://github.com/docker/distribution-library-image/blob/registry-2.7.1/amd64/docker-entrypoint.sh)
+
+```bash
+### 運行容器方式: 「/entrypoint.sh /etc/docker/registry/config.yml」
+set -- registry serve "$@"
+# ↑ shell 執行上面的動作
+# ↓ 腳本內便可使用 「exec "$@"」 來作變數呼叫 & 執行
+echo $1
+#registry
+echo $2 
+#serve
+echo $3
+#/etc/docker/registry/config.yml
+```
+
 
 
 ### 陣列變數

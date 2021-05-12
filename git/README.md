@@ -9,6 +9,26 @@
 - [Github Cheat Sheet](https://metavige.github.io/2015/04/20/github-chest-sheet/#%E5%BE%9E%E5%B7%A5%E4%BD%9C%E5%8D%80%E5%8E%BB%E9%99%A4%E5%A4%A7%E9%87%8F%E5%B7%B2%E5%88%AA%E9%99%A4%E6%96%87%E4%BB%B6) 感覺值得花時間看看~ 2018/07/19 新增
 
 
+```bash
+### 基本資訊
+git config --global user.name "TonyChou"
+git config --global user.email "cool21540125@gmail.com"
+
+### Useful
+git config --global alias.tree "log --graph --decorate --pretty=oneline --abbrev-commit"
+
+### 檔案改變權限(chmod)後, git 不會把他們視為變更
+git config --global core.fileMode false
+
+### 快取密碼
+git config --global credential.helper 'cache --timeout=86400'
+
+# 忽略「空白」所造成的影響
+git config --global apply.whitespace nowarn
+
+# 增加Git輸出時的顏色
+git config --global color.ui true
+```
 
 # 底下幾個指令自己太常用... 備註到最前面
 
@@ -39,32 +59,15 @@ git remote set-url origin git@github.com:cool21540125/documentation-notes.git
 # 重新 Commit
 git commit --amend -m "<Commit String>"
 
-# 基本重要設定
-git config --global user.name "TonyCC"
-git config --global user.email "cool21540125@gmail.com"
-git config --global alias.tree "log --graph --decorate --pretty=oneline --abbrev-commit"
-
 # 設定 git 預設的編輯器 (預設為 vim)
 git config --global core.editor "notepad"
 
-# 檔案改變權縣(chmod)後, git 不會把他們視為變更
-git config --global core.fileMode false
-```
-
-## git 記住密碼
-
-```bash
 ### 快取記憶密碼 (應該是存在 RAM 吧)
 git config --global credential.helper 'cache --timeout=86400'
 
-### 永久紀錄密碼 (https)
+### 永久紀錄密碼 (https) 存到 「~/.git-credentials」, 以明碼的方式儲存
 git config --global credential.helper store
-# 密碼會存到 「~/.git-credentials」, 以明碼的方式儲存
-```
 
-
-
-```sh
 ### 暫存目前變更
 git stash
 
@@ -83,15 +86,6 @@ git stash drop stash@{2}
 git stash clear
 ```
 
-```sh
-# 作業環境
-$ uname -a
-Linux tonynb 3.10.0-514.el7.x86_64 #1 SMP Tue Nov 22 16:42:41 UTC 2016 x86_64 x86_64 x86_64
-
-# 版本
-$ git --version
-git version 2.14.3
-```
 
 ## cherry-pick 合併特定 Commit 節點的特色
 
@@ -358,12 +352,6 @@ $ git cherry-pick --abort
 > 任何透過指令修改的`參照(ref)的內容` or `更任何分支的 HEAD 參照內容`, 都會建立歷史紀錄. ex: commit, checkout, pull, push, merge, ...
 
 
-## git rebase
-
-```sh
-
-```
-
 ## git diff
 
 - 2020/02/03
@@ -415,6 +403,7 @@ System | --system | /etc/gitconfig | 對所有使用者/儲存庫都有效
 
 
 ## 查詢、設定、移除
+
 ```sh
 # 查詢組態
 $ git config -l
@@ -423,18 +412,6 @@ $ git config -l --global
 $ git config -l --local
 $ git config  <Config_Section.Config_Name> # 顯示特定組態
 
-# 設定組態
-$ git config --global user.name "TonyCC"
-$ git config --global user.email "cool21540125@gmail.com"
-
-# 忽略「空白」所造成的影響
-$ git config --global apply.whitespace nowarn
-
-# 增加Git輸出時的顏色
-$ git config --global color.ui true
-```
-
-```sh
 # 查看 分支 及 遠端追蹤情形
 $ cat .git/config
 ```
@@ -453,15 +430,6 @@ $ git config --global alias.unstage "reset HEAD --"     # 將檔案從 index中�
 
 $ git config --global alias.undo "reset --soft HEAD~1"  # 取消最近一次提交
 # 將來可用 git undo a.js 來取代 git reset --soft HEAD~1 a.js
-
-$ git config --global alias.tree "log --graph --decorate --pretty=oneline --abbrev-commit"
-# 將來可用 git tree 來漂亮的看提交紀錄
-
-$ git config --global alias.tree2 "log --graph --oneline --all --decorate"
-# 將來可用 git tree2 來漂亮的看提交紀錄
-
-$ git config --global push.followTags true  # ※ 好像沒有用處!!?? ※
-# git push時, 連同 tag一起推送, git tag
 ```
 
 
@@ -596,8 +564,6 @@ param   | data in repo | git index | file in dir
 --soft  | v            |           |
 --mixed | v            | v         |
 -- hard | v            | v         | v
-
-
 
 
 ```sh

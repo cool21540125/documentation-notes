@@ -11,23 +11,12 @@
 ### 密碼登入
 $# redis-cli -h <HOST> -p <PORT> -a <PASSWORD> -n <DB>
 # -n 3    : 進入db3
-
-```
-
-
-
-### 跨 Host使用 redis
-- 更改組態裏頭的 config的 bind
-```conf
-# bind 127.0.0.1
-bind 0.0.0.0
 ```
 
 
 # Redis-GUI
 
 參考 [redis-desktop-manager](https://redisdesktop.com/pricing)
-
 
 ```bash
 

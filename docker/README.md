@@ -1,6 +1,7 @@
 
 # Docker 自學筆記
 
+- [官方](https://docs.docker.com/engine/reference/builder/#usage)
 - [Docker 網路架構](https://github.com/docker/libnetwork/blob/master/docs/design.md)
 - [Docker daemon.json - 寫得還不錯](https://blog.csdn.net/u013948858/article/details/79974796)
 
@@ -107,59 +108,13 @@ REPOSITORY    TAG      IMAGE ID        CREATED         SIZE
 
 $ docker load < aa.tar
 $ docker images
-
-
-```
-
-
-```sh
-# 溫和移除
-$ docker stop ...
-
-# 暴力移除
-$ docker kill ...
 ```
 
 
 ## 操作 Container
 ```sh
-# 啟動睡著的 Container
-$ docker start <ContainerName>
-
-# 進入 Container(running container)
-$ docker attach <ContainerName>
-
 # 快速離開 Container (但不結束)
 # <Ctrl+p> + <Ctrl+q>
-```
-
-
-
-> `docker run -d --name <Container Name> -h <Host Name> <Image Name> <其他指令>` 使用 Image建立 Container, 並指定 hostname, 然後執行相關指令
-
-
-### MySQL 與 WordPress
-
-```sh
-$ docker pull wordpress:latest
-$ docker pull mysql:latest
-
-$ docker run --name mysqlwp -e MYSQL_ROOT_PASSWORD=wordpressdocker -d mysql
-
-# 老舊版本的 Networking 方式
-$ docker run --name wordpress --link mysqlwp:mysql -p 80:80 -d wordpress
-
-# Bind Mound方式, 將本地的 /home/docker/mysql Bind Mound 到 Container 內的 /var/lib/mysql
-$ docker run --name mysqlwp -e MYSQL_ROOT_PASSWORD=wordpressdocker \
-                            -e MYSQL_DATABASE=wordpress \
-                            -e MYSQL_USER=wordpress \
-                            -e MYSQL_PASSWORD=wordpresspwd \
-                            -v /home/docker/mysql:/var/lib/mysql \
-                            -d mysql
-
-# Docker 備份 mysql container
-$ docker exec mysqlwp mysqldump --all-databases \
-                                --password=wordpressdocker > wordpress.backup
 ```
 
 
@@ -212,38 +167,6 @@ Removing network getstartedlab_webnet
 $ docker swarm leave --force
 Node left the swarm.
 ```
-
-
-
-# 2. Dockerfile
-- [官方教學](https://docs.docker.com/engine/reference/builder/#usage)
-
- 起手式 | 範例 | 說明 |
- --- | --- | --- |
- ADD | ADD . /app | 把本地目前資料夾底下的東西, 複製到指定 container的 /app內 |
- CMD | CMD ["python", "app.py"] | container啟動後, 執行 app.py
- COPY |  |
- ENTRYPOINT |  |
- ENV | ENV NAME World <br />ENV https_proxy host:port | 設定環境變數 NAME 為 World <br /> 可以設定 Proxy Server
- EXPOSE | EXPOSE 80 | 開放 80 port
- FROM |  |
- MAINTAINER |  |
- ONBUILD |  |
- RUN |  | 執行腳本
- USER |  |
- VOLUME |  |
- WORKDIR | 進入Container後的起始路徑<br /> 對於`RUN`, `CMD`, `ENTRYPOINT`, `COPY`, `ADD`皆有效 <br /> 可以設定絕對/相對路徑 |
-
-
-> `docker run 的參數` 可覆寫 DOCKERFILE的 `CMD`
-
-> `docker run --entrypoint XXX` 可覆寫DOCKERFILE的 `ENTRYPOINT`
-
-
-
----
----
----
 
 
 # 3. Dockerfile Examples
@@ -316,132 +239,6 @@ $ docker run -p 4000:80 c8d0
 ```
 
 
-#### 範例 - ENTRYPOINT
-- 2018/01/30
-
-> ENTRYPOINT 建立 Image 時不執行; 啟動 Container 時才執行
-
-1. dockerfile
-```dockerfile
-FROM ubuntu:14.04
-ENTRYPOINT ["/bin/echo"]
-
-# 或者
-# FROM ubuntu:14.04
-# CMD ["/bin/echo" , "Hi Docker !"]
-```
-2. run
-```sh
-$ docker build .
-
-$ docker images
-REPOSITORY     TAG       IMAGE ID        CREATED          SIZE
-<none>         <none>    ac41d98ae2f5    3 minutes ago    222MB
-ubuntu         14.04     dc4491992653    4 days ago       222MB
-
-$ docker run ac41 HIII~~
-HIII~~
-
-$ docker ps -a
-CONTAINER ID    IMAGE    COMMAND               CREATED    STATUS    PORTS    NAMES
-d13e1f5a3f72    ac41     "/bin/echo HIII~~"    ...        ...                stoic_johnson
-# 每次 RUN Image, 都會啟動新的 Container, 然後再關掉
-```
-
-#### 範例 - CMD
-- 2018/01/30
-
-1. dockerfile
-```dockerfile
-FROM ubuntu:14.04
-CMD ["/bin/echo" , "Hi Docker !"]
-```
-
-2. run
-```sh
-$  docker build .
-
-$ docker images
-REPOSITORY    TAG       IMAGE ID        CREATED           SIZE
-<none>        <none>    2d0610d94311    17 seconds ago    222MB
-ubuntu        14.04     dc4491992653    4 days ago        222MB
-
-$ docker run 2d06 /bin/date
-Tue Jan 30 07:06:40 UTC 2018
-
-$ docker container ls -a
-CONTAINER ID    IMAGE    COMMAND        CREATED          STATUS    PORTS    NAMES
-00f8e0ace3e5    2d06     "/bin/date"    7 seconds ago    ...                distracted_brattain
-```
-
-
-#### 範例 -
-- 2018/01/30
-
-1. dockerfile
-```dockerfile
-FROM ubuntu:14.04
-RUN apt-get update
-RUN apt-get install -y python
-RUN apt-get install -y python-pip
-RUN apt-get clean all
-RUN pip install flask
-
-ADD hello.py /tmp/hello.py
-EXPOSE 6000
-cmd ["python", "/tmp/hello.py"]
-```
-
-2. hello.py
-```py
-from flask import Flask
-app = Flask(__name__)
-@app.route('/hi')
-def hello_world():
-  return 'Hello World!'
-if __name__ == '__main__':
-  app.run(host='0.0.0.0', port=6000)
-```
-
-3. run
-```sh
-$ ls
-dockerfile  hello.py
-
-$ docker build -t flask .
-# 使用本地 dockerfile 建立 tag為 flask的 docker image
-
-$ docker images
-REPOSITORY     TAG         IMAGE ID        CREATED           SIZE
-flask          latest      ac9445327790    39 seconds ago    397MB
-flask_image    latest      76ab99223787    24 hours ago      707MB
-python         2.7-slim    4fd30fc83117    7 weeks ago       138MB
-
-$ docker run -d -P flask
-27829ed44e8a82e465380368d6241356669ced08d9563e11a3195af84c482818
-
-$ docker ps
-CONTAINER ID    IMAGE    COMMAND                  CREATED    STATUS    PORTS                     NAMES
-27829ed44e8a    flask    "python /tmp/hello.py"   ...        ...       0.0.0.0:32768->6000/tcp   epic_ptolemy
-# 可透過 localhost:32768/hi 訪問 flask
-```
-
-
-
----
----
----
-
-# 4. 備註
-
-> 如果在 `run`和`build` images的時候, 沒有明確指名 `tag`, 則會視為`latest`
-
-```sh
-# 建立名為 web的 Container, 並將它 link到 db Container
-$ docker run -d -P --name web --link db:db training/webapp python app.py
-```
-
-
 ## Volume 使用方式
 
 ```sh
@@ -479,16 +276,6 @@ docker run -d -v my-vol:/data debian
 #### Example
 docker run -v /home/adrian/data:/data debian ls /data
 # Will mount the directory /home/adrian/data on the host as /data inside the container
-```
-
-
-## 查看資訊
-```sh
-# 查看 Docker Volume
-$ docker inspect -f {{.Mounts}} <Container>
-
-# 查看 Docker Network
-$ docker network inspect <Network>
 ```
 
 
@@ -532,118 +319,13 @@ networks:
 ```
 
 
-## docker cp
-- [Copying files from Docker container to host](https://stackoverflow.com/questions/22049212/copying-files-from-docker-container-to-host#)
-
-> 複製 Container 內的檔案到 Host, 語法: `docker cp <Container ID>:<path> <host path>`
-
-```sh
-# 把 463d2b6f28cf 這個 Container 裡的 /root/.ssh 複製出來到 Host 的 目前位置
-$ docker cp 463d2b6f28cf:/root/.ssh/ .
-```
-
-
-
-## 名詞
-
-> yml: 用來表達資料序列的格式
-
-> swarm: A swarm is a group of machines that are running Docker and joined into a cluster. 每台加入 swarm的機器, 都稱為 nodes.
-
-> hypervisor: 虛擬機器監控裝置
-
-
-```sh
-# 查看 「運行中 Container」的大小, ['size', 'virtual size']
-$ docker ps -s
-```
-
-# Windows vs Linux Container
-
-- 2018/09/20
-
-
-```powershell
-### Linux Container
-> docker network ls
-NETWORK ID          NAME                DRIVER              SCOPE
-7280e8a0597c        bridge              bridge              local
-a26f1acc48e6        host                host                local
-5c32253289c9        none                null                local
-
-
-### Windows Container
-> docker network ls
-NETWORK ID          NAME                DRIVER              SCOPE
-45f5073a72bf        ExternalSwitch      transparent         local
-619942edbcff        nat                 nat                 local
-b26d7431a85e        none                null                local
-3432c65f886b        預設切換             ics                 local
-```
-
-![HyperV Linux Container](../img/HypervLinuxContainer.jpg)
-
-MobyLinuxVM 是啟用 Linux Container 之後才出現的, 原本我使用 Windows Container 時, 還看不到它, 但要使用 Linux Images 時, 發現 Windows Container 無法使用, 切換到 Linux Container 之後, 它就出現了!!
-
-
-```powershell
-> ipconfig
-
-
-### 1 手動新增的 Internal Switch
-乙太網路卡 vEthernet (InternalSwitch):
-
-   連線特定 DNS 尾碼 . . . . . . . . :
-   連結-本機 IPv6 位址 . . . . . . . : fe80::c941:1ad4:5463:ad66%7
-   自動設定 IPv4 位址 . . . . . . . .: 169.254.173.102
-   子網路遮罩 . . . . . . . . . . . .: 255.255.0.0
-   預設閘道 . . . . . . . . . . . . .:
-
-### 2 手動新增的 External Switch
-乙太網路卡 vEthernet (ExternalSwitch):
-
-   連線特定 DNS 尾碼 . . . . . . . . :
-   連結-本機 IPv6 位址 . . . . . . . : fe80::80f5:8c6f:43f9:dd4f%21
-   IPv4 位址 . . . . . . . . . . . . : 192.168.124.101
-   子網路遮罩 . . . . . . . . . . . .: 255.255.255.0
-   預設閘道 . . . . . . . . . . . . .: 192.168.124.254
-
-### 3 Windows Container 使用的 NAT
-乙太網路卡 vEthernet (nat):
-
-   連線特定 DNS 尾碼 . . . . . . . . :
-   連結-本機 IPv6 位址 . . . . . . . : fe80::690f:d8e:dec8:255a%29
-   IPv4 位址 . . . . . . . . . . . . : 172.25.144.1
-   子網路遮罩 . . . . . . . . . . . .: 255.255.240.0
-   預設閘道 . . . . . . . . . . . . .:
-
-### 5 Hyper-V 預設的 NAT
-乙太網路卡 vEthernet (預設切換):
-
-   連線特定 DNS 尾碼 . . . . . . . . :
-   連結-本機 IPv6 位址 . . . . . . . : fe80::6d63:b9d7:b1eb:229a%18
-   IPv4 位址 . . . . . . . . . . . . : 172.22.35.1
-   子網路遮罩 . . . . . . . . . . . .: 255.255.255.240
-   預設閘道 . . . . . . . . . . . . .:
-
-### 6 Linux Container 使用的 NAT
-乙太網路卡 vEthernet (DockerNAT):
-
-   連線特定 DNS 尾碼 . . . . . . . . :
-   IPv4 位址 . . . . . . . . . . . . : 10.0.75.1
-   子網路遮罩 . . . . . . . . . . . .: 255.255.255.0
-   預設閘道 . . . . . . . . . . . . .:
-```
-
-![HyperV Virtual Switch](../img/vSwitch.jpg)
-
-
 ### 額外備註
 
 在 `centos:7` 的 docker image內, 編譯 git 時, 因為缺乏許多套件, 發生下列錯誤
 
 ```sh
-$ make
+### Problem
+$# make
     * new build flags
     CC credential-store.o
 In file included from credential-store.c:1:0:
@@ -652,13 +334,9 @@ cache.h:42:18: fatal error: zlib.h: No such file or directory
                   ^
 compilation terminated.
 make: *** [credential-store.o] Error 1
-```
 
-解法: [Install Git](https://tecadmin.net/install-git-2-0-on-centos-rhel-fedora/)
-
-```sh
-$ sudo yum install zlib-devel
-# 之後即可正常 make
+### Solution
+$# yum install zlib-devel
 ```
 
 
@@ -685,26 +363,3 @@ postgres    25  0.0  0.8 330920 139896 ?       Ss   Mar24   1:27 postgres: check
 postgres    26  0.0  0.8 330620 138256 ?       Ss   Mar24   4:49 postgres: background writer
 # ...(超多)...f
 ```
-
-
-
-
-
-## Restart
-
-服務重啟政策
-
-目前已知有 4 種方式:
-
-- no: (default)
-- on-failure: 當 Container 伴隨著 non-zero exit code, 則適用
-- unless-stopped: 除非 Container 手動停止 or Docker daemon 被停止, 否則適用
-- always: 除非 Container 手動停止, 否則適用
-
-
-# Knowledgement
-
-- Container 網路專案 : libnetwork
-- Docker 的容器叢集管理平台 - Kubernetes
-- 服務探查(Service discovery) 的 鍵值儲存系統 Etcd
-- 容器監控平台: Cadvisor

@@ -1,3 +1,7 @@
+# SQA
+
+
+
 
 
 ## Unix Domain Connections
@@ -8,7 +12,6 @@
 
 ```py
 CONN = "postgresql+psycopg2://user:password@/dbname?host=/var/lib/postgresql"
-#                                          ^^^ 這邊
+#                                          ^^^
+# 可省略 host 部分, 取而代之的是使用 Unix 內部的 Unix Socket 連線
 ```
-
-上述可省略 host 部分, 取而代之的是使用 Unix 內部的 Unix Socket 連線

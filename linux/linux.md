@@ -1060,6 +1060,8 @@ n1 -eq n2      | n1 == n2
 #
 name=Tony; [-z $name ]; echo $?
 1
+
+name=; test -z $name; echo $?
 ```
 
 
