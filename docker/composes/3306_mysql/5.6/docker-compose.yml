@@ -1,15 +1,15 @@
 version: "3"
 
 services:
-  mysql57:
-    image: mysql57
+  mysql56:
+    image: mysql56
     build:
       context: .
-    container_name: mysql57
-    hostname: mysql57
+    container_name: mysql56
+    hostname: mysql56
     restart: always
     ports:
-      - "3357:3306"
+      - "3356:3306"
     volumes:
       - ./data_db:/var/lib/mysql
       - ./conf/my.cnf:/etc/mysql/my.cnf
@@ -17,8 +17,8 @@ services:
     environment:
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
     networks:
-      - net_mysql57
+      - net_mysql56
 
 networks:
-  net_mysql57:
-    name: net_mysql57
+  net_mysql56:
+    name: net_mysql56

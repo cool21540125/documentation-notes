@@ -1,4 +1,4 @@
-version: '3.8'
+version: "3"
 
 services:
   mysql8:
@@ -7,20 +7,16 @@ services:
     hostname: mysql8
     restart: always
     ports:
-      - "8022:3306"
+      - "3380:3306"
     volumes:
-      - mysql8_data:/var/lib/mysql
-      - mysql8_conf:/etc/mysql
-      - mysql8_sock:/var/run/mysqld
+      - ./data_db:/var/lib/mysql
+      - ./conf/my.cnf:/etc/mysql/my.cnf
+      - /etc/localtime:/etc/localtime:ro
     environment:
       - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
-    labels:
-      - macbook.data.path=/da
+    networks:
+      - net_mysql80
 
-volumes:
-  mysql8_data:
-    name: mysql8_data
-  mysql8_conf:
-    name: mysql8_conf
-  mysql8_sock:
-    name: mysql8_sock
+networks:
+  net_mysql80:
+    name: net_mysql80
