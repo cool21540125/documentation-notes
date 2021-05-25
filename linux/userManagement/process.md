@@ -96,7 +96,12 @@ root         1  0.0  0.5 193524  5512 ?        Ss    1月13   0:06 /usr/lib/syst
 # VSZ: Process 使用掉的 虛擬記憶體
 # RSS: Process 佔用的 固定記憶體
 # TTY: Proce3ss 所在 Terminal. 若為 pts/0 等等, 則為網路連線來的
-# STAT: 程序的狀態, 有 R/S/T/Z
+# STAT: 程序的狀態, 有 R/S/D/T/Z
+#   - R: Running
+#   - S: Sleep, 該程式目前正在睡眠(idle), 但可以被喚醒(signal)
+#   - D: 不可被喚醒的睡眠狀態. 通常是此程式是在等待 I/O 的狀態, ex: 列印
+#   - T: Stop, 可能是 背景暫停 or 除錯(traced) 的狀態
+#   - Z: Zombie, 程序已經終止, 但無法自 Memory 中移除
 
 $#
 ```

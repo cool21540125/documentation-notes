@@ -304,3 +304,8 @@ location / {
     index $file;
 }
 ```
+
+
+## Note
+
+Ubuntu 上面的 nginx 用戶為 `www-data`

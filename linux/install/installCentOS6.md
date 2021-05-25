@@ -8,17 +8,13 @@
 # 讓使用者成為 pu
 
 ```sh
-$# vim /etc/sudoers
+$# visudo  # 千萬不要使用「vim /etc/sudoers」
 # 於ALL=(ALL)   ALL下一行增加
 <user>=(ALL)   ALL
-# 「:x!」強制存檔離開
 
 # 如果覺得每次都要打密碼很麻煩 把下列寫入即可
 tony ALL=(ALL) NOPASSWD: ALL
-# 上 su 免輸入密碼, 使用 「:x!」 儲存
-
-# chmod u-w /etc/sudoers
-# 重新登入terminal即可
+# 上 su 免輸入密碼
 ```
 
 

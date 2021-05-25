@@ -45,6 +45,10 @@ usermod -aG sodor james
 usermod -aG sodor thomas
 usermod -aG controller student
 
+
+### 移除
+gpasswd --delete user group
+
 mkdir -p /shares/steamies
 touch /shares/steamies/display_engines.sh
 echo 'echo "You are executing \"/shares/steamies/display_engines.sh\""' > /shares/steamies/display_engines.sh

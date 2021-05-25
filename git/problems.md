@@ -37,3 +37,17 @@ fatal: unable to access 'https://HOST/PROJECT_OWNER/PROJECT.git': Peer's Certifi
 $# env GIT_SSL_NO_VERIFY=true git clone https://HOST/PROJECT_OWNER/PROJECT.git
 
 ```
+
+
+# Issue
+
+> 不小心把 dev 合併到 master, 並且推送到遠端. 然後過了一陣子才意識到, 發現的時候, dev 及 master 已有多次 commit
+
+- https://www.facebook.com/will.fans/videos/134512168711909/?comment_id=135775351918924&reply_comment_id=135779518585174&notif_id=1621171331630887&notif_t=video_reply&ref=notif
+
+1. 把壞掉的分支另外建一個新分支
+2. 原分支 git reset
+3. 用 cherry-pick 將新分支有用的修訂版提交一一撿回來
+4. 把壞掉的分支移除
+
+網友推薦做法, 留作筆記, 將來遇到再試試
