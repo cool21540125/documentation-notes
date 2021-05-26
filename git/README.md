@@ -9,64 +9,16 @@
 - [Github Cheat Sheet](https://metavige.github.io/2015/04/20/github-chest-sheet/#%E5%BE%9E%E5%B7%A5%E4%BD%9C%E5%8D%80%E5%8E%BB%E9%99%A4%E5%A4%A7%E9%87%8F%E5%B7%B2%E5%88%AA%E9%99%A4%E6%96%87%E4%BB%B6) 感覺值得花時間看看~ 2018/07/19 新增
 
 
-```bash
-### 基本資訊
-git config --global user.name "TonyChou"
-git config --global user.email "cool21540125@gmail.com"
-
-### Useful
-git config --global alias.tree "log --graph --decorate --pretty=oneline --abbrev-commit"
-
-### 檔案改變權限(chmod)後, git 不會把他們視為變更
-git config --global core.fileMode false
-
-### 快取密碼
-git config --global credential.helper 'cache --timeout=86400'
-
-# 忽略「空白」所造成的影響
-git config --global apply.whitespace nowarn
-
-# 增加Git輸出時的顏色
-git config --global color.ui true
-```
 
 # 底下幾個指令自己太常用... 備註到最前面
 
 ```sh
-### 測試能否與 Git Server 連線
-$# ssh -vT git@GIT_SERVER_DOMAIN -p PORT
-# 若 PORT 為預設的 22, -p PORT 可略
-# GIT_SERVER_DOMAIN, ex: gitlab.com
-# 永遠使用 git user 來測
-
-# 首次設定 PKI
-ssh-keygen -t rsa -b 4096 -C "tony@tonynb" -f "key_name"
-
-### ed25519 (比 rsa 更有效率 && 安全)
-# https://docs.gitlab.com/ee/ssh/README.html#ed25519-ssh-keys
-$# ssh-keygen -t ed25519 -C "tony@tonynb"
-# 產生 id_ed25519 && id_ed25519.pub
-
 # 本地分支 push 至 origin
 git push --set-upstream origin feature
 
 # 設定本地分支追蹤的遠端分支
 git branch --set-upstream-to=origin/feature feature
 
-# 改變追蹤 URL
-git remote set-url origin git@github.com:cool21540125/documentation-notes.git
-
-# 重新 Commit
-git commit --amend -m "<Commit String>"
-
-# 設定 git 預設的編輯器 (預設為 vim)
-git config --global core.editor "notepad"
-
-### 快取記憶密碼 (應該是存在 RAM 吧)
-git config --global credential.helper 'cache --timeout=86400'
-
-### 永久紀錄密碼 (https) 存到 「~/.git-credentials」, 以明碼的方式儲存
-git config --global credential.helper store
 
 ### 暫存目前變更
 git stash
@@ -422,9 +374,6 @@ $ cat .git/config
 
 > *移除別名* : `git config --<層級> --unset alias.<已建立的別名>`
 ```sh
-$ git config --global alias.cm "commit -m"
-# 將來可用 git cm "..." 來代替 git commit -m "..."
-
 $ git config --global alias.unstage "reset HEAD --"     # 將檔案從 index中移除
 # 將來可用 git unstage a.js 來取代 git reset HEAD a.js
 
