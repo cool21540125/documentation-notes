@@ -266,7 +266,8 @@ docker version
 - [Install Docker Compose](https://docs.docker.com/compose/install/)
 
 ```sh
-curl -L "https://github.com/docker/compose/releases/download/1.28.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+VERSION=1.29.2
+curl -L "https://github.com/docker/compose/releases/download/$VERSION/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
 
 chmod +x /usr/local/bin/docker-compose
 cat <<"EOT" > /etc/profile.d/usr_local_bin.sh
