@@ -158,6 +158,7 @@ Code                       | Description
 - `403 Authentication credentials were not provided.` 認證方式不被允許, `Basic`, `Digest`, ...
 - `403 You do not have permission to perform this action.` 使用者權限不足
 - `405 Method "POST" not allowed.` 後端不接受 POST api
+- `413 Request Entity Too Large` Request 大小 > the buffer size for reading the client request body
 
 
 ### * 14.47 response header - WWW-Authenticate

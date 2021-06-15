@@ -62,6 +62,7 @@
 - retention : 保留
 - routing mesh : 路由網路
 - sharding : 分片(把東西拆成幾分的概念吧??)
+- SIGSEGV : 記憶體區段錯誤
 - snippets : 片段
 - space bar : 空白鍵
 - sponsor : 發起人

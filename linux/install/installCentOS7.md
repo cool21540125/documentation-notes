@@ -1,3 +1,4 @@
+
 # CentOS7 安裝備註
 
 我的使用環境如下
@@ -570,10 +571,11 @@ yum install -y mysql-community-server
 
 # 3. 啟動 && 設定 root 密碼~
 systemctl start mysqld.service
+systemctl enable mysqld.service
 
 grep 'temporary password' /var/log/mysqld.log
 
-$ mysql -uroot -p
+mysql -uroot -p
 # 前面取得的密碼登入
 ```
 
@@ -582,9 +584,9 @@ $ mysql -uroot -p
 ```sql
 --;# 登入 MySQL 後, 立馬改密碼
 ALTER USER 'root'@'localhost' IDENTIFIED BY '<new password>';
-
+FLUSH PRIVILEGES;
 --;# 自己看看要不要移除 密碼政策
-uninstall plugin validate_password;
+-- uninstall plugin validate_password;
 
 --;# 建立 User
 CREATE USER 'tony'@'%' IDENTIFIED BY '<password>';
@@ -691,14 +693,12 @@ Python 3.6.3 :: Anaconda, Inc.
 - [jemalloc not found 的解法](https://www.cnblogs.com/oxspirt/p/11392437.html)
 - [Linode - Install and Configure Redis on CentOS 7](https://www.linode.com/docs/databases/redis/install-and-configure-redis-on-centos-7/)
 
-
 ```sh
 # 安裝 Redis
 $ sudo yum install epel-release
 $ sudo yum install redis
 $ sudo systemctl start redis
 ```
-
 
 
 # Git (CentOS7 default repo -> git v-1.8 太舊了~~)
@@ -1324,29 +1324,37 @@ $# yum install -y psmisc
 
 - 2020/12/05
 - [官網](https://www.zabbix.com/download?zabbix=4.0&os_distribution=centos&os_version=7&db=mysql&ws=apache)
+- [官網](https://www.zabbix.com/documentation/4.0/manual/installation/install_from_packages/rhel_centos)
+- [How to Install Zabbix Server 4.0 on CentOS 7](https://computingforgeeks.com/how-to-install-zabbix-server-4-0-on-centos-7/)
+- [How To Install Zabbix Server 3.4 on CentOS/RHEL 7/6](https://tecadmin.net/install-zabbix-network-monitoring-on-centos-rhel-and-fedora/)
+- http://localhost/zabbix
 
-所謂的 Zabbix, 只是個統稱, 它包含了底下三個元件:
+Zabbix, 只是個統稱, 它包含了底下三個元件:
+
 - database
 - zabbix-server
+  - database(mysql/postgres)
+  - monitor GUI(php, apache)
 - front-end
 
 
-Part 1. 安裝
+### Part 1. 安裝
 
 ```bash
 ### 安裝
+rpm -ivh https://repo.zabbix.com/zabbix/4.0/rhel/7/x86_64/zabbix-release-4.0-1.el7.noarch.rpm
+# ↑↓ 不知道差在哪.... 4.0-1 及 4.0-2.....
 rpm -Uvh https://repo.zabbix.com/zabbix/4.0/rhel/7/x86_64/zabbix-release-4.0-2.el7.noarch.rpm
 yum clean all
 
-yum install zabbix-get zabbix-agent zabbix-server-mysql zabbix-web-mysql mariadb-server
-# zabbix-get : 多半用來做 debug
-# zabbix-agent : 要被監控的一端要裝這個, 如果跟 zabbix-server 裝在同一台, 可以順便監控自己
-# zabbix-server-mysql : 算是安裝了 mysql driver for zabbix, 可同時用在 mysql && mariadb
-# zabbix-web-mysql : 前端
+yum install -y zabbix-get zabbix-agent zabbix-server-mysql zabbix-web-mysql 
+
+yum install -y mariadb-server  # 或是使用 Oracle MySQL, 但要留意會有一點點點點點點點不同@@!
+
+systemctl start zabbix-server
 ```
 
-
-Part2. DB 部分
+### Part2. DB 部分
 
 ```bash
 systemctl start mariadb
@@ -1365,8 +1373,7 @@ zcat /usr/share/doc/zabbix-server-mysql*/create.sql.gz | mysql zabbix
 # 建立 zabbix server 存資料的地方 && 倒 schema 進去
 ```
 
-
-Part 3. 組態
+### Part 3. 組態
 
 ```bash
 cat /etc/zabbix/zabbix_server.conf
@@ -1374,26 +1381,45 @@ sed -i 's/# DBPassword=/DBPassword=UGf!i_Jg%ao29&7J/' /etc/zabbix/zabbix_server.
 # ↑ 設定密碼
 ```
 
-Part 4. 前端
+### Part 4. 前端
 
 ```bash
 cat /etc/httpd/conf.d/zabbix.conf
 sed -i 's/# php_value date.timezone Europe\/Riga/php_value date.timezone Asia\/Taipei/' /etc/httpd/conf.d/zabbix.conf
 # 修改預設時區
+```
+
+### Part 5. 啟動
+
+
 
 ```
 
-Part 5. 啟動
+
+
+
+
 
 ```bash
-systemctl start httpd
-systemctl start zabbix-server
+### mysql 部分 (安裝完後)
+mysql> CREATE DATABASE zabbix CHARACTER SET UTF8;
+mysql> CREATE USER zabbix@localhost IDENTIFIED BY 'GtKpcWmD88tN4Vye';
+mysql> GRANT ALL PRIVILEGES on zabbix.* to zabbix@localhost IDENTIFIED BY 'password';
+mysql> FLUSH PRIVILEGES;
+$# zcat /usr/share/doc/zabbix-server-mysql*/create.sql.gz | mysql -uroot -p zabbix
+$# zcat /usr/share/doc/zabbix-proxy-mysql*/schema.sql.gz | mysql -uroot -p zabbix
+# 建立 zabbix server 存資料的地方 && 倒 schema 進去
 
+$# vim /etc/zabbix/zabbix_server.conf
+# ↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓
+  DBHost=localhost
+  DBName=zabbix
+  DBUser=zabbix
+  DBPassword=password
+# ↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑
+
+$# systemctl start zabbix-server
 ```
-
-GO~
-- http://localhost/zabbix
-
 
 
 # zabbix-proxy
@@ -1440,52 +1466,6 @@ Hostname=vm157                      # ← 我這台 Agent 叫啥
 $# systemctl start zabbix-agent
 
 ### 防火牆, SELinux...
-```
-
-
-# zabbix-server
-
-- 2019/07/24
-- [官網](https://www.zabbix.com/documentation/4.0/manual/installation/install_from_packages/rhel_centos)
-- [How to Install Zabbix Server 4.0 on CentOS 7](https://computingforgeeks.com/how-to-install-zabbix-server-4-0-on-centos-7/)
-- [How To Install Zabbix Server 3.4 on CentOS/RHEL 7/6](https://tecadmin.net/install-zabbix-network-monitoring-on-centos-rhel-and-fedora/)
-
-Zabbix-Server 是一整包的東西... 它包含了:
-
-- zabbix-server
-- database(mysql/postgres)
-- monitor GUI(php, apache)
-
-```bash
-### 安裝
-rpm -ivh https://repo.zabbix.com/zabbix/4.0/rhel/7/x86_64/zabbix-release-4.0-1.el7.noarch.rpm
-yum-config-manager --enable rhel-7-server-optional-rpms
-yum -y install zabbix-server-mysql zabbix-web-mysql
-
-### 若要使用 zabbix-proxy...
-yum install zabbix-proxy-mysql
-
-systemctl start mysqld
-```
-
-```bash
-### mysql 部分 (安裝完後)
-mysql> CREATE DATABASE zabbix CHARACTER SET UTF8;
-mysql> GRANT ALL PRIVILEGES on zabbix.* to zabbix@localhost IDENTIFIED BY 'password';
-mysql> FLUSH PRIVILEGES;
-$# zcat /usr/share/doc/zabbix-server-mysql*/create.sql.gz | mysql -uroot -p zabbix
-$# zcat /usr/share/doc/zabbix-proxy-mysql*/schema.sql.gz | mysql -uroot -p zabbix
-# 建立 zabbix server 存資料的地方 && 倒 schema 進去
-
-$# vim /etc/zabbix/zabbix_server.conf
-# ↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓
-  DBHost=localhost
-  DBName=zabbix
-  DBUser=zabbix
-  DBPassword=password
-# ↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑
-
-$# systemctl start zabbix-server
 ```
 
 
@@ -1574,7 +1554,6 @@ $# yum install -y iproute
 ```
 
 
-
 # htpasswd
 
 - 2020/04/10
@@ -1593,7 +1572,6 @@ $# yum install -y httpd-tools
 ```bash
 yum install -y nmap
 ```
-
 
 
 # 備註

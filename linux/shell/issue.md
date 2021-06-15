@@ -65,4 +65,10 @@ $ echo "QQQ" | sudo /etc/motd
 $ echo "QQQ" | sudo tee -a /etc/motd
 ```
 
+如果發現, 明明編輯了 `/etc/motd` 但是 ssh 近來卻沒看到, 可能是 `sshd` Service 把它 disable 掉了
 
+```bash
+grep -i motd /etc/ssh/sshd_config
+#PrintMotd yes
+# ↑ 此為預設, 看看是否註解被拿掉, 然後改成 no 了
+```

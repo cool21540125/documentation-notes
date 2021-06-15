@@ -1,8 +1,77 @@
+與 ssh 有關的大小事
+
+# SSH Server
+
+查詢 SSH Server 目前套用的配置, 語法:
+
+> sshd -T
+
+```bash
+### 設定主檔
+vim /etc/ssh/sshd_config
+
+### 檢查 SSH Server 目前已套用的配置主檔
+sshd -T | egrep -i AllowTcpForwarding
+#-------------------------
+# allowtcpforwarding yes
+#-------------------------
+
+### 若要允許 SSH Server Port Forwarding, 則這必須是 yes
+sshd -T | egrep -i AllowTcpForwarding
+#-------------------------
+allowtcpforwarding yes  # Default yes
+#-------------------------
+# yes 及 all 同義詞
+# local  則只允許 Local Forwarding
+# remote 則只允許 Remote Forwarding
+
+### 允許 Forward Unix domain sockets
+sshd -T | egrep -i AllowStreamLocalForwarding
+#-------------------------
+allowstreamlocalforwarding yes  # Default yes
+#-------------------------
+
+### Server Host 預設不允許自己以外的主機 Connect to forwarded ports
+sshd -T | egrep -i GatewayPorts
+#-------------------------
+#gatewayports no
+#-------------------------
+# ↑ 若要開放 Public forwarded ports, 需改成 「gatewayports yes」 或是
+# 「gatewayports clientspecified」 ← 也就是說, Client 可使用:
+ssh -R 5.6.7.8:9999:localhost:80 host147.aws.example.com
+# ↑ 只有來自 5.6.7.8, 訪問 9999 會被許可
+# ※ 若 Client 沒有 固定IP(而且也不透過VPN) 的話, 則設為 yes 或許是唯一解了
+```
+
+OpenSSH 也允許 forwarded remote port 到 0 (遇到再說了~)
 
 
-# SSH Tunnel (跳板)
+# SSH Client
 
-- 2018/09/29
+查詢 SSH Client 目前套用的配置檔, 語法:
+
+> ssh -G [Host]
+
+```bash
+### 檢查 SSH Client 目前已套用的配置檔
+ssh -G ec2 | egrep -i User
+#-------------------------
+#user ec2-user
+#userknownhostsfile /c/Users/tony/.ssh/known_hosts /c/Users/tony/.ssh/known_hosts2
+#syslogfacility USER
+#-------------------------
+# 此指令會優先套用 「~/.ssh/config」, 再者才是 「/etc/ssh/ssh_config」
+
+### ssh to remote
+ssh user@host
+# 也可使用
+ssh -l user host
+```
+
+
+# SSH Tunnel
+
+## Part 1.Local Forwarding
 
 在 localhost(`A`) (透過 `C`) 訪問 `B`
 
@@ -10,19 +79,40 @@
 - B: 169.254.10.10 (先安裝 `httpd`)
 - C: 169.254.10.20
 
-語法 : `ssh -L 本地Port:目的IP:目的Port user@跳板IP`
+語法:
+
+> ssh -L Local_Port:Destination_IP:Destination_Port user@Connection_Target_Host
+
+> ssh -L Local_Port:Destination_IP:Destination_Port Connection_Target_Host
 
 ```sh
+### Local Port Forwarding
+$ ssh -N -L 8088:169.254.10.10:80 tony@169.254.10.20
 # 透過 tony@169.254.10.20 訪問 169.254.10.10:80, 並將結果回傳到本地的 8088 port (在A電腦執行)
-$ ssh -L 8088:169.254.10.10:80 tony@169.254.10.20
-
+# -N: 單純只給 forwarding ports 使用(不執行 remote command)
+# -L: Local Port Forwarding
 # 瀏覽器~~ 「localhost:8088」 就看到網頁了~~
 # 但是不知道為什麼　curl會出現
 # curl: (7) Failed to connect to localhost port 8088: Connection refused
+
+### 或者, 可以更嚴格的限定, 只能由 localhost:8888 來做 Tunneling
+$ ssh -N -L 127.0.0.1:8088:169.254.10.10:80 tony@169.254.10.20
+#           ↑↑↑↑↑↑↑↑↑
+# 也可藉由修改 ssh config 的 「LocalForward」來做限定
 ```
 
 
-# 非正規 Port
+## Part 2.Remote Forwarding
+
+```bash
+### Remote Port Forwarding
+$ ssh -R 8080:localhost:80 public.example.com
+# 
+# -R: 處理 Remote Port Forwarding
+```
+
+
+# SSH Server 改 非正規 Port
 
 ```sh
 ### 1. 改組態
@@ -57,7 +147,7 @@ $ vim ~/.ssh/config
 # --------- 內容如下 ---------
 #!/bin/bash
 Host vm8                        # Remote Server 名稱
-    StrictHostKeyChecking   no              # 忽略 known_hosts 的檢查 (參考最下面的連結)
+    StrictHostKeyChecking   no              # 忽略 known_hosts 的檢查 (登入遠端機器, 不做檢查是否是以前登入過的機器)
     HostName    172.20.61.210               # Remote Server IP
     Port    22                              # Remote Server ssh port
     ForwardAgent    yes                     # ??
@@ -77,20 +167,10 @@ Host aws
 ### 登入
 $ ssh tony@vm8
 tony@172.20.61.210's password:
-
 ```
 
 
-## 參考
-
-- [如何在ssh登入主機遠端主機時不要有key的檢查](https://ssorc.tw/1288/%E5%A6%82%E4%BD%95%E5%9C%A8ssh%E7%99%BB%E5%85%A5%E4%B8%BB%E6%A9%9F%E9%81%A0%E7%AB%AF%E4%B8%BB%E6%A9%9F%E6%99%82%E4%B8%8D%E8%A6%81%E6%9C%89key%E7%9A%84%E6%AA%A2%E6%9F%A5/)
-
-
-
-
 # CLI
-
-## ssh-keyscan
 
 ```bash
 ### 掃描 SSH Server 上頭的 Public Key

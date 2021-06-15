@@ -175,6 +175,10 @@ enp1s0: flags=4163<UP,BROADCAST,RUNNING,MULTICAST>  mtu 1500
         RX errors 0  dropped 0  overruns 0  frame 0
         TX packets 3073  bytes 507757 (495.8 KiB)
         TX errors 0  dropped 0 overruns 0  carrier 0  collisions 0
+# RX 網路從 啟動 到 現在, 接收自網路的 封包數, Bytes
+# TX                     傳送到
+# txqueuelen 用來傳輸資料的緩衝區的儲存長度
+# collisions 封包碰撞數, 若越多表示網路越不好
 
 $ ifconfig enp1s0 up          # 開啟 enp1s0網路卡
 $ ifconfig enp1s0 down        # 關閉 enp1s0網路卡 (別白痴到在 ssh時使用阿XD )

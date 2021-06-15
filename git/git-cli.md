@@ -75,6 +75,23 @@ git commit --amend -m "<Commit String>"
 
 ### 改變追蹤 URL
 git remote set-url origin git@github.com:cool21540125/documentation-notes.git
+
+### 設定追蹤遠端分支
+BRANCH=dev
+git branch --set-upstream-to=origin/${BRANCH} ${BRANCH}
+
+### 手動推送到遠端分支
+BRANCH=feature
+git push --set-upstream origin ${BRANCH}
+
+### 改變追蹤 URL
+REPOSITORY=origin
+GIT_URL=git@github.com:cool21540125/documentation-notes.git
+git remote set-url ${REPOSITORY} ${GIT_URL}
+
+### push tag
+TAG_NAME=1.0.0
+git push origin ${TAG_NAME}
 ```
 
 > git ls-remote -h ${GIT_REPO_URL}

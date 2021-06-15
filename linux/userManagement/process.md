@@ -305,11 +305,11 @@ $# fuser [-umv] [-k [i] [-signal]] file/dir
 fuser -uv -k zbx_env
 ```
 
+
 ## lsof
 
 - 用來查 Process 使用的 file/dir
 - Process 用了哪些 file/dir/fs/dev
-
 
 ```bash
 $# lsof [-aUu] [+d]
