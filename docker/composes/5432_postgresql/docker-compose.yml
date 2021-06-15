@@ -1,17 +1,19 @@
-version: "3.7"
+version: "3"
 
 services:
   db:
-    image: postgres:11
-    container_name: mypg
+    image: postgres:13.2-alpine
+    container_name: pg
+    hostname: pg
     restart: always
     environment:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     ports:
-      - "4444:5432"
+      - "5432:5432"
     volumes:
-      - pg_data:/var/lib/postgresql/data
+      - data_pg:/var/lib/postgresql/data
       - ./initdb.d:/docker-entrypoint-initdb.d
 
 volumes:
-  pg_data:
+  data_pg:
+    name: data_pg
