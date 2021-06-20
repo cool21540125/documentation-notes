@@ -1,4 +1,5 @@
-# Ansible
+
+Ansible
 
 - 2019/01/12
 - 這東西可以快速部署一群遠端主機(透過 ssh, 使用 PKI 認證)
@@ -21,7 +22,6 @@
   - name: install httpd
     yum: pkg=httpd state=latest
 ```
-
 
 
 ## Structure
@@ -51,6 +51,8 @@ $HOME/
 
 ### 主機目錄
 
+> /etc/ansible/hosts
+
 ```sh
 ### 簡單寫法 ----------
 192.168.124.101
@@ -77,6 +79,17 @@ node4
 [webservers:children]
 prod
 # 上頭的寫法表示, node3, node4 隸屬於 prod 群組, 而 prod 群組屬於 webservers 群組
+
+### 建議寫法 ----------
+# 與其寫這樣
+w14301.example.com
+w17802.example.com
+
+# 不如寫像下面這樣
+web1 ansible_host=w14301.example.com
+web2 ansible_host=w17802.example.com
+# ansible_host 也可用 ip
+# web1, web2 為到時候使用的簡稱
 ```
 
 
@@ -94,36 +107,6 @@ ansible -m <模組名稱>
 ansible -a <模組的參數>
 ```
 
-Example:
-
-```sh
-### 檢查所有主機, 是否以 tony 建立了 Ansible 管理主機可存取的環境
-$ ansible all -m ping -u tony
-
-### 所有主機, 與目前 bash 相同使用者, 在遠端主機執行 'echo hi~'
-$ ansible all -a "/bin/echo hi~"
-
-### 複製 /etc/hosts 到 db 這台的 /home/tony/hosts
-$ ansible db -m copy -a "src=/etc/hosts dest=/home/tony/hosts"
-
-### app 這台, 安裝套件
-$ ansible app -m yum -a "name=acme state=present"
-
-### 所有主機建立使用者
-$ ansible all -m user -a "name=cool21540125 password=<加密後密碼>"
-
-### web 這台, 下載 Git repo
-$ ansible web -m git -a "repo=git@github.com:cool21540125/documentation-notes.git dest=/tmp/illu version=HEAD"
-
-### app2 這台, 啟動服務
-$ ansible app2 -m service -a "name=httpd state=started"
-
-### lb 這台, 並存 10 個重啟
-$ ansible lb -a "/sbin/reboot" -f 10
-
-### 檢查所有主機, 全部系統資訊
-$ ansible all -m setup
-```
 
 ### 2. Ansible Playbook
 

@@ -213,6 +213,17 @@ dotnet --version
 ```
 
 
+# Install ansible
+
+- 2021/06/20
+- [Installing Ansible on RHEL, CentOS, or Fedora](https://docs.ansible.com/ansible/latest/installation_guide/intro_installation.html#installing-ansible-on-rhel-centos-or-fedora)
+
+```bash
+yum install epel-release
+yum install ansible
+```
+
+
 # Google Chrome
 
 - 2017/11/25
@@ -1450,7 +1461,8 @@ sed -i 's/# DBPassword=/DBPassword=zabbix/' /etc/zabbix/zabbix_proxy.conf
 - [ZabbixOfficial-zabbix-packages](https://repo.zabbix.com/zabbix/4.0/rhel/7/x86_64/)
 
 ```bash
-$# rpm -Uvh https://repo.zabbix.com/zabbix/4.0/rhel/7/x86_64/zabbix-agent-4.0.27-1.el7.x86_64.rpm
+$# VERSION=4.0.10
+$# rpm -ivh https://repo.zabbix.com/zabbix/4.0/rhel/7/x86_64/zabbix-agent-${VERSION}-1.el7.x86_64.rpm
 $# yum install zabbix-agent
 
 ### Config

@@ -235,26 +235,30 @@ $# uptime
 ## jobs 工作管理 && fg
 
 > jobs參數, `l: 顯示 PID`, `r: running process`, `s: stopped process`
-> 預設, Ctrl+z後, 都會暫停此 process
+
+> 預設, `Ctrl+z` 後, 都會暫停此 process
+
 ```sh
-$ vi ~/.bashrc        # Ctrl + z
+$# vi ~/.bashrc        # Ctrl + z
 [1]+  Stopped                 vi .bashrc
 
-$ mysql -uroot -p     # Ctrl + z
+$# mysql -uroot -p     # Ctrl + z
 [2]+  Stopped                 mysql -uroot -p
 
-$ jobs -lrs
+$# jobs -lrs
 [1]- 19499 Stopped                 mysql -uroot -p  (wd: /home/tony)
 [2]+ 19504 Stopped                 vi .bashrc
 
-$ fg              # 可以回到上面有「+」的那個 process
+$# fg              # 可以回到上面有「+」的那個 process
 
-$ fg %1           # 可以回到第1個 process
----
-## 虛擬檔案
+$# fg %1           # 可以回到第1個 process
+```
+
+虛擬檔案
+
 > `/proc`內的檔案, 都是虛擬檔案, 是系統讓使用者查看系統內部狀況的窗口
 
-```sh
+```bash
 # 查看記憶體使用情形
 $ cat /proc/meminfo
 
@@ -264,7 +268,6 @@ $ cat /proc/partitions
 # 查看 CPU資訊
 $ cat /proc/cpuinfo
 ```
-
 
 
 # Process Example

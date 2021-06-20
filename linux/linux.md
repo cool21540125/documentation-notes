@@ -1057,11 +1057,14 @@ n1 -eq n2      | n1 == n2
 -ne, -gt, ...  | (略)
 
 ```bash
-#
-name=Tony; [-z $name ]; echo $?
+### test -z 變數的字串長度若為0, 返回 true(也就是 0)
+name=Tony; test -z $name; echo $?
 1
 
 name=; test -z $name; echo $?
+0
+
+# 上述的 「test -z $name」 也可用 「[[ -z $name ]]」 來代替
 ```
 
 

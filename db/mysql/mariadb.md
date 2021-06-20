@@ -16,6 +16,9 @@ SHOW GRANTS for root@localhost;
 CREATE USER 'zabbix'@'*' IDENTIFIED BY 'myadmin';
 GRANT ALL PRIVILEGES on zabbix.* to zabbix@localhost;
 
+CREATE USER zabbix@localhost IDENTIFIED BY 'monitoring';
+GRANT SELECT, PROCESS, FILE, REPLICATION CLIENT ON *.* TO zabbix@localhost;
+
 --#; 建立 zabbix 用戶
 UPDATE mysql.user SET authentication_string = PASSWORD('zabbix') WHERE User = 'zabbix' AND Host = 'localhost';
 --#; ↑ 不知道為什麼, 這個失敗

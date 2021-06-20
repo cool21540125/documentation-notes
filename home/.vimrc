@@ -3,5 +3,4 @@ set tabstop=4
 set shiftwidth=4
 set autoindent
 set ai
-set nu
-set nocompatible
+#set nocompatible  # Ubuntu

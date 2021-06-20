@@ -26,7 +26,7 @@ $# alembic init alembic  # 產生 alembic dir, 作為託管 SQL 版本的基地
 $# vim alembic.ini
 # 修改裏頭的 sqlalchemy.url 部分, 定義好 DB 連線
 
-$# alembic revision -m "meaningful operation name" --autogenerate
+$# alembic revision -m "init" --autogenerate
 # 會產生
 /alembic/versions/68ff4441380d_meaningful_operation_name.py
 # 裡面的 upgrade && downgrade, 一定要能夠做反向操作!!
