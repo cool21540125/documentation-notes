@@ -10,7 +10,7 @@ Starts the MySQL database server.
 Usage: mysqld [OPTIONS]
 
 Default options are read from the following files in the given order:
-/etc/my.cnf /etc/mysql/my.cnf ~/.my.cnf 
+/etc/my.cnf /etc/mysql/my.cnf ~/.my.cnf   # 可把 「.my.cnf」 放到使用者家目錄底下, 將來藉由 「HOME=~zabbix mysql」 就可以讀取 zabbix 家目錄底下的「.my.cnf」(假設裡面已有配置帳密資訊), 直接使用 MySQL
 The following groups are read: mysqld server mysqld-8.0
 The following options may be given as the first argument:
 --print-defaults        Print the program argument list and exit.
