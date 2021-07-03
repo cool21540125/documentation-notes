@@ -47,6 +47,9 @@ alias diip='docker inspect --format="{{range .NetworkSettings.Networks}}{{.IPAdd
 alias dienv='docker inspect --format="{{json .Config.Env}}"'
 
 EOF
+
+### 底下這個, 可以讓 Terminal 變漂亮(有顏色)
+echo 'export PS1="\[\e[37;40m\][\[\e[32;40m\]\u\[\e[37;40m\]@\h \[\e[35;40m\]\W\[\e[0m\]]# "' >> ~/.bashrc
 ```
 
 

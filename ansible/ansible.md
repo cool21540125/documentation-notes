@@ -4,7 +4,7 @@ Ansible
 - 2019/01/12
 - 這東西可以快速部署一群遠端主機(透過 ssh, 使用 PKI 認證)
 
-![Ansible Tower](../img/AnsibleTower.png)
+
 
 ## Terms
 
@@ -24,28 +24,7 @@ Ansible
 ```
 
 
-## Structure
 
-```sh
-/etc
-    /ansible/       # ansible 組態目錄
-        /ansible.cfg    # ansible 設定主檔
-        /hosts          # ansible 自己管理的 主機清單(Host Inventory)
-        /roles/
-/usr/
-    /share/             # 模組位置
-$HOME/
-    /.ansible/
-        /tmp/           # remote_tmp 及 local_tmp
-
-### 設定檔順序
-# Ansible 預設組態主檔 /etc/ansible/ansible.cfg
-# 設定檔參考順序為(先找到先適用):
-# 1. ANSIBLE_CONFIG (環境變數)
-# 2. ansible.cfg (current dir)
-# 3. .ansible.cfg (home dir)
-# 4. /etc/ansible/ansible.cfg (最後才參考設定主檔)
-```
 
 `主機目錄` 依照用途可分為: `DB Nodes`, `Service Nodes`, ...
 

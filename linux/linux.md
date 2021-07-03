@@ -959,6 +959,18 @@ $ ls --full-time  # 列出 詳細時間
 $ ls --time={atime, ctime}  # 列出 {access時間 , 改變權限屬性時間 }
 ```
 
+### 靠 inode 來砍檔案
+
+![](../img/filesystem_error_find_by_inode.png)
+
+偶爾就是會發生 同資料夾底下檔名重複的東西, 但是實際上, 它已經不存在了! (如上圖的 328993)
+
+正常的 rm -rf 方式已經砍不到東西, 因此改砍 inode
+
+```bash
+find . -inum 328993 -exec rm -rfi {} \;
+```
+
 
 ### 追蹤 - tail (動態log)
 > 語法: `tail -f <追蹤的 log路徑>`
@@ -1041,7 +1053,8 @@ option         | description
 -------------- | -------------
 file           |
   -d           | 為 dir
-  -e           | 存在
+  -e           | 檔名是否存在
+  -f           | 檔名是否存在 && 為 file
   -s           | 大小 >0
   -r           | readable
   -w           | writable

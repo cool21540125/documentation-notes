@@ -148,3 +148,9 @@ $ find / size +1M
 find themes -type f | xargs ls -l
 ```
 
+```bash
+### 把找到的東西壓縮
+find /apps/tomcat/logs -name "*.log" -mtime +1 -exec gzip {} \;
+# or
+find /apps/tomcat/logs -name "*.log" -mtime +1 | xargs gzip
+```

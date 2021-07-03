@@ -18,6 +18,12 @@
 # lsusb 列出 USB port
 # iostat 列出整個 CPU與 周邊設備的I/O狀態 (類似 vmstat)
 
+### 列出 Kernel 的訊息(buffer)
+$# dmesg
+
+### 列出 Kernel 的訊息, 並且把訊息(buffer)清空
+$# dmesg -c
+
 # lsmod: 查看核心模組
 $ lsmod | grep nouveau
 nouveau              1527946  0 

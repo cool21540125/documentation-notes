@@ -30,7 +30,7 @@ centos-release-7-5.1804.4.el7.centos.x86_64
 
 
 
-# yum
+## yum
 
 ```sh
 # 可查線上 repo 可安裝的套件(但是得給完全相同的名字才能查(可用regex))
@@ -118,7 +118,7 @@ repolist: 24,950
   - 無誤後, 使用 `sudo make install`開始安裝
 
 
-# EPEL(Extra Packages for Enterprise Linux)
+## EPEL(Extra Packages for Enterprise Linux)
 > Linux在安裝許多軟體的時候(ex: yum install ...), 會有軟體相依性的問題, 若發現相依軟體尚未被安裝, yum會自己去`本地 repository`裡頭找有記載的`遠端 repository`去下載相依套件. 而 EPEL就是專門 for CentOS的套件庫, 裡頭有許多CentOS的核心套件. <br>查看補充說明:
 [What is EPEL](https://www.tecmint.com/how-to-enable-epel-repository-for-rhel-centos-6-5/)
 ```sh
@@ -127,7 +127,7 @@ $ sudo yum install -y epel
 
 
 
-# Linux的軟體管理員 - rpm
+## Linux的軟體管理員 - rpm
 
 ### - rpm vs dpkg
 
@@ -194,13 +194,13 @@ options     | description
 
 
 
-# Apache - kafka
+# Install Apache - kafka
 
 - [看這邊](../../other/kafka.md)
 
 
 
-# DotNet Core
+# Install DotNet Core
 
 - 2019/01/03
 - https://dotnet.microsoft.com/download/linux-package-manager/centos/sdk-current
@@ -213,18 +213,67 @@ dotnet --version
 ```
 
 
-# Install ansible
+# Install Ansible
 
 - 2021/06/20
 - [Installing Ansible on RHEL, CentOS, or Fedora](https://docs.ansible.com/ansible/latest/installation_guide/intro_installation.html#installing-ansible-on-rhel-centos-or-fedora)
 
 ```bash
-yum install epel-release
-yum install ansible
+yum install -y epel-release
+yum install -y ansible
 ```
 
 
-# Google Chrome
+# Install Ansible Tower
+
+- 2019/01/12
+- [Ansible tar file](https://releases.ansible.com/ansible-tower/setup-bundle/)
+- 2G+ RAM (建議 4G+)
+- 20G Disk
+- 64 bits os
+
+
+```sh
+### 1. Download && Install
+$# wget https://releases.ansible.com/ansible-tower/setup-bundle/ansible-tower-setup-bundle-3.0.3-1.el7.tar.gz
+$# tar -zxf ansible-tower-setup-bundle-3.0.3-1.el7.tar.gz
+$# cd ansible-tower-setup-bundle-3.0.3-1.el7/
+
+$# vim inventory
+### 先設定好 inventory 裏頭的 3 組密碼
+
+$# ./setup.sh   # 會檢查 Disk, RAM ...
+# 好像會偷偷幫你安裝 PostgreSQL, redis, httpd...
+# ~~~ 會安裝一陣子~~~
+
+The setup process completed successfully.   # ← successfully
+Setup log saved to /var/log/tower/setup-2019-01-12-17:53:43.log
+You have new mail in /var/spool/mail/root
+# 安裝完後, 要看到上面的訊息才算 OK
+
+
+### 2. Setup 安裝完後, 就可透過網頁看到 Ansible Tower 的管理頁面了~
+# 2-1. 改密碼~
+$# tower-manage changepassword admin
+Changing password for user 'admin'
+Password:
+Password (again):
+Password changed successfully for user 'admin'
+
+# 2-2. 然後就可以登入網頁
+# 因為是個人, 所以選擇申請個人版(只能管理 10 nodes 以下)
+# 且無法使用 LDAP
+# 填妥收信後, 就可以收到 Licenses 了~
+
+### 3. PKI
+$# ssh-keygen -f tower_rsa
+$# ssh-copy-id -i ~/.ssh/tower_rsa.pub <RemoteUser>@<RemoteIP>
+$# ssh -i ~/.ssh/tower_rsa <RemoteUser>@<RemoteIP>
+# 將來便可使用 Public Key 方式連線
+```
+
+
+# Install Google Chrome
 
 - 2017/11/25
 - [老灰鴨的筆記本](http://oldgrayduck.blogspot.tw/2016/04/linuxcentos-7-google-chrome.html)
@@ -325,8 +374,19 @@ PS1='[\u@\h \W$(__docker_machine_ps1)]\$ '
 # 內容如上 ----------------------------------
 ```
 
+# Install bridge-utils
 
-# bash_completion
+```bash
+yum install bridge-utils -y
+
+### Usage
+$# brctl show
+bridge name   bridge id           STP enabled   interfaces
+docker0       8000.02428b91c08f   no
+```
+
+
+# Install bash_completion
 
  - 2020/04/08
  - [How to Install and Enable Bash Auto Completion in CentOS/RHEL](https://www.tecmint.com/install-locate-command-to-find-files-in-centos/)
@@ -342,56 +402,7 @@ $# updatedb
 ```
 
 
-# Ansible
-
-- 2019/01/12
-- [Ansible tar file](https://releases.ansible.com/ansible-tower/setup-bundle/)
-- 2G+ RAM (建議 4G+)
-- 20G Disk
-- 64 bits os
-
-
-```sh
-### 1. Download && Install
-$# wget https://releases.ansible.com/ansible-tower/setup-bundle/ansible-tower-setup-bundle-3.0.3-1.el7.tar.gz
-$# tar -zxf ansible-tower-setup-bundle-3.0.3-1.el7.tar.gz
-$# cd ansible-tower-setup-bundle-3.0.3-1.el7/
-
-$# vim inventory
-### 先設定好 inventory 裏頭的 3 組密碼
-
-$# ./setup.sh   # 會檢查 Disk, RAM ...
-# 好像會偷偷幫你安裝 PostgreSQL, redis, httpd...
-# ~~~ 會安裝一陣子~~~
-
-The setup process completed successfully.   # ← successfully
-Setup log saved to /var/log/tower/setup-2019-01-12-17:53:43.log
-You have new mail in /var/spool/mail/root
-# 安裝完後, 要看到上面的訊息才算 OK
-
-
-### 2. Setup 安裝完後, 就可透過網頁看到 Ansible Tower 的管理頁面了~
-# 2-1. 改密碼~
-$# tower-manage changepassword admin
-Changing password for user 'admin'
-Password:
-Password (again):
-Password changed successfully for user 'admin'
-
-# 2-2. 然後就可以登入網頁
-# 因為是個人, 所以選擇申請個人版(只能管理 10 nodes 以下)
-# 且無法使用 LDAP
-# 填妥收信後, 就可以收到 Licenses 了~
-
-### 3. PKI
-$# ssh-keygen -f tower_rsa
-$# ssh-copy-id -i ~/.ssh/tower_rsa.pub <RemoteUser>@<RemoteIP>
-$# ssh -i ~/.ssh/tower_rsa <RemoteUser>@<RemoteIP>
-# 將來便可使用 Public Key 方式連線
-```
-
-
-# ELK - elasticsearch
+# Install ELK - elasticsearch
 
 - 2019/01/12
 
@@ -441,7 +452,7 @@ $# systemctl status elasticsearch
 ```
 
 
-# ELK - kibana
+# Install ELK - kibana
 
 - 2019/01/24
 - [Install Kibana with RPM](https://www.elastic.co/guide/en/kibana/current/rpm.html)
@@ -464,7 +475,7 @@ type=rpm-md
 $# yum install kibana
 ```
 
-# ELK - logstash
+# Install ELK - logstash
 
 - [Install Logstash](https://www.elastic.co/guide/en/logstash/current/installing-logstash.html)
 
@@ -486,7 +497,7 @@ type=rpm-md
 $# yum install -y logstash
 ```
 
-# ELK - metricbeat
+# Install ELK - metricbeat
 
 - [Install Metricbeat](https://www.elastic.co/guide/en/beats/metricbeat/6.5/setup-repositories.html)
 - [各種 Logstash 之下的 Beats](https://www.elastic.co/guide/en/elastic-stack-get-started/current/get-started-elastic-stack.html)
@@ -513,7 +524,7 @@ $# systemctl enable metricbeat
 $# chkconfig --add metricbeat
 ```
 
-# ELK - Filebeat
+# Install ELK - Filebeat
 
 - [How To Install Elasticsearch, Logstash, and Kibana (ELK Stack) on CentOS/RHEL 7](https://www.tecmint.com/install-elasticsearch-logstash-and-kibana-elk-stack-on-centos-rhel-7/)
 
@@ -536,7 +547,7 @@ $# yum install filebeat
 $# vim /etc/filebeat/filebeat.yml
 ```
 
-# MySQL Community 8.0
+# Install MySQL Community 8.0
 
 - 2020/12/31
 
@@ -556,7 +567,7 @@ ALTER USER 'root'@'localhost' IDENTIFIED BY '<new password>';
 ```
 
 
-# MySQL Community 5.7
+# Install MySQL Community 5.7
 
 - 2018/09/14
 - [Official MySQL](https://dev.mysql.com/doc/mysql-yum-repo-quick-guide/en/)
@@ -609,7 +620,7 @@ grant all on *.* to 'demo'@'localhost';
 ```
 
 
-# MongoDB CE
+# Install MongoDB CE
 
 - 2017/11/26
 - [Official MongoDB](https://docs.mongodb.com/manual/tutorial/install-mongodb-on-red-hat/)
@@ -645,7 +656,7 @@ tony    9499  0.0  0.0 112708   968 pts/2  S+  20:45  0:00 grep --color=auto mon
 
 
 
-# Visual Studio Code
+# Install Visual Studio Code
 
 - 2018/09/14
 - [Official vscode](https://code.visualstudio.com/docs/setup/linux)
@@ -670,7 +681,7 @@ $# yum -y install code
 ```
 
 
-# install Anaconda (python3.6.1)
+# Install Anaconda (python3.6.1)
 
 - 2017/11/26
 - [Official Anaconda](https://www.continuum.io/downloads)
@@ -695,7 +706,7 @@ Python 3.6.3 :: Anaconda, Inc.
 
 
 
-# Redis
+# Install Redis
 
 - 2017/11/26 (2018/05/15, 2018/09/02 update)
 - [Official Redis](https://redis.io/download)
@@ -712,7 +723,7 @@ $ sudo systemctl start redis
 ```
 
 
-# Git (CentOS7 default repo -> git v-1.8 太舊了~~)
+# Install Git (CentOS7 default repo -> git v-1.8 太舊了~~)
 - 2017/11/26
 - [How To Install Git on CentOS 7](https://blacksaildivision.com/git-latest-version-centos)
 - [Choose a version](https://github.com/git/git/releases) ( 以2.14.3版為例 )
@@ -787,19 +798,9 @@ git version 2.14.3
 
 
 
-# 語言套件
-
-- 2018/10/04
 
 
-```sh
-# 想要輸入中文的話, 裝這些吧
-$# yum install ibus* cjk*
-```
-
-
-
-# net-tools
+# Install net-tools
 
 - 2017/11/26
 - [centos7 最小化安装無網路服務](http://www.cnblogs.com/cocoajin/p/4064547.html)
@@ -816,7 +817,7 @@ success!
 
 
 
-# VLC
+# Install VLC
 
 - 2017/11/26
 - [How to Install EPEL on CentOS 7](https://www.tecmint.com/how-to-enable-epel-repository-for-rhel-centos-6-5/)
@@ -843,7 +844,7 @@ Try `vlc --help' for more information
 
 
 
-# teamviewer
+# Install teamviewer
 
 - 2018/02/07
 - [Install TeamViewer on CentOS 7 / RHEL 7](https://community.teamviewer.com/t5/Knowledge-Base/How-to-install-TeamViewer-Host-for-Linux/ta-p/6318?_ga=2.2833328.1279667713.1518017393-1552891207.1518017393)
@@ -865,7 +866,7 @@ x86_64
 
 
 
-# 7zip
+# Install 7zip
 - 2017/11/26
 - [e Learning](http://elearning.wsldp.com/pcmagazine/extract-7zip-centos-7/)
 
@@ -945,6 +946,15 @@ www.google.com port 80 open.
 ```
 
 
+# Install conntrack
+
+```bash
+$# yum install conntrack-tools
+
+### Usage
+$# conntrack -L
+# 可以從 Kernel 來查看所有的 Connections
+```
 
 # Install Apache
 
@@ -1170,7 +1180,7 @@ $ sudo virt-manager
 
 
 
-# VirtualBox
+# Install VirtualBox
 
 - 2018/08/19
 - [官網](https://www.virtualbox.org/wiki/Linux_Downloads)
@@ -1199,7 +1209,7 @@ $ systemctl status vboxautostart-service
 
 
 
-# gcc, make
+# Install `Development Tools`(gcc, make)
 
 - 2018/06/16
 - [bash - make command not found](https://stackoverflow.com/questions/21700755/bash-make-command-not-found)
@@ -1217,7 +1227,7 @@ $ sudo yum groupinstall "Development Tools"
 
 
 
-# unrar
+# Install unrar
 
 - [Linux rar](https://www.phpini.com/linux/linux-extract-rar-file)
 - 2018/06/16
@@ -1233,7 +1243,7 @@ $ unrar t <file.rar>    # 測試壓縮檔是否完整
 
 
 
-# Node.js
+# Install Node.js
 
 - 2018/09/14
 - [官網](https://nodejs.org/en/)
@@ -1259,7 +1269,7 @@ v8.11.3
 
 
 
-# PhantomJS
+# Install PhantomJS
 
 - [Install PhantomJS on CentOS](https://www.bonusbits.com/wiki/HowTo:Install_PhantomJS_on_CentOS)
 
@@ -1281,7 +1291,7 @@ $ ln -s /opt/phantomjs/bin/phantomjs ~/bin/phantomjs
 
 
 
-# Go lang
+# Install golang
 
 - 2018/09/14
 
@@ -1298,7 +1308,28 @@ go version go1.11 linux/amd64
 ```
 
 
-# supervisor
+
+# Install Jenkins
+
+```bash
+### LTS 安裝方式
+wget -O /etc/yum.repos.d/jenkins.repo https://pkg.jenkins.io/redhat-stable/jenkins.repo
+rpm --import https://pkg.jenkins.io/redhat-stable/jenkins.io.key
+yum upgrade
+yum install jenkins java-11-openjdk-devel
+systemctl daemon-reload
+```
+
+設定主檔 `/etc/sysconfig/jenkins`
+
+```bash
+systemctl start jenkins
+systemctl enable jenkins
+systemctl status jenkins
+```
+
+
+# Install supervisor
 
 - 2019/05/02
 
@@ -1311,7 +1342,7 @@ $# vim /etc/supervisord.conf
 ```
 
 
-# chromedriver
+# Install chromedriver
 
 ```bash
 ### selenium 用
@@ -1322,7 +1353,7 @@ sudo cp chromedriver /usr/local/bin
 ```
 
 
-# fuser
+# Install psmisc(fuser)
 
 - 2019/07/19
 
@@ -1331,7 +1362,7 @@ sudo cp chromedriver /usr/local/bin
 $# yum install -y psmisc
 ```
 
-# Zabbix-Server
+# Install Zabbix-Server
 
 - 2020/12/05
 - [官網](https://www.zabbix.com/download?zabbix=4.0&os_distribution=centos&os_version=7&db=mysql&ws=apache)
@@ -1402,15 +1433,6 @@ sed -i 's/# php_value date.timezone Europe\/Riga/php_value date.timezone Asia\/T
 
 ### Part 5. 啟動
 
-
-
-```
-
-
-
-
-
-
 ```bash
 ### mysql 部分 (安裝完後)
 mysql> CREATE DATABASE zabbix CHARACTER SET UTF8;
@@ -1433,7 +1455,7 @@ $# systemctl start zabbix-server
 ```
 
 
-# zabbix-proxy
+# Install zabbix-proxy
 
 前置步驟幾乎同 zabbix-server, 略
 
@@ -1455,13 +1477,13 @@ sed -i 's/# DBPassword=/DBPassword=zabbix/' /etc/zabbix/zabbix_proxy.conf
 ```
 
 
-# zabbix-agent
+# Install zabbix-agent
 
 - 2020/12/25
 - [ZabbixOfficial-zabbix-packages](https://repo.zabbix.com/zabbix/4.0/rhel/7/x86_64/)
 
 ```bash
-$# VERSION=4.0.10
+$# VERSION=4.0.31
 $# rpm -ivh https://repo.zabbix.com/zabbix/4.0/rhel/7/x86_64/zabbix-agent-${VERSION}-1.el7.x86_64.rpm
 $# yum install zabbix-agent
 
@@ -1481,6 +1503,36 @@ $# systemctl start zabbix-agent
 ```
 
 
+# Install Zabbix-Percona
+
+- [Installing Percona Server for MySQL on Red Hat Enterprise Linux and CentOS](https://www.percona.com/doc/percona-server/LATEST/installation/yum_repo.html)
+- [Percona Monitoring Plugins for Zabbix](https://www.percona.com/doc/percona-monitoring-plugins/LATEST/zabbix/index.html)
+
+### Step1. Install
+
+```bash
+### percona yum.repo
+yum install https://repo.percona.com/yum/percona-release-latest.noarch.rpm
+
+### Install
+yum install percona-zabbix-templates
+
+mkdir -p /etc/zabbix/agent_bin
+mkdir -p /etc/zabbix/zabbix_agent.d
+cp /var/lib/zabbix/percona/templates/userparameter_percona_mysql.conf /etc/zabbix/zabbix_agent.d/
+cp /var/lib/zabbix/percona/scripts/get_mysql_stats_wrapper.sh /etc/zabbix/agent_bin/
+cp /var/lib/zabbix/percona/scripts/ss_get_mysql_stats.php /etc/zabbix/agent_bin/
+```
+
+### Step2. Config
+
+```bash
+### 依照 MySQL 連線資訊做配置
+vim /etc/zabbix/agent_bin/get_mysql_stats_wrapper.sh
+vim /etc/zabbix/agent_bin/ss_get_mysql_stats.php
+```
+
+
 # Install squid
 
 - 2019/12/30
@@ -1493,7 +1545,7 @@ systemctl start squid
 ```
 
 
-# Redis GUI
+# Install Redis GUI
 
 - 2019/08/06
 - [Win 及 Mac 似乎要 License, 但 Linux 似乎不用...?](https://github.com/uglide/RedisDesktopManager)
@@ -1555,7 +1607,21 @@ Kubernetes v1.20.4
 ```
 
 
-# ip CLI
+# Install iptables
+
+```bash
+systemctl stop firewalld
+systemctl disable firewalld
+
+yum install iptables-services -y
+
+systemctl start iptables
+systemctl enable iptables
+systemctl status iptables
+```
+
+
+# Install ip CLI
 
 - 2020/11/02
 
@@ -1566,7 +1632,7 @@ $# yum install -y iproute
 ```
 
 
-# htpasswd
+# Install htpasswd
 
 - 2020/04/10
 
@@ -1577,12 +1643,23 @@ $# yum install -y httpd-tools
 ```
 
 
-# nmap
+# Install nmap
 
 - 2021/01/30
 
 ```bash
 yum install -y nmap
+```
+
+
+# 語言套件
+
+- 2018/10/04
+
+
+```sh
+# 想要輸入中文的話, 裝這些吧
+$# yum install ibus* cjk*
 ```
 
 
