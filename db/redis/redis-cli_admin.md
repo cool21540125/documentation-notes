@@ -1,6 +1,5 @@
 
-
-# RedisCLuster INFO
+# Redis Cluster INFO
 
 - [redis INFO](https://redis.io/commands/INFO)
 
@@ -166,27 +165,27 @@ io_threaded_writes_processed:0
 ### Master 範例
 $# redis-cli -c info replication
 # Replication
-role:master  # Node 為 master/slave
-connected_slaves:1  # 連到此 Master 的 replicas 數量 (slave 值為 0)
+role:master         ## Node 為 master/slave
+connected_slaves:1  ## 連到此 Master 的 replicas 數量 (slave 值為 0)
 slave0:ip=172.16.30.13,port=6380,state=online,offset=153001,lag=1  # 此 Master 的 slave 是誰 (slave 無此 key)
-master_replid:357c3750678266026e7977e3ca6aa79e76d5af67
-master_replid2:0000000000000000000000000000000000000000
-master_repl_offset:153001
-second_repl_offset:-1
-repl_backlog_active:1
-repl_backlog_size:1048576
-repl_backlog_first_byte_offset:1
-repl_backlog_histlen:153001
+master_replid:357c3750678266026e7977e3ca6aa79e76d5af67   ## Redis Server 的 `replication ID`
+master_replid2:0000000000000000000000000000000000000000  ## (PSYNC 使用) failover 之後的 `secondary replication ID`
+master_repl_offset:153001  ## The server's current replication offset
+second_repl_offset:-1      ## The offset up to which replication IDs are accepted
+repl_backlog_active:1      ## Flag indicating replication backlog is active
+repl_backlog_size:1048576        ## Total size in bytes of the replication backlog buffer
+repl_backlog_first_byte_offset:1 ## The master offset of the replication backlog buffer
+repl_backlog_histlen:153001      ## Size in bytes of the data in the replication backlog buffer
 
 ### Slave 範例
 $# redis-cli -c info replication
 # Replication
-role:slave
-master_host:172.16.30.14
-master_port:6380
-master_link_status:up  # 與 Master 連接狀態 (up/down)
-master_last_io_seconds_ago:0  # 自前與 Master 互動後的經過秒數
-master_sync_in_progress:0
+role:slave          ## Node 為 master/slave(若此為 slave, 則可能它會是另一個 chained replication 的 master)
+master_host:172.16.30.14  ## Master 位置
+master_port:6380          ## Master 位置
+master_link_status:up         ## 與 Master 連接狀態 (up/down)
+master_last_io_seconds_ago:0  ## 自前與 Master 互動後的經過秒數
+master_sync_in_progress:0     ## Indicate the master is syncing to the replica
 slave_repl_offset:4675213
 slave_priority:100
 slave_read_only:1
@@ -263,14 +262,14 @@ $# redis-cli -c cluster nodes
 b1b855a130e32787e881fdd3a72ded4a18aa1f76 172.16.30.12:6379@16379 master - 0 1622628974393 1 connected 0-5460
 56990b4007de9f22a5b8351f8728d9d27bff1a61 172.16.30.12:6380@16380 master - 0 1622628973590 7 connected 10923-16383
 f00ece239d8607fac3ff63cded338e12d3c57cf7 172.16.30.13:6379@16379 slave 98f79553015ff3eae2d1cc8051b4c8a4370c1d5f 0 1622628973388 8 connected
-#                                                                flags
-# 每一行的組成方式為:
-# <id> <ip:port@cport> <flags> <master> <ping-sent> <pong-recv> <config-epoch> <link-state> <slot> <slot> ... <slot>
-# <flags> 使用「,」分隔的 list, 可能是這些: myself, master, slave, fail?, fail, handshake, noaddr, noflags
-#   - fail?: 節點處於 PFAIL 狀態(並非 FAIL), 無法 contacting 該 Node, 但邏輯上可 reachable
-#   - fail:  節點處於 FAIL  狀態. 由於多個節點無法訪問, 因而從 PAFIL 提升為 FAIL
-#   - handshake: Untrusted node, we are handshaking.
-#   - noaddr: No address known for this node.
+##                                                                flags
+## 每一行的組成方式為:
+## <id> <ip:port@cport> <flags> <master> <ping-sent> <pong-recv> <config-epoch> <link-state> <slot> <slot> ... <slot>
+## <flags> 使用「,」分隔的 list, 可能是這些: myself, master, slave, fail?, fail, handshake, noaddr, noflags
+##   - fail?: 節點處於 PFAIL 狀態(並非 FAIL), 無法 contacting 該 Node, 但邏輯上可 reachable
+##   - fail:  節點處於 FAIL  狀態. 由於多個節點無法訪問, 因而從 PAFIL 提升為 FAIL
+##   - handshake: Untrusted node, we are handshaking.
+##   - noaddr: No address known for this node.
 ```
 
 > `client list [TYPE normal|master|replica|pubsub]`
