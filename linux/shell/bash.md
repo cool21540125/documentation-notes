@@ -10,47 +10,10 @@ $ echo $$
 ## 快速命令
 
 ```sh
-# 為指令設定別名 (只作用於目前 session)
-$ alias lm='ls -al | less'
-
-# 查看已經設過那些變數
-$ alias
-alias grep='grep --color=auto'
-alias egrep='egrep --color=auto'
-alias fgrep='fgrep --color=auto'
-alias vi='vim'
-alias ls='ls --color=auto'
-alias l.='ls -d .* --color=auto'
-alias ll='ls -l --color=auto'
-alias lm='ls -al | less'
-alias which='alias | /usr/bin/which --tty-only --read-alias --show-dot --show-tilde'
-
 # 取消 已經設定過的別名
 $ unalias lm
 ```
 
-```bash
-cat <<EOF >> ~/.bashrc
-
-### Docker 懶人指令 ------------
-alias d='docker'
-alias dis='docker images'
-alias dps='docker ps'
-alias dpsa='docker ps -a'
-alias dn='docker network'
-alias dv='docker volume'
-alias dex='docker exec -it'
-alias di='docker inspect'
-alias dc='docker-compose'
-alias dl='docker logs -f'
-alias diip='docker inspect --format="{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}"'
-alias dienv='docker inspect --format="{{json .Config.Env}}"'
-
-EOF
-
-### 底下這個, 可以讓 Terminal 變漂亮(有顏色)
-echo 'export PS1="\[\e[37;40m\][\[\e[32;40m\]\u\[\e[37;40m\]@\h \[\e[35;40m\]\W\[\e[0m\]]# "' >> ~/.bashrc
-```
 
 
 ## 變數相關
@@ -246,7 +209,6 @@ echo $2
 echo $3
 #/etc/docker/registry/config.yml
 ```
-
 
 
 ### 陣列變數

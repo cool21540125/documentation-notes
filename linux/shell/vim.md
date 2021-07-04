@@ -1,95 +1,15 @@
-# vim 指令
-
-- 2018/08/03 update
-- [vimrc設定教學](http://wiki.csie.ncku.edu.tw/vim/vimrc)
+# Vim
 - [Vim Tips Wiki - All the right moves](http://vim.wikia.com/wiki/All_the_right_moves)
 
-## Vim 設定檔
-
-```sh
-$ vi ~/.vimrc
-
-
-set expandtab
-set tabstop=4
-set shiftwidth=4
-set nu
-set ai
-set autoindent
-
-set nocompatible
-
-
-retab                  # 將文中所有tab換成空白
-.retab                 # 將目前這行的tab換成空白
-
-set ai  # 內縮
-
-set autoindent         # 啟用自動縮排
-set noautoindent       # 取消自動縮排
-
-set syntax on          # 依照程式語言換顏色
-set syntax off         # 不秀顏色
-
-set ignorecase         # 搜尋不分大小寫
-set noignorecase       # 搜尋區分大小寫(預設)
-
-set cursorline         # 所在行會有底線
-
-if has('mouse')
-  set mouse=a          # 可以使用滑鼠點選位置(這有點猛)
-endif
-set mouse=""           # 取消滑鼠點選位置的功能
-
-# Ubuntu Vim 相容模式 (Ubuntu Vim 超難用~)
-set nocompatible
-
-autocmd FileType yaml setlocal ai sw=2 ts=2 et
-# enable auto-indenting, tab-stop and shift-width to be 2 spaces and tabs are saved as spaces in the file
-```
-
-
-
-# Vim 操作
 
 ## Vim 基本操作
 
 ```sh
-### 模式切換
-a               從目前游標 "之後" 開始輸入
-i               從目前游標 "之前" 開始輸入
-
-A               從目前游標 "所在行行尾" 開始輸入
-I               從目前游標 "所在行行首" 開始輸入
-
-o               從目前游標 "下一行插入一行" 開始輸入
-O               從目前游標 "上一行插入一行" 開始輸入
-
-R               Replace Mode (就... Insert模式) 不好用!
-
-
-### 命令操作
-:w              存檔
-:w /tmp/qq      另存檔名為 /tmp/qq
-:q!             不存檔離開
-:x              存檔後離開
-:e <filename>   開啟檔案
-:e! <filename>  不存檔 && 開啟檔案
-
-
 ### 選取範圍
-v               可逐字選取
-V               一次選取整行
 Ctrl+v          區塊選取 (這個猛!)
 
 
 ### 移動
-gg              到 First Line
-G               到 Last Line
-
-8G              到 第8行
-:8              到 第8行(同8G)
-
 0               到 行首
 $               到 行尾
 
@@ -107,16 +27,9 @@ V3}             目前行, 往下選取 3 段
 
 
 ### Command Mode 編輯
-D               刪 游標處 ~ 行尾
-dd              刪 整行
-5dd             刪 游標位置起往下 5 行
 J               合併目前行與下行
 ~               目前選取的 character 作 大小寫轉換
 
-p               貼上 (Ctrl + v 的概念)
-3p              往後貼上 3 次
-y               複製 (Ctrl + c 的概念)
-x               剪下 (Ctrl + x 的概念)
 u               undo (Ctrl + z 的概念)
 .               redo (Office裏頭, F4 的概念)
 `Ctrl+r`        redo undo (復原 按了太多次... 回復上一個動作)
