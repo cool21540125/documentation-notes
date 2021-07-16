@@ -2,7 +2,7 @@
 
 > The SAVE commands performs a synchronous save of the dataset producing a point in time snapshot of all the data inside the Redis instance, in the form of an RDB file.
 
-將目前 Redis 的所有資料, 作一份 snapshot, 並將之寫入到 RDB file
+將目前 Redis 的所有資料, 作一份 snapshot, 並將之寫入到 `RDB file`
 
 IMPORTANT: `save` 執行下去以後, 會 BLOCK 所有的 clients.
 
