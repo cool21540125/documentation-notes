@@ -191,3 +191,80 @@ $# ssh-keyscan 172.0.10.40
 # - ssh_host_rsa_key.pub
 ```
 
+
+# SSH Container Passthrough
+
+- [SSH Container Passthrough](https://docs.gitea.io/en-us/install-with-docker/#ssh-container-passthrough)
+
+如果容器中有需要使用 ssh 來作訪問, 一種做法是在 Host 2222 port -> Container 22 port
+
+另一種做法是, 轉發本地的 SSH Connection from Host -> Container
+
+### Step1. 設定容器的 USER_UID 與 USER_GID
+
+```bash
+useradd git ; echo <要設定的密碼> | passwd --stdin git
+```
+
+```yml
+### gitea 容器的配置檔
+environment:
+  - USER_UID=1000
+  - USER_GID=1000
+```
+
+### Step2. 掛載
+
+```yml
+### gitea 容器的配置檔
+volumes:
+    - /home/git/.ssh/:/data/git/.ssh
+ports:
+    - "127.0.0.1:2222:22"  # 宿主機 2222 -> 容器 22
+```
+
+### Step3. 建立 git user 的 Key Pair
+
+```bash
+sudo -u git ssh-keygen -t rsa -b 4096 -C "Gitea Host Key"
+```
+
+宿主機產生的這個 Key-Pair, 需要把 Public Key 加入到宿主機的 `/home/git/.ssh/authorized_keys` (同時, 也藉由 mount, 同步到容器中)
+
+將來若使用者透過 Web 加入 SSH Public Key, 則此份檔案看起來像下面這樣
+
+```bash
+### /home/git/.ssh/authorized_keys
+# 此由宿主機 /home/git/.ssh/id_rsa.pub 加入的
+ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQDKjBhZCCTau6MYeugB3glTBeVjUjytP2ZTivIYnbzw/hoxH4AKFJ/PpRMgYqc84lmO7rsiw8A4MxgSlTno8xvBIxrHcHo4O3vhfM6F0QvQnkHcy5hyFw3y3jaenGNvi/LzhSbAafYH1L6fAdf4lwV1XsZMvKmDXFmXJZnl/GfZ5PgfQ7k1L3topGPnY1dPPZGUmytvOEhvJw5mbXwUaQ9co8PG2d+b7wHusTFQ2tJ6hQiW5YsvvBHiX9fzt9cAv/AvgZp4rgnKjryEJU6+rTOtHkdjECFAtI0i+eyQDzWcN22IJ8NiS1MGFDlrpwDR+CykZWt71yrgpDdnIOhUs7lvb89jegjnUB1vGC/wMgsnm8/Pr1mPig9lBUuei9t1h+XMrzBu3AhbNHlhtJqLWTD0S99WpVunLMP6wYnpfc1JIc9dIx1hBS5b9xQUYmPrgNPftP1p13/bzqeiYSjKtuPCGTVSN59I4H1KwkBAaI96/7Tdik6eGlJFin3s2suloKwCoFyLfQdKYUPTrPcSaVqZ3iJ3a5IboZdWrMHnnyJh3rLQfwSD593FsBeYELyhY/hObzlK3R91S43NNsMVCf8zWMre4SwsnK1zIz/fyokdyr0TU6x+xtNIWuCn1zH3bsiEK16LVBEiONgln8Er3bwZWwxpg4YHzV8wMJkP/MpM2w== Gitea Host Key
+
+# 此為 User 透過 Web, 自行加入 Client 的 ~/.ssh/id_rsa.pub
+command="/app/gitea/gitea --config=/data/gitea/conf/app.ini serv key-4",no-port-forwarding,no-X11-forwarding,no-agent-forwarding,no-pty ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQC3aIWdIubUizyFt7A6UM1SRvkO9xjndwcM6+D2N5dAU3icEzi8d02nM01mENeKZ1DedjEgqNmKpVUOew2jZUlVjjqlyfpLECOa/5BdJWSokU1/sAl9XoTfSiO0KOJ7dD/kmJs30js5PJox4pP3N0FfteW11olGCEdwmtU9HWvphLyKvZS1pIIjoGpmRxUx7mWlOqIYuJx+Iaw623HLztuWg4ilU4WJCnDQLaizbm9TFDlDqSu/OdABo4OAwzJX1L66rWy9JfAWDuUgf+8Gaoh4banLIyi4vETcqpu0E3t+Po5Ah32DEN2pHykJccFcOEvFeRtbejQfXzBiUUnbAD98o2/BpqMMMm7iMAfzq5ㄣ+4tl+ogsqmvvK48JUsY1C59oRG+D99B9zOpfviMXwsNur1fLO6azNjvJetG++8cwDYQ+sRXvfvk3OcIyEZXKVinXb2+AZ/cwOB8coHTaztYspfGLGPSnwVjwzGx3JPJJdGgVJ8WqZFJjhPT+E75NL6tw= cool21540125@gmail.com
+```
+
+### Step4. 在宿主機, 建立一個 executable
+
+```bash
+touch /app/gitea/gitea
+echo 'ssh -p 2222 -o StrictHostKeyChecking=no git@127.0.0.1 "SSH_ORIGINAL_COMMAND=\"$SSH_ORIGINAL_COMMAND\" $0 $@"' > /app/gitea/gitea
+#            ^^^^ Host 與 Container mapping port
+chmod u+x /app/gitea/gitea
+```
+
+
+## 說明
+
+1. SSH Request 發送到宿主機, 使用 git user. 執行像是 `git clone git@repo:user/repo.git`
+2. 位於宿主機的 `/home/git/.ssh/authorized_keys`, command 會去執行 `/app/gitea/gitea`
+3. `/app/gitea/gitea` 專發宿主機的 SSH Request 到 2222 port, 後續再 mapping 到 Container 22
+4. Host 藉由 git user 的 `/home/git/.ssh/authorized_keys` 來作主機 → Container 認證成功, 最後由 SSH request forward 到 Gitea Container
+
+將來如果 Web 增加新的 key, 則宿主機也會跟著增加
+
+SSH Container passthrough 成功的條件:
+
+- Container 必須運行 `opensshd`
+- `AuthorizedKeysCommand` 並沒有與 `SSH_CREATE_AUTHORIZED_KEYS_FILE=false` 結合使用來 disable authorized files key generation
+- `LOCAL_ROOT_URL` 維持不變
+
+最後, 防火牆要開 22 port
