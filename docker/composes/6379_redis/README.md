@@ -9,5 +9,9 @@ REDISCLI_AUTH=1qaz@WSX
 ```
 
 ```bash
-
+docker run -d \
+    --name redis \
+    -p 36379:6379 \
+    redis redis-server \
+    --appendonly yes 
 ```
