@@ -1362,7 +1362,7 @@ sudo cp chromedriver /usr/local/bin
 $# yum install -y psmisc
 ```
 
-# Install Zabbix-Server
+# Install Zabbix-Server 4.0
 
 - 2020/12/05
 - [官網](https://www.zabbix.com/download?zabbix=4.0&os_distribution=centos&os_version=7&db=mysql&ws=apache)
@@ -1455,7 +1455,7 @@ $# systemctl start zabbix-server
 ```
 
 
-# Install zabbix-proxy
+# Install zabbix-proxy 4.0
 
 前置步驟幾乎同 zabbix-server, 略
 
@@ -1477,7 +1477,7 @@ sed -i 's/# DBPassword=/DBPassword=zabbix/' /etc/zabbix/zabbix_proxy.conf
 ```
 
 
-# Install zabbix-agent
+# Install zabbix-agent 4.0
 
 - 2020/12/25
 - [ZabbixOfficial-zabbix-packages](https://repo.zabbix.com/zabbix/4.0/rhel/7/x86_64/)
@@ -1500,6 +1500,97 @@ Hostname=vm157                      # ← 我這台 Agent 叫啥
 $# systemctl start zabbix-agent
 
 ### 防火牆, SELinux...
+```
+
+
+# Install php72 && php-fpm 7.2
+
+```bash
+$# yum install http://rpms.remirepo.net/enterprise/remi-release-7.rpm -y
+$# yum-config-manager --enable remi-php72
+
+### 安裝 php72 和 php 好像有一些步一樣@@凸??
+$# yum install php php-fpm php-mysql -y
+
+$# yum list installed | grep php
+#php.x86_64                       7.2.34-6.el7.remi            @remi-php72
+#php-cli.x86_64                   7.2.34-6.el7.remi            @remi-php72
+#php-common.x86_64                7.2.34-6.el7.remi            @remi-php72
+#php-fpm.x86_64                   7.2.34-6.el7.remi            @remi-php72
+#php-json.x86_64                  7.2.34-6.el7.remi            @remi-php72
+#php-mysqlnd.x86_64               7.2.34-6.el7.remi            @remi-php72
+#php-pdo.x86_64                   7.2.34-6.el7.remi            @remi-php72
+
+$# php -v
+PHP 7.2.34 (cli) (built: Jun 28 2021 11:21:49) ( NTS )
+Copyright (c) 1997-2018 The PHP Group
+Zend Engine v3.2.0, Copyright (c) 1998-2018 Zend Technologies
+```
+
+
+# Install zabbix-server 5.0
+
+- [Download and install Zabbix](https://www.zabbix.com/download?zabbix=5.0&os_distribution=centos&os_version=7&db=mysql&ws=nginx)
+- 2021/08/03
+
+此步驟會安裝 zabbix-server 5.0.x && zabbix-web-nginx
+
+```bash
+rpm -Uvh https://repo.zabbix.com/zabbix/5.0/rhel/7/x86_64/zabbix-release-5.0-1.el7.noarch.rpm
+yum clean all
+
+yum install zabbix-server-mysql -y
+
+### 安裝官方版的 zabbix-agent (使用 第三方的 zabbix-agent2 較佳)
+#yum install -y zabbix-agent  # <-- 不要裝~~~
+# ↑ 不要裝~~
+
+yum install centos-release-scl -y
+
+yum-config-manager --enable zabbix-frontend
+# ↑ 這個動作會把 /etc/yum.repo.d/zabbix.repo 的 [zabbix-frontend] 的 enabled=0 改成 1
+
+### 開始安裝前端
+yum install zabbix-web-mysql-scl zabbix-nginx-conf-scl
+# 會安裝 zabbix-nginx-conf-scl && zabbix-web-mysql-scl 5.0.x
+# 以及相依賴的 rh-php72-OOO && rh-nginx116-OOO
+
+### 修改 php-fpm 配置
+vim /etc/opt/rh/rh-php72/php-fpm.d/zabbix.conf
+# 1. listen.acl_users = apache,nginx
+# 2. php_value[date.timezone] = Asia/Taipei
+
+
+### 進入 mysql~
+# 底下使用的是 Oracle MySQL 5.7
+# Part1. User
+
+
+# Part2. DB
+CREATE DATABASE zabbix CHARACTER set utf8 COLLATE utf8_bin;
+CREATE USER zabbix@'%' IDENTIFIED BY 'zabbix';
+GRANT ALL PRIVILEGES ON zabbix.* TO zabbix@'%';
+FLUSH PRIVILEGES;
+quit;
+
+# 倒資料~
+zcat /usr/share/doc/zabbix-server-mysql*/create.sql.gz | mysql -uzabbix zabbix -p  # 如果有密碼的話再 -p
+
+### ↓ 去裡面配置 mysql 相關資訊
+vim /etc/zabbix/zabbix_server.conf
+
+### 法一, 使用 zabbix-server 外掛的 Nginx
+#systemctl start rh-nginx116-nginx 
+#systemctl enable rh-nginx116-nginx 
+
+### 法二, 自行維護 Nginx
+cp /etc/opt/rh/rh-nginx116/nginx/conf.d/zabbix.conf /etc/nginx/conf.d/zabbix.conf
+
+### 啟動 php-fpm
+systemctl start rh-php72-php-fpm
+systemctl enable rh-php72-php-fpm
+systemctl start zabbix-server
+systemctl enable zabbix-server
 ```
 
 
