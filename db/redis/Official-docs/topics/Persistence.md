@@ -1,12 +1,13 @@
 
 [Redis Persistence](https://redis.io/topics/persistence)
 
-Redis 提供了不同的 persistence 選項:
+Redis 提供了下述資料持久化方案:
 
 - RDB(Redis Database): 每隔一段時間執行 point-in-time snapshots
-- AOF(Append Only File): Server 每執行一次資料變更, 都會以 append 的方式寫入到 log, 並且在將來重啟時載入(來作還原). 如果這個 log 變得過於龐大, Redis 也會在背景重寫日誌
+- AOF(Append Only File): Server 每執行一次資料變更, 都會以 append 的方式寫入到 log, 並且在將來重啟時載入(來作還原). 
+    - 如果這個 log 變得過於龐大, Redis 也會在背景重寫日誌
 - No Persistence: 不作持久性保存資料(如果 Server 重啟後, 資料就通通沒了~)
-- RDB+AOF: 結合 AOF & RDB. 如果服務重啟, 則會使用 AOF 機制來作還原
+- RDB+AOF: 結合 AOF & RDB
 
 上述的重點在於, RDB 以及 AOF 之間的權衡關係.
 
@@ -140,7 +141,7 @@ This method allows Redis to benefit from copy-on-write(COW) semantics.
 
 ## Interactions between AOF and RDB persistence
 
-- 若為 Redis>=2.4, 務必避免 RDB 正在執行 snapshotting 的時候, 右同時去執行 AOF rewrite.
+- 若為 Redis2.4+, 務必避免 RDB 正在執行 snapshotting 的時候, 右同時去執行 AOF rewrite.
     - 或者將 save 改為使用 `bgsave`, 來避免 Redis 2 個 background processes 同時運行 heavy disk I/O
 - 若正在運行 snapshotting && Redis Client 直接操作使用 `BGREWRITEAOF`, 可看到 "OK".
     - 則會在 snapshotting 完成後, 開始執行 rewrite

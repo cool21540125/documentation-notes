@@ -17,13 +17,13 @@ atomicvar_api:atomic-builtin
 gcc_version:8.3.0
 process_id:1
 run_id:24b6e860c7d85c2c745dfb40a7b462abeb2bb24d
-tcp_port:6379  ## RedisServer 運行所在的 Port
+tcp_port:6379             ## RedisServer 運行所在的 Port
 uptime_in_seconds:106425  ## RedisServer 連續運作時間(秒)
-uptime_in_days:1  ## RedisServer 連續運作天數
-hz:10
-configured_hz:10
+uptime_in_days:1          ## RedisServer 連續運作天數
+hz:10                     ## The server's current frequency setting (看不懂在說啥...)
+configured_hz:10          ## The server's configured frequency setting (看不懂在說啥...)
 lru_clock:12007502
-executable:/data/redis-server
+executable:/data/redis-server  ## Server executable 路徑 (可能檔案被砍了, 因而將來找不到這檔按, 但查出來配置依舊)
 config_file:/etc/redis.conf
 io_threads_active:0
 ```
@@ -32,10 +32,10 @@ io_threads_active:0
 ```bash
 $# redis-cli -c info clients
 # Clients
-connected_clients:3  ## client connections 數量(已排除 replica 連線)
+connected_clients:3  ## 當前 Replicas 以外的 Redis Clients 連線數量
 client_recent_max_input_buffer:8
 client_recent_max_output_buffer:0
-blocked_clients:0
+blocked_clients:0  ## Clients pending 的 blocking call (BLPOP, BRPOP, BRPOPLPUSH, BLMOVE, BZPOPMIN, BZPOPMAX) 數量
 tracking_clients:0
 clients_in_timeout_table:0
 ```
@@ -45,9 +45,9 @@ clients_in_timeout_table:0
 $# redis-cli -c info memory
 # Memory
 used_memory:3578976
-used_memory_human:3.41M  ## Redis 使用自己的 Allocator 分配的大小 (可以是 `standard libc`, jemalloc, or an alternative allocator such as tcmalloc)
+used_memory_human:3.41M  ## Redis 從 Allocator 獲配的內存大小
 used_memory_rss:20115456
-used_memory_rss_human:19.18M  ## OS 看到的 Redis 配置大小(即 resident set size). 這也是 top 與 ps 看到的大小
+used_memory_rss_human:19.18M  ## OS 看到的, Redis 獲配的內存大小(即 `resident set size`). 結果同 top、ps 看到的大小
 used_memory_peak:3619944  ## 
 used_memory_peak_human:3.45M
 used_memory_peak_perc:98.87%
@@ -74,7 +74,7 @@ allocator_rss_ratio:1.59
 allocator_rss_bytes:2404352
 rss_overhead_ratio:3.11
 rss_overhead_bytes:13651968
-mem_fragmentation_ratio:5.65
+mem_fragmentation_ratio:5.65  ## `used_memory_rss / used_memory` 的比率. 正常來說此值應略大於1. 若過高, 存在記憶體碎片化. 若過低, 表示 OS 收回了部分內存, 會出現明顯 lag
 mem_fragmentation_bytes:16557504
 mem_not_counted_for_evict:2406
 mem_replication_backlog:1048576
@@ -98,7 +98,7 @@ rdb_last_bgsave_status:ok  ## 最近一次 RDB save 的操作狀態
 rdb_last_bgsave_time_sec:0
 rdb_current_bgsave_time_sec:-1
 rdb_last_cow_size:2560000
-aof_enabled:1
+aof_enabled:1  ## AOF logging 是否有被啟用
 aof_rewrite_in_progress:0
 aof_rewrite_scheduled:0
 aof_last_rewrite_time_sec:-1
@@ -123,7 +123,7 @@ $# redis-cli -c info stats
 # Stats
 total_connections_received:55  ## 被 RedisServer 接受的連線總數
 total_commands_processed:2667357  ## RedisServer 處理的 commands 數量
-instantaneous_ops_per_sec:0
+instantaneous_ops_per_sec:0  ## 每秒執行的命令數
 total_net_input_bytes:200489073  ## Read from Network 的 bytes
 total_net_output_bytes:246494065  ## Write to Network 的 bytes
 instantaneous_input_kbps:0.05  ## Read from Network 的 KB/sec
@@ -137,8 +137,8 @@ expired_stale_perc:0.00
 expired_time_cap_reached_count:0
 expire_cycle_cpu_milliseconds:0
 evicted_keys:0
-keyspace_hits:0
-keyspace_misses:0
+keyspace_hits:0  ## 在 main dictionary 裏頭, 成功找到 key 的次數
+keyspace_misses:0  ## 在 main dictionary 裏頭, 找不到 keys(查無此 key) 的次數
 pubsub_channels:0
 pubsub_patterns:0
 latest_fork_usec:2353
@@ -202,8 +202,8 @@ repl_backlog_histlen:1048576
 ```bash
 $# redis-cli -c info cpu
 # CPU
-used_cpu_sys:136.859269
-used_cpu_user:115.160189
+used_cpu_sys:136.859269   ## System mode 消耗 CPU 的累積秒數
+used_cpu_user:115.160189  ## User mode 消耗 CPU 的累積秒數
 used_cpu_sys_children:0.007441
 used_cpu_user_children:0.006229
 ```
@@ -238,7 +238,7 @@ $# redis-cli -c info modules
 # Modules
 ```
 
-> info keyspace
+> info keyspace (Redis 2.8.0+)
 ```bash
 $# redis-cli -c info keyspace
 # Keyspace - DB 的相關統計. (Note: Redis 預設有 15 個 DB)

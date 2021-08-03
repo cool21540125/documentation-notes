@@ -11,8 +11,8 @@ cluster_slots_pfail:0
 cluster_slots_fail:0
 cluster_known_nodes:6  ## 已加入 Cluster 的數量(包含 HANDSHAKE 的狀態)
 cluster_size:3
-cluster_current_epoch:6
-cluster_my_epoch:2
+cluster_current_epoch:6  ## The local Current Epoch variable. This is used in order to create unique increasing version numbers during fail overs.
+cluster_my_epoch:2  ## The Config Epoch of the node we are talking with. This is the current configuration version assigned to this node.
 cluster_stats_messages_sent:1483972
 cluster_stats_messages_received:1483968
 ```
