@@ -19,8 +19,17 @@ echo -e "\033[32m [INFO]: hi \033[0m"
 
 # if
 
-* -r : 讀取權限
-* -f : 檔案存在
+- if -d : 為 dir
+- if -e : 檔名是否存在
+- if -f : 檔名是否存在 && 為 file
+- if -L : 為連結
+- if -n : 長度 > 0
+- if -o : 多重條件 or
+- if -r : readable
+- if -s : 大小 >0
+- if -w : writable
+- if -x : executable
+- if -z : 字串長度為 0, 回傳 true
 
 
 # 

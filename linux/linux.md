@@ -108,7 +108,8 @@ $UID           | 1000
 $LANG          | en_US.UTF-8
 $RANDOM        | 0~32767整數亂數
 $?             | 上次指令結束後的狀態碼(0:true, 1:false)
-
+$EUID          | 系統決定用戶對系統資源的訪問權限, 通常等同於 RUID
+$RUID          | 系統用來辨識用戶是誰. 用戶登入到 Unix 以後, 就確定了目前的 RUID
 
 
 # shell內
@@ -984,6 +985,10 @@ $ tail -n 5 -f /var/log/messages
 > 語法: `awk '條件1{動作1} 條件2{動作2} ...' <filename>`; 欄位分隔符號預設為「空白鍵」or「tab鍵」
 
 ```sh
+### 指定分隔欄位符號
+$# awk -F:
+# 使用「:」作為分隔號
+
 $ last -n 5
 tony     pts/10       192.168.124.94   Mon Apr  9 20:59   still logged in
 tony     pts/11       192.168.124.88   Mon Apr  9 20:11 - 20:12  (00:01)
@@ -1049,26 +1054,6 @@ $ echo $?
 0
 ```
 
-option         | description
--------------- | -------------
-file           |
-  -d           | 為 dir
-  -e           | 檔名是否存在
-  -f           | 檔名是否存在 && 為 file
-  -s           | 大小 >0
-  -r           | readable
-  -w           | writable
-  -x           | executable
-  -L           | 為連結
-string         |
--n \<str>      | 長度 >0
--z \<str>      | 字串長度為 0, 返回 true
-\<str>==\<str> | 字串相等
-\<str>!=\<str> | 字串不相等
-number         |
-n1 -eq n2      | n1 == n2
--ne, -gt, ...  | (略)
-
 ```bash
 ### test -z 變數的字串長度若為0, 返回 true(也就是 0)
 name=Tony; test -z $name; echo $?
@@ -1079,7 +1064,6 @@ name=; test -z $name; echo $?
 
 # 上述的 「test -z $name」 也可用 「[[ -z $name ]]」 來代替
 ```
-
 
 
 # Locale - Linux語系編碼

@@ -73,6 +73,7 @@ variable | /var/mail <br> /var/spool/news | /var/run <br> /var/lock
         /conf.d/                        # Nginx 自訂組態目錄 (裡面的檔名要設定成 *.conf)
             /default.conf                   # Nginx 預設主機配置
         /nginx.conf                     # Nginx 主要設定檔
+    /nologin                        # 如果有這個檔案的話, 用戶會被禁止登入!! 非常可怕!! 不要用!!
     /nsswitch.conf                  # 集中驗證相關; User into && Auth service 該如何被系統使用的設定檔
     /openldap/                      # 集中驗證相關
         /cacerts                        # 儲存 LDAP Server 用來驗證 SSL憑證 的 Root Certificate Authorities(CA)

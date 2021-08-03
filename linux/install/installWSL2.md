@@ -1,5 +1,12 @@
 # Win10 的 WSL2 安裝清單
 
+## Change default editor
+
+```bash
+### 變更預設的偏好 Editor
+sudo update-alternatives --config editor
+```
+
 ## Install Python3.9
 
 Python 版本下載頁面: https://www.python.org/downloads/source/
