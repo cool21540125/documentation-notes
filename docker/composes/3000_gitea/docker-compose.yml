@@ -2,60 +2,52 @@ version: "3.8"
 
 services:
   gitea:
-    image: gitea/gitea:1.13
+    image: gitea/gitea:1.14.2
     container_name: gitea
     restart: always
     environment:
-      DB_HOST: 192.168.188.20:3306
-      DB_NAME: ${DB_NAME}
-      DB_USER: ${DB_USER}
-      DB_PASSWD: ${DB_PASSWD}
-      LOCAL_ROOT_URL: ${LOCAL_ROOT_URL}
+      - USER_UID=${USER_UID}
+      - USER_GID=${USER_GID}
+      - GITEA__server__DOMAIN=${GITEA__server__DOMAIN}
+      - GITEA__server__SSH_DOMAIN=${GITEA__server__SSH_DOMAIN}
+      - GITEA__server__ROOT_URL=${GITEA__server__ROOT_URL}
+      - GITEA__database__DB_TYPE=mysql
+      - GITEA__database__HOST=gitea_db:3306
+      - GITEA__database__NAME=${DB_NAME}
+      - GITEA__database__USER=${DB_USER}
+      - GITEA__database__PASSWD=${DB_PASSWD}
+      - GITEA__service__REQUIRE_SIGNIN_VIEW=true
+      - GITEA__log__LEVEL=${LOG_LEVEL}
     networks:
-      gitea_net:
-        ipv4_address: 192.168.188.10
-      gitea_nat:
+      net_gitea:
     volumes:
-      - "gitea_data:/data"
-      # - "./gitea_data:/data"
+      - "./data_gitea:/data"
+      - "/home/git/.ssh/:/data/git/.ssh"
       - "/etc/localtime:/etc/localtime:ro"
-      # - "/etc/timezone:/etc/timezone:ro"
+      - "./app.ini:/data/gitea/conf/app.ini"
     ports:
-      - "3000:3000"
-      - "2222:22"
+      - "127.0.0.1:3080:3000"
+      - "127.0.0.1:3222:22"
     depends_on:
-      - db
+      - gitea_db
 
-  db:
+
+  gitea_db:
     image: mysql:5.7
-    container_name: gitea_db
-    hostname: gitea_db_host
+    container_name: gitea_mysql
+    hostname: gitea_db
     restart: always
     environment:
-      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+      - MYSQL_ROOT_PASSWORD=${DB_ROOT_PASSWORD}
+      - MYSQL_DATABASE=${DB_NAME}
       - MYSQL_USER=${DB_USER}
       - MYSQL_PASSWORD=${DB_PASSWD}
-      - MYSQL_DATABASE=${DB_NAME}
     networks:
-      gitea_net:
-        ipv4_address: 192.168.188.20
+      net_gitea:
     volumes:
-      - "gitea_db:/var/lib/mysql"
+      - "./data_gitea_db:/var/lib/mysql"
       - "/etc/localtime:/etc/localtime:ro"
-      - "${PWD}/app.ini:/data/gitea/conf/app.ini"
-
-volumes:
-  gitea_data:
-    name: gitea_data
-  gitea_db:
-    name: gitea_db
 
 networks:
-  gitea_net:
-    name: gitea_private
-    external: false
-    ipam:
-      config:
-        - subnet: 192.168.188.0/24
-  gitea_nat:
-    name: gitea_nat
+  net_gitea:
+    name: net_gitea

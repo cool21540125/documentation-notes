@@ -1,0 +1,33 @@
+version: 0.1
+log:
+  fields:
+    service: registry
+storage:
+  cache:
+    blobdescriptor: inmemory
+  filesystem:
+    rootdirectory: /var/lib/registry
+  # s3:
+  #   region: us-west-1
+  #   bucket: bucketname
+  #   # ↑ Needed
+  #   accesskey: awsaccesskey
+  #   secretkey: awssecretkey
+  #   regionendpoint: http://myobjects.local
+  #   encrypt: true
+  #   keyid: mykeyid
+  #   secure: true
+  #   skipverify: true
+  #   v4auth: true
+  #   chunksize: 5242880
+  #   rootdirectory: /s3/object/name/prefix
+  #   storageclass: STANDARD
+http:
+  addr: :5000
+  headers:
+    X-Content-Type-Options: [nosniff]
+health:
+  storagedriver:
+    enabled: true
+    interval: 10s
+    threshold: 3

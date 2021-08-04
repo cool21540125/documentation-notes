@@ -1,0 +1,9 @@
+version: "3"
+
+services:
+    jms:
+        image: jumpserver/core:2.9.2
+        container_name: jms
+        hostname: jml
+        volumes:
+            

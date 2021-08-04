@@ -2,7 +2,7 @@ version: "3"
 
 services:
   db:
-    image: postgres:13.2-alpine
+    image: postgres:13.3
     container_name: pg
     hostname: pg
     restart: always

@@ -1,0 +1,33 @@
+version: "3.8"
+
+services:
+  elasticsearch:
+    image: elasticsearch:7.12.1
+    container_name: es
+    hostname: es
+    restart: always
+    volumes:
+      - elk_db:/usr/share/elasticsearch/data
+    environment:
+      # - node.name=es01
+      # - cluster.name=es-docker-cluster
+      # - discovery.seed_hosts=es02,es03
+      # - cluster.initial_master_nodes=es01,es02,es03
+      # - bootstrap.memory_lock=true
+      # - ES_JAVA_OPTS=-Xms512m -Xmx512m
+      - discovery.type=single-node
+    ports:
+      - "9200:9200"
+      - "9300:9300"
+    networks:
+      net_elk:
+    stop_grace_period: 10s
+
+
+networks:
+  net_elk:
+    name: net_elk
+
+volumes:
+  elk_db:
+    name: elk_db

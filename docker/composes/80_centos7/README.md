@@ -41,7 +41,9 @@ git clone git@github.com:cool21540125/angular-map.git
 cd angular-map
 npm install
 npm run prod
+```
 
+```bash
 # Lan IP
 hostname -I
 

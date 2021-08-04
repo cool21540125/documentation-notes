@@ -1,14 +1,18 @@
 version: "3"
+
 services:
   jenkins:
-    image: jenkins/jenkins:2.263.1-lts-centos7
-    container_name: my_jenkins
+    image: jenkins/jenkins:lts-centos7
+    container_name: jenkins
+    hostname: jenkins
     restart: always
     ports:
-      - "8089:8080"
+      - "8080:8080"
       - "50000:50000"
     volumes:
-    - jenkins_data:/var/jenkins_home
+    - "jenkins_home:/var/jenkins_home"
+    - "/etc/localtime:/etc/localtime:ro"
+
 volumes:
-  jenkins_data:
-    name: jenkins_data
+  jenkins_home:
+    name: jenkins_home

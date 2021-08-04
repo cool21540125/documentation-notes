@@ -12,6 +12,6 @@ REDISCLI_AUTH=1qaz@WSX
 docker run -d \
     --name redis \
     -p 36379:6379 \
-    redis redis-server \
-    --appendonly yes 
+    redis:6.2 \
+    redis-server --appendonly yes 
 ```
