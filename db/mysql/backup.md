@@ -6,14 +6,17 @@
 
 
 ```sh
-# mysqldump -u '<帳號>' -p '<密碼>' <Format>
-$ mysqldump -u '<id>' -p '<pd>' 
-    --single-transaction                # non-lock online backup(for InnoDB)
-    --flush-logs                        # 將 transaction flush到檔案
-    --master-data=2                     # 使用二進制
-    --all-databases                     # 所有 DB的所有 table
-    --delete-master-logs >              # 
-        <被備份出來的資料的絕對路徑.sql>
+$ mysqldump -u '<id>' -p '<pd>' \
+    --single-transaction \
+    --flush-logs \
+    --master-data=2 \
+    --all-databases \
+    --delete-master-logs > PATH_TO_BACKUP/full_backup_`date +\%H\%M`.sql
+# ex: full_backup_1036.sql
+# non-lock online backup(for InnoDB)
+# 將 transaction flush到檔案
+# 使用二進制
+# 所有 DB的所有 table
 ```
 
 
@@ -61,13 +64,6 @@ $ mysql > set sql_log_bin=1;
 ## other
 
 - [LVM快照備份](https://ithelp.ithome.com.tw/articles/10081811)
-
-
-```sh
-# 依照目前時間做完整備份, 產出ex: full_backup_1036.sql
-$ mysqldump -u '<id>' -p '<pd>' --single-transaction --flush-logs --master-data=2 --all-databases --delete-master-logs > <PATH>/full_backup_`date +\%H\%M`.sql
-```
-
 
 
 # MySQL5.6 mysqlcopy ( `mysqldump` 前身 )

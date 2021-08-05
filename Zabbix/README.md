@@ -7,8 +7,8 @@
 ## Ports
 
 - 80:    Web GUI
-- 10050: **Passive Agent** 使用. Server 藉由 10050 Port 訪問 Agent, Agent 回報監控數據
-- 10051: **Active Agent** 使用. Agent 自動向 Server 10051 Port 提交監控數據
+- 10050: Agent 要開, Server 會來訪問此 Port 撈資料 (Passive Agent)
+- 10051: Server 要開, Agent 會送資料到此 Port (Active Agent)
 
 
 # 結構
