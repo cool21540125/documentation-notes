@@ -7,7 +7,7 @@
 
 - [鳥哥 chattr](http://linux.vbird.org/linux_basic/0220filemanager.php#chattr)
 
-隱藏屬性對於 Linux 來說, 只能在 Ext2/Ext3/Ext4 中完整生效, 像是 CentOS7 預設使用的 `xfs`, 僅有部分支援
+IMPORTANT: 隱藏屬性對於 Linux 來說, 只能在 Ext2/Ext3/Ext4 中完整生效, 像是 CentOS7 預設使用的 `xfs`, 僅有部分支援
 
 - `lsattr` : 查隱藏屬性
 - `chattr` : 改隱藏屬性
@@ -22,6 +22,8 @@ $ lsattr
 ----i----------- ./qq
 ```
 
-最常用到的有
-1. `chattr +a` 檔案 無法作 append 以外的事情, 且無法被刪除; 
-2. `chattr +i` 檔案 無法被 刪除, 更名, 設定連結, 等等操作
+最常用到的有:
+
+- `chattr +a` 檔案 無法作 append 以外的事情, 且無法被刪除
+    - 像是 log file, 建議可搭配此隱藏屬性來加以保護
+- `chattr +i` 檔案 無法被 刪除, 更名, 設定連結, 等等操作
