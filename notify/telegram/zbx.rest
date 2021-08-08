@@ -1,0 +1,32 @@
+@BOT_TOKEN={{tgbot_sysops_token}}
+@BOT_CHATID={{tgbot_sysops_chatid}}
+@BOT_CHAT_GROUP={{tgbot_sysops_groupid}}
+
+@URL=api.telegram.org/bot{{BOT_TOKEN}}
+
+### 取得歷史紀錄
+GET {{URL}}/getUpdates
+
+
+@messages_sent=(API發送訊息)
+@title=TestingFromRestClient
+
+
+### 發送訊息到 chat_id BOT
+POST {{URL}}/sendMessage
+Content-Type: application/json
+
+{
+    "chat_id": "{{BOT_CHATID}}",
+    "text": "{{messages_sent}}"
+}
+
+
+### 發送訊息到 chat_id BOT
+POST {{URL}}/sendMessage
+Content-Type: application/json
+
+{
+    "chat_id": "{{BOT_CHAT_GROUP}}",
+    "text": "{{messages_sent}}"
+}
