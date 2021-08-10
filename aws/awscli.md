@@ -17,11 +17,14 @@ sudo ./aws/install
 
 ```bash
 aws configure
+# 透過互動式的詢問, 依序為
+# 1. AWS Access Key ID
+# 2. AWS Secret Access Key
+# 3. Default region name [None]
+# 4. Default output format
 # 會把配置寫到 ~/.aws/config && ~/.aws/credentials
+# Region 可參考 https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-regions-availability-zones.html
 
-
-### 動態切換 Region
+### 也可動態切換 Region
 export AWS_REGION=ap-northeast-3
-# ex: 大阪
-# 參考: https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-regions-availability-zones.html
 ```
