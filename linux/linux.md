@@ -973,14 +973,6 @@ find . -inum 328993 -exec rm -rfi {} \;
 ```
 
 
-### 追蹤 - tail (動態log)
-> 語法: `tail -f <追蹤的 log路徑>`
-```sh
-# 顯示最後5行, 並持續監看 (追蹤log)
-$ tail -n 5 -f /var/log/messages
-```
-
-
 ## 好用的資料處理工具(分欄位) - awk
 > 語法: `awk '條件1{動作1} 條件2{動作2} ...' <filename>`; 欄位分隔符號預設為「空白鍵」or「tab鍵」
 
@@ -1289,49 +1281,6 @@ grep -n -v  -e '^[#;]' /etc/samba/smb.conf.example | grep -v ':$' -
 # 非 #; 開頭
 # 非 空白行
 # pipeline 給 非 : 結尾(因有行號:)
-```
-
-## ps
-
-```sh
-### 可查看系統使用的是 SysV 或 systemd
-$# ps -p 1
-   PID TTY          TIME CMD
-     1 ?        00:00:22 systemd
-
-### enable
-$# systemctl enable XXX     # systemd enable
-$# chkconfig --add XXX      # SysV enable
-
-### start
-$# systemctl start XXX      # systemd start
-$# service XXX start        # SysV start
-
-### status
-$# systemctl status XXX     # systemd status
-$# service XXX status       # SysV status
-```
-
-
-# lsof
-
-```bash
-$# lsof -i
-COMMAND  PID USER FD  TYPE  DEVICE SIZE/OFF NODE NAME
-python3 3705 root 17u IPv4 3383170      0t0  TCP *:commplex-main (LISTEN)
-python3 3705 root 19u IPv4 3387478      0t0  TCP vm-220:39544->vm-220:6379 (ESTABLISHED)
-python3 3705 root 23u IPv4 3387483      0t0  TCP vm-220:52422->vm-220:postgres (ESTABLISHED)
-python3 3705 root 24u IPv4 3387486      0t0  TCP vm-220:39548->vm-220:6379 (ESTABLISHED)
-python3 3705 root 25u IPv4 3387488      0t0  TCP vm-220:39550->vm-220:6379 (ESTABLISHED)
-python3 3705 root 26u IPv4 3387489      0t0  TCP vm-220:52428->vm-220:postgres (ESTABLISHED)
-python3 3705 root 27u IPv4 3387490      0t0  TCP vm-220:52430->vm-220:postgres (ESTABLISHED)
-python3 3705 root 28u IPv4 3387491      0t0  TCP vm-220:52432->vm-220:postgres (ESTABLISHED)
-python3 3705 root 29u IPv4 3387492      0t0  TCP vm-220:52434->vm-220:postgres (ESTABLISHED)
-python3 3705 root 30u IPv4 3387493      0t0  TCP vm-220:52436->vm-220:postgres (ESTABLISHED)
-python3 3705 root 31u IPv4 3387494      0t0  TCP vm-220:52438->vm-220:postgres (ESTABLISHED)
-python3 3705 root 32u IPv4 3387495      0t0  TCP vm-220:52440->vm-220:postgres (ESTABLISHED)
-python3 3705 root 33u IPv4 3387496      0t0  TCP vm-220:52442->vm-220:postgres (ESTABLISHED)
-python3 3705 root 34u IPv4 3387497      0t0  TCP vm-220:52444->vm-220:postgres (ESTABLISHED)
 ```
 
 

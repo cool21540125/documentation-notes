@@ -11,7 +11,7 @@ $ ln [-sf] <來源> <目的地>
 # f : 如果目標檔存在, 則覆蓋
 
 $ ln -s /opt/anaconda3/bin/python3    ~/bin/python
-#         ^^^^^ 可以連到這裡             ^^^^^ 藉由這裡
+#       ^^^^^ 可以連到這裡             ^^^^^ 藉由這裡
 $ ll ~/bin/python
 lrwxrwxrwx. 1 root root   26  3月  2 14:10 python -> /opt/anaconda3/bin/python3
 

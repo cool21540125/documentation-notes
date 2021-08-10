@@ -307,17 +307,3 @@ $# fuser [-umv] [-k [i] [-signal]] file/dir
 
 fuser -uv -k zbx_env
 ```
-
-
-## lsof
-
-- 用來查 Process 使用的 file/dir
-- Process 用了哪些 file/dir/fs/dev
-
-```bash
-$# lsof [-aUu] [+d]
-# -a: 多項資料需要同時成立才列出
-# -U: 僅列出 Unix-like socket
-# -u <user>: 列出該使用者相關程序所開啟的檔案
-# +d <dir name>: 該目錄下, 已經被開啟的檔案
-```
