@@ -4,6 +4,8 @@
 
 用來 backup MongoDB, 產出檔為 JSON or CSV
 
+※ **只能用來匯出以 Collection 為單位的指令.... 無法針對整個 DB 做匯出**
+
 `mongoexport` 與 `mongoimport` 為 System CLI, 非為 mongo shell
 
 - MongoDB v4.4+ 以後, 已把 `mongoexport` & `mongoimport` 從 MongoDB Server 拆分出來
@@ -20,21 +22,24 @@
 
 ```bash
 ### 備份 Standalone
+MONGO_URI=mongodb://db0.com:27017/reporting
 mongoexport \
-    --uri="mongodb://db0.com:27017/reporting" \
+    --uri="$MONGO_URI" \
     --collection=collectionName \
     --db=businessDB \
     --out=/data/backup/mongo-bak.20210810.json
 
 ### 備份 ReplicaSet
+MONGO_URI=mongodb://db0.com:27017,db1.com:27017,db2.com:27017/reporting?replicaSet=rs0
 mongoexport \
-    --uri="mongodb://db0.com:27017,db1.com:27017,db2.com:27017/reporting?replicaSet=rs0" \
+    --uri="$MONGO_URI" \
     --collection=events \
     --out=events.json [additional options]
 
 # 預設, 它會從 Primary of the ReplicaSet 去作讀取. 除非自行指定 readPreference
+MONGO_URI=mongodb://db0.com:27017,db1.com:27017,db2.com:27017/reporting?replicaSet=rs0&readPreference=secondary
 mongoexport \
-    --uri="mongodb://db0.com:27017,db1.com:27017,db2.com:27017/reporting?replicaSet=rs0&readPreference=secondary" \
+    --uri="$MONGO_URI" \
     --collection=events \
     --out=events.json [additional options]
 

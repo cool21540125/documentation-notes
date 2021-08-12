@@ -2,6 +2,8 @@
 
 本章節介紹 MongoDB 做備份還原的工具
 
+----------------------------
+
 - `mongodump` & `mongorestore` 使用 BSON data dumps, 可用來作小型資料庫備份還原.
     - 運行 mongodump 時, 必須要有:
         - privileges that grant `find` action for each DB to back up
