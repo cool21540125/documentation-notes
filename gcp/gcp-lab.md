@@ -3,7 +3,7 @@
 - [gcloud SDK](https://cloud.google.com/sdk/gcloud/reference)
 
 
-## Getting Started with Compute Engine
+## Part1. Getting Started with Compute Engine
 
 ```bash
 ### Ubuntu 可安裝 gsutil SDK (非課堂範圍)
@@ -35,7 +35,7 @@ $# gcloud compute instances create "my-vm-2" \
 $# ssh my-vm-1.us-central1-a
 ```
 
-## Getting Started with Cloud Storage and Cloud SQL
+## Part2. Getting Started with Cloud Storage and Cloud SQL
 
 Goals:
 
@@ -100,7 +100,7 @@ $# gsutil acl ch -u allUsers:R gs://$DEVSHELL_PROJECT_ID/my-excellent-blog.png
 
 
 
-## Getting Started with App Engine, GAE
+## Part3. Getting Started with App Engine, GAE
 
 如果 PROJECT 一但啟動, 然後又來啟用 App Engine 以後, 頂多只能把 App Engine `disable`
 
@@ -135,7 +135,7 @@ $# gcloud app browse
 > GCP Web > APP Engine > Settings > Disable application
 
 
-## Getting Started with GKE
+## Part4. Getting Started with GKE
 
 ### Part1. 前置設定
 
@@ -254,7 +254,7 @@ $# kubectl get services
 The connection to the server localhost:8080 was refused - did you specify the right host or port?
 ```
 
-## Getting Started with App Engine
+## Part5. Getting Started with App Engine
 
 ### Part1. Google Cloud Shell 簡介
 
@@ -395,7 +395,7 @@ https://qwiklabs-gcp-03-36f0c6e08a3d.uc.r.appspot.com  # ← 去看看吧~ 熱�
 
 
 
-## Getting Started with Deployment Manager and Cloud Monitoring
+## Part6. Getting Started with Deployment Manager and Cloud Monitoring
 
 Goal: 建立一個專案, 然後去監控它~
 
@@ -473,32 +473,45 @@ $# dd if=/dev/urandom | gzip -9 >> /dev/null &
 ```
 
 
-## Getting Started with BigQuery
+## Part7. Getting Started with BigQuery
+
+### 1. 簡介
+
+BigQuery 用途, 可在 GCP Web 針對已經載入到 BigQuery 的 data 進行查詢, 並且可進行互動式的即時分析
+
+如存在 BigQuery 的資料具備 highly durable
+
+BigQuery 會針對原始資料進行 replicate, 查詢都是針對該 replicated data 做操作, 而且不會收取費用. 之需針對查詢支付費用.
+
+概念名詞:
+
+- Datasets: A dataset is a grouping mechanism that holds zero or more tables. A dataset is the lowest level unit of access control. Datasets are owned by GCP projects. Each dataset can be shared with individual users.
+- Tables: A table is a row-column structure that contains actual data. Each table has a schema that describes strongly typed columns of values. Each table belongs to a dataset.
+- Job: 執行查詢的工作任務(會依照查詢時間進行收費)
+
+### 2. 實作
+
+- 章節目標:
+    - Load data from Cloud Storage into BigQuery
+    - Perform a query on the data in BigQuery
+
+> GCP Web > BigQuery > (專案編號右邊的...) > Create dataset > Dataset ID(隨便給個名字吧~) & Data location(不知道差在哪, 隨便選) > Create Dataset
+
+> (新建的)Dataset(右邊的...) > Open > Create Table > (依照下列指示操作) > Create table
+
+- Create table from : 自己選資料來源. Lab 裏頭, 要我們選 Google Cloud Storage 的 `gs://cloud-training/gcpfci/access_log.csv` (該 Dataset 位於 US, 因而上一步驟的 Data location 只能選 US)
+- Table name : 隨便打吧
+- Schema and input parameters : 勾選 (只是不知道這在幹嘛的=.=)
 
 ```bash
-# Create table from: dataset: gs://cloud-training/gcpfci/access_log.csv (此 DataSet 有開源)
-# Table Type: Native table
-# Schema: Auto detect
-### 執行 big query
+### 法1. BigQuery 頁面執行 bigquery (注意! 會依照查詢時間來計費)
+# 點選 COMPOSE NEW QUERY
+select int64_field_6 as hour, count(*) as hitcount from logdata.accesslog group by hour order by hour
+# 點選 RUN
+# 看到查詢結果 (略)
+
+### 法2. Cloud Shell 執行 bigquery (注意! 會依照查詢時間來計費)
 $# bq query "select string_field_10 as request, count(*) as requestcount from logdata.accesslog group by request order by requestcount desc"
 Waiting on bqjob_r3dc6efdda95fb5aa_0000017b3ec19266_1 ... (0s) Current status: DONE   
-+----------------------------------------+--------------+
-|                request                 | requestcount |
-+----------------------------------------+--------------+
-| GET /store HTTP/1.0                    |       337293 |
-| GET /index.html HTTP/1.0               |       336193 |
-| GET /products HTTP/1.0                 |       280937 |
-| GET /services HTTP/1.0                 |       169090 |
-| GET /products/desserttoppings HTTP/1.0 |        56580 |
-| GET /products/floorwaxes HTTP/1.0      |        56451 |
-| GET /careers HTTP/1.0                  |        56412 |
-| GET /services/turnipwinding HTTP/1.0   |        56401 |
-| GET /services/spacetravel HTTP/1.0     |        56176 |
-| GET /favicon.ico HTTP/1.0              |        55845 |
-+----------------------------------------+--------------+
-
-# ↑
-# 或者, 可在 BigQuery 的功能頁面, 使用一個新的「COMPOSE NEW QUERY」 來運行
-
+# 看到查詢結果 (略)
 ```
-
