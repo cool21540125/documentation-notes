@@ -61,14 +61,22 @@ access_log /spool/logs/nginx-access.log compression buffer=32k;
 log_format combined '$remote_addr - $remote_user [$time_local] '
                     '"$request" $status $body_bytes_sent '
                     '"$http_referer" "$http_user_agent"';
-# $remote_addr : Client Address
-# $remote_user : Basic authentication 之下的 username
-# $time_local : local time
-# $request : 完整的 Request Line
-# $status : Response Status
-# $body_bytes_sent : 回應給 Client 的 Bytes(不包含 Response Headers) (與 Apache 的 mod_log_config 的 "%B" 相容)
+# $body_bytes_sent : 回應給 Client 的 Bytes(不包含 Response Headers)
+# $bytes_sent : 回傳給 Client 的 Bytes
+# $connection : Connection serial number
+# $connection_requests : 一次 Connection 裏頭, 所發出請求的 Current Number
 # $http_referer : 
 # $http_user_agent : 用戶端使用的代理
+# $msec : time in seconds with a milliseconds resolution at the time of the log write
+# $pipe : “p” if request was pipelined, “.” otherwise
+# $remote_addr : Client Address
+# $remote_user : Basic authentication 之下的 username
+# $request : 完整的 Request Line
+# $request_length : Request Length (包含 Line && Header && Body)
+# $request_time : 由 Client 發出的 Request 中讀入的首個 bytes 到 發送給 Client 最後一個 bytes 之後, 寫入 log 的時間區間
+# $status : Response Status
+# $time_iso8601 : local time in the ISO 8601 standard format
+# $time_local : local time in the Common Log Format
 ```
 
 

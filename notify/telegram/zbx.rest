@@ -1,3 +1,4 @@
+# https://core.telegram.org/bots/api#sendmessage
 @BOT_TOKEN={{tgbot_sysops_token}}
 @BOT_CHATID={{tgbot_sysops_chatid}}
 @BOT_CHAT_GROUP={{tgbot_sysops_groupid}}
@@ -12,21 +13,40 @@ GET {{URL}}/getUpdates
 @title=TestingFromRestClient
 
 
-### 發送訊息到 chat_id BOT
+### to「BOT」(Markdown 單一句話) ===========
 POST {{URL}}/sendMessage
 Content-Type: application/json
 
 {
     "chat_id": "{{BOT_CHATID}}",
-    "text": "{{messages_sent}}"
+    "text": "你是 `花朵` , 我是 ~蒼蠅~",
+    "parse_mode": "MarkdownV2"
 }
 
 
-### 發送訊息到 chat_id BOT
+### to「Group BOT」 ===========
 POST {{URL}}/sendMessage
 Content-Type: application/json
 
 {
     "chat_id": "{{BOT_CHAT_GROUP}}",
     "text": "{{messages_sent}}"
+}
+
+
+### to「BOT Group」(發送多行訊息) ===========
+POST {{URL}}/sendMessage
+Content-Type: application/json
+
+{
+    "chat_id": "{{BOT_CHAT_GROUP}}",
+    "parse_mode": "MarkdownV2",
+    "text": "不知道這個能幹嘛 @Chou Tony",
+    "entities": [
+        {
+            "type": "mention",
+            "offset": 0,
+            "length": 10
+        }
+    ]
 }
