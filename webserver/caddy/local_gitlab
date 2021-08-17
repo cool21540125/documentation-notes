@@ -1,6 +1,0 @@
-http://mygitlab.com {
-    redir http://mygitlab.com:20080
-}
-http://mydrone.com {
-    redir http://mydrone.com:8085
-}
