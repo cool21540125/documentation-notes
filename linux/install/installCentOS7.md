@@ -596,6 +596,9 @@ systemctl start mysqld.service
 systemctl enable mysqld.service
 
 grep 'temporary password' /var/log/mysqld.log
+### ↑ 如果沒有的話, 透過底下方式找預設密碼~
+journalctl -u mysqld > /tmp/mysql_init_log
+grep 'password' /tmp/mysql_init_log
 
 mysql -uroot -p
 # 前面取得的密碼登入
@@ -605,7 +608,7 @@ mysql -uroot -p
 
 ```sql
 --;# 登入 MySQL 後, 立馬改密碼
-ALTER USER 'root'@'localhost' IDENTIFIED BY '<new password>';
+ALTER USER 'root'@'localhost' IDENTIFIED BY '<聽說智障都直接複製貼上>';
 FLUSH PRIVILEGES;
 --;# 自己看看要不要移除 密碼政策
 -- uninstall plugin validate_password;
@@ -626,34 +629,39 @@ grant all on *.* to 'demo'@'localhost';
 - [Official MongoDB](https://docs.mongodb.com/manual/tutorial/install-mongodb-on-red-hat/)
 
 ```sh
-# 1. 編寫 Yum repo 檔
-$# vim /etc/yum.repos.d/mongodb-org-3.4.repo
-###### 內容如下 ######
-[mongodb-org-3.4]
+### 選擇要安裝的 MongoDB 版本
+VERSION=3.4
+VERSION=4.4
+VERSION=5.0
+
+cat <<"EOT" > /etc/yum.repos.d/mongodb-org-${VERSION}.repo
+[mongodb-org-${VERSION}]
 name=MongoDB Repository
-baseurl=https://repo.mongodb.org/yum/redhat/$releasever/mongodb-org/3.4/x86_64/
+baseurl=https://repo.mongodb.org/yum/redhat/$releasever/mongodb-org/${VERSION}/x86_64/
 gpgcheck=1
 enabled=1
-gpgkey=https://www.mongodb.org/static/pgp/server-3.4.asc
-###### 內容如上 ######
+gpgkey=https://www.mongodb.org/static/pgp/server-${VERSION}.asc
+EOT
 
-# 2. Check Repo && Install
+
+### Check Repo && Install
 $# yum repolist | grep mongo
 mongodb-org-3.4/7       MongoDB Repository        90
 
+### Install~~~
 $# yum install -y mongodb-org
 
-# 3. 啟動~
+# 啟動~
 $# systemctl start mongod.service
+$# systemctl enable mongod.service
+$# systemctl status mongod.service
 
 $ mongod --version
-# v3.4.17
 
 $ ps auxw | grep mongod
 mongod  8562  1.1  1.0 972408 41188 ?      Sl  20:43  0:01 /usr/bin/mongod -f /etc/mongod.conf
 tony    9499  0.0  0.0 112708   968 pts/2  S+  20:45  0:00 grep --color=auto mongod
 ```
-
 
 
 # Install Visual Studio Code
@@ -1540,11 +1548,6 @@ rpm -Uvh https://repo.zabbix.com/zabbix/5.0/rhel/7/x86_64/zabbix-release-5.0-1.e
 yum clean all
 
 yum install zabbix-server-mysql -y
-
-### 安裝官方版的 zabbix-agent (使用 第三方的 zabbix-agent2 較佳)
-#yum install -y zabbix-agent  # <-- 不要裝~~~
-# ↑ 不要裝~~
-
 yum install centos-release-scl -y
 
 yum-config-manager --enable zabbix-frontend
@@ -1559,12 +1562,11 @@ yum install zabbix-web-mysql-scl zabbix-nginx-conf-scl
 vim /etc/opt/rh/rh-php72/php-fpm.d/zabbix.conf
 # 1. listen.acl_users = apache,nginx
 # 2. php_value[date.timezone] = Asia/Taipei
+### ↑ 修改上面 2 個配置
 
-
-### 進入 mysql~
+### 進入 mysql -----------------------------
 # 底下使用的是 Oracle MySQL 5.7
 # Part1. User
-
 
 # Part2. DB
 CREATE DATABASE zabbix CHARACTER set utf8 COLLATE utf8_bin;
