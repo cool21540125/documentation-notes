@@ -642,22 +642,23 @@ EOT
 
 
 ### Check Repo && Install
-$# yum repolist | grep mongo
-mongodb-org-3.4/7       MongoDB Repository        90
+yum repolist | grep mongo
+# mongodb-org-3.4/7       MongoDB Repository        90
+# ↑ 已經配置好的 MongoDB Repository
 
 ### Install~~~
-$# yum install -y mongodb-org
+yum install -y mongodb-org
 
 # 啟動~
-$# systemctl start mongod.service
-$# systemctl enable mongod.service
-$# systemctl status mongod.service
+systemctl start mongod.service
+systemctl enable mongod.service
+systemctl status mongod.service
 
-$ mongod --version
+mongod --version
 
-$ ps auxw | grep mongod
-mongod  8562  1.1  1.0 972408 41188 ?      Sl  20:43  0:01 /usr/bin/mongod -f /etc/mongod.conf
-tony    9499  0.0  0.0 112708   968 pts/2  S+  20:45  0:00 grep --color=auto mongod
+ps auxw | grep -v grep | grep mongod
+# mongod  8562  1.1  1.0 972408 41188 ?      Sl  20:43  0:01 /usr/bin/mongod -f /etc/mongod.conf
+# ↑ 已經啟動了~                                               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ systemctl 預設的啟動方式
 ```
 
 
