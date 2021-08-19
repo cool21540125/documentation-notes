@@ -629,18 +629,15 @@ grant all on *.* to 'demo'@'localhost';
 - [Official MongoDB](https://docs.mongodb.com/manual/tutorial/install-mongodb-on-red-hat/)
 
 ```sh
-### 選擇要安裝的 MongoDB 版本
-VERSION=3.4
-VERSION=4.4
-VERSION=5.0
 
-cat <<"EOT" > /etc/yum.repos.d/mongodb-org-${VERSION}.repo
-[mongodb-org-${VERSION}]
+### ↓ 自行替換底下的版本!!!! (ex: 把 4.4 改成 5.0 或是 3.6 之類的)
+cat <<"EOT" > /etc/yum.repos.d/mongodb-org-4.4.repo
+[mongodb-org-4.4]
 name=MongoDB Repository
-baseurl=https://repo.mongodb.org/yum/redhat/$releasever/mongodb-org/${VERSION}/x86_64/
+baseurl=https://repo.mongodb.org/yum/redhat/$releasever/mongodb-org/4.4/x86_64/
 gpgcheck=1
 enabled=1
-gpgkey=https://www.mongodb.org/static/pgp/server-${VERSION}.asc
+gpgkey=https://www.mongodb.org/static/pgp/server-4.4.asc
 EOT
 
 
