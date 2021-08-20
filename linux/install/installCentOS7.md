@@ -30,22 +30,11 @@ centos-release-7-5.1804.4.el7.centos.x86_64
 
 
 
-## yum
+## Linux的軟體管理員 - yum
+
+> 解決 rpm安裝時, 套件相依性的問題
 
 ```sh
-# 可查線上 repo 可安裝的套件(但是得給完全相同的名字才能查(可用regex))
-$ yum list 'http*'
-
-# (同上) 但可用關鍵字來查詢 (套件名稱, 套件說明)
-$ yum search all 'web server'
-
-# 給完整名稱, 查線上套件安裝資訊
-$ yum info httpd
-
-# 到 YUM Server 查 安裝在哪個位置的工具叫啥 or 該工具相關的套件
-$ yum provides /var/www/html
-$ yum provides semanage
-
 # 查本地已經安裝的 Linex Kernels
 $ yum list kernel
 
@@ -58,29 +47,10 @@ $ yum group list # 或 yum grouplist
 # 可用關鍵字來查詢線上 群組套件名稱, 群組套件說明
 $ yum groups info "Server with GUI"
 
-# 增加 「yum repo 檔」 到 /etc/yum.repo.d/xxx.repo  (沒事別用這個...)
+# 增加 「yum repo 檔」 到 /etc/yum.repo.d/xxx.repo
 $# sudo yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
-```
 
-
-## Linux的軟體管理員 - yum
-
-> 解決 rpm安裝時, 套件相依性的問題
-
-```sh
-$ yum install <套件名稱>
-
-$ yum update <套件名稱>
-
-$ yum remove <套件名稱>
-
-$ yum searcn <套件名稱>
-# 搜尋 YUM Server上的特定套件
-
-$ yum list
-# 列出 YUM Server上的所有套件資訊, 套件名稱, 版本, 是否已經安裝...
-
-# 列出 系統可用的 yum套件庫
+## 列出 系統可用的 yum套件庫
 $ yum repolist
 Loaded plugins: fastestmirror, langpacks
 Loading mirror speeds from cached hostfile
@@ -100,6 +70,41 @@ mysql-tools-community/x86_64    MySQL Tools Community                           
 mysql57-community/x86_64        MySQL 5.7 Community Server                          247
 updates/7/x86_64                CentOS-7 - Updates                                1,962
 repolist: 24,950
+# -------------------------------------------------------------------------------------
+
+### yum list - 列出 (遠端)YUM Server 上的「所有」套件資訊, 套件名稱, 版本...
+# 列出 YUM Server 的 packages
+$# yum list available 
+$# yum list
+$# yum list 'http*'
+# 可查有哪些東西(但是得給完全相同的名字才能查(可用regex))
+
+
+### yum search - 可用關鍵字來查詢 (套件名稱, 套件說明) (比 yum list 好用)
+$# yum search all 'web server'
+
+
+### yum info - 查線上套件安裝資訊 (必須是完整名稱)
+$# yum info httpd
+
+
+### yum provides - 
+# 到 YUM Server 查 安裝在哪個位置的工具叫啥 or 該工具相關的套件
+$ yum provides /var/www/html
+$ yum provides semanage
+
+
+
+$# yum --disablerepo="*" --enablerepo="rsawaroha" list available
+
+$ yum install <套件名稱>
+
+$ yum update <套件名稱>
+
+$ yum remove <套件名稱>
+
+$ yum searcn <套件名稱>
+# 搜尋 YUM Server上的特定套件
 ```
 
 
@@ -659,6 +664,27 @@ mongod --version
 ps auxw | grep -v grep | grep mongod
 # mongod  8562  1.1  1.0 972408 41188 ?      Sl  20:43  0:01 /usr/bin/mongod -f /etc/mongod.conf
 # ↑ 已經啟動了~                                               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ systemctl 預設的啟動方式
+```
+
+
+# Install Percona-Backup MongoDB
+
+- 2021/08/19
+- [Installing Percona Backup for MongoDB](https://www.percona.com/doc/percona-backup-mongodb/installation.html#install-pbm-on-red-hat-enterprise-linux-and-centos)
+- [不同版本的 percona-Backup Binary 下載頁](https://www.percona.com/downloads/percona-backup-mongodb/)
+
+
+可直接下載 Binary 或是透過 yum 的方式, 底下僅列出 Binary 的作法(簡單許多)
+
+不然如果透過 yum 安裝的話, 會再安裝 `percona-release` 的 CLI <-- 功能雖強大, 但使用複雜度較高
+
+```bash
+wget https://downloads.percona.com/downloads/percona-backup-mongodb/percona-backup-mongodb-1.5.0/binary/redhat/7/x86_64/percona-backup-mongodb-1.5.0-1.el7.x86_64.rpm
+yum localinstall percona-backup-mongodb-1.5.0-1.el7.x86_64.rpm
+# ↑ 安裝了 3 個 CLI, 安置在 /bin/xxx
+
+mkdir -pv /data/mongodbbackup
+chown -R pbm.pbm /data/mongodbbackup/
 ```
 
 
