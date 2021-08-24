@@ -670,21 +670,32 @@ ps auxw | grep -v grep | grep mongod
 # Install Percona-Backup MongoDB
 
 - 2021/08/19
-- [Installing Percona Backup for MongoDB](https://www.percona.com/doc/percona-backup-mongodb/installation.html#install-pbm-on-red-hat-enterprise-linux-and-centos)
-- [不同版本的 percona-Backup Binary 下載頁](https://www.percona.com/downloads/percona-backup-mongodb/)
-
 
 可直接下載 Binary 或是透過 yum 的方式, 底下僅列出 Binary 的作法(簡單許多)
 
 不然如果透過 yum 安裝的話, 會再安裝 `percona-release` 的 CLI <-- 功能雖強大, 但使用複雜度較高
 
+
+### 法1. 直接安裝 binary
+
+- [不同版本的 percona-Backup Binary 下載頁](https://www.percona.com/downloads/percona-backup-mongodb/)
+
 ```bash
 wget https://downloads.percona.com/downloads/percona-backup-mongodb/percona-backup-mongodb-1.5.0/binary/redhat/7/x86_64/percona-backup-mongodb-1.5.0-1.el7.x86_64.rpm
-yum localinstall percona-backup-mongodb-1.5.0-1.el7.x86_64.rpm
+yum localinstall percona-backup-mongodb-1.5.0-1.el7.x86_64.rpm -y
 # ↑ 安裝了 3 個 CLI, 安置在 /bin/xxx
 
-mkdir -pv /data/mongodbbackup
+mkdir -p /data/mongodbbackup
 chown -R pbm.pbm /data/mongodbbackup/
+```
+
+
+### 法2. 使用 yum
+
+- [Installing Percona Backup for MongoDB](https://www.percona.com/doc/percona-backup-mongodb/installation.html#install-pbm-on-red-hat-enterprise-linux-and-centos)
+
+```bash
+
 ```
 
 

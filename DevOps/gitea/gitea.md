@@ -50,7 +50,7 @@ http://demo.gitea.com {
 ```
 
 
-# SSH Container Passthrough
+# SSH Container Passthrough (未完成)
 
 - [SSH Container Passthrough](https://docs.gitea.io/en-us/install-with-docker/#ssh-container-passthrough)
 

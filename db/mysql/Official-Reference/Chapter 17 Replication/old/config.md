@@ -47,6 +47,7 @@ GRANT REPLICATION SLAVE ON *.* TO 'repl'@'%.example.com';
 mysqldump --all-databases --master-data > dbdump.db
 # --master-data : 會連同把 CHANGE MASTER TO ... 的指令也一起產生
 #     Ref: https://dev.mysql.com/doc/refman/8.0/en/mysqldump.html#option_mysqldump_master-data
+#    - Write the binary log file name and position to the output
 # --all-databases, -A : 所有 DB 都做 backup
 #     Ref: https://dev.mysql.com/doc/refman/8.0/en/mysqldump.html#option_mysqldump_all-databases
 # --databases, -B : 只做要 backup 的 DB 
