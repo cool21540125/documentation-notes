@@ -25,3 +25,6 @@ proxy_cache_path path [levels=levels] [use_temp_path=on|off]
     - ex: proxy_cache_path /data/nginx/cache levels=1:2 keys_zone=one:10m;
 - 快取背後, 在檔案系統看到的樣子長得像這樣:
     - /data/nginx/cache/c/29/b7f54b2df7773722d382f4809d65029c
+
+### proxy_redirect
+

@@ -426,6 +426,17 @@ $ echo ${RANDOM}
 14852
 ```
 
+#### CLI: `tail`
+
+這邊紀錄它的一種特殊用法
+
+```bash
+### 產生一個耗費 85M 記憶體的程序
+cat /dev/zero | head -c 85m | tail
+# 透過 /dev/zero, 連續不斷的產生一連串 ascii 為 0 的 character
+# tail Hold 住前面的東西, 然後在一口氣爆出 (前面的東西會積壓在 RAM 裏頭)
+```
+
 
 #### CLI: `type`
 ```sh

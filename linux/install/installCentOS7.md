@@ -326,7 +326,7 @@ docker version
 ```
 
 
-## Docker-compose
+# Install Docker-compose
 
 - 2021/02/04
 - [Install Docker Compose](https://docs.docker.com/compose/install/)
@@ -597,8 +597,9 @@ mysql57-community/x86_64     MySQL 5.7 Community Server      287
 yum install -y mysql-community-server
 
 # 3. 啟動 && 設定 root 密碼~
-systemctl start mysqld.service
-systemctl enable mysqld.service
+systemctl start mysqld
+systemctl enable mysqld
+systemctl status mysqld
 
 grep 'temporary password' /var/log/mysqld.log
 ### ↑ 如果沒有的話, 透過底下方式找預設密碼~
@@ -722,31 +723,6 @@ code        Visual Studio Code       44
 
 $# yum -y install code
 ```
-
-
-# Install Anaconda (python3.6.1)
-
-- 2017/11/26
-- [Official Anaconda](https://www.continuum.io/downloads)
-
-1. Download && Install
-
-```sh
-$ wget https://repo.continuum.io/archive/Anaconda3-5.0.1-Linux-x86_64.sh
-
-$ bash ./Anaconda3-5.0.1-Linux-x86_64.sh
-# 安裝在使用者家目錄就好了~~  省麻煩阿~~
-```
-
-2. 設環境變數
-```sh
-echo "export anaconda_HOME=\"/home/${USER}/anaconda3\"" >> ~/.bashrc
-echo 'export PATH=$anaconda_HOME/bin:$PATH' >> ~/.bashrc
-
-$ python --version
-Python 3.6.3 :: Anaconda, Inc.
-```
-
 
 
 # Install Redis
@@ -962,6 +938,8 @@ nginx -v
 nginx -t
 systemctl start nginx
 systemctl enable nginx
+systemctl status nginx
+
 ```
 
 
@@ -1070,10 +1048,11 @@ $# psql
 
 
 
-# Install Python3.7 on CentOS7.6
+# Install Python3
 
 - 2019/05/10
 - [CentOS 7 下 安装 Python3.7](https://segmentfault.com/a/1190000015628625)
+- [官方Python下載](https://www.python.org/downloads/)
 
 ```sh
 ### 必要套件
@@ -1086,25 +1065,26 @@ yum -y install epel-release
 ### 安裝 pip
 yum install -y python-pip
 
-### 下載 Python3.7.3 tar ball
+### 下載 Python3.9.7 tar ball
 yum install -y wget
-wget https://www.python.org/ftp/python/3.7.3/Python-3.7.3.tgz
+wget https://www.python.org/ftp/python/3.9.7/Python-3.9.7.tgz
+# 自行到官網看看要抓哪一版~
 
-tar zxf Python-3.7.3.tgz
-cd Python-3.7.3
-# ./configure --enable-loadable-sqlite-extensions --enable-optimizations  # 這個會跑很久很久(會執行測試)
-# 或者可改成下一行
-./configure --enable-loadable-sqlite-extensions # 比較快
+tar zxf Python-3.9.7.tgz
+cd Python-3.9.7
+./configure \
+  --enable-optimizations \                # 使用穩定優化的方式(會花比較久)
+  --enable-loadable-sqlite-extensions \   # SQLite
+  --prefix=/usr/local/bin/python397       # 使用前需要自行 mkdir
 
+### 環境變數
+echo 'PYTHON_HOME=/usr/local/bin/python397/bin' >> ~/.bashrc
+echo 'export PATH=${PYTHON_HOME}:${PATH}' >> ~/.bashrc
+source ~/.bashrc
 
 ### 開始 Compile
 make && make install
 # -j 2: 使用Core
-
-### root 環境變數 (一般使用者可直接使用...)
-echo 'PYTHON_HOME=/usr/local/bin' >> ~/.bash_profile
-echo 'PATH=${PYTHON_HOME}:${PATH}' >> ~/.bash_profile
-source ~/.bash_profile
 ```
 
 
@@ -1777,6 +1757,27 @@ $# yum install -y httpd-tools
 
 ```bash
 yum install -y nmap
+```
+
+
+# Install acme.sh
+
+- 2021/08/31
+- [How to install](https://github.com/acmesh-official/acme.sh/wiki/How-to-install)
+- 建議安裝以前, 先安裝 `socat`
+
+```bash
+### 官方建議安裝在 root 底下, 但沒有必要
+$ MAIL=cool21540125@gmail.com
+$ curl https://get.acme.sh | sh -s email=${MAIL}
+### ↑ 先安裝完 scoat 再來弄這個
+```
+
+
+# Install socat
+
+```bash
+yum install socat
 ```
 
 

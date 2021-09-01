@@ -68,6 +68,8 @@ variable | /var/mail <br> /var/spool/news | /var/run <br> /var/lock
     /locale.conf                    # 系統預設語系定義檔 (一開始安裝就決定了!)
     /localtime                      # 系統時間, 可從 /usr/share/zoneinfo/Asia/Taipei 複製過來
     /login.defs                     # 建立使用者時, 該使用者的 系統愈設初始值
+    /logrotate.conf                 # Journal log 的配置主檔
+    /logrotate.d/
     /my.cnf                         # MySQL 組態 主要設定檔
     /nginx/                         # Nginx 組態檔目錄
         /conf.d/                        # Nginx 自訂組態目錄 (裡面的檔名要設定成 *.conf)
