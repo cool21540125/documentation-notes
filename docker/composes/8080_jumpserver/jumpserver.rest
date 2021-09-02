@@ -1,0 +1,11 @@
+
+@URL=
+
+### 
+POST http://{{URL}}/api/users/v1/auth/
+Content-Type: application/json
+
+{
+    "username": "",
+    "password": ""
+}
