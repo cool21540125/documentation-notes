@@ -29,3 +29,6 @@ $# docker run -p 9222:5000 elastichq/elasticsearch-hq
 ```
 
 直接進 web 囉~ http://localhost:9222
+
+
+# Kibana
