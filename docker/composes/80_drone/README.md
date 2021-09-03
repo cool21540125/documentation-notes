@@ -7,7 +7,9 @@
 - [使用Drone进行CI支持(分類還蠻詳細的)](https://xenojoshua.com/2019/12/drone-ci/#1-%E5%89%8D%E8%A8%80)
 - [DockerHub-DockerRunner](https://hub.docker.com/r/drone/drone-runner-docker)
 - [DockerRunner配置](https://docker-runner.docs.drone.io/installation/reference/)
-
+- [Docker Pipeline](https://docs.drone.io/yaml/docker/)
+- [Drone 大神們的 Plugins](http://plugins.drone.io/jetrails/drone-cloudflare-dns/)
+- [Drone 整合 Telegram](https://stanislas.blog/2018/08/setup-telegram-bot-for-drone-ci-cd-builds/)
 
 
 ### drone CLI
