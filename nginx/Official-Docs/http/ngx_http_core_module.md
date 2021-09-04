@@ -1,55 +1,147 @@
-# [Module ngx_http_core_module](http://nginx.org/en/docs/http/ngx_http_core_module.html#try_files)
+[Module ngx_http_core_module](https://nginx.org/en/docs/http/ngx_http_core_module.html)
 
 > 此為 Nginx 的 http 核心模組
 
-## Directives:
+# Directives:
 
-### root
+### [root](https://nginx.org/en/docs/http/ngx_http_core_module.html#root)
 
 - Syntax:
     - `root path;`
-        - path 可以包含變數, 但 `$document_root` && `$realpath_root` 除外
+        - path 可改用 `$document_root`, `$realpath_root` 以外的變數
 - Default: `root html;`
 - Context: http, server, location, if in location
 
-> root directory for requests
+> Sets the root directory for requests.
 
 ```conf
+# Request to "/i/top.gif"
 location /i/ {
     root /data/w3;
 }
-# 「/i/top.gif」 的 Request, 會以 「/data/w3/i/top.gif」 做為 Response
+# 以 "/data/w3/i/top.gif" 做為 Response (容易與 alias 混淆)
 ```
 
-文件路徑是基於 `root` 再增加一個 URI 來構成. 如果必須修改 URI, 則須再搭配 `alias` 來使用
+> A path to the file is constructed by merely adding a URI to the value of the root directive. If a URI has to be modified, the alias directive should be used. (不是很懂)
 
 
-### alias
+### [alias](https://nginx.org/en/docs/http/ngx_http_core_module.html#alias)
 
 - Syntax:
     - `alias path;`
-        - path 可以包含變數, 但 `$document_root` and `$realpath_root` 除外
+        - path 可改用 `$document_root`, `$realpath_root` 以外的變數
 - Default: -
 - Context: location
 
-> Defines a replacement for the specified location.
+可用來對 location 做取代, 如下範例:
 
 ```conf
+# Request to "/i/top.gif"
 location /i/ {
     alias /data/w3/images/;
 }
-# 「/i/top.gif」的 Request, 會以 「/data/w3/images/top.gif」做為 Response
+# 以 "/data/w3/images/top.gif" 做為 Response (容易與 root 混淆)
+```
+
+如果 `alias` 放在了 regex location 裏頭, 則 *such regular expression should contain captures* && *alias should refer to these captures*
+
+```conf
+### 使用 Regex 的 location, 裡面有 alias...
+location ~ ^/users/(.+\.(?:gif|jpe?g|png))$ {
+    alias /data/w3/images/$1;
+}
+# Regex 應有 () 來劃分
+# alias 應有 $x 來補獲
+# 資源位於 FS 的 /data/w3/images/XXX
+```
+
+```conf
+location /images/ {
+    alias /data/w3/images/;
+}
+# 與其寫這樣 ↑
+# 應該改成這樣 ↓
+location /images/ {
+    root /data/w3;
+}
 ```
 
 
-### try_files
+### [http](https://nginx.org/en/docs/http/ngx_http_core_module.html#http)
 
-- Syntax:
+- Syntax
+    - `http { ... }`
+- Default: -
+- Context: main
+
+> Provides the configuration file context in which the HTTP server directives are specified.
+
+
+### [try_files](https://nginx.org/en/docs/http/ngx_http_core_module.html#try_files)
+
+- Syntax
     - `try_files file ... uri;`
     - `try_files file ... =code;`
 - Default: -
 - Context: server, location
 
-> Checks the existence of files in the specified order and uses the first found file for request processing; the processing is performed in the current context. The path to a file is constructed from the file parameter according to the `root` and `alias` directives. It is possible to check directory’s existence by specifying a slash at the end of a name, e.g. “$uri/”. If none of the files were found, an internal redirect to the uri specified in the last parameter is made. (看的不是很懂=.=)
+> Checks the existence of files in the specified order and uses the first found file for request processing; the processing is performed in the current context. The path to a file is constructed from the file parameter according to the `root` and `alias` directives. It is possible to check directory’s existence by specifying a slash at the end of a name, e.g. “$uri/”. If none of the files were found, an internal redirect to the uri specified in the last parameter is made.
 
-### 
+```conf
+location /images/ {
+    try_files $uri /images/default.gif;
+}
+
+location = /images/default.gif {
+    expires 30s;
+}
+# 如上範例, 也可直接指向 named location (明確已存在的資源)
+```
+
+以 PHP 的角度, try_files 會先確認 PHP file 存在, 再 pass Request to FastCGI Server
+
+
+
+# Embedded Variables
+
+底下的變數, 都屬於 Request Header fields (僅節錄自認為重要的)
+
+- $arg_name :          Request Line 的 argument name
+- $args :              Request Line 的 arguments
+- $body_bytes_sent :   Response 大小(bytes)(不含 Header)
+- $bytes_sent :        Response 大小(bytes)
+- $connection_time :   Request 的連線時間(毫秒)
+- $content_length :    Request "Content-Length"
+- $content_type :      Request "Content-Type"
+- $cookie_name :       the name cookie
+- $document_root :     Request 的 root/alias directive 的值
+- $host :              按照底下的順序取值:
+    - Request Line 裏頭的 host name
+    - Request Header 的 "Host" field
+    - 與 Request 匹配的 server name
+- $hostname :          hsot name
+- $http_name :         arbitrary request header field.
+    - the last part of a variable name is the field name converted to lower case with dashes replaced by underscores
+- $nginx_version :     Nginx Version (為了安全, 應該讓它消失)
+- $pid :               Worker process 的 PID
+- $query_string :      同 $args
+- $remote_addr :       Request of client address
+- $remote_port :       Request of client port
+- $remote_user :       Request 使用 Basic authentication 的 user name
+- $request :           Request Line
+- $request_body :      Request Body
+- $request_body_file : Request Body 內的 temporary file
+- $request_length :    Request Line + Header + Body 的 length
+- $request_method :    Request Method
+- $request_time :      Request 的處理時間(直到 Client 讀取到 first bytes of Response)
+- $request_uri :       完整的 Request URI (含 arguments)
+- $scheme :            http/https
+- $server_addr :       接收 Request 的 Server address
+    - 計算此變數需要呼叫 system call. 為了避免此開銷, the *listen directives* must specify addresses and use the bind parameter.
+- $server_port :       接收 Request 的 Server port
+- $server_protocol :   "HTTP/1.0" or "HTTP/1.1" or "HTTP/2.0" or ...
+- $status :            Response Status
+- $time_iso8601 :      local time in the ISO 8601 standard format
+- $time_local :        local time in the Common Log Format
+- $uri :               current URI in Request, normalized
+    - 變數會隨 Request 處理方式而不同, . ex: 使用 internal redirects、使用 index files、...

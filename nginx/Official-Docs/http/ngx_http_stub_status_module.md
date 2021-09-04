@@ -1,4 +1,4 @@
-# [Module ngx_http_stub_status_module ](https://nginx.org/en/docs/http/ngx_http_stub_status_module.html)
+[Module ngx_http_stub_status_module ](https://nginx.org/en/docs/http/ngx_http_stub_status_module.html)
 
 > The ngx_http_stub_status_module module provides access to basic status information.
 
@@ -20,14 +20,25 @@ location = /nginxstatus {
 ```
 
 
-## Directives
+# Directives
+
+### [stub_status](https://nginx.org/en/docs/http/ngx_http_stub_status_module.html#stub_status)
 
 - Key: `stub_status;`
-    - Default: -
-    - Context: server / location
+- Default: -
+- Context: server, location
 
+> The basic status information will be accessible from the surrounding location.
 
-## Example
+此 status information 可以得到底下的 data:
+
+- Active connections
+- accepts
+- handled
+- requests
+- Reading
+- Writing
+- Waiting
 
 ```bash
 $# curl 127.0.0.1/nginxstatus
@@ -47,7 +58,7 @@ Reading: 6 Writing: 179 Waiting: 106
 ```
 
 
-## Embeded Variables
+# Embeded Variables
 
 此模組提供的變數:
 

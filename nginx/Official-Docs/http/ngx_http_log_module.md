@@ -1,4 +1,4 @@
-# [Module ngx_http_log_module](https://nginx.org/en/docs/http/ngx_http_log_module.html)
+[Module ngx_http_log_module](https://nginx.org/en/docs/http/ngx_http_log_module.html)
 
 > ngx_http_log_module 可自訂 log format
 
@@ -14,11 +14,11 @@ access_log /spool/logs/nginx-access.log compression buffer=32k;
 ```
 
 
-## Directives
+# Directives
 
 ### 1. access_log
 
-- Key: 
+- Syntax: 
     - `access_log path [format [buffer=size] [gzip[=level]] [flush=time] [if=condition]];`
     - `access_log off;`
 - Default:
