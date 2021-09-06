@@ -1,7 +1,7 @@
 set shiftwidth=4
 set tabstop=4
 set autoindent
-set syntax on          # 依照程式語言換顏色
+set syntax=on          # 依照程式語言換顏色
 
 set ignorecase         # 搜尋不分大小寫
 set noignorecase       # 搜尋區分大小寫(預設)

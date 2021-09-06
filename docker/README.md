@@ -139,3 +139,24 @@ $ boot2docker stop
 $ boot2docker upgrade
 $ boot2docker start
 ```
+
+
+### docker run
+
+```bash
+### 限制 RAM 使用
+docker run -m 1024m ...
+
+### 限制 CPU 使用. 指定使用 Core 2(第一顆 Core 為 0), 只能使用 20%
+### 限制 CPU 使用. 指定使用 Core 2(第一顆 Core 為 0), 只能使用 30%
+docker run --cpuset-cpus="1" --cpus="0.2" ...
+docker run --cpuset-cpus="1" --cpus="0.3" ...
+
+### 動態調整(限制) Container 的資源
+docker update -m 996m ContainerName
+
+### 限制 Disk I/O 使用. 指定對 /dev/sda 寫入限制為 100mb
+docker run --device-write-bps /dev/sda:100mb ...
+
+
+```

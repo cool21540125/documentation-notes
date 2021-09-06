@@ -45,5 +45,5 @@ Low Level <-----------------------> High Level
 ************************ rkt
 ```
 
-如果我們從 **讓 Container 運行起來** 的觀點來看的話, 這屬於 Low Level
+以實務的觀點來看, 我們專注的 `container runtime` 在於 **讓 Container 運行起來**, 這屬於 "low-level container runtime"
 
