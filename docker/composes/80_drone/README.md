@@ -1,16 +1,4 @@
-# Install Drone-Server by Docker
-
-- 2020/03/27
-- [DockerHub-drone/drone](https://hub.docker.com/r/drone/drone)
-- [Drone.io-environments](https://docs.drone.io/server/reference/)
-- [Drone.io-plugins](http://plugins.drone.io/drone-plugins/drone-docker/)
-- [使用Drone进行CI支持(分類還蠻詳細的)](https://xenojoshua.com/2019/12/drone-ci/#1-%E5%89%8D%E8%A8%80)
-- [DockerHub-DockerRunner](https://hub.docker.com/r/drone/drone-runner-docker)
-- [DockerRunner配置](https://docker-runner.docs.drone.io/installation/reference/)
-- [Docker Pipeline](https://docs.drone.io/yaml/docker/)
-- [Drone 大神們的 Plugins](http://plugins.drone.io/jetrails/drone-cloudflare-dns/)
-- [Drone 整合 Telegram](https://stanislas.blog/2018/08/setup-telegram-bot-for-drone-ci-cd-builds/)
-
+# Drone
 
 ### drone CLI
 
@@ -25,7 +13,7 @@ $# cp drone /usr/local/bin
 ### Linux
 $# curl -L https://github.com/drone/drone-cli/releases/latest/download/drone_linux_amd64.tar.gz | tar zx
 $# install -t /usr/local/bin drone
-# Note: 記得加環境變數
+# Note: 記得加環境變數  
 
 
 $ export DRONE_SERVER=https://example.tonychoucc.com
@@ -59,36 +47,6 @@ drone 提供了底下幾種 runner
 - ssh runner: 通常透過 ssh 執行遠端命令來做建置
 - kubernetes runner: (不鳥他)
 - digital ocean runner: (不鳥他)
-
-```yml
-### v1.x 寫法
----
-kind: pipeline  # 會去找 agent
-name: default
-
-steps:
-  - name: backend
-    image: python:3
-    commands:
-    - pytest
-  - name: frontend
-    image: node
-    commands:
-    - xxx
-    - yyy
-  - name: build
-    image: plugins/slack
-    settings:
-      channel: general
-    depends_on:
-    - backend
-    - frontend
-
-# 底下是另一個任務
----
-kind: pipeline
-name: zzz
-```
 
 
 ## Drone Exec Runner

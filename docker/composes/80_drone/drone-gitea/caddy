@@ -1,8 +1,0 @@
-http://mygitea.com {
-    redir http://mygitea.com:3000
-}
-
-http://mydrone.com {
-    redir http://mydrone.com:8082
-}
-
