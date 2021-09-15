@@ -28,7 +28,6 @@ curl -X POST -d "@data.txt" http://localhost:3000/data
 
 # 使用 JSON 作 POST
 curl -d '{"k1": "v1", "k2": "v2"}' -H "Content-Type: application/json" -X http://localhost:8000/data
-
 ```
 
 ## hacking curl (讓 curl 變好用!? )
@@ -45,4 +44,10 @@ $# chmod +x bin/curl
 
 ```sh
 curl --unix-socket /path-to-docker/docker.sock http://localhost/version
+```
+
+```bash
+$# DOMAIN=tonychoucc.com
+$# IP=1.2.3.4
+$# curl -sv --resolve www.${DOMAIN}:${IP} https://www.${DOMAIN}/checked
 ```

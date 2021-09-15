@@ -158,7 +158,7 @@ echo ${NAME:-nobody}
 #tony
 
 ### 會把 不存在 or "" 當成一樣
-echo ${AGE-DoesntKnow}  
+echo ${AGE-DoesntKnow}
 #DoesntKnow
 
 echo ${AGE:-DoesntKnow}

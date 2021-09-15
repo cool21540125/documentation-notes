@@ -104,10 +104,10 @@ Parameters:
   --server <server_uri>             ACME Directory Resource URI. (default: https://acme.zerossl.com/v2/DV90)
                                     See: https://github.com/acmesh-official/acme.sh/wiki/Server
 
-  --accountconf <file>              Specifies a customized account config file.
-  --home <directory>                Specifies the home dir for acme.sh.
+  --accountconf <file>              Specifies a customized account config file.  ## 自訂的 account.conf 路徑
+  --home <directory>                Specifies the home dir for acme.sh.          ## 變更證書生好後預設放置位置
   --cert-home <directory>           Specifies the home dir to save all the certs, only valid for '--install' command.
-  --config-home <directory>         Specifies the home dir to save all the configurations.
+  --config-home <directory>         Specifies the home dir to save all the configurations.  ## config home
   --useragent <string>              Specifies the user agent string. it will be saved for future use too.
   -m, --email <email>               Specifies the account email, only valid for the '--install' and '--update-account' command.
   --accountkey <file>               Specifies the account key path, only valid for the '--install' command.
@@ -130,7 +130,7 @@ Parameters:
   --pre-hook <command>              Command to be run before obtaining any certificates.
   --post-hook <command>             Command to be run after attempting to obtain/renew certificates. Runs regardless of whether obtain/renew succeeded or failed.
   --renew-hook <command>            Command to be run after each successfully renewed certificate.
-  --deploy-hook <hookname>          The hook file to deploy cert  ## 可使用 acme.sh .... 「--deploy-hook ssh」, 來將證書部署到 Server
+  --deploy-hook <hookname>          The hook file to deploy cert  ## 每執行完一次證書生成, 就執行一次(可搭配此選項, 將證書部署到 Server)
   --ocsp, --ocsp-must-staple        Generate OCSP-Must-Staple extension.
   --always-force-new-domain-key     Generate new domain key on renewal. Otherwise, the domain key is not changed by default.
   --auto-upgrade [0|1]              Valid for '--upgrade' command, indicating whether to upgrade automatically in future. Defaults to 1 if argument is omitted.

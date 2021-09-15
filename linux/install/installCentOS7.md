@@ -1780,6 +1780,27 @@ $ curl https://get.acme.sh | sh -s email=${MAIL}
 yum install socat
 ```
 
+# Install sysstat
+
+```bash
+### 裏頭含有常用的監控工具
+$# yum install -y sysstat
+# The iostat command reports CPU utilization and I/O statistics for disks.
+# The tapestat command reports statistics for tapes connected to the system.
+# The mpstat command reports global and per-processor statistics.
+# The pidstat command reports statistics for Linux tasks (processes).
+# The nfsiostat-sysstat command reports I/O statistics for network file systems.
+# The cifsiostat command reports I/O statistics for CIFS file systems.
+```
+
+
+# Install nfs-utils
+
+```bash
+### 許多 NFS 的 CLI
+$# yum install -y nfs-utils
+```
+
 
 # 語言套件
 

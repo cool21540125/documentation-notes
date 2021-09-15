@@ -14,7 +14,7 @@ location / {
 
 ### [proxy_cache_path](http://nginx.org/en/docs/http/ngx_http_proxy_module.html#proxy_cache_path)
 
-- Syntax: 
+- Syntax:
     ```conf
     proxy_cache_path path [levels=levels] [use_temp_path=on|off] 
     keys_zone=name:size [inactive=time] 
