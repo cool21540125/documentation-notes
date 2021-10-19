@@ -1,5 +1,23 @@
 
 ```bash
+
+### ansible ping
+$# ansible all -m ping
+host03 | SUCCESS => {
+    "ansible_facts": {
+        "discovered_interpreter_python": "/usr/libexec/platform-python"
+    },
+    "changed": false,
+    "ping": "pong"
+}
+host02 | SUCCESS => {
+    "ansible_facts": {
+        "discovered_interpreter_python": "/usr/libexec/platform-python"
+    },
+    "changed": false,
+    "ping": "pong"
+}
+
 ### ----------------- ansible ad-hoc command -----------------
 ### 執行 ad-hoc command
 $# ansible xxx

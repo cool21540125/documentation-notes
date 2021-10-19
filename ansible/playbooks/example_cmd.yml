@@ -1,0 +1,6 @@
+- name: Sample Task
+  hosts: all
+  become: yes  # 晉升為 become_user (預設為 root)
+  tasks:
+    - name: Leave file
+      command: "touch /tmp/demo"

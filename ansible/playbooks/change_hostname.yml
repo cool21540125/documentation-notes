@@ -1,0 +1,8 @@
+---
+- name: Change hostname
+  hosts: local
+  become: true
+  tasks:
+  - name: Change hostname 
+    hostname:
+      name: "Control-node"
