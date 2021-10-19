@@ -36,6 +36,8 @@ Step2. Usage
 
 # Install ipkg
 
+UPDATED: 升級成 DSM 7.0 以後, 這東西就掛了
+
 因為 Synology NAS 的 Distribution 似乎是從 Debian 改來改去改來的, 但又不那麼的 Debina, 因而社群弄出了個 `ipkg` 做為 額外的套件管理員
 
 Step1. Install

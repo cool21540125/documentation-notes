@@ -1,4 +1,5 @@
 [Replication](https://redis.io/topics/replication)
+[mysql – Error ‘Your password does not satisfy the current policy requirements’ or zero length mysql password](https://ahelpme.com/software/mysql/mysql-error-your-password-does-not-satisfy-the-current-policy-requirements-or-zero-length-mysql-password/)
 
 先撇開 RedisCluster 及 RedisSentinel 不說, Redis replication 是最容易配置的主從複製.
 
@@ -103,3 +104,14 @@ pass
 ## Maxmemory on replicas
 
 pass
+
+
+
+# 其它
+
+Replication 時, 發生錯誤
+
+> Error 'Your password does not satisfy the current policy requirements' on query. Default database: ''.
+
+參考這篇 https://ahelpme.com/software/mysql/mysql-error-your-password-does-not-satisfy-the-current-policy-requirements-or-zero-length-mysql-password/
+

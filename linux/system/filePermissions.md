@@ -120,3 +120,7 @@ groupdel bakerstreet
 groupdel scotlandyard
 
 ```
+
+```bash
+echo -e "用戶名\\n用戶密碼" | adduser -s /bin/sh -h /home/bigboss bigboss
+```

@@ -54,7 +54,7 @@ Reading: 6 Writing: 179 Waiting: 106
 # Active connections: Active client 的目前連線數(包含 Waiting connections) ; Number of all open connections
 #    Reading + Writing + Waiting
 # accepts: 已接受的連線數
-# handled: 已處理的連線數. 
+# handled: 已處理的連線數
 #    此值基本上同 accepts, 除非請求達到 resource limits(ex: worker_connections limit)
 # requests: Client Requests 的總數
 # Reading: Nginx 正在 Reading Request Header 的當前連線數

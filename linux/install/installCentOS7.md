@@ -379,6 +379,42 @@ PS1='[\u@\h \W$(__docker_machine_ps1)]\$ '
 # 內容如上 ----------------------------------
 ```
 
+
+# Install Podman
+
+- 2021/09/25
+
+```bash
+### EPEL 裏頭就有
+$# yum install podman -y
+
+### 預設來說, podman 一般使用者就可以使用了
+# 如果遇到問題, 在使用下面方式處理
+$# cat /proc/sys/user/max_user_namespaces
+0
+$# sudo sysctl user.max_user_namespaces=15000
+user.max_user_namespaces = 15000
+$# cat /proc/sys/user/max_user_namespaces
+15000
+$# sudo usermod --add-subuids 200000-201000 --add-subgids 200000-201000 $USER
+$# grep tony /etc/subuid /etc/subgid
+/etc/subuid:tony:200000:1001
+/etc/subgid:tony:200000:1001
+```
+
+```bash
+### Usage
+podman pod list
+
+###
+$ podman version
+Version:            1.6.4
+RemoteAPI Version:  1
+Go Version:         go1.12.12
+OS/Arch:            linux/amd64
+```
+
+
 # Install bridge-utils
 
 ```bash
@@ -580,7 +616,7 @@ ALTER USER 'root'@'localhost' IDENTIFIED BY '<new password>';
 1. 安裝 MySQL
 
 ```sh
-# 1. 編寫 yum repo 檔
+### 1. 編寫 yum repo 檔
 cat <<"EOT" > /etc/yum.repos.d/mysql-community.repo
 [mysql57-community]
 name=MySQL 5.7 Community Server
@@ -590,13 +626,13 @@ gpgcheck=1
 gpgkey=http://repo.mysql.com/RPM-GPG-KEY-mysql
 EOT
 
-# 2. Check Repo && Install
+### 2. Check Repo && Install
 yum repolist | grep mysql
-mysql57-community/x86_64     MySQL 5.7 Community Server      287
+# mysql57-community/x86_64     MySQL 5.7 Community Server      287
 
 yum install -y mysql-community-server
 
-# 3. 啟動 && 設定 root 密碼~
+### 3. 啟動 && 設定 root 密碼~
 systemctl start mysqld
 systemctl enable mysqld
 systemctl status mysqld
@@ -1073,18 +1109,50 @@ wget https://www.python.org/ftp/python/3.9.7/Python-3.9.7.tgz
 tar zxf Python-3.9.7.tgz
 cd Python-3.9.7
 ./configure \
-  --enable-optimizations \                # 使用穩定優化的方式(會花比較久)
-  --enable-loadable-sqlite-extensions \   # SQLite
-  --prefix=/usr/local/bin/python397       # 使用前需要自行 mkdir
+  --enable-optimizations \
+  --enable-loadable-sqlite-extensions
+# --enable-optimizations: 使用穩定優化的方式(會花比較久)
+# --enable-loadable-sqlite-extensions  使用 SQLite
+# --prefix=/usr/local/bin/python397 者指定要 compile install 到哪邊
 
 ### 環境變數
-echo 'PYTHON_HOME=/usr/local/bin/python397/bin' >> ~/.bashrc
+echo 'PYTHON_HOME=/usr/local/bin' >> ~/.bashrc
 echo 'export PATH=${PYTHON_HOME}:${PATH}' >> ~/.bashrc
 source ~/.bashrc
+# 必須要先能找到 python3, 底下 make 才能成功
 
 ### 開始 Compile
 make && make install
 # -j 2: 使用Core
+
+python3 --version
+```
+
+
+# Install OpenJDK
+
+- 2021/10/04
+- https://www.server-world.info/en/note?os=CentOS_7&p=jdk8&f=2
+
+```bash
+$# yum install java-1.8.0-openjdk java-1.8.0-openjdk-devel -y
+
+$# java -version
+openjdk version "1.8.0_302"
+OpenJDK Runtime Environment (build 1.8.0_302-b08)
+OpenJDK 64-Bit Server VM (build 25.302-b08, mixed mode)
+
+$# javac -version
+javac 1.8.0_302
+```
+
+
+# Install SpringBoot
+
+- 2021/10/04
+
+```bash
+
 ```
 
 
@@ -1338,7 +1406,7 @@ go version go1.11 linux/amd64
 ### LTS 安裝方式
 wget -O /etc/yum.repos.d/jenkins.repo https://pkg.jenkins.io/redhat-stable/jenkins.repo
 rpm --import https://pkg.jenkins.io/redhat-stable/jenkins.io.key
-yum upgrade
+yum update
 yum install jenkins java-11-openjdk-devel
 systemctl daemon-reload
 ```
@@ -1718,14 +1786,14 @@ Kubernetes v1.20.4
 # Install iptables
 
 ```bash
-systemctl stop firewalld
-systemctl disable firewalld
-
 yum install iptables-services -y
 
 systemctl start iptables
 systemctl enable iptables
 systemctl status iptables
+# iptables 無法 & 不應 與 firewalld 共同啟用
+systemctl stop firewalld
+systemctl disable firewalld
 ```
 
 
@@ -1799,6 +1867,97 @@ $# yum install -y sysstat
 ```bash
 ### 許多 NFS 的 CLI
 $# yum install -y nfs-utils
+```
+
+
+# Install dos2unix
+
+這東西常被我誤認成 `doc2unix`... =.=
+
+```bash
+yum install -y dos2unix
+```
+
+
+# Install RabbitMQ
+
+- [Install on Older Distributions (CentOS 7, RHEL 7) Using PackageCloud Yum Repository](https://www.rabbitmq.com/install-rpm.html#yum-legacy)
+
+```bash
+## primary RabbitMQ signing key
+$# rpm --import https://github.com/rabbitmq/signing-keys/releases/download/2.0/rabbitmq-release-signing-key.asc
+## modern Erlang repository
+$# rpm --import https://packagecloud.io/rabbitmq/erlang/gpgkey
+## RabbitMQ server repository
+$# rpm --import https://packagecloud.io/rabbitmq/rabbitmq-server/gpgkey
+
+
+$# vim /etc/yum.repos.d/rabbitmq.repo
+####################################### 內容如下 #######################################
+[rabbitmq_erlang]
+name=rabbitmq_erlang
+baseurl=https://packagecloud.io/rabbitmq/erlang/el/7/$basearch
+repo_gpgcheck=1
+gpgcheck=1
+enabled=1
+# PackageCloud's repository key and RabbitMQ package signing key
+gpgkey=https://packagecloud.io/rabbitmq/erlang/gpgkey
+       https://github.com/rabbitmq/signing-keys/releases/download/2.0/rabbitmq-release-signing-key.asc
+sslverify=1
+sslcacert=/etc/pki/tls/certs/ca-bundle.crt
+metadata_expire=300
+
+[rabbitmq_erlang-source]
+name=rabbitmq_erlang-source
+baseurl=https://packagecloud.io/rabbitmq/erlang/el/7/SRPMS
+repo_gpgcheck=1
+gpgcheck=0
+enabled=1
+gpgkey=https://packagecloud.io/rabbitmq/erlang/gpgkey
+sslverify=1
+sslcacert=/etc/pki/tls/certs/ca-bundle.crt
+metadata_expire=300
+
+##
+## RabbitMQ server
+##
+
+[rabbitmq_server]
+name=rabbitmq_server
+baseurl=https://packagecloud.io/rabbitmq/rabbitmq-server/el/7/$basearch
+repo_gpgcheck=1
+gpgcheck=1
+enabled=1
+# PackageCloud's repository key and RabbitMQ package signing key
+gpgkey=https://packagecloud.io/rabbitmq/rabbitmq-server/gpgkey
+       https://github.com/rabbitmq/signing-keys/releases/download/2.0/rabbitmq-release-signing-key.asc
+sslverify=1
+sslcacert=/etc/pki/tls/certs/ca-bundle.crt
+metadata_expire=300
+
+[rabbitmq_server-source]
+name=rabbitmq_server-source
+baseurl=https://packagecloud.io/rabbitmq/rabbitmq-server/el/7/SRPMS
+repo_gpgcheck=1
+gpgcheck=0
+enabled=1
+gpgkey=https://packagecloud.io/rabbitmq/rabbitmq-server/gpgkey
+sslverify=1
+sslcacert=/etc/pki/tls/certs/ca-bundle.crt
+metadata_expire=300
+####################################### 內容如上 #######################################
+
+## 2021/10/13 的今天, 安裝的版本如下:
+$# yum install socat logrotate -y
+## socat-1.7.3.2-2.el7.x86_64
+
+$# yum install erlang rabbitmq-server -y
+# rabbitmq-server-3.9.7-1.el7.noarch
+# erlang-23.3.4.7-1.el7.x86_64
+
+$# systemctl start rabbitmq-server
+$# systemctl enable rabbitmq-server
+$# systemctl status rabbitmq-server
 ```
 
 

@@ -63,6 +63,7 @@
 - routing mesh : 路由網路
 - sharding : 分片(把東西拆成幾分的概念吧??)
 - SIGSEGV : 記憶體區段錯誤
+- slirp4netns : User-mode networking for unprivileged network namespaces
 - snippets : 片段
 - space bar : 空白鍵
 - sponsor : 發起人
@@ -78,6 +79,7 @@
 - vast : 極大的
 - wildcard characters : 萬用字元 (「*」啦)
 - whichever : 任何
+- whiteout : 抹除 (overlay2 FS 的 lower 有檔案, upper 使用此方式來偽移除檔案)
 - wireframe : 線框
 - workaround : 解決方法
 - workhorse : 主力

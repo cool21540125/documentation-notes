@@ -25,10 +25,10 @@ docker-compose up   # 要先安裝好 docker compose 「sudo yum install -y dock
 ```bash
 $# docker pull elastichq/elasticsearch-hq
 
-$# docker run -p 9222:5000 elastichq/elasticsearch-hq
+$# docker run -p 9200:5000 --name es-hq elastichq/elasticsearch-hq
 ```
 
-直接進 web 囉~ http://localhost:9222
+http://$DOMAIN:9200
 
 
 # Kibana

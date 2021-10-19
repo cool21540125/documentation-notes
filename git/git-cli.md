@@ -98,8 +98,12 @@ git push origin ${TAG_NAME}
 
 ```bash
 ### 查看 Remote Repository 有哪些 heads
-git ls-remote -h git@github.com:cool21540125/documentation-notes.git
+$# git ls-remote -h git@github.com:cool21540125/documentation-notes.git
+d737674386544fa4909b11bfd85f9aethn4q1h448	refs/tags/chat-app_v1.0.1
+db5ae4mnj5ae4t1b6a5e1taet658naebaec9db321	refs/tags/chat-app_v1.0.2
 
 ### 查看 Remote Repository 有哪些 tags
-git ls-remote -t git@github.com:cool21540125/documentation-notes.git
+$# git ls-remote -t git@github.com:cool21540125/documentation-notes.git
+81aebae12cdadb33fet7ant9t849nr98ff59761e3	refs/heads/master
+# 也可在 git 專案底下, 直接 「git ls-remote -t .」
 ```

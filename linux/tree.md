@@ -116,7 +116,7 @@ variable | /var/mail <br> /var/spool/news | /var/run <br> /var/lock
         /config                         # SELinux 組態設定檔
     /services                       # 服務 與 port 對映檔
     /shells                         # 某些服務運作時會來檢查使用者能使用的shells
-    /skel/                          # 預設建立使用者後, 使用者家目錄底下的東西
+    /skel/                          # 預設建立使用者後, 使用者家目錄底下的東西(會從這邊 copy 過去 new USER HOME)
     /squid/                         # Proxy Server
         /squid.config                   # squid 設定主檔
         /mime.conf                      # squid 支援 Internet 上的檔案格式(沒事別亂動)
@@ -126,6 +126,7 @@ variable | /var/mail <br> /var/spool/news | /var/run <br> /var/lock
         /sshd_config                    # SSH Server 組態
     /sssd/                          # 集中驗證相關
         /sssd.conf                      # System Security Services Daemon; 網路不通時, 從 cache 作 Login 驗證
+    /subuid                         # 
     /sudoers                        # 定義 sudo, wheel... 相關事項(使用 "visudo" 來取代 "vim /etc/sudoers" 的愚蠢操作!)
     /sudoers.tmp                    # 使用 visudo 指令來更改 /etc/sudoers 的安全中介檔
     /supervisord.conf               # supervisord 設定主檔 (USE supervisorctl)

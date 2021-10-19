@@ -1,0 +1,8 @@
+- name: Show uptime
+  hosts: all
+  tasks:
+    - name: Show uptime
+      register: uptimeoutput
+      command: "uptime"
+    - debug:
+        var: uptimeoutput.stdout_lines

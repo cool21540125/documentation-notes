@@ -5,24 +5,6 @@
 
 - https://www.middlewareinventory.com/blog/ansible-playbook-example/#What_is_Ansible_Playbook
 
-```yml
-### example_install_httpd.yml
----
-  - name: Playbook  ## 此為 一個 Play
-    hosts: webservers
-    become: yes
-    become_user: root
-    tasks:
-      - name: ensure apache is at the latest version
-        yum:  ## Module
-          name: httpd
-          state: latest
-          # state: present  ## 預設已安裝的話會升級. 加入此描述表示不執行升級
-      - name: ensure apache is running
-        service:  ## Service
-          name: httpd
-          state: started
-```
 
 ## Install httpd && tomcat
 
@@ -48,7 +30,7 @@
         yum:
           name: httpd
           state: installed
-        
+
   # Play2 - Application Server related tasks
   - name: Play app - Create tomcat directories and username in app servers
     hosts: appservers
