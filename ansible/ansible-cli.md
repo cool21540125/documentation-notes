@@ -1,8 +1,15 @@
+指令:
+
+> ansible [pattern] -m [module] -a "[module options]" -f N -u username --become [-K]
+
+* -f : 指定 parallel forks 的數量. ansible 預設高併發 5 個程序. 可用這個調高並行處理的程序數量.
+* -u : 指定遠端執行的用戶
+* --become : 若為 poweruser, 加上這個不指定用戶, 則會使用 root 運行. 但也可指定使用特定用戶
+* -K, --ask-become-pass : 可加上這個, 來互動式詢問 privilege escalation 的密碼
 
 ```bash
-
 ### ansible ping
-$# ansible all -m ping
+$# ansible host03 -m ping
 host03 | SUCCESS => {
     "ansible_facts": {
         "discovered_interpreter_python": "/usr/libexec/platform-python"
@@ -10,73 +17,79 @@ host03 | SUCCESS => {
     "changed": false,
     "ping": "pong"
 }
-host02 | SUCCESS => {
-    "ansible_facts": {
-        "discovered_interpreter_python": "/usr/libexec/platform-python"
-    },
-    "changed": false,
-    "ping": "pong"
-}
+```
 
-### ----------------- ansible ad-hoc command -----------------
-### 執行 ad-hoc command
-$# ansible xxx
-
-### ----------------- ansible-playbook command -----------------
-### playbook 語法檢查
-$# ansible-playbook $PLAYBOOK.yml --syntax-check -i $ANSIBLE_HOSTS_FILE
-
-### DRY-RUN (不直接執行, 但列出測試執行的結果)
-$# ansible-playbook -C $PLAYBOOK.yml -i $ANSIBLE_HOSTS_FILE
-
-### 執行 Ansible playbook
-$# ansible-playbook xxx -vvv
-# -vvv : 顯示更多資訊
-
-### ----------------- config -----------------
-### 我覺得有點蝦的東西XD 目前還不懂它作用是啥就是了
-export ANSIBLE_NOCOWS=1
+```bash
+###  直接使用 shell module 來運行 指令字串(若用變數, 記得要用雙引號)
+$# ansible hosts -m ansible.builtin.shell -a "echo 最常用的方式"
 ```
 
 
-# ad-hoc command
+## Example - 管理檔案
 
+```bash
+### 複製本地檔案到遠端 
+$# ansible hosts -m ansible.builtin.copy -a "src=/etc/hosts dest=/etc/hosts"
+
+### 改變遠端檔案/資料夾, 等同於做 chown & chmod
+$# ansible app_server -m ansible.builtin.file -a "dest=/data/a.txt mode=755"
+
+### (承上)加上 state=directory, 可用來建立 Dir
+$# ansible app_server -m ansible.builtin.file -a "dest=/data/app_dir mode=755 owner=mdehaan group=mdehaan state=directory"
+
+### state=directory, 清除遠端特定資料夾 (用來清 Nginx cache)
+$# ansible nginx_proxy -m ansible.builtin.file -a "dest=/data/nginx_cache state=absent"
+```
+
+
+## Example - 管理套件
+
+```bash
+### 使用 yum 安裝套件
+$# ansible hosts -m ansible.builtin.yum -a "name=acme state=present"
+
+### (承上)還可以指定版本
+$# ansible hosts -m ansible.builtin.yum -a "name=acme-1.5 state=present"
+
+### (承上)確保安裝到最新版
+$# ansible hosts -m ansible.builtin.yum -a "name=acme-1.5 state=latest"
+
+### 移除套件 
+$# ansible webservers -m ansible.builtin.yum -a "name=acme state=absent"
+```
+
+
+## Example - 管理用戶
+
+```bash
+### 建立用戶
+$# ansible all -m ansible.builtin.user -a "name=foo password=這是密碼"
+
+### 砍人
+$# ansible all -m ansible.builtin.user -a "name=foo state=absent"
+```
+
+
+## Example - 管理服務 
+ 
+```bash
+### 讓遠端 Nginx start
+$# ansible nginx -m ansible.builtin.service -a "name=nginx state=started"
+
+### 讓遠端 Nginx stop
+$# ansible nginx -m ansible.builtin.service -a "name=nginx state=stopped"
+```
+
+
+## Example -  未整理
 
 ```sh
-### 檢查所有主機, 是否以 tony 建立了 Ansible 管理主機可存取的環境
-$ ansible all -m ping -u tony
-
-### 所有主機, 與目前 bash 相同使用者, 在遠端主機執行 'echo hi~'
-$ ansible all -a "/bin/echo hi~"
-
 ### 列出 ansible tower 可使用的 Host Groups
 $ ansible localhost -m debug -a 'var=groups'
 
-### 複製 /etc/hosts 到 db 這台的 /home/tony/hosts
-$ ansible db -m copy -a "src=/etc/hosts dest=/home/tony/hosts"
-
-### app 這台, 安裝套件
-$ ansible app -m yum -a "name=acme state=present"
-
-### 所有主機建立使用者
-$ ansible all -m user -a "name=cool21540125 password=<加密後密碼>"
-
-### web 這台, 下載 Git repo
+### 叫 web 下載 Git repo
 $ ansible web -m git -a "repo=git@github.com:cool21540125/documentation-notes.git dest=/tmp/illu version=HEAD"
 
-### app2 這台, 啟動服務
-$ ansible app2 -m service -a "name=httpd state=started"
-
-### lb 這台, 並存 10 個重啟
-$ ansible lb -a "/sbin/reboot" -f 10
-
-### 檢查所有主機, 全部系統資訊
-$ ansible all -m setup
-```
-
-
-# playbook
-
-```bash
-
+### 檢查系統資訊
+$ ansible hosts -m setups
 ```
