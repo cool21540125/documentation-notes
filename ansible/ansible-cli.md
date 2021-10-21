@@ -39,6 +39,9 @@ $# ansible app_server -m ansible.builtin.file -a "dest=/data/app_dir mode=755 ow
 
 ### state=directory, 清除遠端特定資料夾 (用來清 Nginx cache)
 $# ansible nginx_proxy -m ansible.builtin.file -a "dest=/data/nginx_cache state=absent"
+
+### 將本地 tar file 解壓縮到遠端(目錄必須事先存在)
+$# ansible nginx_proxy -m unarchive -a "src=foo.tar.gz dest=/tmp/abc"
 ```
 
 
@@ -78,6 +81,9 @@ $# ansible nginx -m ansible.builtin.service -a "name=nginx state=started"
 
 ### 讓遠端 Nginx stop
 $# ansible nginx -m ansible.builtin.service -a "name=nginx state=stopped"
+
+### 讓遠端 Nginx reload
+$# ansible nginx -m ansible.builtin.service -a "name=nginx state=reloaded"
 ```
 
 
