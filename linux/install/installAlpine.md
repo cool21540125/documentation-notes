@@ -1,8 +1,11 @@
 
-# Install curl
 
-```sh
-$# update && apk add curl
+# Install Basic Tooks
+
+```bash
+sudo apk update
+sudo apk add curl
+sudo apk add vim
 ```
 
 
@@ -10,12 +13,37 @@ $# update && apk add curl
 
 ```sh
 ### Install
-$ sudo apk add docker
+$# sudo apk add docker
 
 ### 讓它開機後直接運行
-$ sudo rc-update add docker boot
+$# sudo rc-update add docker boot
  * service docker added to runlevel boot
 
-$ sudo addgroup ${USER} docker
-$ sudo reboot
+$# sudo addgroup ${USER} docker
+$# sudo reboot
+```
+
+
+# Install CRI-O & CRI-Tools
+
+```bash
+$# apk update
+
+### ↓ 測試版本, URL 部分自行選擇版本
+$# sudo apk add cri-o cri-tools --update-cache --repository http://dl-3.alpinelinux.org/alpine/edge/testing/ --allow-untrusted
+
+### 啟動
+$# sudo rc-update add crio default
+ * service crio added to runlevel default
+
+$# sudo reboot
+
+### crictl 版本
+$# crictl -v
+crictl version 3.15.0_alpha20210804-2028-g3664443d34
+
+### CRI-O 版本
+$# crio -version | grep version
+INFO[0000] RDT is not enabled: failed to detect resctrl mount point: resctrl not found in /proc/mounts
+crio version 1.22.0
 ```

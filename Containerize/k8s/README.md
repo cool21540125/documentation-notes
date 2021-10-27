@@ -1,25 +1,72 @@
+
 - [為什麼使用 Kubernetes](https://blog.gcp.expert/kubernetes-gke-introduction/)
 - [Learn Kubernetes Basics](https://kubernetes.io/docs/tutorials/kubernetes-basics/)
 - [k8s-30天](https://ithelp.ithome.com.tw/articles/10192401)
 - [raft演算法(去中心化)-超簡明解說](http://thesecretlivesofdata.com/raft/)
 
-# 基本組成
 
-- service: 為 k8s 分散式叢集架構的核心
-  - 擁有唯一的指定名稱
-  - 擁有一組 IP:port, 提供遠端服務能力. 每個服務處理程序都有獨立的 Endpoint(IP+Port), 但 k8s 讓我們可透過 Service (Cluster IP+Service Port) 連接到 Service
-  - 被對應到提供這種服務能力的一組容器應用上
-- Pod : k8s 運作的最小單位, 一個 Pod 對應一個服務, ex: API Server
-  - 每個 Pod 都有個專屬的定義, 也就是 `yml` 檔
-  - 一個 Pod 可有 1~N 個 Container, 但有 [文章](https://medium.com/@C.W.Hu/kubernetes-basic-concept-tutorial-e033e3504ec0) 寫說最好只有一個
-  - Pod 內的 Containers 共享資源 && 網路, 理解成一個家庭提供單一服務, 但家庭成員之間共享家庭內的一切.
+## 架構簡圖
+
+```mermaid
+flowchart LR;
+
+subgraph Master;
+    scheduler --> api;
+    api -- Cluster 資料儲存 --> etcd;
+    cm["Controller-manager(replication, namespace, serviceaccounts, ...)"] --> api[API Server];
+end
+
+subgraph w1[Worker Node1];
+    api <--> kubelet1[kubelet];
+    kubelet1 --> pod1A[pod];
+    kubelet1 --> pod1B[pod];
+    kube-proxy1[kube-proxy] --> pod1A[pod];
+    kube-proxy1[kube-proxy] --> pod1B[pod];
+    crio2["CRI-O(早期它可能是 Docker 或其他)"];
+
+    subgraph pod1A[pod];
+        containers1A[containers];
+    end
+    subgraph pod1B[pod];
+        containers1B[containers];
+    end
+end
+
+subgraph w2[Worker Node2];
+    api <--> kubelet2[kubelet];
+    kubelet2 --> pod2A[pod];
+    kubelet2 --> pod2B[pod];
+    kube-proxy2[kube-proxy] --> pod2A[pod];
+    kube-proxy2[kube-proxy] --> pod2B[pod];
+    crio1["CRI-O(早期它可能是 Docker 或其他)"];
+
+    subgraph pod2A[pod];
+        containers2A[containers];
+    end
+    subgraph pod2B[pod];
+        containers2B[containers];
+    end
+end
+
+kubectl -- 管理員操作 --> api;
+Internet --> kube-proxy1;
+Internet --> kube-proxy2;
+```
+
+
+## 元件 & 名詞
+
+- K8s Cluster
+  - k8s 架構下的所有 Workers && Masters
 - Worker Node
   - k8s 最小硬體單位
   - 一台機器 or VM
   - 每個 Node 都有 3 個元件:
-    - kubelet : Node 上的管理員, 負責與 Pods 及 Master 溝通
+    - kubelet
+        - 安裝在 Node 上面的管理員(daemon), 負責與 Pods 及 Master 溝通
+        - 用來啟動 pods && containers (與 API Server 溝通), 可理解成是 Node 上頭的 Container 代理
     - kube-proxy : 讓其他 Nodes 上的其他物件可以與此 Node 內的 Pods 溝通 (處理 iptables)
-    - Container Runtime : 容器執行環境
+    - Container Runtime, Pod : 容器執行環境
 - Master Node
   - 內有 4 個元件:
     - Etcd : 存放所有叢集相關的資料
@@ -27,21 +74,47 @@
     - kube-scheduler : 對資源的調度, 負責分配任務到到 Nodes 上頭的 Pod 來執行
     - kube-controller-manager : 負責監控 Cluster 內的一個 Process(對於各個資源的管理器)
     - DNS: 紀錄啟動 Pods 的位址
-- Cluster
-  - k8s 架構下的所有 Workers && Masters
+- API Server
+    - 所有 REST commands 訪問的 Entrypoint, 用來控制整個 cluster
+- etcd storage
+    - Distributed & Key-Value Store
+    - 共享組態配置
+    - Service Discovery (CoreDNS)
+    - 提供 RESTful API 來對特定 WorkerNodes 更新組態, 並且告知其於 Cluster Nodes 相關配置已改變
+    - Meta Store, 用來儲存整個 k8s 的資訊區
+- kubectl: 安裝在 k8s master 上面的 CLI, 用來與 cluster 溝通使用
+- Scheduler
+    - 
+- service: 為 k8s 分散式叢集架構的核心
+    - 擁有唯一的指定名稱
+    - 擁有一組 IP:port, 提供遠端服務能力. 每個服務處理程序都有獨立的 Endpoint(IP+Port), 但 k8s 讓我們可透過 Service (Cluster IP+Service Port) 連接到 Service
+    - 被對應到提供這種服務能力的一組容器應用上
+- Pod : k8s 運作的最小單位, 一個 Pod 對應一個服務, ex: API Server
+    - 每個 Pod 都有個專屬的定義, 也就是 `yml` 檔
+    - 一個 Pod 可有 1~N 個 Container, 但有 [文章](https://medium.com/@C.W.Hu/kubernetes-basic-concept-tutorial-e033e3504ec0) 寫說最好只有一個
+    - Pod 內的 Containers 共享資源 && 網路, 理解成一個家庭提供單一服務, 但家庭成員之間共享家庭內的一切.
+- kubeadm(非必要) : 建立&管理 k8s cluster.
+- kind(非必要, Deprecated) : 用來運行 local computer 的 k8s
+- minikube(用來取代 kind): 用來運行 single-node 的 k8s cluster
+
+
+# K8s Interface
+
+k8s 只有制定了 3 個介面
+
+- CRI, 容器運行介面
+- CNI, 容器網路介面
+- CSI, 容器儲存介面
 
 
 # 一些必要名詞之間的定義 && 釐清
 
-- kubeadm: 建立&管理 k8s cluster.
-- kubelet: Workers 上面的 daemon. 用來啟動 pods && containers (與 API Server 溝通), 可理解成是 Node 上頭的 Docker 代理
-- kubectl: k8s master 用來與 cluster 溝通使用
-  - 用來 部署APP, 檢查&管理 manage cluster resources, view logs.
-- kind: 用來運行 local computer 的 k8s (已經 Deprecated)
-- minikube: 用來運行 single-node 的 k8s cluster. (開發測試用) 與 kins 功能相似
-  - [安裝看這](https://minikube.sigs.k8s.io/docs/start/)
-- etcd: Master Node 們的 分散式資料庫系統.
+
 - kube-proxy: 給 kubectl && kubelet 進行 API Server 連線
+- Cloud
+  - GCP - Google GKE
+  - AWS - Amazon EKS
+  - Azure - Azure AKS
 
 
 # 架構
@@ -75,6 +148,18 @@ k8s 需要這環境來運行 Container (與 Container 溝通的介面), 預設�
 配置 control-plane node 上面 kubelet 需要使用的 cgroup driver
 
 若使用的是 Docker, kubelet 會自動偵測 cgroup driver, 並於 Runtime 期間設定於 `/var/lib/kubelet/config.yaml`
+
+
+# kubernetes CRI 架構演進圖
+
+```
+kubelet -> Dockershim              -> Docker Engine -> Containerd -> Containerd-shim -> OCI runtime -> container
+kubelet -> CRI-Containerd          ->                  Containerd -> Containerd-shim -> OCI runtime -> container
+kubelet -> Containerd + CRI Plugin ->                                Containerd-shim -> OCI runtime -> container
+kubelet -> CRI-O                                                                     -> OCI runtime -> container
+```
+
+
 
 
 # 安裝
