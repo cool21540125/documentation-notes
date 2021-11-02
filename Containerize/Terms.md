@@ -1,0 +1,16 @@
+# 容器化相關名詞簡介、說明與應用
+
+- runc
+    - golang 寫的
+    - Container runtime 的一種實作
+    - 早期被 k8s 使用, 但後期已被 crun 取代
+        - crun 用 C 寫的
+- slirp4netns
+    - podman 用它來做 rootless container 的網路.
+    - a tool which helps networking work in unprivileged containers
+- conmon
+    - Docker 的必要元件之一
+    - OCI container runtime monitor
+- containerd-shim
+    - Docker Container 的墊片程序. Docker 藉由這東西來呼叫 runc, 藉以建立 Docker Container
+    - 用這東西的好處是, Docker Daemon 升級或是掛掉時, 不會影響到 Docker Container

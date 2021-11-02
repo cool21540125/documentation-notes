@@ -1109,7 +1109,6 @@ wget https://www.python.org/ftp/python/3.9.7/Python-3.9.7.tgz
 tar zxf Python-3.9.7.tgz
 cd Python-3.9.7
 ./configure \
-  --enable-optimizations \
   --enable-loadable-sqlite-extensions
 # --enable-optimizations: 使用穩定優化的方式(會花比較久)
 # --enable-loadable-sqlite-extensions  使用 SQLite

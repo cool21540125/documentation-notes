@@ -138,9 +138,11 @@ NETWORK ID      NAME      DRIVER    SCOPE
 # 1. 在 `OS Level` 設定 routing
 $# sysctl net.ipv4.conf.all.forwarding=1
 # ex: 讓 Linux kernel 允許 IP routing
+# 需要寫入到 /etc/sysctl.conf
 
 # 2. 設定「iptables FORWARD policy」為 ACCEPT (原為 DROP)
 $# iptables -P FORWARD ACCEPT
+# (如果有啟用 iptables 的話再作)
 ```
 
 NOTE: 上述 2 個動作, 僅目前採用, 重啟後套用則須額外處理

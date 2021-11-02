@@ -1,0 +1,16 @@
+// https://www.jenkins.io/doc/book/pipeline/jenkinsfile/#handling-parameters
+// Jenkins pipeline 可透過 Build with Parameters 來建置代參數的 Job
+// 像是藉由 ${params.Greeting} 來取得 Greeting 變數
+pipeline {
+    agent any
+    parameters {
+        string(name: 'Greeting', defaultValue: 'Hello', description: 'How should I greet the world?')
+    }
+    stages {
+        stage('Example') {
+            steps {
+                echo "${params.Greeting} World!"
+            }
+        }
+    }
+}

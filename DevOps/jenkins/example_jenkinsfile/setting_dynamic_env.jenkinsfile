@@ -1,0 +1,28 @@
+// https://www.jenkins.io/doc/book/pipeline/jenkinsfile/#setting-environment-variables-dynamically
+// sh 可在運行時取得環境變數, 且可搭配 returnStatus or returnStdout 來使用
+pipeline {
+    agent any 
+    environment {
+        // Using returnStdout. 
+        // When using returnStdout a trailing whitespace will be appended to the returned string. Use .trim() to remove this.
+        CC = """${sh(
+                returnStdout: true,
+                script: 'echo "clang"'
+            )}""" 
+        // Using returnStatus
+        EXIT_STATUS = """${sh(
+                returnStatus: true,
+                script: 'exit 1'
+            )}"""
+    }
+    stages {
+        stage('Example') {
+            environment {
+                DEBUG_FLAGS = '-g'
+            }
+            steps {
+                sh 'printenv'
+            }
+        }
+    }
+}

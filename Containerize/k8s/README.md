@@ -82,6 +82,8 @@ Internet --> kube-proxy2;
     - Service Discovery (CoreDNS)
     - 提供 RESTful API 來對特定 WorkerNodes 更新組態, 並且告知其於 Cluster Nodes 相關配置已改變
     - Meta Store, 用來儲存整個 k8s 的資訊區
+    - Deployment object
+      - 裏頭會有 `Replicaset Controller`
 - kubectl: 安裝在 k8s master 上面的 CLI, 用來與 cluster 溝通使用
 - Scheduler
     - 
@@ -109,12 +111,17 @@ k8s 只有制定了 3 個介面
 
 # 一些必要名詞之間的定義 && 釐清
 
+K8s 平台的選擇:
 
-- kube-proxy: 給 kubectl && kubelet 進行 API Server 連線
+- Bare Metal
 - Cloud
   - GCP - Google GKE
   - AWS - Amazon EKS
   - Azure - Azure AKS
+- 平台供應商(都會包裝 Bare Metal)
+  - RedHat OpenShift
+  - VMware Tanzu
+  - Rancher : 三者中較為便宜
 
 
 # 架構
@@ -139,11 +146,14 @@ k8s 只有制定了 3 個介面
 
 ### Container Runtime Interface(CRI)
 
+↓↓↓↓↓↓↓↓↓↓ 這知識可能過期了
 k8s 需要這環境來運行 Container (與 Container 溝通的介面), 預設會依照底下去尋找:
-
 - Docker: /var/run/docker.sock  (Docker 內建的 CRI 實作為 `dockershim`, 與 kubelet 於 18.09 整合起來了)
 - containerd: /run/containerd/containerd.sock
 - CRI-O: /var/run/crio/crio.sock
+↑↑↑↑↑↑↑↑↑↑ 這知識可能過期了
+
+So far, 2021/10/30, k8s 以使用 CRI-O 來實作 CRI
 
 配置 control-plane node 上面 kubelet 需要使用的 cgroup driver
 
