@@ -1093,7 +1093,7 @@ $# psql
 ```sh
 ### 必要套件
 yum install -y zlib-devel bzip2-devel openssl-devel ncurses-devel sqlite-devel readline-devel tk-devel gcc make libffi-devel
-# libffi-devel 專門給 python3.7
+# libffi-devel 專門給 python3.7+ 使用
 
 ### 為了要安裝「python-pip」
 yum -y install epel-release
@@ -1103,6 +1103,8 @@ yum install -y python-pip
 
 ### 下載 Python3.9.7 tar ball
 yum install -y wget
+
+cd /usr/local/src
 wget https://www.python.org/ftp/python/3.9.7/Python-3.9.7.tgz
 # 自行到官網看看要抓哪一版~
 
@@ -1113,6 +1115,7 @@ cd Python-3.9.7
 # --enable-optimizations: 使用穩定優化的方式(會花比較久)
 # --enable-loadable-sqlite-extensions  使用 SQLite
 # --prefix=/usr/local/bin/python397 者指定要 compile install 到哪邊
+# ※※※ 預設會安裝在 /usr/local/bin 底下, 想改路徑請使用 --prefix=/ANOTHER/PYTHON/PATH
 
 ### 環境變數
 echo 'PYTHON_HOME=/usr/local/bin' >> ~/.bashrc
