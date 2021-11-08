@@ -7,8 +7,8 @@ kubectl run ...
 
 
 ### Declarative 運行 k8s
-kubectl create ...
-kubectl apply  ...
+kubectl create ...  # 僅能用來建立
+kubectl apply  ...  # 可用來建立 & 更改運行中的規格
 # 會去讀取 yml
 
 
@@ -46,6 +46,19 @@ kubectl logs POD_NAME
 
 ### 列出與 Application 有關的 k8s 物件 (並非所有 k8s 物件)
 kubectl get all
+
+### 針對 pod 內的 Container 執行命令
+kubectl exec Pod_Name -c Container_Name -- Execution_Command
+# 等同於 docker exec Container_Name Execution_Command
+
+### 進入容器執行互動式 sh
+kubectl exec -it Pod_Name -c Container_Name -- sh
+# 等同於 docker exec -it Container_Name sh
+
+### 查看 log
+kubectl logs Pod_Name -c Container_Name
+
+###
 
 
 ```

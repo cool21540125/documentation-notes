@@ -14,3 +14,8 @@
 - containerd-shim
     - Docker Container 的墊片程序. Docker 藉由這東西來呼叫 runc, 藉以建立 Docker Container
     - 用這東西的好處是, Docker Daemon 升級或是掛掉時, 不會影響到 Docker Container
+- kubelet
+    - 
+- flannel
+    - k8s CNI 的實作
+- 
