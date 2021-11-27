@@ -18,4 +18,5 @@
     - 
 - flannel
     - k8s CNI 的實作
-- 
+- CRI-O
+    - OCI-based implementation of Kubernetes Container Runtime Interface

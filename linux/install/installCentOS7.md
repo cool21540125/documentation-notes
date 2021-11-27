@@ -317,10 +317,6 @@ yum install -y docker-ce
 systemctl start docker
 systemctl enable docker
 
-# user
-USER=tony
-usermod -aG docker ${USER}
-
 # 完成
 docker version
 ```
@@ -339,6 +335,7 @@ chmod +x /usr/local/bin/docker-compose
 cat <<"EOT" > /etc/profile.d/usr_local_bin.sh
 export PATH=/usr/local/bin:${PATH}
 EOT
+source /etc/profile
 
 docker-compose --version
 ```
@@ -975,8 +972,24 @@ nginx -t
 systemctl start nginx
 systemctl enable nginx
 systemctl status nginx
-
 ```
+
+## Colorize nginx
+
+- [Gist: vim-nginx-conf-highlight.sh](https://gist.github.com/ralavay/c4c7750795ccfd72c2db)
+
+```bash
+### 讓 vim 開啟 Nginx 配置有顏色~
+# Download syntax highlight
+mkdir -p ~/.vim/syntax/
+wget https://www.vim.org/scripts/download_script.php?src_id=19394 --no-check-certificate -O ~/.vim/syntax/nginx.vim
+
+# Set location of Nginx config file
+cat > ~/.vim/filetype.vim <<EOF
+au BufRead,BufNewFile /etc/nginx/*,/etc/nginx/conf.d/*,/usr/local/nginx/conf/* if &ft == '' | setfiletype nginx | endif
+EOF
+```
+
 
 
 # Install tcping

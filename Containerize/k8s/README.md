@@ -117,6 +117,8 @@ kubelet -> Dockershim              -> Docker Engine -> Containerd -> Containerd-
 kubelet -> CRI-Containerd          ->                  Containerd -> Containerd-shim -> OCI runtime -> container
 kubelet -> Containerd + CRI Plugin ->                                Containerd-shim -> OCI runtime -> container
 kubelet -> CRI-O                                                                     -> OCI runtime -> container
+           ↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑ 
+                          CRI
 ```
 
 
@@ -131,3 +133,19 @@ kubelet -> CRI-O                                                                
 - `ip link`
 - `cat /sys/class/dmi/id/product_uuid`
 
+
+
+# k3s
+
+- 內建 Ingress
+- 內建 Dynamic Volume Provision
+
+
+
+# 未整理雜訊
+
+- k8s service 的 CLUSTER-IP 不會變動; 而 pod IP 可能會變動
+- k8s apply vs create
+  - The key difference between kubectl apply and create is that apply creates Kubernetes objects through a declarative syntax, while the create command is imperative.
+  - kubectl apply : declarative syntax, 可用來改變已 deploy 的規格 && 也可用來首次建立
+  - kubectl create : imperative, 只能用來首次建立

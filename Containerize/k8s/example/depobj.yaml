@@ -1,0 +1,23 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: depobj
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: deppod
+# ↑ Deployments 宣告
+# ↓ pods 宣告
+  template:
+    metadata:
+      labels:
+        app: deppod
+    spec:
+      containers:
+      - name: myderby
+        image: quay.io/ict39/alpine.derby
+        imagePullPolicy: Never
+        ports:
+        - name: http
+          containerPort: 8888
