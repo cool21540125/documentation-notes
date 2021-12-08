@@ -104,3 +104,4 @@ $ ansible hosts -m setups
 $ ansible all -m lineinfile -a 'dest=/etc/zabbix/zabbix_agentd.conf line="Server=112.121.164.2" regexp="^Server=" ' -f 50
 # -f 50, 使用高併發來做處理
 ```
+
