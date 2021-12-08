@@ -1,0 +1,19 @@
+kind: Pod
+apiVersion: v1
+metadata:
+  name: pod-hp
+spec:
+  containers:
+    - name: pod-hp
+      image: quay.io/cloudwalker/nginx
+      imagePullPolicy: IfNotPersent
+      ports:
+        - containerPort: 80
+          name: "http-server"
+      volumeMounts:
+        - mountPath: "/usr/share/nginx/html"
+          name: hp-volume
+  volumes:
+    - name: hp-volume
+      hostPath:  # 此為 PV
+        path: /opt/hostpath  # 會自動產生此目錄. 若 Pod 被刪, 此目錄會被保留

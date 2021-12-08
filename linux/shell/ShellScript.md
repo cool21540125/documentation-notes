@@ -39,6 +39,23 @@ echo -e "\033[32m [INFO]: hi \033[0m"
 if [ "${1:0:1}" = '-' ]; then
 	set -- mongod "$@"
 fi
-
-
 ```
+
+
+# ShellScript
+
+### IFS 用途
+
+> If IFS is unset, the parameters are separated by spaces
+
+```bash
+$ set -- one two three
+$ IFS=hello
+$ echo "$*"
+onehtwohthree
+$ unset IFS
+$ echo "$*"
+one two three
+```
+
+### 

@@ -1,0 +1,19 @@
+kind: Pod
+apiVersion: 1
+metadata:
+  name: pod-pvc1
+spec:
+  Volumes:  ## Volumes in pod 定義在這
+    - name: pv-storage
+      persistentVolumeClaim:
+        claimName: pvc-local
+  containers:
+    - name: pod-pvc1
+      image: quay.io/cloudwalker/nginx
+      imagePullPolicy: IfNotPresent
+      ports:
+        - containerPort: 80
+          name: "http-server"
+      volumeMounts:  ## Volume mounts in container 定義在這
+        - mountPath: "/usr/share/nginx/html"
+          name: pv-storage

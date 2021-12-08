@@ -56,6 +56,15 @@ location ~ ^/users/(.+\.(?:gif|jpe?g|png))$ {
 ```
 
 ```conf
+### 使用 Regex 的 location, 裡面有 alias...
+location ~ ^/download/(.+\.apk)$ {
+    alias /data/project/apk_download/$1;
+}
+# 用戶訪問 http://DOMAIN/download/XXX.apk
+# 可下載   /data/project/apk_download/XXX.apk
+```
+
+```conf
 location /images/ {
     alias /data/w3/images/;
 }

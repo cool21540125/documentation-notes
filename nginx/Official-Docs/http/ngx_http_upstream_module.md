@@ -1,14 +1,6 @@
 [Module ngx_http_upstream_module](http://nginx.org/en/docs/http/ngx_http_upstream_module.html)
 
-`ngx_http_upstream_module` 模組用來定義可被底下 directives 參照的 server group:
-
-- proxy_pass
-- fastcgi_pass
-- uwsgi_pass
-- scgi_pass
-- memcached_pass
-- grpc_pass
-
+> The ngx_http_upstream_module module is used to define groups of servers that can be referenced by the proxy_pass, fastcgi_pass, uwsgi_pass, scgi_pass, memcached_pass, and grpc_pass directives.
 
 ```conf
 ### 範例
@@ -31,3 +23,17 @@ server {
 
 
 # Directives
+
+
+### [least_conn](http://nginx.org/en/docs/http/ngx_http_upstream_module.html#least_conn)
+
+```
+Syntax:	    least_conn;
+Default:	—
+Context:	upstream
+```
+
+做 round-robin 用
+
+
+

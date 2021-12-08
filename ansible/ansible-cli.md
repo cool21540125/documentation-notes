@@ -98,4 +98,9 @@ $ ansible web -m git -a "repo=git@github.com:cool21540125/documentation-notes.gi
 
 ### 檢查系統資訊
 $ ansible hosts -m setups
+
+
+### 功能相當於 sed -i, 只是是用來改遠端檔案
+$ ansible all -m lineinfile -a 'dest=/etc/zabbix/zabbix_agentd.conf line="Server=112.121.164.2" regexp="^Server=" ' -f 50
+# -f 50, 使用高併發來做處理
 ```

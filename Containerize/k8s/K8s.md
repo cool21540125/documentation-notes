@@ -3,29 +3,6 @@
 - [k8s-30天](https://ithelp.ithome.com.tw/articles/10192401)
 - [raft演算法(去中心化)-超簡明解說](http://thesecretlivesofdata.com/raft/)
 
-# 基本組成
-
-- Pod : k8s 運作的最小單位, 一個 Pod 對應一個服務, ex: API Server
-  - 每個 Pod 都有個專屬的定義, 也就是 `yml` 檔
-  - 一個 Pod 可有 1~N 個 Container, 但有 [文章](https://medium.com/@C.W.Hu/kubernetes-basic-concept-tutorial-e033e3504ec0) 寫說最好只有一個
-  - Pod 內的 Containers 共享資源 && 網路, 理解成一個家庭提供單一服務, 但家庭成員之間共享家庭內的一切.
-- Worker Node
-  - k8s 最小硬體單位
-  - 一台機器 or VM
-  - 每個 Node 都有 3 個元件:
-    - kubelet : Node 上的管理員, 負責與 Pods 及 Master 溝通
-    - kube-proxy : 讓其他 Nodes 上的其他物件可以與此 Node 內的 Pods 溝通 (處理 iptables)
-    - Container Runtime : 容器執行環境
-- Master Node
-  - 內有 4 個元件:
-    - Etcd : 存放所有叢集相關的資料
-    - kube-apiserver : 使用 kubectl 所下的指令, 都會跑到這裡; Workers 之間溝通的橋樑; k8s 內的身分認證&&授權
-    - kube-scheduler : 對資源的調度, 負責分配任務到到 Nodes 上頭的 Pod 來執行
-    - kube-controller-manager : 負責監控 Cluster 內的一個 Process(對於各個資源的管理器)
-    - DNS: 紀錄啟動 Pods 的位址
-- Cluster
-  - k8s 架構下的所有 Workers && Masters
-
 
 # 一些必要名詞之間的定義 && 釐清
 

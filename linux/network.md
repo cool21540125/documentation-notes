@@ -193,9 +193,9 @@ $ ifconfig enp1s0 <new IP> netmask <new Mask>
 
 # NetworkManager 服務 與 network 服務(比較傳統的方式)
 
-NetworkManager服務(NM) 專門設計用來給 `移動設備(ex: NB)` 使用, 可以在各種場合切換連線方式. 所以像是 Server或是一般桌電, 大都不使用 NM, 而是使用 network服務. **兩者則一啟用即可**.
+NetworkManager服務(NM) 專門設計用來給 `移動設備(ex: NB)` 使用, 可以在各種場合切換連線方式. 所以像是 Server或是一般桌電, 大都不使用 NM, 而是使用 network服務. **兩者澤一啟用即可**.
 
-NM 這東西從 OS6 時期就有了, 但是 BUG 一大堆~~, 值到 OS7 的時候, 進階使用時, 一樣會有某些 BUG, 基本 BUG 幾乎都修好了
+NM 這東西從 OS6 時期就有了, 但是 BUG 一大堆~~, 直到 OS7 的時候, 基本 BUG 幾乎都修好了 (進階使用一樣會有 BUG)
 
 CentOS7 的 NetworkManager 預設的組態路徑 : `/etc/sysconfig/network-scripts/ifcfg-*`
 
@@ -275,7 +275,7 @@ ONBOOT=no           # 開機是否啟用此網路卡
 ### 以上都可以直接編輯後, 重新啟動 network.service即可作用 ###
 ```
 
-↑ 改完後重啟 `systemctl restart network `
+↑ 改完後重啟 `systemctl restart network`
 
 
 ## nmcli - 查看 network information

@@ -335,6 +335,7 @@ chmod +x /usr/local/bin/docker-compose
 cat <<"EOT" > /etc/profile.d/usr_local_bin.sh
 export PATH=/usr/local/bin:${PATH}
 EOT
+source /etc/profile
 
 docker-compose --version
 ```
