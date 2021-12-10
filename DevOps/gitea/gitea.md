@@ -103,6 +103,7 @@ command="/app/gitea/gitea --config=/data/gitea/conf/app.ini serv key-4",no-port-
 ### Step4. 在宿主機, 建立一個 executable
 
 ```bash
+mkdir -p /app/gitea
 touch /app/gitea/gitea
 echo 'ssh -p 2222 -o StrictHostKeyChecking=no git@127.0.0.1 "SSH_ORIGINAL_COMMAND=\"$SSH_ORIGINAL_COMMAND\" $0 $@"' > /app/gitea/gitea
 #            ^^^^ Host 與 Container mapping port
