@@ -1591,7 +1591,6 @@ sed -i 's/# DBPassword=/DBPassword=zabbix/' /etc/zabbix/zabbix_proxy.conf
 ```bash
 $# VERSION=4.0.31
 $# rpm -ivh https://repo.zabbix.com/zabbix/4.0/rhel/7/x86_64/zabbix-agent-${VERSION}-1.el7.x86_64.rpm
-$# yum install zabbix-agent
 
 ### Config
 $# vim /etc/zabbix/zabbix_agentd.conf
