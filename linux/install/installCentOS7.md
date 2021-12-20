@@ -424,6 +424,15 @@ docker0       8000.02428b91c08f   no
 ```
 
 
+# Install mlocate
+
+```bash
+### locate - command not found
+yum install -y mlocate
+updatedb
+```
+
+
 # Install bash_completion
 
  - 2020/04/08
@@ -433,10 +442,6 @@ docker0       8000.02428b91c08f   no
 $# yum install -y bash-completion bash-completion-extras
 $# locate bash_completion.sh   # 如果出現 locate command not found, 參考底下解法
 $# source /etc/profile.d/bash_completion.sh
-
-### locate - command not found
-$# yum install -y mlocate
-$# updatedb
 ```
 
 
@@ -564,25 +569,32 @@ $# chkconfig --add metricbeat
 
 # Install ELK - Filebeat
 
-- [How To Install Elasticsearch, Logstash, and Kibana (ELK Stack) on CentOS/RHEL 7](https://www.tecmint.com/install-elasticsearch-logstash-and-kibana-elk-stack-on-centos-rhel-7/)
+- [Filebeat Reference](https://www.elastic.co/guide/en/beats/filebeat/current/setup-repositories.html)
 
 ```sh
-$# rpm --import http://packages.elastic.co/GPG-KEY-elasticsearch
+### public signing key
+rpm --import https://packages.elastic.co/GPG-KEY-elasticsearch
 
-$# vim /etc/yum.repos.d/filebeat.repo
-###### 內容如下 ######
-[filebeat]
-name=Filebeat for ELK clients
-baseurl=https://packages.elastic.co/beats/yum/el/$basearch
-enabled=1
-gpgkey=https://packages.elastic.co/GPG-KEY-elasticsearch
+cat > /etc/yum.repos.d/elastic.repo <<EOF
+
+[elastic-7.x]
+name=Elastic repository for 7.x packages
+baseurl=https://artifacts.elastic.co/packages/7.x/yum
 gpgcheck=1
-###### 內容如上 ######
+gpgkey=https://artifacts.elastic.co/GPG-KEY-elasticsearch
+enabled=1
+autorefresh=1
+type=rpm-md
+EOF
 
-$# yum install filebeat
+yum install -y filebeat
 
-### Config
-$# vim /etc/filebeat/filebeat.yml
+systemctl start filebeat
+systemctl enable filebeat
+systemctl status filebeat
+
+### 配置主檔
+vim /etc/filebeat/filebeat.yml
 ```
 
 # Install MySQL Community 8.0
@@ -857,11 +869,12 @@ git version 2.14.3
 - 2017/11/26
 - [centos7 最小化安装無網路服務](http://www.cnblogs.com/cocoajin/p/4064547.html)
 
-```
+```bash
 $ ifconfig
 bash: ifconfig: command not found
 
-$ yum install -y net-tools
+### Install
+yum install -y net-tools
 
 $ ifconfig
 success!
@@ -965,13 +978,14 @@ yum repolist | grep nginx
 
 yum install -y nginx
 
-nginx -v
-# nginx version: nginx/1.18.0
-
-nginx -t
 systemctl start nginx
 systemctl enable nginx
 systemctl status nginx
+
+nginx -t
+
+nginx -v
+#nginx version: nginx/1.20.2
 ```
 
 ## Colorize nginx
@@ -981,6 +995,7 @@ systemctl status nginx
 ```bash
 ### 讓 vim 開啟 Nginx 配置有顏色~
 # Download syntax highlight
+cd
 mkdir -p ~/.vim/syntax/
 wget https://www.vim.org/scripts/download_script.php?src_id=19394 --no-check-certificate -O ~/.vim/syntax/nginx.vim
 
@@ -988,6 +1003,7 @@ wget https://www.vim.org/scripts/download_script.php?src_id=19394 --no-check-cer
 cat > ~/.vim/filetype.vim <<EOF
 au BufRead,BufNewFile /etc/nginx/*,/etc/nginx/conf.d/*,/usr/local/nginx/conf/* if &ft == '' | setfiletype nginx | endif
 EOF
+
 ```
 
 

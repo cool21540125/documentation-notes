@@ -85,7 +85,11 @@ ports:
 
 ```bash
 sudo -u git ssh-keygen -t rsa -b 4096 -C "Gitea Host Key"
+
+cat /home/git/.ssh/id_rsa.pub >> /home/git/.ssh/authorized_keys
 ```
+
+底下為說明
 
 宿主機產生的這個 Key-Pair, 需要把 Public Key 加入到宿主機的 `/home/git/.ssh/authorized_keys` (同時, 也藉由 mount, 同步到容器中)
 
@@ -108,6 +112,8 @@ touch /app/gitea/gitea
 echo 'ssh -p 2222 -o StrictHostKeyChecking=no git@127.0.0.1 "SSH_ORIGINAL_COMMAND=\"$SSH_ORIGINAL_COMMAND\" $0 $@"' > /app/gitea/gitea
 #            ^^^^ Host 與 Container mapping port
 chmod u+x /app/gitea/gitea
+cat /app/gitea/gitea
+ll /app/gitea/gitea
 ```
 
 

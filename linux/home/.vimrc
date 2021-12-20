@@ -1,3 +1,14 @@
+
+### vim 常用
+cat <<EOF >> ~/.vimrc
+set shiftwidth=4
+set tabstop=4
+set expandtab
+EOF
+
+### vim 常用
+
+# -----------------------------------------
 set shiftwidth=4
 set tabstop=4
 set expandtab          # 使用 tab 的話, 以 whitespace 取代 tag
