@@ -2043,12 +2043,22 @@ warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 
 ```bash
-### 因為花了些時間實在是找不到有效又好用的安裝方式...
-### 於是便放棄, 轉而投向使用 Docker 的方式來安裝
-docker pull bitnami/jsonnet
+### 目前沒找到已經編譯好的 jsonnet, 所以自行到 github 來處理了 ~_~
+cd /usr/local/src
+git clone https://github.com/google/jsonnet.git
+cd jsonnet
+git checkout v0.18.0
+
+# ↓ 比需先裝好 GCC 才能處理 (而且版本還不能太舊)
+make
+
+cp jsonnet /usr/local/bin/
+jsonnet --version
+# Jsonnet commandline interpreter v0.18.0
+### ---------------------------------------------
 
 ### ↓ Example Usage for CLI
-docker run --rm bitnami/jsonnet -e "{Description: 'jsonnet 把字串變成 json 了'}"
+jsonnet -e "{Description: 'jsonnet 把字串變成 json 了'}"
 
 ### ↓ Example Usage for file
 cat <<EOF > /tmp/demo.jsonnet
@@ -2061,7 +2071,7 @@ local Flavor(spicy) = {
   'Food2': Flavor(false),
 }
 EOF
-docker run --rm -v /tmp/demo.jsonnet:/demo.jsonnet bitnami/jsonnet /demo.jsonnet
+jsonnet /tmp/demo.jsonnet
 ```
 
 
