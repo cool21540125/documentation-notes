@@ -1115,8 +1115,7 @@ $# psql
 
 # Install Python3
 
-- 2019/05/10
-- [CentOS 7 下 安装 Python3.7](https://segmentfault.com/a/1190000015628625)
+- 2022/01/04
 - [官方Python下載](https://www.python.org/downloads/)
 
 ```sh
@@ -1130,20 +1129,22 @@ yum -y install epel-release
 ### 安裝 pip
 yum install -y python-pip
 
-### 下載 Python3.9.7 tar ball
-yum install -y wget
+### 下載 Python
+VERSION=3.9.9
+# ↑ 指定好要編譯安裝的版本
 
+yum install -y wget
 cd /usr/local/src
-wget https://www.python.org/ftp/python/3.9.7/Python-3.9.7.tgz
+wget https://www.python.org/ftp/python/$VERSION/Python-$VERSION.tgz
 # 自行到官網看看要抓哪一版~
 
-tar zxf Python-3.9.7.tgz
-cd Python-3.9.7
+tar zxf Python-$VERSION.tgz
+cd Python-$VERSION
 ./configure \
   --enable-loadable-sqlite-extensions
-# --enable-optimizations: 使用穩定優化的方式(會花比較久)
+# --enable-optimizations: 使用穩定優化的方式(會花比較久), 但是 python3.8+ 使用的話, 需要使用 8.1+ 的 gcc
 # --enable-loadable-sqlite-extensions  使用 SQLite
-# --prefix=/usr/local/bin/python397 者指定要 compile install 到哪邊
+# --prefix=/usr/local/bin/python 者指定要 compile install 到哪邊
 # ※※※ 預設會安裝在 /usr/local/bin 底下, 想改路徑請使用 --prefix=/ANOTHER/PYTHON/PATH
 
 ### 環境變數
@@ -1162,7 +1163,7 @@ python3 --version
 
 # Install OpenJDK
 
-- 2021/10/04
+- 2021/12/27
 - https://www.server-world.info/en/note?os=CentOS_7&p=jdk8&f=2
 
 ```bash
@@ -1269,10 +1270,6 @@ Java HotSpot(TM) 64-Bit Server VM (build 25.191-b12, mixed mode)
 $ javac -version
 javac 1.8.0_191
 ```
-
-
-
-
 
 
 # Install KVM
@@ -1751,6 +1748,40 @@ systemctl start squid
 ```
 
 
+# Install snapd
+
+- 2022/01/04
+- https://snapcraft.io/install/jsonnet/rhel
+
+```bashrc
+yum install -y snapd
+
+systemctl start snapd
+systemctl enable snapd
+systemctl status snapd
+
+# To enable classic snap support, enter the following to create a symbolic link between /var/lib/snapd/snap and /snap:
+ln -s /var/lib/snapd/snap /snap
+# ↑ 不知道這在幹嘛的...
+```
+
+
+# Install jsonnet
+
+- 2022/01/04
+- https://snapcraft.io/install/jsonnet/rhel
+
+```bashrc
+### 先安裝好 snapd
+$# snap install jsonnet
+# ↑ 沒辦法帶 -y... QAQ
+
+### logout && login
+$# which jsonnet
+/var/lib/snapd/snap/bin/jsonnet
+```
+
+
 # Install Redis GUI
 
 - 2019/08/06
@@ -1759,13 +1790,7 @@ systemctl start squid
 - [Redis Desktop Manager - Quick Start](http://docs.redisdesktop.com/en/latest/quick-start/)
 
 ```bash
-### Install
-$# yum install -y snapd
-$# systemctl start snapd
-
-$# ln -s /var/lib/snapd/snap /snap
-#         ^^^^^ 可以連到這裡   ^^^^^ 藉由這裡
-
+### 必須先安裝好 snapd
 $# snap install redis-desktop-manager
 
 ### 如果發生下面的錯誤訊息 ----
@@ -1988,6 +2013,55 @@ $# yum install erlang rabbitmq-server -y
 $# systemctl start rabbitmq-server
 $# systemctl enable rabbitmq-server
 $# systemctl status rabbitmq-server
+```
+
+
+# Install gcc
+
+- 2022/01/04
+- [[Centos7] 升級gcc/gcc-c++ 由5.8版升級到9.3版](http://n.sfs.tw/content/index/14840)
+
+還沒 k 文件, 改天補上
+
+需要升級 `gcc` 的情境之一像是, 編譯安裝 python3.8+ 以上時, 如果指定要 `--enable-optimizations`, 會被告知需要 gcc 8.1+ 以上版本才行
+
+```bash
+### CentOS7 已有內建的 gcc
+$# gcc --version
+gcc (GCC) 4.8.5 20150623 (Red Hat 4.8.5-44)
+Copyright (C) 2015 Free Software Foundation, Inc.
+This is free software; see the source for copying conditions.  There is NO
+warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+# 但是這個版本是 2015 年的老舊東西了~
+
+### Update gcc
+待補充
+```
+
+
+# Install jsonnet
+
+
+```bash
+### 因為花了些時間實在是找不到有效又好用的安裝方式...
+### 於是便放棄, 轉而投向使用 Docker 的方式來安裝
+docker pull bitnami/jsonnet
+
+### ↓ Example Usage for CLI
+docker run --rm bitnami/jsonnet -e "{Description: 'jsonnet 把字串變成 json 了'}"
+
+### ↓ Example Usage for file
+cat <<EOF > /tmp/demo.jsonnet
+local Flavor(spicy) = {
+  ingredients: ['番茄醬', '沙拉',],
+  [if spicy then '加辣']: '多到爆',
+};
+{
+  Food1: Flavor(true),
+  'Food2': Flavor(false),
+}
+EOF
+docker run --rm -v /tmp/demo.jsonnet:/demo.jsonnet bitnami/jsonnet /demo.jsonnet
 ```
 
 
