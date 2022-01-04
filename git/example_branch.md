@@ -456,17 +456,6 @@ $ git log --oneline --graph
 ```
 
 # Result
-### 開發端
-```sh
-$ git tree
-* 74ee335 (p1, origin/p1) f2                                ## p1 HEAD
-|
-* feaef67 f1                                                ## p1 無名歷史
-|
-| * 7db764a (p2, origin/p2) ff1                             ## p2 HEAD
-|/
-* 2de1ad2 (origin/master, origin/HEAD, master) init commit  ## master HEAD
-```
 
 ### A客戶
 ```sh
