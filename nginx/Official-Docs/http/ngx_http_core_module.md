@@ -115,42 +115,49 @@ location = /images/default.gif {
 
 底下的變數, 都屬於 Request Header fields (僅節錄自認為重要的)
 
-- $arg_name :          Request Line 的 argument name
-- $args :              Request Line 的 arguments
-- $body_bytes_sent :   Response 大小(bytes)(不含 Header)
-- $bytes_sent :        Response 大小(bytes)
-- $connection_time :   Request 的連線時間(毫秒)
-- $content_length :    Request "Content-Length"
-- $content_type :      Request "Content-Type"
-- $cookie_name :       the name cookie
-- $document_root :     Request 的 root/alias directive 的值
-- $host :              按照底下的順序取值:
+- `$arg_name` :          Request Line 的 argument name
+- `$args` :              Request Line 的 arguments
+- `$body_bytes_sent` :   Response 大小(bytes)(不含 Header)
+- `$bytes_sent` :        Response 大小(bytes)
+- `$connection_time` :   Request 的連線時間(毫秒)
+- `$content_length` :    Request "Content-Length"
+- `$content_type` :      Request "Content-Type"
+- `$cookie_name` :       the name cookie
+- `$document_root` :     Request 的 root/alias directive 的值
+- `$host` :              按照底下的順序取值:
     - Request Line 裏頭的 host name
     - Request Header 的 "Host" field
     - 與 Request 匹配的 server name
-- $hostname :          hsot name
-- $http_name :         arbitrary request header field.
+- `$hostname` :          hsot name
+- `$http_name` :         arbitrary request header field.
     - the last part of a variable name is the field name converted to lower case with dashes replaced by underscores
-- $nginx_version :     Nginx Version (為了安全, 應該讓它消失)
-- $pid :               Worker process 的 PID
-- $query_string :      同 $args
-- $remote_addr :       Request of client address
-- $remote_port :       Request of client port
-- $remote_user :       Request 使用 Basic authentication 的 user name
-- $request :           Request Line
-- $request_body :      Request Body
-- $request_body_file : Request Body 內的 temporary file
-- $request_length :    Request Line + Header + Body 的 length
-- $request_method :    Request Method
-- $request_time :      Request 的處理時間(直到 Client 讀取到 first bytes of Response)
-- $request_uri :       完整的 Request URI (含 arguments)
-- $scheme :            http/https
-- $server_addr :       接收 Request 的 Server address
+- `$nginx_version` :     Nginx Version (為了安全, 應該讓它消失)
+- `$pid` :               Worker process 的 PID
+- `$query_string` :      同 `$args`
+- `$remote_addr` :       Request of client address
+- `$remote_port` :       Request of client port
+- `$remote_user` :       Request 使用 Basic authentication 的 user name
+- `$request` :           Request Line
+- `$request_body` :      Request Body
+- `$request_body_file` : Request Body 內的 temporary file
+- `$request_length` :    Request Line + Header + Body 的 length
+- `$request_method` :    Request Method
+- `$request_time` :      Request 的處理時間(直到 Client 讀取到 first bytes of Response)
+- `$request_uri` :       完整的 Request URI (含 arguments)(最原始的 URI)
+    - Nginx 變數的使用, 大多時候應該都使用 `$uri` 來替代 `$request_uri` (誤用的話, 會造成 URL 被重覆 decode)
+    - 若需要 map URI 及 query string, 則使用 `$request_uri`
+    - 在 `proxy_pass` directive, 務必使用 `$request_uri` 而非 `$uri`(會有漏洞)
+- `$scheme` :            http/https
+- `$server_addr` :       接收 Request 的 Server address
     - 計算此變數需要呼叫 system call. 為了避免此開銷, the *listen directives* must specify addresses and use the bind parameter.
-- $server_port :       接收 Request 的 Server port
-- $server_protocol :   "HTTP/1.0" or "HTTP/1.1" or "HTTP/2.0" or ...
-- $status :            Response Status
-- $time_iso8601 :      local time in the ISO 8601 standard format
-- $time_local :        local time in the Common Log Format
-- $uri :               current URI in Request, normalized
+- `$server_port` :       接收 Request 的 Server port
+- `$server_protocol` :   "HTTP/1.0" or "HTTP/1.1" or "HTTP/2.0" or ...
+- `$status` :            Response Status
+- `$time_iso8601` :      local time in the ISO 8601 standard format
+- `$time_local` :        local time in the Common Log Format
+- `$uri` :               current URI in Request, normalized
     - 變數會隨 Request 處理方式而不同, . ex: 使用 internal redirects、使用 index files、...
+    - Nginx 目前正在處理的 URI, 但也受到底下規範:
+        - 刪除了 ? 及後續的 query string
+        - 連續多的 / 替換成單一個 /
+        - URL encoded characters are decoded
