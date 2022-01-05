@@ -14,5 +14,13 @@
 - CoCo/KoKo : SSH Server && Web Terminal Server && Character protocaol Connector
     - CoCo: OLD, python base
     - KoKo: NEW, golang base
-- Luna : JumpServer Web Terminal 的 front-page. 用戶使用 Web Terminal 需要此元件
+        - `/koko`
+- Luna : 純靜態文件. JumpServer Web Terminal 的 front-page. 用戶使用 Web Terminal 需要此元件
+    - `/luna`
+- Lina : 純靜態文件.
+    - `/ui`
+- Core : JumpServer 核心. Django 開發, 內建 Gunicorn Celery Beat Flower Daphne
+    - `/core`
+- Lion : 
+    - `/lion`
 - Guacamole : RDP && VNC Protocol 資產套件
