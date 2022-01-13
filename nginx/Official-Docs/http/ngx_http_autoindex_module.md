@@ -45,4 +45,25 @@ location / {
 - Default: `autoindex_localtime off;`
 - Context: http, server, location
 
-對於 HTML 格式文件, 時間應以 localtime 或 UTC 來呈現
+如果沒配置(預設, off) 的話, 看到的檔案時間會是 UTF 時間
+
+
+# 範例
+
+```conf
+server {
+    listen 80;
+    server_name log.DOMAIN;
+    
+    access_log off;
+
+    location / {
+        root /data/log;
+        autoindex on;           # 可查看目錄內容
+        autoindex_localtime on; # 顯示 localtime, 而非 UTC time
+
+        allow 9.4.8.7;
+        deny all;
+    }
+}
+```
