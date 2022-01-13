@@ -86,6 +86,9 @@ $ echo "${name[1]}'s sister is ${name[2]}"
 
 ### 變數替換 - 「#」 與 「%」
 
+- 類似 substring
+- bash string manipulation
+
 ```sh
 a="123-456-789"
 echo ${a}

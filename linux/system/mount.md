@@ -197,26 +197,32 @@ UUID=e6...(pass)...7e   /boot   xfs     defaults    0     0
 
 使用檔案建置 swap
 
-```sh
-$ cd /tmp 
-$ dd if=/dev/zero of=/tmp/swap bs=1M count=64
-64+0 records in
-64+0 records out
-67108864 bytes (67 MB) copied, 0.0271058 s, 2.5 GB/s
-# 使用 dd 這個指令, 新增一個 64MB 的檔案在 /tmp 底下
+```bash
+### 配置 4 GB 的 swap
+$# dd if=/dev/zero of=/swapfile count=4096 bs=1MiB
 
-$ ll -h
-總計 64M
--rw-rw-r--. 1 tony tony 64M  6月 28 21:57 swap
+### 安全性問題, 務必使用 root read only
+$# chmod 600 /swapfile
 
-# 慎用!! 因為指令稍有錯誤, 可能導致檔案系統掛掉!!!!!
-$ mkswap /tmp/swap
-設定 swapspace 版本 1, 大小 = 65532 KiB
-無標籤，UUID=a8e9102c-f7b0-47cd-a7b2-3d3b31d60d1a
+### 讓系統 setup up swap space
+$# mkswap /swapfile
+Setting up swapspace version 1, size = 4194300 KiB
+no label, UUID=6ec8f68c-f6cf-43ae-96e9-6e15294c563d
 
-# 因為一開始
-$ swapon /tmp/swap
-swapon: /tmp/swap：不安全的權限 0664, 建議使用 0600。
-swapon: /tmp/swap: insecure file owner 1000, 0 (root) suggested.
-swapon: /tmp/swap：swapon 失敗: 此項操作並不被允許
+### 掛載使用 swap
+$# swapon /swapfile
+
+### 確認 swap 的使用
+$# swapon -s
+Filename				Type		Size	Used	Priority
+/swapfile                              	file	4194300	0	-2
+
+### 永久配置
+$# vim /etc/fstab
+# ↓↓↓↓↓↓ 配置 ↓↓↓↓↓↓
+/swapfile   swap    swap    sw  0   0
+# ↑↑↑↑↑↑ 配置 ↑↑↑↑↑↑
+
+### 配置後記得確認
+$# mount -a
 ```
