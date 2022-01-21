@@ -69,10 +69,11 @@ location /images/ {
     alias /data/w3/images/;
 }
 # 與其寫這樣 ↑
-# 應該改成這樣 ↓
+# 不如寫這樣 ↓
 location /images/ {
     root /data/w3;
 }
+# 一樣都是 Request to /images/$1, 然後會拿 /data/w3/images/$1 回應
 ```
 
 
