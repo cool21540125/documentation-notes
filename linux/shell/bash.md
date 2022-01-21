@@ -110,6 +110,17 @@ echo ${a%-*}
 echo ${a%%-*}
 #123
 
+### 字串拆解
+tag="api_v1.2.3"
+
+echo ${tag##*_v}    # 1.2.3
+echo ${tag%%_v*}    # api
+# 或
+IFS="_" read -r -a array <<< $tag
+echo "${array[0]}"  # web
+echo "${array[1]}"  # v1.2.3
+
+
 # --------------------------
 ### 測試是否包含
 name=tonychou
