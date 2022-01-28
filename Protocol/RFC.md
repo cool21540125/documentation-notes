@@ -34,7 +34,7 @@
 > An IP datagram is the unit of end-to-end transmission in the IP protocol.  An IP datagram consists of an IP header followed by transport layer data, i.e., of an IP header followed by a message.
 > In the description of the internet layer (Section 3), the unqualified term "datagram" should be understood to refer to an IP datagram.
 
-`IP Datagram` = `IP header` + `傳輸層 data`(ex: message).
+`IP Datagram` = `IP header` + `segment`.
 
 
 ### * Segment : 資料段 (L4 傳輸層)

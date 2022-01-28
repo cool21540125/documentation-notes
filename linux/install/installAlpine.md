@@ -3,9 +3,18 @@
 # Install Basic Tooks
 
 ```sh
-sudo apk update
-sudo apk add curl
-sudo apk add vim
+apk update
+apk add curl
+apk add vim
+apk add wget
+apk add git
+
+### telnet: not found
+apk add busybox-extras
+
+
+### dig: command not found
+apk add bind-tools
 ```
 
 

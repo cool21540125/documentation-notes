@@ -1,0 +1,2 @@
+- Application-Level Gateway, Application Layer Gateway, ALG, 應用層閘道
+- circuit-level proxy, 電路層代理

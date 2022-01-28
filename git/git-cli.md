@@ -107,3 +107,15 @@ $# git ls-remote -t git@github.com:cool21540125/documentation-notes.git
 81aebae12cdadb33fet7ant9t849nr98ff59761e3	refs/heads/master
 # 也可在 git 專案底下, 直接 「git ls-remote -t .」
 ```
+
+
+# git checkout
+
+```bash
+### 還原所有檔案回最近一次 commit (unstaged 的部分)
+git checkout -- .
+# or all unstaged files in current working
+
+git checkout -- path/to/file
+# for specific file
+```

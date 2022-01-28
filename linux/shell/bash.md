@@ -542,3 +542,16 @@ x=
 $ echo x=${x}k
 x=200k
 ```
+
+# 內建指令
+
+```sh
+# which 會從 PATH 環境變數裏頭, 找出 command 的位置
+# 而 history 為 「bash的內建指令」, 所以會找不到
+$# which history
+/usr/bin/which: no history in (/opt/anaconda3//bin:/opt/jdk1.8//bin:/usr/local/bin:/usr/bin:/usr/local/sbin:/usr/sbin:/home/tony/.local/bin:/home/tony/bin)
+
+$# history --help
+-bash: history: --：無效選項
+history: usage: history [-c] [-d offset] [n] or history -anrw [filename] or history -ps arg [arg...]
+```

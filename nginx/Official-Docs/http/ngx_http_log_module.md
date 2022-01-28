@@ -46,18 +46,18 @@ access_log /spool/logs/nginx-access.log compression buffer=32k;
 
 ### 2. log_format
 
-- Key: 
-    - `log_format name [escape=default|json|none] string ...;`
-- Default:
-    - `log_format combined "...";`
-- Context:
-    - http
+```
+Syntax:	    log_format name [escape=default|json|none] string ...;
+Default:    log_format combined "...";
+Context:	http
+```
 
-說明
+關於 `escape`
 
-配置都有個預先定義好的 log format, 名為 `combined`:
+- 預設為 default. 也就是說, 如果遇到 「ASCII < 32」 或 「ASCII > 126」, 都會被轉義為「\xXX」
 
 ```conf
+#配置都有個預先定義好的 log format, 名為 `combined`:
 log_format combined '$remote_addr - $remote_user [$time_local] '
                     '"$request" $status $body_bytes_sent '
                     '"$http_referer" "$http_user_agent"';

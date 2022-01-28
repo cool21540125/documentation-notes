@@ -87,6 +87,29 @@ location /images/ {
 > Provides the configuration file context in which the HTTP server directives are specified.
 
 
+### [log_not_found](http://nginx.org/en/docs/http/ngx_http_core_module.html#log_not_found)
+
+> Enables or disables logging of errors about not found files into error_log.
+
+```conf
+Syntax:	    log_not_found on | off;
+Default:	log_not_found on;
+Context:	http, server, location
+```
+
+```conf
+    # Example Usage
+    # 避免產生過多 favicon.ico 的 Error Log, 回應一個空值 Status 200
+    location ~ ^/favicon.ico$ {
+         default_type text/html;
+         return 200 '';
+         log_not_found off;
+         access_log off;
+    }
+```
+
+
+
 ### [try_files](https://nginx.org/en/docs/http/ngx_http_core_module.html#try_files)
 
 - Syntax

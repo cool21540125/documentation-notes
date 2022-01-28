@@ -56,3 +56,18 @@
 (不會讀取 `/etc/profile`)
 
 
+# trap
+
+此 command 為 Shell 內建命令, 用來在腳本裏頭指定「信號如何處理」
+
+```bash
+#!/bin/bash
+
+trap "" INT
+# ↑ 若腳本執行中, 會忽略 SIGNAL INT (也就是使用者使用 Ctrl+C 也無法中斷)
+
+trap "echo YO" EXIT
+# ↑ 若腳本執行完後, 會執行的動作
+
+
+```

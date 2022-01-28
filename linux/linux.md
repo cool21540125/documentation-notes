@@ -608,7 +608,7 @@ export PATH
 
 read -p "Your name : " name      # 提示使用者輸入
 read -p "Your age :  " age       # 提示使用者輸入
-echo -e "Your full name and age : ${name} ${age}" # 結果由螢幕輸出
+echo "Your full name and age : ${name} ${age}" # 結果由螢幕輸出
 ```
 
 2. 執行看看~
@@ -905,7 +905,11 @@ ls is /usr/bin/ls
 ```
 
 ### echo
+
+「echo -e」 用法
+
 ```sh
+#### 範例 1
 $ echo "L1\nL2\nL3"
 L1\nL2\nL3
 
@@ -914,7 +918,15 @@ $ echo -e "L1\nL2\nL3"
 L1
 L2
 L3
+
+
+#### 範例2
+$# GREEN='\033[1;32m'
+$# echo -e "${GREEN}印出的字會是綠色的"
+印出的字會是綠色的  # <-- 綠色的
 ```
+
+
 
 ### 互動式 input - read
 ```sh

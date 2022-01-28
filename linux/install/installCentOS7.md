@@ -1201,7 +1201,7 @@ nginx -v
 ```bash
 ### 讓 vim 開啟 Nginx 配置有顏色~
 # Download syntax highlight
-cd
+
 mkdir -p ~/.vim/syntax/
 wget https://www.vim.org/scripts/download_script.php?src_id=19394 --no-check-certificate -O ~/.vim/syntax/nginx.vim
 
@@ -1211,7 +1211,6 @@ au BufRead,BufNewFile /etc/nginx/*,/etc/nginx/conf.d/*,/usr/local/nginx/conf/* i
 EOF
 
 ```
-
 
 
 # Install tcping
@@ -2094,12 +2093,13 @@ Kubernetes v1.20.4
 ```bash
 yum install iptables-services -y
 
+systemctl stop firewalld
+systemctl disable firewalld
+# iptables 無法 & 不應 與 firewalld 共同啟用
 systemctl start iptables
 systemctl enable iptables
 systemctl status iptables
-# iptables 無法 & 不應 與 firewalld 共同啟用
-systemctl stop firewalld
-systemctl disable firewalld
+
 ```
 
 
