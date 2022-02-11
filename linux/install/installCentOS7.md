@@ -35,6 +35,9 @@ centos-release-7-5.1804.4.el7.centos.x86_64
 > 解決 rpm安裝時, 套件相依性的問題
 
 ```sh
+### 由 /etc/yum.repo.d/*.conf 裏頭的 [XXX] 區塊之中來 enable 或 disable 此倉庫
+yum-config-manager --enable XXX
+
 # 查本地已經安裝的 Linex Kernels
 $ yum list kernel
 
@@ -1158,9 +1161,9 @@ $ 7za x <fileName>
 
 # Install Nginx
 
-- 2018/03/19
-- [Official](http://nginx.org/en/linux_packages.html#stable)
-- [參考這邊](https://dotblogs.com.tw/grayyin/2017/05/18/183117)
+- 2022/02/11
+- [Official Nginx](http://nginx.org/en/linux_packages.html#stable)
+- [Official Nginx](https://www.nginx.com/resources/wiki/start/topics/tutorials/install/)
 
 ```sh
 # 1. 匯入 GPG-Key
@@ -1169,14 +1172,29 @@ rpm --import nginx_signing.key
 
 # 2. 建立 Yum Repo
 cat <<"EOT" > /etc/yum.repos.d/nginx.repo
-[nginx]
-name=Nginx Repo
-baseurl=http://nginx.org/packages/centos/7/$basearch/
+[nginx-stable]
+name=nginx stable repo
+baseurl=https://nginx.org/packages/centos/$releasever/$basearch/
 gpgcheck=1
 enabled=1
-EOT
+gpgkey=https://nginx.org/keys/nginx_signing.key
+module_hotfixes=true
 
+[nginx-mainline]
+name=nginx mainline repo
+baseurl=http://nginx.org/packages/mainline/centos/$releasever/$basearch/
+gpgcheck=1
+enabled=0
+gpgkey=https://nginx.org/keys/nginx_signing.key
+module_hotfixes=true
+EOT
 ###### 內容如上 ######
+
+### 重要選擇性資訊
+yum-config-manager --enable ${中括號裡面的名稱}
+# 上面有 2 個支線可用來追蹤, 如果要選擇其他的話, 則使用此指令更改安裝來源, ex:
+# yum-config-manager --enable nginx-mainline
+
 
 ### 3. Repolist && Install
 yum repolist | grep nginx
@@ -1677,7 +1695,6 @@ go version go1.11 linux/amd64
 ```
 
 
-
 # Install Jenkins
 
 ```bash
@@ -1953,6 +1970,22 @@ systemctl start rh-php72-php-fpm
 systemctl enable rh-php72-php-fpm
 systemctl start zabbix-server
 systemctl enable zabbix-server
+```
+
+
+# Install Zabbix Agent 5.0
+
+- [Download and install Zabbix](https://www.zabbix.com/download?zabbix=5.0&os_distribution=red_hat_enterprise_linux&os_version=7&db=mysql&ws=nginx)
+
+```bash
+rpm -Uvh https://repo.zabbix.com/zabbix/5.0/rhel/7/x86_64/zabbix-release-5.0-1.el7.noarch.rpm
+yum clean all
+
+yum install -y zabbix-agent2
+
+systemctl start zabbix-agent2
+systemctl enable zabbix-agent2
+systemctl status zabbix-agent2
 ```
 
 
