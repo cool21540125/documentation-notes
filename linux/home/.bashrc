@@ -11,8 +11,8 @@ cat <<EOF >> ~/.bashrc
 ### Docker 懶人指令 ------------
 alias d='docker'
 alias dis='docker images'
-alias dps='docker ps'
-alias dpsa='docker ps -a'
+alias dps='docker ps --format "table {{.ID}}\t{{.Image}}\t{{.Status}}\t{{.Ports}}\t{{.Names}}"'
+alias dpsa='docker ps -a --format "table {{.ID}}\t{{.Image}}\t{{.Status}}\t{{.Ports}}\t{{.Names}}"'
 alias dn='docker network'
 alias dv='docker volume'
 alias dex='docker exec -it'
