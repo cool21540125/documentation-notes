@@ -40,6 +40,12 @@ $# ssh-keygen -t ed25519 -C "tony@tonynb"
 ### git tree
 git config --global alias.tree "log --graph --decorate --pretty=oneline --abbrev-commit"
 
+git config --global alias.lg "log --color --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset'"
+
+git config --global alias.lgg "log --pretty=format:'%C(yellow)%h%Cred%d %Creset%s%Cblue [%cn]%Creset' --decorate"
+
+git config --global alias.lggg "log --pretty=format:"%C(yellow)%h%Cred%d\\ %Creset%s%Cblue\\ [%cn]%Creset" --decorate --numstat"
+
 ### git pu
 git config --global alias.pu "push"
 
