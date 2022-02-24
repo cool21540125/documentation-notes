@@ -198,8 +198,12 @@ UUID=e6...(pass)...7e   /boot   xfs     defaults    0     0
 使用檔案建置 swap
 
 ```bash
+### 先查看 Disk 的 Block Size
+$# fdisk -l
+# 底下的 dd 的 count 及 bs, 再依據此來劃分, 以優化讀寫效能
+
 ### 配置 4 GB 的 swap
-$# dd if=/dev/zero of=/swapfile count=4096 bs=1MiB
+$# dd if=/dev/zero of=/swapfile count=2097152 bs=4KiB
 
 ### 安全性問題, 務必使用 root read only
 $# chmod 600 /swapfile

@@ -1,18 +1,6 @@
 
 
-
-```bash
-### 顯示 Nginx 配置後的目前組態
-nginx -T
-# 可用來看總體的配置成果
-
-nginx -s reload
-nginx -s stop
-
-
-```
-
-```bash
+```conf
 server {
     listen 80;
     server_name www.tonychoucc.com;
