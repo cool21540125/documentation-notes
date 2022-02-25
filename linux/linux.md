@@ -1,5 +1,15 @@
 
 
+
+# CLI
+
+```bash
+### 取得 CentOS7 OS 內頁單個內存緩衝區大小
+$# getconf PAGE_SIZE
+4096
+```
+
+
 # Linux檔案時間
 
 - 2018/07/08
