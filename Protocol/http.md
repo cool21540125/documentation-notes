@@ -1,10 +1,17 @@
+
 # Hypertext Transfer Protocol (HTTP)
+
 * http/1.0
 * http/1.1 : [2616](https://tools.ietf.org/html/rfc2616)
 * http/2   : [7230](https://tools.ietf.org/html/rfc7230)
+
+
 # 名詞
+
 * Internet Engineering Task Force (IETF)
 * Internet Engineering Steering Group (IESG)
+
+
 # http 這東西
 
 HTTP/2 為 HTTP/1.1 的替代方案 ; 藉由引入 `header field compression` && `allow multiple concurrent exchange on the same connection` 減少網路傳輸延遲, 來提升網路傳輸效能, 減少延遲的知覺.
@@ -20,7 +27,9 @@ HTTP/2 為 HTTP/1.1 的替代方案 ; 藉由引入 `header field compression` &&
    clients that need to make many requests use multiple connections to a
    server in order to achieve concurrency and thereby reduce latency.
 
+
 # HTTP
+
 * [What does enctype='multipart/form-data' mean?](https://stackoverflow.com/questions/4526273/what-does-enctype-multipart-form-data-mean)
 
 > When you make a POST request, you have to encode the data that forms the body of the request in some way.
@@ -30,7 +39,10 @@ HTML form 提供了 3 種方法來做 encoding:
 * application/x-www-form-urlencoded (default)
 * multipart/form-data
 * text/plain
+
+
 # HSTS
+
 * 2021/05
 * [HTTP Strict Transport Security (HSTS) and NGINX](https://www.nginx.com/blog/http-strict-transport-security-hsts-and-nginx/)
 
@@ -102,3 +114,15 @@ server {
 出非把 domain 加入到 https://hstspreload.org/
 
 IMPORTANT: 上述加入到 HSTS preload 的作法, 是一條通往 HTTPS 的不歸路!!!!! 只能單向通行.
+
+
+# X-Forwarded-For
+
+- [What is the difference between X-Forwarded-For and X-Forwarded-IP?](https://stackoverflow.com/questions/19366090/what-is-the-difference-between-x-forwarded-for-and-x-forwarded-ip)
+- [Forwarded](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Forwarded#browser_compatibility)
+
+- `X-Forwarded-For` 是非標準表頭, 最早由 squid 引入. 之後則有了標準表頭 `Forwarded`(IETF 於 2014 制定)
+   - 雖說 `Forwarded` 為標準表頭, 不過 `X-Forwarded-For`, `X-Forwarded-Host`, `X-Forwarded-Proto` 被視為是時尚的標準
+- 若確定 Client 來自 proxy, 則用 `X-Forwarded-For` 或 `Forwarded` 來取得用戶 IP
+- 若確定 Client 非來自 proxy, 則用 `REMOTE_ADDR` 來取得用戶 IP
+- 不管事 `X-Forwarded-For` 或 `Forwarded`, 都可能被 Client 到 Server 之間的任何 Proxy 竄改

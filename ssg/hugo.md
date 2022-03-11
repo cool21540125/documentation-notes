@@ -48,7 +48,7 @@ Context
 {{< /XXX >}}
 ```
 
-XXX 有 :
+XX 有 :
 - note
 - info
 - warning

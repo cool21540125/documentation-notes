@@ -145,4 +145,14 @@ proxy_set_header X-Real-IP  $remote_addr;
 
 - $proxy_host :                *proxy_pass directive* 紀錄的 proxied server
 - $proxy_port :                *proxy_pass directive* 紀錄的 proxied server port, 或是協定預設 port
-- $proxy_add_x_forwarded_for : 
+- $proxy_add_x_forwarded_for : Nginx 提供的變數. 可用來將 $remote_addr Append 到 X-Forwarded-For 欄位
+    - 使用方式範例: 
+    ```conf
+    location / {
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    }
+    ```
+    - 後續的標準, 則是加入倒 `Forwarded` 欄位. 但是 Nginx 並沒提供 `$proxy_add_forwarded` 這樣的欄位, 若要這樣做, 參考:
+        - https://www.nginx.com/resources/wiki/start/topics/examples/forwarded/
+        - 但此方式, 依舊無法處理 multiple incoming headers
+    

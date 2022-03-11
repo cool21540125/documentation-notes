@@ -24,7 +24,7 @@ Syntax:	    set_real_ip_from address | CIDR | unix:;
 Default:	—
 Context:	http, server, location
 
-# 讓 Nginx 信任這個來源 IP
+# 讓 Nginx 信任這個來源 IP/hostname
 ```
 
 
@@ -39,19 +39,27 @@ Context:	http, server, location
 ```
 
 
-### real_ip_recursive 
+### real_ip_recursive
+
+- [nginx real_ip_header and X-Forwarded-For seems wrong](https://serverfault.com/questions/314574/nginx-real-ip-header-and-x-forwarded-for-seems-wrong)
+- [NGinx $proxy_add_x_forwarded_for and real_ip_header](https://stackoverflow.com/questions/29279084/nginx-proxy-add-x-forwarded-for-and-real-ip-header/47575872#47575872)
 
 ```conf
 Syntax:	    real_ip_recursive on | off;
 Default:	real_ip_recursive off;
 Context:	http, server, location
 
-# - off: 把 Request Header 最後一個 IP,                      設為 read_ip
-# - on:  把 Request Header 最後一個非 set_real_ip_from 的 IP, 設為 read_ip
+# - off: 將 real_ip_header 指定的 Request Header 最後一個 IP,      視為 client IP
+# - on:  將 real_ip_header 指定的 Request Header 最後一個非信任 IP, 視為 client IP
 ```
+
+> If recursive search is disabled, the original client address that matches one of the trusted addresses is replaced by the last address sent in the request header field defined by the real_ip_header directive.
+
+> If recursive search is enabled, the original client address that matches one of the trusted addresses is replaced by the last non-trusted address sent in the request header field.
 
 
 # Embedded Variables
 
 - $realip_remote_addr : keeps the original client address
+    - Since nginx v1.9.7+, 上一層的來訪 IP
 - $realip_remote_port : keeps the original client port

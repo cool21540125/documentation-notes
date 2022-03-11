@@ -364,7 +364,7 @@ $ git branch -u origin/master foo
 ```bash
 ###
 $# git cat-file -p XXX
-# XXX 可為 `commit` or `Tag` or `branch`
+# XX 可為 `commit` or `Tag` or `branch`
 ```
 
 ## Git tag

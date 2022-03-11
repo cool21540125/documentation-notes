@@ -87,7 +87,7 @@ $# ansible nginx -m ansible.builtin.service -a "name=nginx state=reloaded"
 ```
 
 
-## Example -  未整理
+## Example - 未整理
 
 ```sh
 ### 列出 ansible tower 可使用的 Host Groups

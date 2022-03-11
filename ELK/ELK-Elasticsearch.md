@@ -112,7 +112,7 @@ curl -X POST "localhost:9200/data2/_doc/_bulk?pretty" -H 'Content-Type: applicat
 
 > curl -XGET http://<HOST>:<PORT>/_cat/XXX?YYY
 
-XXX         | Description
+XX         | Description
 ----------- | ---------------
 health      | Cluster 狀態
 indices     | Index 狀態

@@ -435,6 +435,9 @@ dotnet --version
 ```bash
 yum install -y epel-release
 yum install -y ansible
+
+ansible --version
+# ansible 2.9.27
 ```
 
 

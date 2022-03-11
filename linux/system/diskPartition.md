@@ -250,7 +250,7 @@ Disk Flags:
 ```
 
 
-## 2. 使用 gdisk/fdisk 來做 磁碟分割 (整會更新系統的 分割表, 還不會動到磁碟)
+## 2. 使用 gdisk/fdisk 來做 磁碟分割 (這會更新系統的 分割表, 還不會動到磁碟)
 
 - MBR 分割表 : 使用 `fdisk`
 - GPT 分割表 : 使用 `gdisk` 或 `parted`

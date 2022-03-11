@@ -5,7 +5,7 @@
 > Docker 從 [v17.09](https://docs.docker.com/v17.09/engine/userguide/networking/) -> [v17.12](https://docs.docker.com/v17.12/network/#network-drivers), 把 Networking 的部分幾乎是作了翻盤式的修改(我也不清楚啦! 但說明文件看起來變很多就是了XD), 而 17.12 -> 18.03, 應該是差不多吧@@? 先暫時把他們當成一樣了.
 
 ```sh
-$ docker --version
+$# docker --version
 Docker version 18.03.0-ce, build 0520e24
 ```
 
@@ -45,8 +45,16 @@ Docker version 18.03.0-ce, build 0520e24
 
 > Note: `Class B 的私有IP位址區間 : 172.16.0.1 ~ 172.31.255.254`
 
+```bash
+$# docker network create \
+    --driver bridge \
+    --subnet 192.168.101.0/24 \
+    --gateway 192.168.101.1 \
+    net_ng
+```
+
 ```sh
-$ ip a
+$# ip a
 docker0: <NO-CARRIER,BROADCAST,MULTICAST,UP> mtu 1500 qdisc noqueue state DOWN
     link/ether 02:42:8d:79:3e:79 brd ff:ff:ff:ff:ff:ff
     inet 172.17.0.1/16 brd 172.17.255.255 scope global docker0
@@ -58,7 +66,7 @@ docker0: <NO-CARRIER,BROADCAST,MULTICAST,UP> mtu 1500 qdisc noqueue state DOWN
 ```sh
 # 查看「bridge 網卡」的資訊
 # docker network inspect <NetworkName>
-$ docker network inspect bridge
+$# docker network inspect bridge
 [
     {
         "Name": "bridge",
@@ -170,14 +178,14 @@ $ docker create --name my-nginx --network my-net --publish 8080:80 nginx:latest
     `default bridge` containers 則只能 `ping ip`
 
 ```sh
-$ docker network create --driver bridge alpine-net
+$# docker network create --driver bridge alpine-net
 # 或
-$ docker network creae -d bridge alpine-net
+$# docker network creae -d bridge alpine-net
 # 或
-$ docker network creae alpine-net
+$# docker network creae alpine-net
 
 
-$ docker network inspect alpine-net
+$# docker network inspect alpine-net
 [
     {
         "Name": "alpine-net",   # 建立 User-defined network
@@ -210,16 +218,16 @@ $ docker network inspect alpine-net
 ]
 
 # 使用 alpine image 建立 4 個 Container, 並指定 network driver
-$ docker run -dit --name alpine1 --network alpine-net alpine ash    # alpine1 指定 alpine-net 網卡
-$ docker run -dit --name alpine2 --network alpine-net alpine ash    # alpine2 指定 alpine-net 網卡
-$ docker run -dit --name alpine3 alpine ash                         # alpine2 不指定網卡 (預設採用 bridge)
-$ docker run -dit --name alpine4 --network alpine-net alpine ash    # alpine4 指定 alpine-net 網卡
-$ docker network connect bridge alpine4                             # alpine4 額外附加 bridge 網卡
+$# docker run -dit --name alpine1 --network alpine-net alpine ash    # alpine1 指定 alpine-net 網卡
+$# docker run -dit --name alpine2 --network alpine-net alpine ash    # alpine2 指定 alpine-net 網卡
+$# docker run -dit --name alpine3 alpine ash                         # alpine2 不指定網卡 (預設採用 bridge)
+$# docker run -dit --name alpine4 --network alpine-net alpine ash    # alpine4 指定 alpine-net 網卡
+$# docker network connect bridge alpine4                             # alpine4 額外附加 bridge 網卡
 # 使用 ash (而非 bash) 來作為執行的程式
 # 使用 alpine image 建立 Containers
 # 預設上, 都會附加 bridge network
 
-$ docker container ls
+$# docker container ls
 CONTAINER ID    IMAGE     COMMAND    CREATED    STATUS    PORTS    NAMES
 e5f58da319fa    alpine    "ash"      (pass)     (pass)    alpine4           # 172.18.0.4/16     172.17.0.3/16
 5e8bbe5278ac    alpine    "ash"      (pass)     (pass)    alpine3           #                   172.17.0.2/16
@@ -266,19 +274,19 @@ e5f58da319fa    alpine    "ash"      (pass)     (pass)    alpine4           # 17
 
 ```sh
 # 建立自定義的 overlay network, 名為 my-overlay...
-$ docker network create -d overlay my-overlay
+$# docker network create -d overlay my-overlay
 Error response from daemon: This node is not a swam manager. Use "docker swarm init" or "docker swarm join" to connect this node to swarm and try again.
 # 因為還沒起始 swarm, 不給建立><"
 
 # 初始化 swarm~
-$ docker swarm init
+$# docker swarm init
 Swarm initialized: current node (4l40jr...) is now a manager.
 To add a worker to this swarm, run the following command:
     docker swarm join --token SWMTKN-1-15oo(略).... 192.168.65.3:2377 # <- 2377 port, 供 cluster溝通
 To add a manager to this swarm, run 'docker swarm join-token manager' and follow the instructions.
 
 # 多了 2 個 network
-$ docker network ls
+$# docker network ls
 NETWORK ID      NAME               DRIVER     SCOPE
 572ead22f29c    bridge             bridge     local
 a3bab954f849    host               host       local
@@ -289,7 +297,7 @@ yohqm0mkfipy    ingress            overlay    swarm     # swarm 建立的
 
 ```sh
 # 建立 「讓本地 swarm services or standalone container 可與 "other Docker daemons' standalone containers" 溝通的 Network」
-$ docker network create -d overlay --attachable <Network Name>
+$# docker network create -d overlay --attachable <Network Name>
 # 白話文: standalone container 只能連接到 「attachable 的 overlay network」 (( 應該吧!? ))
 ```
 
@@ -338,7 +346,7 @@ Flag value                    | Description
 
 ```sh
 # prerequest
-$ docker swarm init
+$# docker swarm init
 # 自動建立 2個 network
 # NAME              DRIVER    SCOPE
 # docker_gwbridge   bridge    local
@@ -356,7 +364,7 @@ $ docker swarm init
 - `host driver` 直接與 `Docker Host` 做連結(自動 mapping 所有 ports)
 
 ```sh
-$ docker network ls
+$# docker network ls
 NETWORK ID      NAME      DRIVER    SCOPE
 572ead22f29c    bridge    bridge    local
 a3bab954f849    host      host      local   # 此次的主角~~
@@ -365,7 +373,7 @@ faa4e0b64151    none      null      local
 ## 範例 (只能在 Docker for Linux 執行)
 
 ```sh
-$ docker run --rm -d --network host --name my_nginx nginx
+$# docker run --rm -d --network host --name my_nginx nginx
 # --rm : stop Container 後, 一併刪除 Container
 # -d : 背景執行
 # 使用 名為 "host" 的 network driver
@@ -375,19 +383,19 @@ $ docker run --rm -d --network host --name my_nginx nginx
 # 有網頁了~~「http://localhost:80/」  
 
 # 使用預設的 host network driver, 所以不會建立新的網卡
-$ ip addr show
+$# ip addr show
 
 # 檢查 80 port 上有什麼服務
-$ sudo netstat -tulnp | grep :80
+$# sudo netstat -tulnp | grep :80
 Proto  Recv-Q  Send-Q  Local Address  Foreign Address  State   PID/Program name
 tcp         0       0  0.0.0.0:80     0.0.0.0:*        LISTEN  23988/nginx: master
 # 因為在建立 nginx docker image時, 已經在 Dockerfile 定義好了「EXPOSR 80」
 
 # firewall 開放 port 80 port
-$ sudo firewall-cmd --zone=public --add-port=80/tcp
+$# sudo firewall-cmd --zone=public --add-port=80/tcp
 
 # firewall 關閉 port
-$ firewall-cmd --zone=public --remove-port=80/tcp
+$# firewall-cmd --zone=public --remove-port=80/tcp
 
 # 別台電腦, 也可藉由 ip, 用瀏覽器看 80 port了~~
 ```
@@ -404,11 +412,11 @@ $ firewall-cmd --zone=public --remove-port=80/tcp
 關閉 Docker Container Network, Container內, 將不再有 `eth0` 這個 network
 
 ```sh
-$ docker run --rm -dit --network none --name no-net-alpine alpine:latest ash
+$# docker run --rm -dit --network none --name no-net-alpine alpine:latest ash
 
-$ docker attach no-net-alpine
+$# docker attach no-net-alpine
 
-$ ifconfig  # 只有 lo 而已
+$# ifconfig  # 只有 lo 而已
 lo        Link encap:Local Loopback
           inet addr:127.0.0.1  Mask:255.0.0.0
           UP LOOPBACK RUNNING  MTU:65536  Metric:1
@@ -419,7 +427,7 @@ lo        Link encap:Local Loopback
 
 # <Ctrl+p> + <Ctrl+q> 離開
 
-$ docker exec no-net-alpine ip link show
+$# docker exec no-net-alpine ip link show
 1: lo: <LOOPBACK,UP,LOWER_UP> mtu 65536 qdisc noqueue state UNKNOWN qlen 1
     link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
 2: tunl0@NONE: <NOARP> mtu 1480 qdisc noop state DOWN qlen 1
@@ -427,7 +435,7 @@ $ docker exec no-net-alpine ip link show
 3: ip6tnl0@NONE: <NOARP> mtu 1452 qdisc noop state DOWN qlen 1
     link/tunnel6 00:00:00:00:00:00:00:00:00:00:00:00:00:00:00:00 brd 00:00:00:00:00:00:00:00:00:00:00:00:00:00:00:00
 
-$ docker exec no-net-alpine ip route
+$# docker exec no-net-alpine ip route
 # 沒有回傳值~~ 因為沒有網路, routing table 是空der
 ```
 
@@ -437,14 +445,14 @@ $ docker exec no-net-alpine ip route
 
 ```sh
 # 查看有哪些 Net working space
-$ ip netns list
+$# ip netns list
 
-$ sudo ip netns add blue
+$# sudo ip netns add blue
 
-$ ip netns list
+$# ip netns list
 blue
 
-$ sudo ip netns delete blue
+$# sudo ip netns delete blue
 
 # 查看接口
 $# ip netns exec blue ip a
@@ -463,7 +471,7 @@ $# ip netns exec blue ip link
 ```
 
 ```sh
-$ brctl show
+$# brctl show
 bridge name     bridge id               STP enabled     interfaces
 docker0         8000.02423eebdec1       no
 virbr0          8000.52540048e681       yes             virbr0-nic
