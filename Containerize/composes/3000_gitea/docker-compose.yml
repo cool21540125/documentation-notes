@@ -2,52 +2,52 @@ version: "3.8"
 
 services:
   gitea:
-    image: gitea/gitea:1.14.2
+    image: gitea/gitea:1.16.3
     container_name: gitea
+    hostname: gitea
     restart: always
     environment:
-      - USER_UID=${USER_UID}
-      - USER_GID=${USER_GID}
-      - GITEA__server__DOMAIN=${GITEA__server__DOMAIN}
-      - GITEA__server__SSH_DOMAIN=${GITEA__server__SSH_DOMAIN}
-      - GITEA__server__ROOT_URL=${GITEA__server__ROOT_URL}
-      - GITEA__database__DB_TYPE=mysql
-      - GITEA__database__HOST=gitea_db:3306
-      - GITEA__database__NAME=${DB_NAME}
-      - GITEA__database__USER=${DB_USER}
-      - GITEA__database__PASSWD=${DB_PASSWD}
-      - GITEA__service__REQUIRE_SIGNIN_VIEW=true
-      - GITEA__log__LEVEL=${LOG_LEVEL}
+      - "GITEA__database__DB_TYPE=mysql"
+      - "GITEA__database__HOST=gitea_db:3306"
+      - "GITEA__database__NAME=${DB_NAME}"
+      - "GITEA__database__USER=${DB_USER}"
+      - "GITEA__database__PASSWD=${DB_PASSWD}"
+      #- "USER_UID=992"  # ssh Container passthrough
+      #- "USER_GID=988"  # ssh Container passthrough
     networks:
-      net_gitea:
+      app_gitea_net:
+        ipv4_address: 172.30.0.3
     volumes:
       - "./data_gitea:/data"
-      - "/home/git/.ssh/:/data/git/.ssh"
       - "/etc/localtime:/etc/localtime:ro"
-      - "./app.ini:/data/gitea/conf/app.ini"
+      - "/home/git/.ssh/:/data/git/.ssh"
     ports:
-      - "127.0.0.1:3080:3000"
-      - "127.0.0.1:3222:22"
+      - "127.0.0.1:6000:3000"
+      - "127.0.0.1:30022:22"
     depends_on:
       - gitea_db
 
-
   gitea_db:
-    image: mysql:5.7
+    image: mysql:5.7.37
     container_name: gitea_mysql
-    hostname: gitea_db
+    hostname: gitea_mysql
     restart: always
     environment:
-      - MYSQL_ROOT_PASSWORD=${DB_ROOT_PASSWORD}
-      - MYSQL_DATABASE=${DB_NAME}
-      - MYSQL_USER=${DB_USER}
-      - MYSQL_PASSWORD=${DB_PASSWD}
+      - "MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}"
+      - "MYSQL_DATABASE=${DB_NAME}"
+      - "MYSQL_USER=${DB_USER}"
+      - "MYSQL_PASSWORD=${DB_PASSWD}"
     networks:
-      net_gitea:
+      app_gitea_net:
+        ipv4_address: 172.30.0.2
     volumes:
-      - "./data_gitea_db:/var/lib/mysql"
+      - "./db_gitea:/var/lib/mysql"
       - "/etc/localtime:/etc/localtime:ro"
 
 networks:
-  net_gitea:
-    name: net_gitea
+  app_gitea_net:
+    name: app_gitea_net
+    ipam:
+      config:
+        - subnet: 172.30.0.0/16
+    #external: true  # 如果要一直 up and down, 最好設定這個, 避免 networking 一直異動

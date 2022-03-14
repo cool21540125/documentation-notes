@@ -1,0 +1,35 @@
+version: "3.8"
+
+services:
+  drone-runner-docker:
+    image: drone/drone-runner-docker:1.8.0
+    container_name: runner
+    restart: always
+    environment:
+      DRONE_RPC_PROTO: http
+      DRONE_RPC_HOST: ${DRONE_RPC_HOST}
+      DRONE_RPC_SECRET: ${DRONE_RPC_SECRET}
+      DRONE_RUNNER_CAPACITY: 3
+      DRONE_RUNNER_NETWORKS: app_drone_net
+      DRONE_DEBUG: 1
+      DRONE_TRACE: 1
+      DRONE_RPC_DUMP_HTTP: 1
+      DRONE_RPC_DUMP_HTTP_BODY: 1
+      DRONE_UI_USERNAME: ${DRONE_UI_USERNAME}
+      DRONE_UI_PASSWORD: ${DRONE_UI_PASSWORD}
+      DRONE_RUNNER_NAME: ${DRONE_RUNNER_NAME}
+    volumes:
+      - "/etc/localtime:/etc/localtime:ro"
+      - "/var/run/docker.sock:/var/run/docker.sock"
+    ports:
+      - "3000:3000"
+    networks:
+      app_drone_net:
+        ipv4_address: 192.168.200.2
+
+networks:
+  app_drone_net:
+    name: app_drone_net
+    ipam:
+      config:
+        - subnet: 192.168.200.0/24

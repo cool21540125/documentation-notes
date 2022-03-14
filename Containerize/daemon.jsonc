@@ -10,5 +10,7 @@
     "data-root": "/data/docker",
     "features": {
         "buildkit": true
-    }
+    },
+    // 解除 container 與 docker daemon 的耦合
+    "live-restore": true,
 }

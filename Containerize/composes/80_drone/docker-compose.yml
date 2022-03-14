@@ -1,0 +1,33 @@
+version: "3.8"
+
+services:
+  drone:
+    image: drone/drone:2.10.0
+    container_name: drone
+    restart: always
+    ports:
+      - "19080:80"
+    networks:
+      app_gitea_net:
+    volumes:
+      - "./:/data"
+      - "/etc/localtime:/etc/localtime:ro"
+      - "/var/run/docker.sock:/var/run/docker.sock"
+    logging:
+      options:
+        max-size: "200k"
+        max-file: "5"
+    environment:
+      DRONE_RPC_SECRET: ${DRONE_RPC_SECRET}
+      DRONE_SERVER_HOST: ${DRONE_SERVER_HOST}
+      DRONE_SERVER_PROTO: http
+      DRONE_LOGS_COLOR: 1
+      DRONE_LOGS_PRETTY: 1
+      DRONE_GITEA_SERVER: ${DRONE_GITEA_SERVER}
+      DRONE_GITEA_CLIENT_ID: ${DRONE_GITEA_CLIENT_ID}
+      DRONE_GITEA_CLIENT_SECRET: ${DRONE_GITEA_CLIENT_SECRET}
+      DRONE_USER_CREATE: username:tony,admin:true
+
+networks:
+  app_gitea_net:
+    external: true
