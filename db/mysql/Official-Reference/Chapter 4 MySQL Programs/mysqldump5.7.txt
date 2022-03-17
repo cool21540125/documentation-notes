@@ -152,8 +152,8 @@ The following options may be given as the first argument:
   --master-data[=#]  This causes the binary log position and filename to be      ## --master-data=1 : 方便還原後直接成為 slave (會有 CHANGE MASTER TO ...)
                       appended to the output. If equal to 1, will print it as a   ## --master-data=2 : 在輸出的 dump, 將 source 的 file & position 註解掉
                       CHANGE MASTER command; if equal to 2, that command will
-                      be prefixed with a comment symbol. This option will turn    ## 若有啟用, 則會自動啟用 --lock-all-tables
-                      --lock-all-tables on, unless --single-transaction is        ## 若有啟用 --single-transaction
+                      be prefixed with a comment symbol. This option will turn    ## 除非有指定 --single-transaction, 否則隱含自動啟用 --lock-all-tables
+                      --lock-all-tables on, unless --single-transaction is 
                       specified too (in which case a global read lock is only
                       taken a short time at the beginning of the dump; don''t
                       forget to read about --single-transaction below). In all
@@ -209,8 +209,8 @@ The following options may be given as the first argument:
                       @@GLOBAL.GTID_PURGED' is added to the output. If GTIDs
                       are disabled, AUTO does nothing. If no value is supplied
                       then the default (AUTO) value will be considered.
-  --single-transaction                                                          ## 在 dump 期間, 進行 BEGIN transition 操作
-                      Creates a consistent snapshot by dumping all tables in a
+  --single-transaction                                                          ## 若有使用 single-transaction, 表示在 dump 期間不會去 lock table
+                      Creates a consistent snapshot by dumping all tables in a  ## 反過來說, 如果沒帶, 則會 lock table -> dump 期間, 其他使用者可 select, 但無法變動資料
                       single transaction. Works ONLY for tables stored in
                       storage engines which support multiversioning (currently
                       only InnoDB does); the dump is NOT guaranteed to be
