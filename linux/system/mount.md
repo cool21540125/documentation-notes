@@ -200,7 +200,9 @@ UUID=e6...(pass)...7e   /boot   xfs     defaults    0     0
 ```bash
 ### 先查看 Disk 的 Block Size
 $# fdisk -l
-# 底下的 dd 的 count 及 bs, 再依據此來劃分, 以優化讀寫效能
+# 假設 「Units = sectors of 1 * 512 = 512 bytes」
+# 則 底下 dd 的 bs, 盡可能為 512 的倍數, 以優化讀寫效能
+# (會造成一定程度的浪費, 不過可盡量降低磁碟的搜尋成本)
 
 ### 配置 4 GB 的 swap
 $# dd if=/dev/zero of=/swapfile count=2097152 bs=4KiB
