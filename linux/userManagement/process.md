@@ -22,6 +22,10 @@ ex: 使用者登入後, 取得的就是個 bash 這個工作環境, 這也是個
 
 上面所說的 **bash 的背景**(會隨著 Terminal 關掉而結束(因為是他們的 PPID 阿)), 如果要把工作丟到 **系統背景**, 可使用 `nohup`
 
+如果要讓 **bash 背景** -> **系統背景**, 參考 `disown`
+
+- https://gist.github.com/zaius/782263
+
 系統背景, 就像是 `crontab` 與 `at`
 
 除了 `nohup` 以外, 也可參考 `screen` 的使用方式
