@@ -71,3 +71,7 @@
   - Pod 內的 Containers 共享資源 && 網路, 理解成一個家庭提供單一服務, 但家庭成員之間共享家庭內的一切.
 - Cluster
   - k8s 架構下的所有 Workers && Masters
+- inner-loop
+    - code, build, run, test
+- outer-loop
+    - push change, CI build, CI test, deployment

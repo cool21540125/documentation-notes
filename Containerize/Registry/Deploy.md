@@ -5,6 +5,15 @@
 - [Deploy a registry server](https://docs.docker.com/registry/deploying/)
 
 
+```bash
+docker run -d \
+    -p 5000:5000 \
+    --restart=always \
+    --name registry \
+    registry:2.7.1
+```
+
+
 # Build
 
 Nginx 負責 ssl, proxy, loggin, set-header
@@ -29,6 +38,7 @@ curl -X GET ${HOST}/v2/_catalog -H "Authorization: Basic ${Base64_Creds}"
 # 要看到上面這樣
 ```
 
+
 ## 變數
 
 - REGISTRY_HTTP_ADDR: 預設開在 5000, 但可用此指定開在其他 port
@@ -37,6 +47,7 @@ curl -X GET ${HOST}/v2/_catalog -H "Authorization: Basic ${Base64_Creds}"
 - REGISTRY_AUTH: 認證方式, 使用 htpasswd 吧
 - REGISTRY_AUTH_HTPASSWD_REALM: 認證頁面看到的提示訊息
 - REGISTRY_AUTH_HTPASSWD_PATH: htpasswd 位置
+
 
 # Usage
 
@@ -59,6 +70,7 @@ $# curl -X GET https://${MyRegistryHost}/v2/_catalog -H "Authorization: Basic ${
 
 
 # 其他備註
+
 
 ## Docker Registry 1 與 2
 
@@ -87,7 +99,6 @@ Docker Distribution 專案, 實作了 Docker Registry 2.0 的規範, 與 1.0 版
 
 > 預設的 docker registry 為 Docker Hub(非 Docker Cloud), 但只要在其中一個地方註冊的話, 兩邊的身份是互通的. 
 > 此外, 可以把 Docker Cloud 想像成是更強大的 Docker Hub, 提供了更完善的自動化服務(至於是啥我不知道), 也可在裡頭做 Docker 的 CI/CD.
-
 
 ```py
 import hashlib
