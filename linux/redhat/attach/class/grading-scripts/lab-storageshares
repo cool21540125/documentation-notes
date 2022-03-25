@@ -1,0 +1,780 @@
+#!/bin/bash
+#
+# Copyright 2014 Red Hat, Inc.
+#
+# NAME
+#     lab-storageshares - setup/grading script for RH254/RH299 NFS/SMB lab
+#
+# SYNOPSIS
+#     lab-storageshares {setup|grade}
+#
+#     This script works on both desktopX and serverX.
+#
+# DESCRIPTION
+#     This script is the setup/grading script for a RH254 NFS/SMB
+#     storage lab.
+#
+# CHANGELOG
+#   * Mon Jun 16 2014 George Hacker <ghacker@redhat.com>
+#   - fixed a bug that caused check_cifs_multiuser_mount to always fail
+#   * Tue Jun  3 2014 Rudy Kastl <rkastl@redhat.com>
+#   - original code
+
+# Initialize and set some variables
+MYHOST=""
+CMD=""
+RUN_AS_ROOT=true
+
+SERV_PKG="sssd krb5-workstation"
+CLNT_PKG="sssd krb5-workstation"
+SERV_ERR="Error running script. Did you reset the server before running this script? \
+Contact your instructor if you continue to see this message."
+CLNT_ERR="Error running script. Did you reset the desktop before running this script? \
+Contact your instructor if you continue to see this message."
+
+# Source library of functions
+source /usr/local/bin/labtool.shlib
+trap on_exit EXIT
+LOG_TAG=$(basename $0)
+
+# Additional functions for this shell script
+function srv_exit {
+  # call debug with msg and exit with code
+  DEBUG=true
+  debug "$1"
+  exit $2
+}
+
+function install_pkgs {
+  # install the package that provides the service
+  echo "Installing packages ..."
+  yum -y install $@ &> /dev/null || \
+    srv_exit "yum failed: $?" 150
+}
+
+function update_authconfig {
+  # update the authconfig for ldap & krb5
+  echo "Updating authconfig for ldap & krb5 ..."
+  authconfig \
+    --enableldap \
+    --enableldaptls \
+    --ldapserver=ldaps://classroom.example.com \
+    --ldapbasedn=dc=example,dc=com \
+    --ldaploadcacert=http://classroom.example.com/pub/example-ca.crt \
+    --enablekrb5 \
+    --krb5realm=EXAMPLE.COM \
+    --krb5kdc=classroom.example.com \
+    --krb5adminserver=classroom.example.com \
+    --enablesssd \
+    --enablesssdauth \
+    --enablemkhomedir \
+    --update &> /dev/null || \
+    srv_exit "authconfig failed: $?" 151
+}
+
+# Grading scripts server
+function check_enabled_nfs_server {
+  echo -n "Checking nfs-server service is enabled... "
+  if systemctl is-enabled nfs-server &> /dev/null
+  then
+    print_PASS
+  else
+    print_FAIL
+    echo "Service nfs-server is not enabled."
+    return 1
+  fi
+}
+
+function check_isactive_nfs_server {
+  echo -n "Checking nfs-server service is started... "
+  if systemctl is-active nfs-server &> /dev/null
+  then
+    print_PASS
+  else
+    print_FAIL
+    echo "Service nfs-server is not started."
+    return 1
+  fi
+}
+
+function check_nfs_share_dir_exists {
+  echo -n "Checking /datashare directory exists... "
+  if [ -d /datashare ]
+  then
+    print_PASS
+  else
+    print_FAIL
+    echo "The /datashare directory does not exist."
+    return 1
+  fi
+}
+
+function check_nfs_export {
+  echo -n "Checking for correct /etc/exports file... "
+  if ! grep '/datashare' /etc/exports &>/dev/null
+  then
+    print_FAIL
+    echo "The /datashare entry in /etc/exports does not exist."
+    return 1
+  elif ! (grep '/datashare' /etc/exports |grep 'desktop') &>/dev/null
+    then
+      print_FAIL
+      echo "The /datashare entry in /etc/exports does not export to the desktopX system."
+      return 1
+  elif ! (grep '/datashare' /etc/exports |grep 'rw') &>/dev/null
+    then
+      print_FAIL
+      echo "The /datashare entry in /etc/exports does not export with read-write permission."
+      return 1
+  else
+    print_PASS
+  fi
+}
+
+function check_exportfs {
+  echo -n "Checking if the server knows about the exported directory... "
+  if exportfs -v |grep '/datashare' &>/dev/null
+  then
+    print_PASS
+  else
+    print_FAIL
+    echo "Did you forget to run: exportfs -r?"
+    return 1
+  fi
+}
+
+#function check_firewalld {
+#  echo -n "Checking for correct firewall settings..."
+#}
+
+function check_server_keytab {
+  echo -n "Checking correct krb5.keytab exists... "
+  if ! klist -k /etc/krb5.keytab 2> /dev/null | grep -q nfs/server${X}\.example\.com &> /dev/null; then
+    print_FAIL
+    echo "Correct keytab not found."
+    return 1
+  else
+    print_PASS
+  fi
+}
+
+function check_nfs_secure_labelexport {
+  echo -n "Checking for correct RPCNFSDARGS... "
+  if grep 'RPCNFSDARGS="-V.*4.2"' /etc/sysconfig/nfs &>/dev/null
+  then
+    print_PASS
+  else
+    print_FAIL
+    echo "NFS Version 4.2 has not been enabled on the server."
+    return 1
+  fi
+}
+
+function check_enabled_nfs_secure_server {
+  echo -n "Checking nfs-server service is enabled... "
+  if systemctl is-enabled nfs-secure-server &> /dev/null
+  then
+    print_PASS
+  else
+    print_FAIL
+    echo "Service nfs-secure-server is not enabled."
+    return 1
+  fi
+}
+
+function check_isactive_nfs_secure_server {
+  echo -n "Checking nfs-secure-server service is started... "
+  if systemctl is-active nfs-secure-server &> /dev/null
+  then
+    print_PASS
+  else
+    print_FAIL
+    echo "Service nfs-secure-server is not started."
+    return 1
+  fi
+}
+
+function check_nfs_secure_share_dir_exists {
+  echo -n "Checking /krbnfs directory exists... "
+  if [ -d /krbnfs ]
+  then
+    print_PASS
+  else
+    print_FAIL
+    echo "The /krbnfs directory does not exist."
+    return 1
+  fi
+}
+
+function check_nfs_secure_export {
+  echo -n "Checking for correct /etc/exports file... "
+  if ! grep '/krbnfs' /etc/exports &>/dev/null
+  then
+    print_FAIL
+    echo "The /krbnfs entry in /etc/exports does not exist."
+    return 1
+  elif ! (grep '/krbnfs' /etc/exports |grep 'desktop') &>/dev/null
+    then
+      print_FAIL
+      echo "The /krbnfs entry in /etc/exports does not export to the desktopX system."
+      return 1
+  elif ! (grep '/krbnfs' /etc/exports |grep 'rw'|grep 'sec=krb5p') &>/dev/null
+    then
+      print_FAIL
+      echo "The /krbnfs entry in /etc/exports does not export with read-write permission and krb5p security."
+      return 1
+  else
+    print_PASS
+  fi
+}
+
+function check_secure_exportfs {
+  echo -n "Checking if the server knows about the exported directory... "
+  if exportfs -v |grep '/krbnfs' &>/dev/null
+  then
+    print_PASS
+  else
+    print_FAIL
+    echo "Did you forget to run: exportfs -r?"
+    return 1
+  fi
+}
+
+function check_nfs_mountpoint {
+  echo -n "Checking /mnt/dataspace directory exists..."
+  if [ -d /mnt/dataspace ]
+  then
+    print_PASS
+  else
+    print_FAIL
+    echo "The /mnt/dataspace directory does not exist."
+    return 1
+  fi
+}
+
+function check_nfs_fstab {
+  echo -n "Checking for correct /etc/fstab entry..."
+  if ! (grep 'server.*:/datashare.*/mnt/dataspace.*nfs.*' /etc/fstab) &>/dev/null
+  then
+    print_FAIL
+    echo "The /etc/fstab entry is not present or not correct."
+    return 1
+  else
+    print_PASS
+  fi
+}
+
+function check_nfs_mounted {
+  echo -n "Checking for mounted nfs share ..."
+  if ! (mount |grep 'server.*:/datashare.*/mnt/dataspace.*nfs4') &>/dev/null
+  then
+    print_FAIL
+    echo "The nfs share is not mounted."
+    return 1
+  else
+    print_PASS
+  fi
+}
+
+function check_nfsmount_writeable {
+  echo -n "Checking if nfs mount is writeable for everyone ..."
+  rm -f /mnt/dataspace/mytestfile123321.txt &>/dev/null
+  if ! touch /mnt/dataspace/mytestfile123321.txt &>/dev/null
+  then
+    print_FAIL
+    echo "The nfs share is not writable by everyone."
+    return 1
+  else
+    print_PASS
+  fi
+}
+
+function check_desktop_keytab {
+  echo -n "Checking correct krb5.keytab exists... "
+  if ! klist -k /etc/krb5.keytab 2> /dev/null | grep -q nfs/desktop${X}\.example\.com &> /dev/null; then
+    print_FAIL
+    echo "Correct keytab not found."
+    return 1
+  else
+    print_PASS
+  fi
+}
+
+function check_enabled_nfs_secure {
+  echo -n "Checking nfs-secure service is enabled... "
+  if systemctl is-enabled nfs-secure &> /dev/null
+  then
+    print_PASS
+  else
+    print_FAIL
+    echo "Service nfs-secure is not enabled."
+    return 1
+  fi
+}
+
+function check_isactive_nfs_secure {
+  echo -n "Checking nfs-secure service is started... "
+  if systemctl is-active nfs-secure &> /dev/null
+  then
+    print_PASS
+  else
+    print_FAIL
+    echo "Service nfs-secure is not started."
+    return 1
+  fi
+}
+
+function check_nfs_secure_mountpoint {
+  echo -n "Checking /mnt/securespace directory exists..."
+  if [ -d /mnt/securespace ]
+  then
+    print_PASS
+  else
+    print_FAIL
+    echo "The /mnt/securespace directory does not exist."
+    return 1
+  fi
+}
+
+function check_nfs_secure_fstab {
+  echo -n "Checking for correct /etc/fstab entry for the secure export..."
+  if ! (grep 'server.*:/krbnfs.*/mnt/securespace.*nfs.*' /etc/fstab |grep 'sec=krb5p' |grep '4.2') &>/dev/null
+  then
+    print_FAIL
+    echo "The /etc/fstab entry is not present or not correct for the secure nfs share."
+    return 1
+  else
+    print_PASS
+  fi
+}
+
+function check_nfs_secure_mounted {
+  echo -n "Checking for mounted nfs share ..."
+  if ! (mount |grep 'server.*:/krbnfs.*/mnt/securespace.*nfs4') &>/dev/null
+  then
+    print_FAIL
+    echo "The nfs share is not mounted."
+    return 1
+  else
+    print_PASS
+  fi
+}
+
+### Grading scripts samba
+function check_samba_installed {
+  echo -n "Checking for samba rpm package... "
+  if rpm -q samba &>/dev/null
+  then
+    print_PASS
+  else
+    print_FAIL
+    echo "The samba rpm is not installed... "
+  fi
+}
+
+function check_enabled_smb {
+  echo -n "Checking smb service is enabled... "
+  if systemctl is-enabled smb &> /dev/null
+  then
+    print_PASS
+  else
+    print_FAIL
+    echo "Service smb is not enabled."
+    return 1
+  fi
+}
+
+function check_isactive_smb {
+  echo -n "Checking smb service is started... "
+  if systemctl is-active smb &> /dev/null
+  then
+    print_PASS
+  else
+    print_FAIL
+    echo "Service smb is not started."
+    return 1
+  fi
+}
+
+function check_smb_config {
+  echo -n "Checking for correct /etc/samba/smb.conf file... "
+  if ! grep '.*workgroup.*=.*salesdep.*' /etc/samba/smb.conf &>/dev/null
+  then
+    print_FAIL
+    echo "The workgroup entry in /etc/samba/smb.conf is not correct."
+    return 1
+  elif ! (grep '.*security.*=.*user.*' /etc/samba/smb.conf) &>/dev/null
+    then
+      print_FAIL
+      echo "The security  entry in /etc/samba/smb.conf is not correct."
+      return 1
+  elif ! (grep '\[smbspace\]' /etc/samba/smb.conf) &>/dev/null
+    then
+      print_FAIL
+      echo "The [smbspace] section does not exist in /etc/samba/smb.conf."
+      return 1
+  elif ! (grep '.*write.*list.*=.*@sales' /etc/samba/smb.conf) &>/dev/null && ! (grep '.*write.*list.*=.*+sales' /etc/samba/smb.conf) &>/dev/null
+    then
+      print_FAIL
+      echo "The write list entry is not correct in /etc/samba/smb.conf."
+      return 1
+  else
+    print_PASS
+  fi
+}
+
+function check_smb_share_dir_exists {
+  echo -n "Checking /sambaspace directory exists... "
+  if [ -d /sambaspace ]
+  then
+    print_PASS
+  else
+    print_FAIL
+    echo "The /sambaspace directory does not exist."
+    return 1
+  fi
+}
+
+function check_smb_share_selinux_context {
+  echo -n "Checking /sambaspace selinux context... "
+  if (ls -Zd /sambaspace | grep samba_share_t) &>/dev/null
+  then
+    print_PASS
+  else
+    print_FAIL
+    echo "The selinux context of /sambaspace is not correct."
+    return 1
+  fi
+}
+
+function check_smb_system_user_groupmember {
+  echo -n "Checking for system user frank... "
+  if ! grep frank /etc/passwd &>/dev/null
+  then
+    print_FAIL
+    echo "User frank does not exist."
+    return 1
+  elif ! (id frank |grep sales) &>/dev/null
+  then
+    print_FAIL
+    echo "User frank is not a member of the sales group."
+    return 1
+  elif ! (grep frank /etc/passwd | grep '/sbin/nologin') &>/dev/null
+  then
+    print_FAIL
+    echo "User frank is not a samba only user."
+    return 1
+  else
+    print_PASS
+  fi
+}
+
+function check_smb_system_user {
+  echo -n "Checking for system user martin... "
+  if ! grep martin /etc/passwd &>/dev/null
+  then
+    print_FAIL
+    echo "User martin does not exist."
+    return 1
+  elif ! (grep martin /etc/passwd | grep '/sbin/nologin') &>/dev/null
+  then
+    print_FAIL
+    echo "User martin is not a samba only user."
+    return 1
+  else
+    print_PASS
+  fi
+}
+
+function check_smb_user_groupmember {
+  echo -n "Checking for samba user frank... "
+  if grep frank /var/lib/samba/private/passdb.tdb &>/dev/null
+  then
+    print_PASS
+  else
+    print_FAIL
+    echo "User frank does not exist in Samba."
+    return 1
+  fi
+}
+
+function check_smb_user {
+  echo -n "Checking for samba user martin... "
+  if grep martin /var/lib/samba/private/passdb.tdb &>/dev/null
+  then
+    print_PASS
+  else
+    print_FAIL
+    echo "User martin does not exist in Samba."
+    return 1
+  fi
+}
+
+
+#function check_firewalld {
+#  echo -n "Checking for correct firewall settings..."
+#}
+
+
+
+# grading scripts desktop
+function check_cifs_utils_installed {
+  echo -n "Checking for cifs-utils rpm package... "
+  if rpm -q cifs-utils &>/dev/null
+  then
+    print_PASS
+  else
+    print_FAIL
+    echo "The rpm package cifs-utils is not installed."
+    return 1
+  fi
+}
+
+function check_cifs_multiuser_mountpoint {
+  echo -n "Checking for /mnt/salesshare mountpoint... "
+  if [ -d /mnt/salesshare ]
+  then
+    print_PASS
+  else
+    print_FAIL
+    echo "The directory /mnt/salesshare does not exist."
+    return 1
+  fi
+}
+
+function check_cifs_multiuser_fstab {
+  echo -n "Checking for multiuser fstab entry... "
+  if ! grep '//server.*/smbspace.*/mnt/salesshare.*cifs.*' /etc/fstab &>/dev/null
+  then
+    print_FAIL
+    echo "There is no fstab entry for the smb share //serverX/sambaspace."
+    return 1
+  elif ! (grep '//server.*/smbspace.*/mnt/salesshare.*cifs.*' /etc/fstab |grep credentials) &>/dev/null
+  then
+    print_FAIL
+    echo "No credentials directive present in the fstab entry for //serverX/sambaspace."
+    return 1
+  elif ! (grep '//server.*/smbspace.*/mnt/salesshare.*cifs.*' /etc/fstab |grep multiuser) &>/dev/null
+  then
+    print_FAIL
+    echo "The fstab entry for //serverX/smbspace is missing the multiuser mount option."
+    return 1
+  else
+    print_PASS
+  fi
+}
+
+function check_cifs_multiuser_mount {
+  echo -n "Checking for multiuser mount... "
+  if ! (mount | grep "//server${X}/smbspace.*/mnt/salesshare.*cifs.*") &>/dev/null
+  then
+    print_FAIL
+    echo "The //serverX/smbspace share is not mounted on /mnt/salesshare"
+    return 1
+  else
+    print_PASS
+  fi
+}
+
+function check_cifs_system_user_groupmember {
+  echo -n "Checking for system user frank... "
+  if ! grep frank /etc/passwd &>/dev/null
+  then
+    print_FAIL
+    echo "User frank does not exist."
+    return 1
+  else
+    print_PASS
+  fi
+}
+
+function check_cifs_system_user {
+  echo -n "Checking for system user martin... "
+  if ! grep martin /etc/passwd &>/dev/null
+  then
+    print_FAIL
+    echo "User martin does not exist."
+    return 1
+  else
+    print_PASS
+  fi
+}
+
+function check_cifs_user_perm {
+  echo -n "Checking for user permissions on /mnt/salesshare... "
+  rm -f /mnt/salesshare/grade-frank.txt &>/dev/null
+  if ! (su - frank -c 'echo 'grade' >/mnt/salesshare/grade-frank.txt') &>/dev/null
+  then
+    print_FAIL
+    echo "User frank is not allowed to write to /mnt/salesshare. Are the permission correct for /sambaspace on server? Did you add the correct credentials with cifscreds?"
+    return 1
+  elif ! (su - martin -c 'grep grade /mnt/salesshare/grade-frank.txt') &>/dev/null
+  then
+    print_FAIL
+    echo "User martin is not allowed to read a file created by user frank. Did you set the SGID bit on /sambaspace on serverX? Did you add the correct credentials with cifscreds?"
+    return 1
+  else
+    print_PASS
+  fi
+}
+
+
+
+function print_usage {
+echo "This script controls the setup and grading of this lab."
+echo "Usage: $(basename $0) COMMAND"
+echo "       $(basename $0) -h|--help"
+echo "COMMAND is one of:"
+echo "    setup - perform any setup steps for this lab on this machine"
+echo "    grade - perform any grading steps and report on this machine"
+
+}
+
+function lab_setup {
+    VMNAME=$1
+    case $VMNAME in
+        desktop)
+            ERROR_MESSAGE="$CLNT_ERR"
+            install_pkgs $CLNT_PKG
+            update_authconfig
+            print_SUCCESS
+            ;;
+        server)
+            ERROR_MESSAGE="$SERV_ERR"
+            install_pkgs $SERV_PKG
+            update_authconfig
+            print_SUCCESS
+            ;;
+        *)
+            # Should never get here, but what the hey....
+            print_FAIL && echo "Please run the lab-storageshares script on both the desktop and server"
+            ;;
+    esac
+}
+
+function lab_grade {
+    VMNAME=$1
+    case $VMNAME in
+        desktop)
+            FAIL=0
+#            echo "Grading exercise IP-based NFS..."
+#            check_nfs_mountpoint || FAIL=1
+#            check_nfs_fstab || FAIL=1
+#            check_nfs_mounted || FAIL=1
+#            check_nfsmount_writeable || FAIL=1
+            echo "Grading exercise Kerberos NFS..."
+            check_desktop_keytab || FAIL=1
+            check_isactive_nfs_secure || FAIL=1
+            check_enabled_nfs_secure || FAIL=1
+            check_nfs_secure_mountpoint || FAIL=1
+            check_nfs_secure_fstab || FAIL=1
+            check_nfs_secure_mounted || FAIL=1
+            echo "Grading exercise Samba..."
+            check_cifs_utils_installed || FAIL=1
+            check_cifs_multiuser_mountpoint || FAIL=1
+            check_cifs_multiuser_fstab || FAIL=1
+            check_cifs_multiuser_mount || FAIL=1
+#            check_cifs_system_user_groupmember || FAIL=1
+#            check_cifs_system_user || FAIL=1
+#            check_cifs_user_perm || FAIL=1
+            echo
+            echo -n "Overall result: "
+            if [ ${FAIL} -eq 0 ]; then
+              print_PASS
+              echo "Congratulations! You've passed all requirements."
+            else
+              print_FAIL
+              echo "Please check your work and try again."
+            fi
+            ;;
+        server)
+            FAIL=0
+#            echo "Grading exercise IP-based NFS..."
+#            check_isactive_nfs_server || FAIL=1
+#            check_enabled_nfs_server || FAIL=1
+#            check_nfs_share_dir_exists || FAIL=1
+#            check_nfs_export || FAIL=1
+#            check_exportfs || FAIL=1
+            echo "Grading exercise Kerberos NFS..."
+            check_server_keytab || FAIL=1
+            check_nfs_secure_labelexport || FAIL=1
+            check_isactive_nfs_secure_server || FAIL=1
+            check_enabled_nfs_secure_server || FAIL=1
+            check_nfs_secure_share_dir_exists || FAIL=1
+            check_nfs_secure_export || FAIL=1
+            check_secure_exportfs || FAIL=1
+            echo "Grading exercise Samba..."
+            check_samba_installed || FAIL=1
+            check_isactive_smb || FAIL=1
+            check_enabled_smb || FAIL=1
+            check_smb_config || FAIL=1
+            check_smb_share_dir_exists || FAIL=1
+            check_smb_share_selinux_context || FAIL=1
+            check_smb_system_user_groupmember || FAIL=1
+            check_smb_user_groupmember || FAIL=1
+            check_smb_system_user || FAIL=1
+            check_smb_user || FAIL=1
+            echo
+            echo -n "Overall result: "
+            if [ ${FAIL} -eq 0 ]; then
+              print_PASS
+              echo "Congratulations! You've passed all requirements."
+            else
+              print_FAIL
+              echo "Please check your work and try again."
+            fi
+            ;;
+        *)
+            # Should never get here, but what the hey....
+            print_FAIL && echo "Something went wrong. Ask your instructor for assistance."
+            ;;
+    esac
+}
+
+# Main area
+
+# Check if to be run as root (must do this first)
+if [[ "${RUN_AS_ROOT}" == 'true' ]] && [[ "${EUID}" -gt "0" ]] ; then
+  if [[ -x /usr/bin/sudo ]] ; then
+    ${SUDO:-sudo} $0 "$@"
+    exit
+  else
+    # Fail out if not running as root
+    check_root
+  fi
+fi
+
+# Process command line
+# Parse input
+case $1 in
+    setup|grade)
+        CMD=$1
+        ;;
+    -h|--help)
+        print_usage
+        exit 0
+        ;;
+    *)
+        echo Bad option $1
+        print_usage
+        exit 1
+        ;;
+esac
+# Validation
+[ -z "$CMD" ] && debug "Missing command" && print_usage && exit 1
+
+# Get local system information
+get_X
+
+# Branch based on short (without number) hostname
+case $MYHOST in
+    desktop|server)
+        lab_$CMD $MYHOST
+        ;;
+    *)
+        debug "Bad or missing hostname - $MYHOST"
+        debug "This command needs to be run on desktop or server"
+        exit 3
+        ;;
+esac
+

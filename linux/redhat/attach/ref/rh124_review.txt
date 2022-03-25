@@ -1,0 +1,83 @@
+    1  head -12 /usr/bin/clean-binary-files > /home/student/headtail.txt
+    2  tail -9 /usr/bin/clean-binary-files >> /home/student/headtail.txt
+    4  su - student
+	Add files
+	exit
+
+    5  vim /etc/login.defs
+    6  groupadd -g 30000 instructors
+    7  user1=gorwell
+    8  useradd -G 30000 $user1 ; echo firstpw | passwd --stdin $user1
+    9  tail -1 /etc/shadow
+   10  chage -E 17613 -M 10 -d 0 $user1
+   11  user1=rbradbury
+   12  useradd -G 30000 $user1 ; echo firstpw | passwd --stdin $user1
+   13  chage -E 17613 -d 0 $user1
+   14  user1=dadams
+   15  useradd -G 30000 $user1 ; echo firstpw | passwd --stdin $user1
+   16  chage -E 17613 -d 0 $user1
+
+   17  mkdir /home/instructors
+   18  chgrp 30000 /home/instructors
+   19  chmod 2775 /home/instructors
+
+   20  ps au --sort=-%cpu
+   21  kill 1654
+   22  systemctl stop cups
+   23  systemctl stop cups.path
+   24  systemctl stop cups.socket
+   25  systemctl disable cups
+
+   27  su - student
+	ssh-keygen
+	ssh-copy-id
+	exit
+
+   28  vim /etc/ssh/sshd_config 
+   29  systemctl restart sshd
+
+   30  tzselect
+   31  timedatectl set-timezone 'America/Nassau'
+
+   32  echo 'journalctl --since 9:05:00 --until 9:15:00' > /home/student/systemdreview.txt
+   33  echo 'authpriv.alert /var/log/auth-errors' > /etc/rsyslog.d/auth-errors.conf
+   34  systemctl restart rsyslog.service 
+
+   35  nmcli connection show
+   36  nmcli connection add con-name review ifname eth0 type ethernet ip4 172.25.30.11/24 gw4 172.25.30.254
+   37  nmcli connection modify review ipv4.dns 172.25.254.254 +ipv4.addresses 10.0.30.1/24
+   38  nmcli connection modify "System eth0" connection.autoconnect no
+   39  nmcli con up review
+   40  nmcli con show
+   43  vim /etc/hosts
+   44  hostnamectl set-hostname server0.example.com
+   45  lab sa1-review grade
+
+   46  chmod 2774 /home/instructors/
+   47  lab sa1-review grade
+
+   73  mkdir /configbackup
+   74  rsync -a /etc /configbackup
+   75  tar czf configuration-backup-server.tar.gz /configbackup/
+   76  mkdir /tmp/configcompare
+   77  tar xf configuration-backup-server.tar.gz -C /tmp/configcompare
+
+   80  su - student
+	ssh student@desktopX 'hostname > /tmp/scpfiles.txt'
+	scp student@destkopX:/tmp/scpfiles.txt /home/student
+	exit
+
+   81  vim /etc/yum.repos.d/localupdates.repo
+   82  yum -y install kernel xsane-gimp rht-system
+   83  yum -y remove wvdial
+
+   84  du /usr/share/fonts > /home/student/dureport.txt
+
+   85  blkid
+   86  mkdir /mnt/datadump
+   87  mount UUID="985d2a5d-3973-4f66-9a0e-e3fe3611b013" /mnt/datadump
+
+   88  ln -s /mnt/datadump/ /root/mydataspace
+
+   90  echo 'find / -type l -name "*data*"' > /home/student/find.txt
+   91  lab sa1-review grade

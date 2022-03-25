@@ -1,0 +1,109 @@
+#!/bin/bash
+#
+# Copyright 2014 Red Hat, Inc.
+#
+# NAME
+#     lab - wrapper for RHCE lab grading scripts
+#
+# SYNOPSIS
+#     lab {-h|--help}
+#     lab PROBLEM {setup|grade}
+#
+# DESCRIPTION
+#     This script is a wrapper for the RHCE lab setup/grading scripts.
+#     If they aren't found locally, it downloads the helper functions
+#     provided by labtool.shlib and the grading script, lab-PROBLEM,
+#     from the content.example.com server. After 
+#
+# CHANGELOG
+#   * Wed May 21 2014 George Hacker <ghacker@redhat.com>
+#   - added copyright notice and added PATH definition
+#   * Thu Apr 24 2014 George Hacker <ghacker@redhat.com>
+#   - disabled sanity-checking code & sudo for grading
+#   * Sun Apr 20 2014 George Hacker <ghacker@redhat.com>
+#   - original code
+
+PATH=/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/bin:/usr/local/sbin
+
+problem_name="$1"
+problem_script="lab-$1"
+setup_grade="$2"
+
+function_lib=labtool.shlib
+content=content.example.com
+
+# Get RHT_* variable definitions
+[[ -f /etc/rht ]] && source /etc/rht
+
+# Additional functions for this shell script
+function panic {
+  error_code=$1 ; shift
+  echo "Error: $@" 1>&2
+  echo 'Please contact your instructor.' 1>&2
+  exit ${error_code}
+}
+
+function print_usage {
+  cat 1>&2 <<EOF
+This script controls the setup and grading of labs.
+
+Usage: lab $1 COMMAND
+       lab $1 {-h|--help}
+
+COMMAND is one of:
+    setup - perform any setup steps for this lab on this machine
+    grade - perform any grading steps and report on this machine
+EOF
+}
+
+# Main area
+
+# This program will not function if RHT_COURSE has not been defined
+[[ -z "${RHT_COURSE}" ]] && panic 1 'RHT_COURSE not set!'
+
+# If not root, use sudo to give necessary privileges (when needed)
+[[ $(id -u) -ne 0 ]] && sudo=sudo
+
+cd /usr/local/bin
+url_prefix=http://${content}/courses/${RHT_COURSE}/${RHT_VMTREE%/*}/grading-scripts
+# If functions are not found locally, download them
+if [[ ! -f ${function_lib} ]] ; then
+  if ! ${sudo} curl -s -f -O ${url_prefix}/${function_lib} ; then
+    panic 2 'unable to download grading functions!'
+  fi
+fi
+
+# If grading script is not found locally, download it
+if [[ ! -f ${problem_script} ]] ; then
+  if ${sudo} curl -s -f -O ${url_prefix}/${problem_script} ; then
+    ${sudo} chmod 755 /usr/local/bin/${problem_script}
+  else
+    echo "Error: unknown problem specified and not found, ${problem_name}" 1>&2
+    print_usage PROBLEM
+    exit 2
+  fi
+fi
+cd - &> /dev/null
+
+# Source library of functions
+source /usr/local/bin/${function_lib}
+
+## Process command line
+#case "${setup_grade}" in
+#  setup|grade)
+#    ;;
+#  -h|--help)
+#    print_usage "${problem_name}"
+#    exit 0
+#    ;;
+#  *)
+#    echo "Bad option ${setup_grade}" 1>&2
+#    print_usage PROBLEM
+#    exit 1
+#    ;;
+#esac
+
+# Validation
+[[ -z "${setup_grade}" ]] && debug 'Missing command' && print_usage "${problem_name}" && exit 1
+
+"${problem_script}" "${setup_grade}"

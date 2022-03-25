@@ -1,0 +1,158 @@
+#!/bin/bash
+#
+# Copyright 2014 Red Hat, Inc.
+#
+# NAME
+#     lab-services - grading script for RH124/RH299 services lab
+#
+# SYNOPSIS
+#     lab-services grade
+#
+# DESCRIPTION
+#     This script is the lab grading script for the RH124 services lab.
+#     It should only be executed on serverX.example.com.
+#
+# CHANGELOG
+#   * Tue Feb  4 2014 Susan Lauber <slauber@redhat.com>
+#   - original code
+
+# Initialize and set some variables
+MYHOST=""
+CMD=""
+DEBUG='true'
+RUN_AS_ROOT='true'
+
+# Source library of functions
+source /usr/local/bin/labtool.shlib
+trap on_exit EXIT
+
+# Additional functions for this shell script
+function print_usage {
+  local problem_name=$(basename $0 | sed -e 's/^lab-//')
+  cat << EOF
+This script controls the setup and grading of this lab.
+Usage: lab ${problem_name} COMMAND
+       lab ${problem_name} -h|--help
+COMMAND is one of:
+    setup - perform any setup steps for this lab on this machine
+EOF
+#   grade - perform any grading steps and report on this machine
+}
+
+function grade_services {
+  echo -n "* Checking psacct service is enabled."
+
+  if systemctl is-enabled psacct.service &> /dev/null
+  then
+    print_PASS
+  else
+    print_FAIL
+    echo "psacct service is not enabled."
+  fi
+
+  echo -n "* Checking psacct service is running."
+
+  if systemctl is-active psacct.service &> /dev/null
+  then
+    print_PASS
+  else
+    print_FAIL
+    echo "psacct service is not running."
+  fi
+
+  echo -n "* Checking rsyslog service is disabled."
+
+  if systemctl is-enabled rsyslog.service &> /dev/null
+  then
+    print_FAIL
+    echo "rsyslog service is enabled."
+  else
+    print_PASS
+  fi
+
+  echo -n "* Checking rsyslog service is not running."
+
+  if systemctl is-active rsyslog.service &> /dev/null
+  then
+    print_FAIL
+    echo "rsyslog service is running."
+  else
+    print_PASS
+  fi
+}
+
+function lab_setup {
+  VMNAME=$1
+  case $VMNAME in
+    desktop|server)
+      echo "No setup required."
+      ;;
+    *)
+      # Should never get here, but what the hey....
+      print_FAIL && echo "The setup script needs to be run on server"
+      ;;
+  esac
+}
+
+function lab_grade {
+  VMNAME=$1
+  case $VMNAME in
+    desktop)
+      print_FAIL && echo "The grade script needs to be run on server"
+      ;;
+    server)
+      grade_services
+      ;;
+    *)
+      # Should never get here, but what the hey....
+      print_FAIL && echo "The grade script needs to be run on server"
+      ;;
+  esac
+}
+
+# Main area
+
+# Check if to be run as root (must do this first)
+if [[ "${RUN_AS_ROOT}" == 'true' ]] && [[ "${EUID}" -gt "0" ]] ; then
+  if [[ -x /usr/bin/sudo ]] ; then
+    ${SUDO:-sudo} $0 "$@"
+    exit
+  else
+    # Fail out if not running as root
+    check_root
+  fi
+fi
+
+# Process command line
+# Parse input
+case $1 in
+  setup|grade)
+    CMD=$1
+    ;;
+  -h|--help)
+    print_usage
+    exit 0
+    ;;
+  *)
+    echo Bad option $1
+    print_usage
+    exit 1
+    ;;
+esac
+# Validation
+[ -z "$CMD" ] && debug "Missing command" && print_usage && exit 1
+
+# Get local system information
+get_X
+
+# Branch based on short (without number) hostname
+case $MYHOST in
+  desktop|server)
+    lab_$CMD $MYHOST
+    ;;
+  *)
+    debug "Bad or missing hostname - $MYHOST"
+    debug "This command needs to be run on desktop or server"
+    exit 3
+    ;;
+esac

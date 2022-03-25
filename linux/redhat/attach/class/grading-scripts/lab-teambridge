@@ -1,0 +1,349 @@
+#!/bin/bash
+#
+# Copyright 2014 Red Hat, Inc.
+#
+# NAME
+#     lab-teambridge - grading script for RH254/RH299 link aggregation labs
+#
+# SYNOPSIS
+#     lab-teambridge {setup|solve|grade}
+#
+#     This script only works on server.
+#
+# DESCRIPTION
+#     This script performs the grading steps for the link aggregation
+#     practice exercises and lab for RH254/RH299.
+#
+#     When it grades, it looks for a teamed interface with a specific
+#     name, checks to see if it has the correct port interfaces, then
+#     makes sure it is using the correct teaming mode. This script also
+#     looks for a bridge with a specific name that is based upon the
+#     teamed interface. It also confirms that the IPv4 network settings
+#     are correct.
+#
+# CHANGELOG
+#   * Tue Jul  8 2014 George Hacker <ghacker@redhat.com>
+#   - converted from bonded to teamed interface
+#   * Thu Jun  3 2014 George Hacker <ghacker@redhat.com>
+#   - added systemd unit by Wander and error checking for setup function
+#   * Thu May 29 2014 George Hacker <ghacker@redhat.com>
+#   - added setup content provided by Steve Bonneville
+#   * Wed May 28 2014 George Hacker <ghacker@redhat.com>
+#   - original code
+
+PATH=/usr/bin:/bin:/usr/sbin:/sbin
+
+# Initialize and set some variables
+MYHOST=''
+CMD=''
+DEBUG='true'
+RUN_AS_ROOT='true'
+
+team_name='team0'
+team_port1='eno1'
+team_port2='eno2'
+team_runner='activebackup'
+
+bridge_name="br${team_name}"
+bridge_IP_regex="192.168.0.100/24"
+gateway_IP=192.168.0.254/24
+
+team_config_file=/etc/sysconfig/network-scripts/ifcfg-${team_name}
+port1_config_file=/etc/sysconfig/network-scripts/ifcfg-${team_name}-port1
+port2_config_file=/etc/sysconfig/network-scripts/ifcfg-${team_name}-port2
+bridge_config_file=/etc/sysconfig/network-scripts/ifcfg-${bridge_name}
+
+# Source library of functions
+source /usr/local/bin/labtool.shlib
+#trap on_exit EXIT
+
+# Additional functions for this shell script
+function print_usage {
+  local problem_name=$(basename $0 | sed -e 's/^lab-//')
+  cat << EOF
+Usage: lab ${problem_name} COMMAND
+       lab ${problem_name} -h|--help
+COMMAND is one of:
+    grade - perform any grading steps and report on this machine
+    setup - perform any setup steps for this lab on this machine
+EOF
+}
+
+function lab_setup {
+  VMNAME=$1
+  case $VMNAME in
+    server)
+      echo -n 'Setting up for link aggregation lab ... '
+      if ip link | grep -q "${team_port1}"; then
+        print_FAIL
+	echo 'Warning: virtual network devices already exist.'
+	exit 1
+      else
+	# Steve Bonneville <sbonnevi@redhat.com>
+	#
+	# This script will appear to create two network
+	# interfaces, eno1 and eno2, which are connected
+	# to an "invisible" bridge hidden in a network
+	# namespace.  Also hidden in that namespace is a
+	# "host" on 192.168.0.254 that won't respond to
+	# pings unless eno1 or eno2 are configured with 
+	# an address on the 192.168.0.0/24 network!
+	#
+	# To reset this script to normal, from the default
+	# namespace just run "ip netns del hidden" and it'll
+	# clean everything up!
+	#
+	# To inspect the hidden namespace from inside, start
+	# a subshell with "ip netns exec hidden bash" and then
+	# run normal networking commands.  You can get back to
+	# the default namespace by exiting the subshell.  
+	#   "ip netns exec bash" is to network interfaces
+	#      what
+	#   "chroot"             is to file systems
+	#
+	# Documentation in ip-netns(8).
+	#
+	cat > /usr/local/sbin/teambridge << EOF
+#!/bin/bash
+# Pardon the dirty SELinux hack, didn't feel like writing a policy
+# module just for this.
+
+OLDENFORCE=\$(getenforce)
+setenforce 0
+
+# create namespace
+ip netns add hidden
+
+# Activate ::1 inside namespace
+ip netns exec hidden ip link set dev lo up
+
+# Add bridge inside "hidden" namespace and turn on
+ip netns exec hidden brctl addbr hiddenbr0
+ip netns exec hidden ip link set dev hiddenbr0 up
+
+# Add virtual patch cables to bridge
+# the eno1/eno2 ends are student-visible
+ip link add ${team_port1} type veth peer name ${team_port1}-port
+ip link add ${team_port2} type veth peer name ${team_port2}-port
+ip link set ${team_port1}-port netns hidden up
+ip link set ${team_port2}-port netns hidden up
+ip netns exec hidden brctl addif hiddenbr0 ${team_port1}-port
+ip netns exec hidden brctl addif hiddenbr0 ${team_port2}-port
+
+# Attach virtual patch cable to bridge inside namespace
+# and assign its far side address as 192.168.0.254/24.
+ip netns exec hidden ip link add inside0 type veth peer name inside0-port
+ip netns exec hidden brctl addif hiddenbr0 inside0-port
+ip netns exec hidden ip link set inside0-port up
+ip netns exec hidden ip link set inside0 up
+ip netns exec hidden ip addr add ${gateway_IP} dev inside0 
+
+setenforce \${OLDENFORCE}
+EOF
+	chmod +x /usr/local/sbin/teambridge
+	cat > /etc/systemd/system/hiddenbridge.service << EOF
+[Unit]
+Description=Create two virtual network interfaces for Red Hat Enterprise Linux System Administration III training (RH254)
+Before=NetworkManager.service
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/sbin/teambridge
+RemainAfterExit=yes
+ExecStopPost=ip netns del hidden
+
+[Install]
+WantedBy=network.target
+EOF
+	systemctl daemon-reload
+	systemctl enable hiddenbridge.service &> /dev/null
+	systemctl start hiddenbridge.service
+	print_SUCCESS
+      fi
+      ;;
+    desktop )
+      print_FAIL && echo "The setup script needs to be run on server"
+      ;;
+    *)
+      # Should never get here, but what the hey....
+      print_FAIL && echo "The setup script needs to be run on server"
+      ;;
+  esac
+}
+
+function lab_solve {
+  VMNAME=$1
+  case $VMNAME in
+    server)
+      if ip link | grep -q "${team_name}"; then
+        print_FAIL
+	echo 'Warning: teamed network interface already exists.'
+	exit 1
+      else
+	# If the port interfaces don't exist, run the setup function
+	if ! ip link | grep -q "${team_port1}"; then
+	  lab_setup $MYHOST
+	fi
+
+	echo -n 'Creating the team interface ........... '
+	nmcli con add type team con-name ${team_name} ifname ${team_name} \
+	      config '{"runner": {"name": "activebackup"}}' &> /dev/null
+	print_SUCCESS
+
+	echo -n 'Creating the port interfaces .......... '
+	nmcli con add type team-slave con-name ${team_name}-port1 \
+	      ifname ${team_port1} master ${team_name} &> /dev/null
+	nmcli con add type team-slave con-name ${team_name}-port2 \
+	      ifname ${team_port2} master ${team_name} &> /dev/null
+	print_SUCCESS
+
+	echo -n 'Disabling the team interface .......... '
+	nmcli dev dis ${team_name} &> /dev/null
+	print_SUCCESS
+
+	echo -n 'Disabling NetworkManager .............. '
+	(
+	systemctl stop NetworkManager
+	systemctl disable NetworkManager
+	) &> /dev/null
+	print_SUCCESS
+
+	echo -n 'Creating bridge configuration file .... '
+	cat > ${bridge_config_file} << EOF
+DEVICE=${bridge_name}
+ONBOOT=yes
+TYPE=Bridge
+IPADDR0=${bridge_IP_regex%/*}
+PREFIX0=${bridge_IP_regex#*/}
+EOF
+	print_SUCCESS
+
+	echo -n 'Removing IP configuration from ports .. '
+	for config in ${port1_config_file} ${port2_config_file}; do
+	  sed -i -n -e '/NAME/,$p' ${config}
+	done
+	print_SUCCESS
+
+	echo -n 'Attaching team interface to bridge .... '
+	echo "BRIDGE=${bridge_name}" >> ${team_config_file}
+	print_SUCCESS
+
+	echo -n 'Restarting the network ................ '
+	systemctl restart network
+	print_SUCCESS
+      fi
+      ;;
+    desktop )
+      print_FAIL && echo "The solve script needs to be run on server"
+      ;;
+    *)
+      # Should never get here, but what the hey....
+      print_FAIL && echo "The solve script needs to be run on server"
+      ;;
+  esac
+}
+
+function lab_grade {
+  VMNAME=$1
+  case $VMNAME in
+    desktop)
+      print_FAIL && echo "The grade script needs to be run on server"
+      ;;
+    server)
+      # perform the teamed interface checks
+      echo -n 'Confirming teamed inferface exists .... '
+      if team_info=$(teamdctl ${team_name} state); then
+	print_PASS
+	# check port interfaces
+	echo -n 'It uses specified port interfaces ..... '
+	if teamdctl ${team_name} port present "${team_port1}" &> /dev/null &&
+	   teamdctl ${team_name} port present "${team_port2}" &> /dev/null; then
+	  print_PASS
+	else
+	  print_FAIL
+	fi
+	# check teaming runner
+	echo -n 'Correct team runner implemented ....... '
+	if echo "${team_info}" | grep -q "runner:.*${team_runner}"; then
+	  print_PASS
+	else
+	  print_FAIL
+	fi
+      else
+	print_FAIL
+      fi
+      # perform the bridge checks
+      echo -n 'Confirming bridge exists .............. '
+      if brctl show | grep -q "^${bridge_name}"; then
+	print_PASS
+	echo -n 'Bridge uses team interface ............ '
+	# bridge uses the team interface? 
+	if brctl show "${bridge_name}" | grep -q "${team_name}$"; then
+	  print_PASS
+	else
+	  print_FAIL
+	fi
+	# bridge network settings correct?
+	echo -n 'Bridge network settings correct ....... '
+	if ip addr show dev "${bridge_name}" | grep -q "${bridge_IP_regex}"; then
+	  print_PASS
+	else
+	  print_FAIL
+	fi
+      else
+	print_FAIL
+      fi
+      ;;
+    *)
+      # Should never get here, but what the hey....
+      print_FAIL && echo "The grade script needs to be run on server"
+      ;;
+  esac
+}
+
+# Main area
+
+# Check if to be run as root (must do this first)
+if [[ "${RUN_AS_ROOT}" == 'true' && "${EUID}" -gt "0" ]] ; then
+  if [[ -x /usr/bin/sudo ]] ; then
+    ${SUDO:-sudo} $0 "$@"
+    exit
+  else
+    # Fail out if not running as root
+    check_root
+  fi
+fi
+
+# Process command line
+# Parse input
+case $1 in
+  setup|solve|grade)
+    CMD=$1
+    ;;
+  -h|--help)
+    print_usage
+    exit 0
+    ;;
+  *)
+    echo Bad option $1
+    print_usage
+    exit 1
+    ;;
+esac
+# Validation
+[[ -z "$CMD" ]] && debug "Missing command" && print_usage && exit 2
+
+# Get local system information
+get_X
+
+# Branch based on short (without number) hostname
+case $MYHOST in
+  desktop|server)
+    lab_$CMD $MYHOST
+    ;;
+  *)
+    debug "Bad or missing hostname - $MYHOST"
+    debug "This command needs to be run on desktop or server"
+    exit 3
+    ;;
+esac

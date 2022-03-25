@@ -1,0 +1,139 @@
+#!/bin/bash
+#
+# Copyright 2014 Red Hat, Inc.
+#
+# NAME
+#     lab-firewall - grading script for RH134/RH199/RH299 firewall lab
+#
+# SYNOPSIS
+#     lab-firewall {setup|grade}
+#
+#     The setup function only works on serverX.example.com.
+#     The grade function only works on desktopX.example.com.
+#
+# DESCRIPTION
+#     This is the lab grading script for the RH134/RH199 firewall lab.
+#
+# CHANGELOG
+#   * Thu Jun 12 2014 Wander Boessenkool <wboessen@redhat.com>
+#   - original code
+
+# Initialize and set some variables
+MYHOST=""
+CMD=""
+DEBUG='true'
+RUN_AS_ROOT='true'
+LOG_TAG=lab-firewall
+TESTMESSAGE="Now 20% cooler"
+
+# Source library of functions
+source /usr/local/bin/labtool.shlib
+trap on_exit EXIT
+
+# Additional functions for this shell script
+function print_usage {
+  local problem_name=$(basename $0 | sed -e 's/^lab-//')
+  cat << EOF
+This script controls the setup and grading of this lab.
+Usage: lab ${problem_name} COMMAND
+       lab ${problem_name} -h|--help
+COMMAND is one of:
+    setup - perform any setup steps for this lab on this machine
+    grade - perform any grading steps and report on this machine
+EOF
+}
+
+function lab_setup {
+    VMNAME=$1
+    case $VMNAME in
+        desktop)
+            print_FAIL && echo "The setup script needs to be run on server"
+            ;;
+        server)
+            echo "Installing packages..."
+            yum -y install httpd &> /dev/null
+            echo "Setting up environment..."
+            echo 'Listen 8080' >> /etc/httpd/conf/httpd.conf
+            echo "${TESTMESSAGE}" > /var/www/html/index.html
+            echo "Starting services..."
+            systemctl enable httpd &> /dev/null
+            systemctl start httpd &> /dev/null
+            ;;
+        *)
+            # Should never get here, but what the hey....
+            print_FAIL && echo "The setup script needs to be run on server"
+            ;;
+    esac
+
+}
+
+function lab_grade {
+    VMNAME=$1
+    case $VMNAME in
+        desktop)
+            echo -n "Testing for closed ports... "
+            curl http://${SERVERX} &> /dev/null && print_FAIL || print_PASS
+            echo -n "Testing for open ports... "
+            MESSAGE=$(curl http://${SERVERX}:8080 2> /dev/null)
+            if [ "${MESSAGE}" == "${TESTMESSAGE}" ]; then
+              print_PASS
+            else
+              print_FAIL
+            fi
+            ;;
+        server)
+            print_FAIL && echo "The grade script needs to be run on desktop"
+            ;;
+        *)
+            print_FAIL && echo "The grade script needs to be run on desktop"
+            ;;
+    esac
+}
+
+# Main area
+
+# Check if to be run as root (must do this first)
+if [[ "${RUN_AS_ROOT}" == 'true' ]] && [[ "${EUID}" -gt "0" ]] ; then
+  if [[ -x /usr/bin/sudo ]] ; then
+    ${SUDO:-sudo} $0 "$@"
+    exit
+  else
+    # Fail out if not running as root
+    check_root
+  fi
+fi
+
+# Process command line
+# Parse input
+case $1 in
+    setup|grade)
+        CMD=$1
+        ;;
+    -h|--help)
+        print_usage
+        exit 0
+        ;;
+    *)
+        echo Bad option $1
+        print_usage
+        exit 1
+        ;;
+esac
+# Validation
+[ -z "$CMD" ] && debug "Missing command" && print_usage && exit 1
+
+# Get local system information
+get_X
+
+# Branch based on short (without number) hostname
+case $MYHOST in
+    desktop|server)
+        lab_$CMD $MYHOST
+        ;;
+    *)
+        debug "Bad or missing hostname - $MYHOST"
+        debug "This command needs to be run on desktop or server"
+        exit 3
+        ;;
+esac
+

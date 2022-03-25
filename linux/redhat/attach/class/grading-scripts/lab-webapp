@@ -1,0 +1,155 @@
+#!/bin/bash
+#
+# Copyright 2014 Red Hat, Inc.
+#
+# NAME
+#     lab-webapp - setup/grading script for RH254/RH299 Apache lab
+#
+# SYNOPSIS
+#     lab-webapp {setup|grade}
+#
+#     The setup function needs to be run on server
+#     The grade function needs to be run on desktop
+#
+# DESCRIPTION
+#     This script, based on singular argument, either does setup or
+#     grading for the particular lab
+#
+# CHANGELOG
+#   * Mon May 26 2014 Wander Boessenkool <wboessen@redhat.com>
+#   - Initial version
+
+PATH=/usr/bin:/bin:/usr/sbin:/sbin
+
+# Initialize and set some variables
+MYHOST=""
+CMD=""
+DEBUG='true'
+RUN_AS_ROOT='false'
+
+# Source library of functions
+source /usr/local/bin/labtool.shlib
+trap on_exit EXIT
+
+# Additional functions for this shell script
+function print_usage {
+  local problem_name=$(basename $0 | sed -e 's/^lab-//')
+  cat << EOF
+This script controls the setup and grading of this lab.
+Usage: lab ${problem_name} COMMAND
+       lab ${problem_name} -h|--help
+COMMAND is one of:
+    setup - perform any setup steps for this lab on this machine
+    grade - perform any grading steps and report on this machine
+EOF
+}
+
+function write_app.wsgi {
+  echo -n "Creating web application files...  "
+  cat > ~student/webapp.wsgi << 'EOF'
+#!/usr/bin/env python
+import time
+
+def application (environ, start_response):
+  response_body = 'UNIX EPOCH time is now: %s\n' % time.time()
+  status = '200 OK'
+  response_headers = [('Content-Type', 'text/plain'),
+                      ('Content-Length', '1'),
+                      ('Content-Length', str(len(response_body)))]
+  start_response(status, response_headers)
+  return [response_body]
+EOF
+  print_SUCCESS
+}
+
+function grade_webapp {
+  echo -n "Checking for web application...  "
+  if ! curl -k https://webapp${X}.example.com 2> /dev/null | grep -q 'UNIX EPOCH' &> /dev/null; then
+    print_FAIL
+    echo " - Could not connect to https://webapp${X}.example.com,"
+    echo "   or wrong content returned."
+  else
+    print_SUCCESS
+  fi
+}
+
+function lab_setup {
+  VMNAME=$1
+  case $VMNAME in
+    desktop)
+      print_FAIL && echo "The setup script needs to be run on server"
+      ;;
+    server)
+      write_app.wsgi
+      ;;
+    *)
+      # Should never get here, but what the hey....
+      print_FAIL && echo "The setup script needs to be run on desktop"
+      ;;
+  esac
+}
+
+function lab_grade {
+  VMNAME=$1
+  case $VMNAME in
+    desktop)
+      grade_webapp
+      ;;
+    server)
+      # Obviously adjust this to actual commands if script needs
+      # to run on server - and adjust the catchall message with *)
+      print_FAIL && echo "The grade script needs to be run on desktop"
+      ;;
+    *)
+      # Should never get here, but what the hey....
+      print_FAIL && echo "The grade script needs to be run on desktop"
+      ;;
+  esac
+}
+
+# Main area
+
+# Check if to be run as root (must do this first)
+if [[ "${RUN_AS_ROOT}" == 'true' ]] && [[ "${EUID}" -gt "0" ]] ; then
+  if [[ -x /usr/bin/sudo ]] ; then
+    ${SUDO:-sudo} $0 "$@"
+    exit
+  else
+    # Fail out if not running as root
+    check_root
+  fi
+fi
+
+# Process command line
+# Parse input
+case $1 in
+  setup|grade)
+    CMD=$1
+    ;;
+  -h|--help)
+    print_usage
+    exit 0
+    ;;
+  *)
+    echo Bad option $1
+    print_usage
+    exit 1
+    ;;
+esac
+# Validation
+[[ -z "$CMD" ]] && debug "Missing command" && print_usage && exit 1
+
+# Get local system information
+get_X
+
+# Branch based on short (without number) hostname
+case $MYHOST in
+  desktop|server)
+    lab_$CMD $MYHOST
+    ;;
+  *)
+    debug "Bad or missing hostname - $MYHOST"
+    debug "This command needs to be run on desktop or server"
+    exit 3
+    ;;
+esac

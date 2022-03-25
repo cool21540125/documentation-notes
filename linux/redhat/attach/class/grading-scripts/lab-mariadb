@@ -1,0 +1,432 @@
+#!/bin/bash
+#
+# Copyright 2014 Red Hat, Inc.
+#
+# NAME
+#     lab-mariadb - setup/grading script for RH254/RH299 MariaDB lab
+#
+# SYNOPSIS
+#     lab-mariadb {setup|grade}
+#
+#     The setup function works on both desktopX and serverX.
+#     The grade function only works on desktopX.example.com.
+#
+# DESCRIPTION
+#     This script performs the setup and grading for the MariaDB lab
+#     exercise for RH254.
+#
+# CHANGELOG
+#   * Mon Jun  9 2014 Douglas Silva <dsilva@redhat.com>
+#   - original code
+
+# Initialize and set some variables
+MYHOST=""
+CMD=""
+DEBUG='true'
+RUN_AS_ROOT='true'
+
+# Source library of functions
+source /usr/local/bin/labtool.shlib
+trap on_exit EXIT
+
+function pad {
+  PADDING="..............................................................."
+  TITLE=$1
+  printf "%s%s  " "${TITLE}" "${PADDING:${#TITLE}}"
+  echo ""
+}
+
+
+function add_privkey {
+  mkdir -p /home/student/.ssh
+  cat > /home/student/.ssh/gradingkey << EOF
+-----BEGIN RSA PRIVATE KEY-----
+MIIEpAIBAAKCAQEA723EW9fU2uIm5p6urX9bCUTqwHqYrozvXCN6w1+wNDME3ndW
+UVRYIFpmVTlEfSMLkjtqU9ckM2+3XPSkMVoHdUGAxnFz57AaC4Q21Dkjol1W9eF/
+TOt+nyea+EJcXAYzLQce4edlLzCdrWWGFO9QDXOwSoEpxyynNahJTBnjH8WdbTA3
+/mqw+k/HKm4hHiep6w2IIXI7vREIqu6kFDj71UvdsXPmQT2PhR+aEQk5DRTmfxkr
+mzpGLsVL/w51SoVdZMNs7r4W5o0/3VNATFO+Pu3566KW2SaRLBPy7F8pVZpUkKti
+QUkov1GOZM20Ku4bTg1UT2ELuebaOwwdPS7M7wIDAQABAoIBAQDZ9jZUWcZXQJuj
+RH/GR/MLHCcM9E48UOayHUZrx5dz3aIoF8GHpl3XjhQsr0aPGLE2/UnNa0R0YtYt
+FDTJDKlPcEMX5D5cg68iHsl/J0kuTQSWMCMgVh3eK0LjkB3eVHKQIjRV+L3fWMWi
+DZMjSby5kkDBgpYS0K6jpUCcu9BMoWm22p/BWCTkwUUaIBMOlXrQdCJmkyB6hYIc
+81eGJ6e8ItCK/aJhYPkreFhlDedmS3PFms60Cj515NnamFP+Vw12uBINqno1DTrT
+X047Ou0GKS/XM+Q4JRf5zOkFkQwHU2IMvfGUmG9/J83fx2rNHTsn8+x5KsjRItaX
+wioNd8NxAoGBAP89s4WRUDiv1KBiIzhoRK9f6ewO8aC9f7lpqV4k+pINmuTNo+8S
+5LABT6zUXgr3G6lWbpK/9v1ePzY6M39DcqALvBCiW1vhS/2QPWkIRafp3UmLjKH3
+SI8qXjch+7CgREW3H8tj5nMr9wRhsHpBJzez+grW6ZLM4UdDtINSv8V3AoGBAPAk
+B2b/FKIbNjFhFj3aKfqKHSGJujKlFuvo6zapO4e6KftH4CmCUrNO2xroYHKUrjZI
+2Ztjh4z4hJwr1h00fx/kz7rYbhxPc5MhdYVz+sKHypsDdYNpzmNuqBbXdnGAlyzd
+OhYdHB1lW60TMfuwPFSDF8cajxtVNxM/vDTsE/JJAoGAB4c9XUos8I8XGWfrnAVP
+SVDt6F2EePY95y0bpsA2d8pY8Di0hh+riRlwzSsyXuZs9XCsMD3jPhPij2nmDPHj
+Vp8h++eeBDa/9AmmFgv9afd25G1uR3SwujBIuR2Se+IuQVQmZuxaZrk8Pu/WsbRs
+QLNZQ6qVFxRd7KktkNYG+/8CgYBvsiJrSsw7FnMfhqwEuvv5l9Iy7k/YDKfbtOvq
+8c5JtFKgmW7vf7mdw1jwbBOoV/WsNDhbKXE8Jb/wsAcYcHmMyS3CF7cnneEBF3gF
+ScviPa0Eaxh2tnkUEL1IWpGx+4DVklTZQlL4bVO17g66pd9547vklTrpGLrUTjnp
+V8FzWQKBgQCkbXU2SDykzakvNYwmVRCkP+JUzdyk5CP6Ej36sICy9Sqg6vblKjz6
+j04WUlTAcT2AiuLATbQJ3db8TxfcnamZoxp8aUWzuoWxIjfm6oJmQWiCoNWxSWE/
+3ZbDMT2ueesinlq+AGa1Y7sLr3Nn02jyDzG9feUst1CqfoIwzBjqNw==
+-----END RSA PRIVATE KEY-----
+EOF
+  chown -R student:student /home/student/.ssh
+  chmod 0700 /home/student/.ssh
+  chmod 0600 /home/student/.ssh/gradingkey
+}
+
+function add_pubkey {
+  mkdir -p /root/.ssh
+  cat >> /root/.ssh/authorized_keys << EOF
+ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDvbcRb19Ta4ibmnq6tf1sJROrAepiujO9cI3rDX7A0MwTed1ZRVFggWmZVOUR9IwuSO2pT1yQzb7dc9KQxWgd1QYDGcXPnsBoLhDbUOSOiXVb14X9M636fJ5r4QlxcBjMtBx7h52UvMJ2tZYYU71ANc7BKgSnHLKc1qElMGeMfxZ1tMDf+arD6T8cqbiEeJ6nrDYghcju9EQiq7qQUOPvVS92xc+ZBPY+FH5oRCTkNFOZ/GSubOkYuxUv/DnVKhV1kw2zuvhbmjT/dU0BMU74+7fnropbZJpEsE/LsXylVmlSQq2JBSSi/UY5kzbQq7htODVRPYQu55to7DB09Lszv student@desktop0.example.com
+EOF
+  chmod 0700 /root/.ssh
+  chmod 0600 /root/.ssh/authorized_keys
+}
+
+
+# Additional functions for this shell script
+function print_usage {
+  local problem_name=$(basename $0 | sed -e 's/^lab-//')
+  cat << EOF
+This script controls the setup and grading of this lab.
+Usage: lab ${problem_name} COMMAND
+       lab ${problem_name} -h|--help
+COMMAND is one of:
+    setup - perform any setup steps for this lab on this machine
+    grade - perform any grading steps and report on this machine
+EOF
+}
+
+function lab_setup {
+  VMNAME=$1
+  case $VMNAME in
+    desktop)
+      pad "Adding private key"
+      add_privkey
+      # Put in the steps to set up the lab
+      # Change to the example of server) if should only run
+      # there - and adjust the catchall message with *)
+      ;;
+    server)
+      # Obviously adjust this to actual commands if script needs
+      # to run on server - and adjust the catchall message with *)
+      pad "Adding public key"
+      add_pubkey
+      cd /tmp
+      wget http://content.example.com/courses/rhce/rhel7.0/materials/mariadb/mariadb.dump
+      mv /tmp/mariadb.dump /home/student
+      chown student:student /home/student/mariadb.dump
+      echo "Done"
+      ;;
+    *)
+      # Should never get here, but what the hey....
+      print_FAIL && echo "The setup script needs to be run on desktop"
+      ;;
+  esac
+}
+
+function verify_mysql_installed(){
+     VERIFY_LOCAL=$1
+     if [ $VERIFY_LOCAL == true ]; then
+	TEXT=$(rpm -qa | grep mariadb-5.5 2>&1)
+	RESULT=$?
+     	if [ $RESULT == 1 ]; then
+	    print_FAIL && pad "You forgot to install mariadb-client group on your desktop${X}"
+     	
+	else
+		print_PASS
+	fi	
+     else
+	ssh -oBatchMode=yes -oStrictHostKeyChecking=no -i /home/student/.ssh/gradingkey server${X}.example.com "rpm -qa | grep mariadb-5.5" > /dev/null
+	RESULT=$?
+     	if [ $RESULT == 1 ]; then
+	    print_FAIL && pad "You forgot to install mariadb-client group on your server${X}"
+	else
+		print_PASS
+     	fi	
+     fi
+}
+
+function verify_service(){
+	pad "Checking if MariaDB service is enabled"
+	if ssh -oBatchMode=yes -oStrictHostKeyChecking=no -i /home/student/.ssh/gradingkey server${X}.example.com "systemctl is-enabled mariadb.service" &> /dev/null 
+	then
+    		print_PASS
+  	else
+    		print_FAIL && pad "MariaDB service is not enabled."
+  	fi
+
+  	pad "Checking if MariaDB service is running."
+
+  	if ssh -oBatchMode=yes -oStrictHostKeyChecking=no -i /home/student/.ssh/gradingkey server${X}.example.com "systemctl is-active mariadb.service" &> /dev/null
+  	then
+	    print_PASS
+  	else
+    	    print_FAIL && pad "MariaDB service is not running."
+	fi
+}
+
+function verify_if_database_was_created(){
+	pad "Verify if legacy database was created"
+	ssh -oBatchMode=yes -oStrictHostKeyChecking=no -i /home/student/.ssh/gradingkey server${X}.example.com 'mysql -uroot -e "use legacy"' &> /dev/null
+	RESULT=$?
+        if [ $RESULT != 0 ]; then
+            print_FAIL && pad "You forgot to create database legacy"
+        else
+            print_PASS
+        fi
+}
+function verify_if_backup_was_restored(){
+        pad "Verify if backup was restored"
+        ssh -oBatchMode=yes -oStrictHostKeyChecking=no -i /home/student/.ssh/gradingkey server${X}.example.com 'mysql -uroot -e "describe legacy.category"' &> /dev/null
+        RESULT=$?
+        if [ $RESULT != 0 ]; then
+            print_FAIL && pad "You forgot to restore the backup"
+        else
+            print_PASS
+        fi
+}
+
+function verify_firewall(){
+	pad "Verify if firewall was configured to accept remote connections"
+	RESULT=$(mysql -uroot -h server${X} 2>&1)
+	case "$RESULT" in
+	   *2003*)
+	    	print_FAIL && pad "You forgot to configure firewall";;
+	   *found*)
+	    	print_FAIL && pad "You forgot to install mariadb-client group on your desktop${X}";;
+	   *)
+	    	print_PASS
+	esac
+}
+
+function verify_remote_connection(){
+	USER=$1
+	pad "Verify if ${USER} can remote connect"
+	TEXT=$(mysql -u${USER} -p${USER}_password -h server${X} -e "show databases" 2>&1)
+	RESULT=$?
+	if [ $RESULT == 1 ]; then
+            print_FAIL && pad "${USER} can not connect remotely"
+	elif [ $RESULT == 127 ]; then
+            print_FAIL && pad "You forgot to install mariadb-client group on your desktop${X}"
+        else
+            print_PASS
+        fi	
+}
+
+
+
+function verify_select_privilege(){
+	USER=$1
+	pad "Verify if ${USER} can select on all tables"
+	TEXT=$(mysql -u${USER} -p${USER}_password -h server${X} -e "select * from legacy.category where id =1; select * from legacy.manufacturer where id = 1; select * from legacy.product where id = 1;" 2>&1)
+	RESULT=$?
+        if [ $RESULT == 1 ]; then
+            print_FAIL && pad "${USER} can not select"
+        elif [ $RESULT == 127 ]; then
+            print_FAIL && pad "You forgot to install mariadb-client group on your desktop${X}"
+        else
+            print_PASS
+        fi
+
+	pad "Verify if ${USER} can't insert on all tables"
+        TEXT=$(mysql -u${USER} -p${USER}_password -h server${X} -e "insert into legacy.category(name) values ('test')" 2>&1)
+        RESULT=$?
+        if [ $RESULT == 1 ]; then
+            print_PASS
+        elif [ $RESULT == 127 ]; then
+            print_FAIL && pad "You forgot to install mariadb-client group on your desktop${X}"
+        else
+            print_FAIL && pad "${USER} can insert"
+        fi
+	
+	pad "Verify if ${USER} can't update on all tables"
+        TEXT=$(mysql -u${USER} -p${USER}_password -h server${X} -e "update legacy.manufacturer set name='teste' where id = 99" 2>&1)
+        RESULT=$?
+        if [ $RESULT == 1 ]; then
+            print_PASS
+        elif [ $RESULT == 127 ]; then
+            print_FAIL && pad "You forgot to install mariadb-client group on your desktop${X}"
+        else
+            print_FAIL && pad "${USER} can update"
+        fi
+
+	 pad "Verify if ${USER} can't delete on all tables"
+        TEXT=$(mysql -u${USER} -p${USER}_password -h server${X} -e "delete from legacy.product where id = 99" 2>&1)
+        RESULT=$?
+        if [ $RESULT == 1 ]; then
+            print_PASS
+        elif [ $RESULT == 127 ]; then
+            print_FAIL && pad "You forgot to install mariadb-client group on your desktop${X}"
+        else
+            print_FAIL && pad "${USER} can delete"
+        fi
+}
+
+
+function verify_crud_privilege(){
+	USER=$1
+	pad "Verify if ${USER} can select on all tables"
+	TEXT=$(mysql -u${USER} -p${USER}_password -h server${X} -e "select * from legacy.category where id =1; select * from legacy.manufacturer where id = 1; select * from legacy.product where id = 1;" 2>&1)
+	RESULT=$?
+        if [ $RESULT == 1 ]; then
+            print_FAIL && pad "${USER} can not select"
+        elif [ $RESULT == 127 ]; then
+            print_FAIL && pad "You forgot to install mariadb-client group on your desktop${X}"
+        else
+            print_PASS
+        fi
+
+	pad "Verify if ${USER} can insert on all tables"
+        TEXT=$(mysql -u${USER} -p${USER}_password -h server${X} -e "insert into legacy.category(name) values ('tobedeleted')" 2>&1)
+        RESULT=$?
+        if [ $RESULT == 1 ]; then
+            print_FAIL && pad "${USER} can't insert"
+        elif [ $RESULT == 127 ]; then
+            print_FAIL && pad "You forgot to install mariadb-client group on your desktop${X}"
+        else
+            print_PASS
+        fi
+	
+	pad "Verify if ${USER} can update on all tables"
+        TEXT=$(mysql -u${USER} -p${USER}_password -h server${X} -e "update legacy.manufacturer set name='teste' where id = 99" 2>&1)
+        RESULT=$?
+        if [ $RESULT == 1 ]; then
+            print_FAIL && pad "${USER} can't update"
+        elif [ $RESULT == 127 ]; then
+            print_FAIL && pad "You forgot to install mariadb-client group on your desktop${X}"
+        else
+            print_PASS
+        fi
+
+	 pad "Verify if ${USER} can delete on all tables"
+        TEXT=$(mysql -u${USER} -p${USER}_password -h server${X} -e "delete from legacy.product where id = 99" 2>&1)
+        RESULT=$?
+        if [ $RESULT == 1 ]; then
+            print_FAIL && pad "${USER} can't delete"
+        elif [ $RESULT == 127 ]; then
+            print_FAIL && pad "You forgot to install mariadb-client group on your desktop${X}"
+        else
+            print_PASS
+        fi
+}
+
+function verify_records(){
+	pad "Verify if manufacturer HP is persisted"
+        TEXT=$(mysql -umary -pmary_password -h server${X} -e "select * from legacy.manufacturer where upper(name) like '%HP%';" 2>&1)
+	case "$TEXT" in
+           *id*)
+                print_PASS;;
+	   *ERROR*)
+		print_FAIL && pad "User Mary can't select manufacturer table";;
+           *)
+                print_FAIL && pad "You forgot to persist HP manufacturer";;
+        esac
+
+	pad "Verify if manufacturer DELL is persisted"
+        TEXT=$(mysql -umary -pmary_password -h server${X} -e "select * from legacy.manufacturer where upper(name) like '%DELL%';" 2>&1)
+	case "$TEXT" in
+           *id*)
+                print_PASS;;
+	   *ERROR*)
+		print_FAIL && pad "User Mary can't select manufacturer table";;
+           *)
+                print_FAIL && pad "You forgot to persist DELL manufacturer";;
+        esac
+	
+	pad "Verify if manufacturer Lenovo is persisted"
+        TEXT=$(mysql -umary -pmary_password -h server${X} -e "select * from legacy.manufacturer where upper(name) like '%Lenovo%';" 2>&1)
+	case "$TEXT" in
+           *id*)
+                print_PASS;;
+	   *ERROR*)
+		print_FAIL && pad "User Mary can't select manufacturer table";;
+           *)
+                print_FAIL && pad "You forgot to persist Lenovo manufacturer";;
+        esac
+
+}
+
+
+
+function lab_grade {
+  VMNAME=$1
+  case $VMNAME in
+    desktop)
+      pad "Steps to grade lab on desktop"
+      pad "Verify if MariaDB client was installed on desktop${X}"
+      verify_mysql_installed true
+      pad "Verify if MariaDB client was installed on server${X}"
+      verify_mysql_installed false
+      verify_service
+      verify_if_database_was_created	
+      verify_if_backup_was_restored
+      verify_firewall
+      verify_remote_connection mary
+      verify_remote_connection legacy
+      verify_remote_connection report
+      verify_select_privilege mary
+      verify_crud_privilege legacy
+      verify_select_privilege report
+      verify_records
+      # Put in the steps to grade the lab (use print_PASS or print_FAIL)
+      # Change to the example of server) if should only run
+      # there - and adjust the catchall message with *)
+      ;;
+    server)
+      # Obviously adjust this to actual commands if script needs
+      # to run on server - and adjust the catchall message with *)
+      print_FAIL && echo "The grade script needs to be run on desktop"
+      ;;
+    *)
+      # Should never get here, but what the hey....
+      print_FAIL && echo "The grade script needs to be run on desktop"
+      ;;
+  esac
+}
+
+# Main area
+
+# Check if to be run as root (must do this first)
+if [[ "${RUN_AS_ROOT}" == 'true' ]] && [[ "${EUID}" -gt "0" ]] ; then
+  if [[ -x /usr/bin/sudo ]] ; then
+    ${SUDO:-sudo} $0 "$@"
+    exit
+  else
+    # Fail out if not running as root
+    check_root
+  fi
+fi
+
+# Process command line
+# Parse input
+case $1 in
+  setup|grade)
+    CMD=$1
+    ;;
+  -h|--help)
+    print_usage
+    exit 0
+    ;;
+  *)
+    echo Bad option $1
+    print_usage
+    exit 1
+    ;;
+esac
+# Validation
+[[ -z "$CMD" ]] && debug "Missing command" && print_usage && exit 1
+
+# Get local system information
+get_X
+
+# Branch based on short (without number) hostname
+case $MYHOST in
+  desktop|server)
+    lab_$CMD $MYHOST
+    ;;
+  *)
+    debug "Bad or missing hostname - $MYHOST"
+    debug "This command needs to be run on desktop or server"
+    exit 3
+    ;;
+esac

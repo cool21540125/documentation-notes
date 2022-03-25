@@ -1,0 +1,238 @@
+#!/bin/bash
+#
+# Copyright 2014 Red Hat, Inc.
+#
+# NAME
+#     lab-lvm - grading script for RH134/RH199/RH299 LVM lab
+#
+# SYNOPSIS
+#     lab-lvm {setup|grade}
+#
+# DESCRIPTION
+#     This script is the RH134/RH199 LVM lab setup/grading script.
+#     It should only be executed on serverX.example.com.
+#
+# CHANGELOG
+#   * Thu Jun  5 2014 George Hacker <ghacker@redhat.com>
+#   - added support for ILT/VT/ROL disk device differences
+
+# Initialize and set some variables
+MYHOST=""
+CMD=""
+RUN_AS_ROOT='true'
+
+VGN="finance"
+LVN="loans"
+LVR="risk"
+LV_DEV="/dev/$VGN/$LVN"
+LVR_DEV="/dev/$VGN/$LVR"
+LV_MNT="/$VGN/$LVN"
+LVR_MNT="/$VGN/$LVR"
+SERV_ERR="Error running script. Did you reset the server before running this script? \
+Contact your instructor if you continue to see this message."
+
+# Source library of functions
+source /usr/local/bin/labtool.shlib
+trap on_exit EXIT
+LOG_TAG=$(basename $0)
+
+# Setup functions
+function srv_exit {
+  # call debug with msg and exit with code
+  DEBUG=true
+  debug "$1"
+  exit $2
+}
+
+function find_device {
+  # call the library function that sets SDISKDEV
+  get_disk_devices
+  if [[ -z "${SDISKDEV}" ]]; then
+    srv_exit "No secondary disk device recognized." 150
+  fi
+  DEVICE=${SDISKDEV}
+  PV_DEV=${DEVICE}1
+}
+
+function create_partition {
+  # create a 512MiB primary partition on vdb
+  echo "Creating partition on $DEVICE ..."
+  parted -s ${DEVICE} mklabel msdos mkpart primary 2048s 1050623s \
+    set 1 LVM on &> /dev/null || srv_exit "parted failed: $?" 151
+  partprobe &> /dev/null || srv_exit "partprobe failed: $?" 151
+}
+
+function create_LVM {
+  # create the PV, VG and LV
+  echo "Adding PV ..."
+  pvcreate ${PV_DEV} &> /dev/null || \
+    srv_exit "pvcreate failed: $?" 152
+  echo "Adding VG ..."
+  vgcreate $VGN ${PV_DEV} &> /dev/null || \
+    srv_exit "vgcreate failed: $?" 152
+  echo "Adding LV ..."
+  lvcreate -n $LVN -L 256M $VGN &> /dev/null || \
+    srv_exit "lvcreate failed: $?" 152
+}
+
+function add_fs {
+  # add an XFS file system to the LV
+  echo "Creating XFS on LV ..."
+  mkfs -t xfs ${LV_DEV} &> /dev/null || \
+    srv_exit "mkfs failed: $?" 153
+  mkdir -p ${LV_MNT} &> /dev/null || \
+    srv_exit "mkdir failed: $?" 153
+  echo "${LV_DEV}  ${LV_MNT}  xfs  defaults  1 2" >> /etc/fstab 2> /dev/null || \
+    srv_exit "fstab update failed: $?" 153
+  mount -a &> /dev/null || \
+    srv_exit "mount failed: $?" 153
+  # create some content to find
+  echo "Success" > ${LV_MNT}/LV-verify.txt
+}
+
+# Grading functions
+function check_lv_size {
+# Check size of loans LV
+  echo -n "Checking size of $LVN LV... "
+  SIZE=$(lvs --noheadings -o lv_size $LV_DEV | awk -F . '{print $1}')
+  if [[ $SIZE < 730 ]]; then
+    print_FAIL; echo "$LVN LV is too small"
+  elif [[ $SIZE > 805 ]]; then
+    print_FAIL; echo "$LVN LV is too large"
+  else
+    print_PASS
+  fi
+# Check size of risk LV
+  echo -n "Checking size of $LVR LV... "
+  SIZE=$(lvs --noheadings -o lv_size $LVR_DEV | awk -F . '{print $1}')
+  if [[ $SIZE < 120 ]]; then
+    print_FAIL; echo "$LVR LV is too small"
+  elif [[ $SIZE > 135 ]]; then
+    print_FAIL; echo "$LVR LV is too large"
+  else
+    print_PASS
+  fi
+}
+
+function check_fs_size {
+# Check size of loans FS
+  echo -n "Checking size of $LVN filesystem... "
+  SIZE=$(df -m $LV_MNT | grep $LV_MNT | awk '{print $2}')
+  if [[ $SIZE < 690 ]]; then
+    print_FAIL; echo "$LVN filesystem is too small"
+  elif [[ $SIZE > 845 ]]; then
+    print_FAIL; echo "$LVN filesystem is too large"
+  else
+    print_PASS
+  fi
+# Check size of risk FS
+  echo -n "Checking size of $LVR filesystem... "
+  SIZE=$(df -m $LVR_MNT | grep $LVR_MNT | awk '{print $2}')
+  if [[ $SIZE < 110 ]]; then
+    print_FAIL; echo "$LVR filesystem is too small"
+  elif [[ $SIZE > 140 ]]; then
+    print_FAIL; echo "$LVR filesystem is too large"
+  else
+    print_PASS
+  fi
+}
+
+function print_usage {
+  local problem_name=$(basename $0 | sed -e 's/^lab-//')
+  cat << EOF
+This script controls the setup and grading of this lab.
+Usage: lab ${problem_name} COMMAND
+       lab ${problem_name} -h|--help
+COMMAND is one of:
+    setup - perform any setup steps for this lab on this machine
+    grade - perform any grading steps and report on this machine
+EOF
+}
+
+function lab_setup {
+    VMNAME=$1
+    case $VMNAME in
+        desktop)
+            print_FAIL && echo "Please run the setup for this lab on the server."
+            ;;
+        server)
+            ERROR_MESSAGE="$SERV_ERR"
+            find_device
+            create_partition
+            create_LVM
+            add_fs
+            print_SUCCESS
+            ;;
+        *)
+            # Should never get here, but what the hey....
+            print_FAIL && echo "The setup script needs to be run on server"
+            ;;
+    esac
+
+}
+
+function lab_grade {
+    VMNAME=$1
+    case $VMNAME in
+        desktop)
+            print_FAIL && echo "Please run the grading for this lab on the server."
+            ;;
+        server)
+            check_lv_size
+            check_fs_size
+            print_SUCCESS
+            ;;
+        *)
+            # Should never get here, but what the hey....
+            print_FAIL && echo "The grade script needs to be run on server"
+            ;;
+    esac
+}
+
+# Main area
+
+# Check if to be run as root (must do this first)
+if [[ "${RUN_AS_ROOT}" == 'true' ]] && [[ "${EUID}" -gt "0" ]] ; then
+  if [[ -x /usr/bin/sudo ]] ; then
+    ${SUDO:-sudo} $0 "$@"
+    exit
+  else
+    # Fail out if not running as root
+    check_root
+  fi
+fi
+
+# Process command line
+# Parse input
+case $1 in
+    setup|grade)
+        CMD=$1
+        ;;
+    -h|--help)
+        print_usage
+        exit 0
+        ;;
+    *)
+        echo Bad option $1
+        print_usage
+        exit 1
+        ;;
+esac
+# Validation
+[ -z "$CMD" ] && debug "Missing command" && print_usage && exit 1
+
+# Get local system information
+get_X
+
+# Branch based on short (without number) hostname
+case $MYHOST in
+    desktop|server)
+        lab_$CMD $MYHOST
+        ;;
+    *)
+        debug "Bad or missing hostname - $MYHOST"
+        debug "This command needs to be run on desktop or server"
+        exit 3
+        ;;
+esac
+

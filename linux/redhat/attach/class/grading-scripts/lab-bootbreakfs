@@ -1,0 +1,147 @@
+#!/bin/bash
+#
+# Copyright 2014 Red Hat, Inc.
+#
+# NAME
+#     lab-bootbreakfs - setup script for RH134/RH199/RH299 bootbreakfs lab
+#
+# SYNOPSIS
+#     lab-bootbreakfs setup
+#
+#     This script only works on serverX.example.com and bootvm.
+#
+# DESCRIPTION
+#     This script is the lab setup script for the RH134/RH199 bootbreakfs
+#     lab.
+#
+# CHANGELOG
+#   * Thu Jun 12 2014 Wander Boessenkool <wboessen@redhat.com>
+#   - original code
+#   * Thu May  8 2014 Wander Boessenkool <wboessen@redhat.com>
+#   - fixed to run with wrapper
+
+# Initialize and set some variables
+MYHOST=""
+CMD=""
+DEBUG='true'
+RUN_AS_ROOT='true'
+
+# Source library of functions
+source /usr/local/bin/labtool.shlib
+trap on_exit EXIT
+
+# Additional functions for this shell script
+function print_usage {
+  local problem_name=$(basename $0 | sed -e 's/^lab-//')
+  cat << EOF
+This script controls the setup and grading of this lab.
+Usage: lab ${problem_name} COMMAND
+       lab ${problem_name} -h|--help
+COMMAND is one of:
+    setup - perform any setup steps for this lab on this machine
+EOF
+#    grade - perform any grading steps and report on this machine
+}
+
+function lab_setup {
+  VMNAME=$1
+  case $VMNAME in
+    desktop)
+      print_FAIL && echo "The setup script needs to be run on server"
+      ;;
+    server|bootvm)
+      if [ "${ROL}" == "true" ]; then
+	if [ "${VMNAME}" != "bootvm" ]; then
+	  echo "The setup script needs to be run on your bootvm"
+	  exit 0
+	fi
+      fi
+      echo "Breaking the boot process..."
+      echo "/dev/I_Dont_Exist /RemoveMe xfs defaults 1 2" >> /etc/fstab
+      echo "Adjusting boot menu timeout..."
+      sed -i 's/set timeout[[:space:]]*=.*$/set timeout=5/' /boot/grub2/grub.cfg &> /dev/null
+      echo "Rebooting your system in 5 seconds..."
+      print_SUCCESS
+      sleep 5
+      systemctl reboot
+      ;;
+    *)
+      # Should never get here, but what the hey....
+      print_FAIL && echo "The setup script needs to be run on server"
+      ;;
+  esac
+}
+
+function lab_grade {
+  VMNAME=$1
+  case $VMNAME in
+    desktop)
+      print_FAIL && echo "The script does not have any grading"
+      ;;
+    server|bootvm)
+      print_FAIL && echo "The script does not have any grading"
+      ;;
+    *)
+      # Should never get here, but what the hey....
+      print_FAIL && echo "The grade script needs to be run on server"
+      ;;
+  esac
+}
+
+# Main area
+
+# Check if to be run as root (must do this first)
+if [[ "${RUN_AS_ROOT}" == 'true' ]] && [[ "${EUID}" -gt "0" ]] ; then
+  if [[ -x /usr/bin/sudo ]] ; then
+    ${SUDO:-sudo} $0 "$@"
+    exit
+  else
+    # Fail out if not running as root
+    check_root
+  fi
+fi
+
+if [[ $(virt-what) != "kvm" ]]; then
+  ROL=true
+  if [[ $(hostname) == "bootvm" ]]; then
+    MYHOST=bootvm
+  fi
+else
+  ROL=false
+fi
+
+# Process command line
+# Parse input
+case $1 in
+  setup|grade)
+    CMD=$1
+    ;;
+  -h|--help)
+    print_usage
+    exit 0
+    ;;
+  *)
+    echo Bad option $1
+    print_usage
+    exit 1
+    ;;
+esac
+# Validation
+[[ -z "$CMD" ]] && debug "Missing command" && print_usage && exit 1
+
+# Get local system information
+if [[ "${MYHOST}" != "bootvm" ]]; then
+  get_X
+fi
+
+# Branch based on short (without number) hostname
+case $MYHOST in
+  desktop|server|bootvm)
+    lab_$CMD $MYHOST
+    ;;
+  *)
+    debug "Bad or missing hostname - $MYHOST"
+    debug "This command needs to be run on desktop or server"
+    exit 3
+    ;;
+esac

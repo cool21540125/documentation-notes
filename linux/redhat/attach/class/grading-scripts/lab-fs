@@ -1,0 +1,145 @@
+#!/bin/bash
+#
+# Copyright 2014 Red Hat, Inc.
+#
+# NAME
+#     lab-fs - setup script for RH124/RH199/RH299 file system management lab
+#
+# SYNOPSIS
+#     lab-fs setup
+#
+# DESCRIPTION
+#     This script is the RH124/RH199 file system management lab setup script.
+#     It should only be executed on serverX.example.com.
+#
+# CHANGELOG
+#   * Thu Jun  5 2014 George Hacker <ghacker@redhat.com>
+#   - added support for ILT/VT/ROL disk device differences
+
+# Initialize and set some variables
+MYHOST=""
+CMD=""
+RUN_AS_ROOT='true'
+
+SERV_ERR="Error running script. Did you reset the server before running this script? \
+Contact your instructor if you continue to see this message."
+
+# Source library of functions
+source /usr/local/bin/labtool.shlib
+trap on_exit EXIT
+LOG_TAG=$(basename $0)
+
+# Setup functions
+function srv_exit {
+  # call debug with msg and exit with code
+  DEBUG=true
+  debug "$1"
+  exit $2
+}
+
+function find_device {
+  # check which device to use
+  echo "Checking device availability ..."
+  # call the library function that sets SDISKDEV
+  get_disk_devices
+  if [[ -z "${SDISKDEV}" ]]; then
+    echo "No secondary disk device recognized."
+    exit 15
+  fi
+  DEVICE=${SDISKDEV}
+  PART_DEV=${DEVICE}1
+}
+
+function create_partition {
+  # create a 512MiB primary partition on vdb
+  echo "Creating partition on $DEVICE ..."
+  parted -s ${DEVICE} mklabel msdos mkpart primary 2048s 1050623s &> /dev/null || srv_exit "parted failed: $?" 151
+  partprobe &> /dev/null || srv_exit "partprobe failed: $?" 151
+}
+
+function add_fs {
+  # add an XFS file system to the LV
+  echo "Creating XFS on PARTITION ..."
+  mkfs.xfs -f ${PART_DEV} &> /dev/null || \
+    srv_exit "mkfs failed: $?" 153
+}
+
+function print_usage {
+  local problem_name=$(basename $0 | sed -e 's/^lab-//')
+  cat << EOF
+This script controls the setup and grading of this lab.
+Usage: lab ${problem_name} COMMAND
+       lab ${problem_name} -h|--help
+COMMAND is one of:
+    setup - perform any setup steps for this lab on this machine
+EOF
+#    grade - perform any grading steps and report on this machine
+}
+
+function lab_setup {
+    VMNAME=$1
+    case $VMNAME in
+        desktop)
+            print_FAIL && echo "Please run the setup for this lab on the server."
+            ;;
+        server)
+            ERROR_MESSAGE="$SERV_ERR"
+            find_device
+            create_partition
+            add_fs
+            print_SUCCESS
+            ;;
+        *)
+            print_FAIL && echo "The setup script needs to be run on server"
+            ;;
+    esac
+
+}
+
+# Main area
+
+# Check if to be run as root (must do this first)
+if [[ "${RUN_AS_ROOT}" == 'true' ]] && [[ "${EUID}" -gt "0" ]] ; then
+  if [[ -x /usr/bin/sudo ]] ; then
+    ${SUDO:-sudo} $0 "$@"
+    exit
+  else
+    # Fail out if not running as root
+    check_root
+  fi
+fi
+
+# Process command line
+# Parse input
+case $1 in
+    setup)
+        CMD=$1
+        ;;
+    -h|--help)
+        print_usage
+        exit 0
+        ;;
+    *)
+        echo Bad option $1
+        print_usage
+        exit 1
+        ;;
+esac
+# Validation
+[ -z "$CMD" ] && debug "Missing command" && print_usage && exit 1
+
+# Get local system information
+get_X
+
+# Branch based on short (without number) hostname
+case $MYHOST in
+    server)
+        lab_$CMD $MYHOST
+        ;;
+    *)
+        debug "Bad or missing hostname - $MYHOST"
+        debug "This command needs to be run on desktop or server"
+        exit 3
+        ;;
+esac
+

@@ -1,0 +1,279 @@
+#!/bin/bash
+#
+# Copyright 2014 Red Hat, Inc.
+#
+# NAME
+#     lab-nfsmount - grading script for RH134/RH199/RH299 NFS mount labs
+#
+# SYNOPSIS
+#     lab-nfsmount {setup|grade}
+#
+#     This setup function works on both serverX and desktopX.
+#     This grade function works on desktopX.
+#
+# DESCRIPTION
+#     This script performs the setup and grading steps for the NFS
+#     mount labs for RH134/RH199.
+#
+# CHANGELOG
+#   * Mon Apr 21 2014 Unknown <unknown@redhat.com>
+#   - original code
+
+# Initialize and set some variables
+MYHOST=""
+CMD=""
+RUN_AS_ROOT='true'
+
+SERV_PKG="sssd"
+CLNT_PKG="sssd krb5-workstation"
+SERV_ERR="Error running script. Did you reset the server before running this script? \
+Contact your instructor if you continue to see this message."
+CLNT_ERR="Error running script. Did you reset the desktop before running this script? \
+Contact your instructor if you continue to see this message."
+
+# Source library of functions
+source /usr/local/bin/labtool.shlib
+trap on_exit EXIT
+LOG_TAG=$(basename $0)
+
+# Additional functions for this shell script
+function srv_exit {
+  # call debug with msg and exit with code
+  DEBUG=true
+  debug "$1"
+  exit $2
+}
+
+function install_pkgs {
+  # install the package that provides the service
+  echo "Installing packages ..."
+  yum -y install $@ &> /dev/null || \
+    srv_exit "yum failed: $?" 150
+}
+
+function update_authconfig {
+  # update the authconfig for ldap & krb5
+  echo "Updating authconfig for ldap & krb5 ..."
+  authconfig \
+    --enableldap \
+    --enableldaptls \
+    --ldapserver=ldaps://classroom.example.com \
+    --ldapbasedn=dc=example,dc=com \
+    --ldaploadcacert=http://classroom.example.com/pub/example-ca.crt \
+    --enablekrb5 \
+    --krb5realm=EXAMPLE.COM \
+    --krb5kdc=classroom.example.com \
+    --krb5adminserver=classroom.example.com \
+    --enablesssd \
+    --enablesssdauth \
+    --enablemkhomedir \
+    --update &> /dev/null || \
+    srv_exit "authconfig failed: $?" 151
+}
+
+function install_keytab {
+  # add two users for testing
+  echo "Installing krb5.keytab ..."
+  wget -O /etc/krb5.keytab http://classroom.example.com/pub/keytabs/${1}.keytab &> /dev/null \
+    srv_exit "wget failed: $?" 152
+  restorecon /etc &> /dev/null \
+    srv_exit "restorecon failed: $?" 152
+}
+
+function make_shares {
+  # make share folders with appropriate permissions
+  echo "Creating share folders ..."
+  [ -d /shares ] && rm -rf /shares
+  mkdir -p /shares/{docs,work,public,manual}
+  chmod 777 /shares/{docs,work,public,manual}
+  
+  # create some content to find
+  echo "Success" > /shares/public/nfs_ldapuser${X}.txt
+  chmod 644 /shares/public/nfs_ldapuser${X}.txt
+  chown ldapuser${X}:ldapuser${X} /shares/public/nfs_ldapuser${X}.txt
+  cp -a /shares/public/nfs_ldapuser${X}.txt /shares/docs
+  cp -a /shares/public/nfs_ldapuser${X}.txt /shares/work
+  cp -a /shares/public/nfs_ldapuser${X}.txt /shares/manual/nfs_student.txt
+  chown student:student /shares/manual/nfs_student.txt
+  
+  # create exports file
+  echo "Updating exports file ..."
+  [ -e /etc/exports.rhtorig ] && srv_exit "exports backup exists" 153
+  mv /etc/exports /etc/exports.rhtorig &> /dev/null || \
+    srv_exit "mv failed: $?" 153
+  cat << EOF > /etc/exports
+#
+# NFS lab exports
+#
+/shares/manual  172.25.0.0/16(rw,sync)
+/shares/public  172.25.0.0/16(sec=krb5p,rw,sync)
+/shares/docs    172.25.0.0/16(sec=krb5p,rw,sync)
+/shares/work    172.25.0.0/16(sec=krb5p,rw,sync)
+EOF
+}
+
+function update_firewall {
+  # update firewall for nfs
+  echo "Updating firewall ..."
+  firewall-cmd --permanent --add-service=nfs &> /dev/null || \
+    srv_exit "firewall add-service failed: $?" 154
+  firewall-cmd --add-service=nfs &> /dev/null || \
+    srv_exit "firewall reload failed: $?" 154
+}
+
+function systemd_cmds {
+  # start and enable service
+  echo "Start $1 ..."
+  systemctl enable $1 &> /dev/null || \
+    srv_exit "systemctl enable failed: $?" 155
+  systemctl start $1 &> /dev/null || \
+    srv_exit "systemctl start failed: $?" 155
+}
+
+# Grading scripts
+function check_enabled {
+  echo -n "Checking autofs service is enabled... "
+  if systemctl is-enabled autofs &> /dev/null
+  then
+    print_PASS
+  else
+    print_FAIL
+    echo "Service autofs is not enabled."
+    exit 0
+  fi
+}
+
+function grade_nfsv4mount {
+  echo -n "Checking krb5.keytab exists... "
+  if ! klist -k /etc/krb5.keytab 2> /dev/null | grep -q nfs/desktop${X}\.example\.com &> /dev/null; then
+    print_FAIL
+    echo "Keytab not found."
+    exit 0
+  fi
+  print_PASS
+  
+  MOUNTS="/shares/docs /shares/work /mnt/public"
+  for DIR in $MOUNTS; do
+    echo -n "Checking mount ${DIR}... "
+    if ! grep -q 'Success' ${DIR}/nfs_ldapuser${X}.txt &>/dev/null; then
+      print_FAIL
+      echo "Could not access ${DIR}/nfs_ldapuser${X}.txt"
+      exit 0
+    fi
+    TESTFILE=$(mktemp -u ${DIR}/flops.XXXXXX)
+    su - ldapuser${X} -c "kdestroy; echo kerberos | kinit ldapuser${X}; touch ${TESTFILE}" &> /dev/null
+    if ! ls -l ${DIR} | grep -q "ldapuser${X} ldapuser${X}.*$(basename ${TESTFILE})\$" &>/dev/null; then
+      print_FAIL
+      echo "${DIR} not writable by ldapuser${X}"
+      exit 0
+    fi
+    su - ldapuser${X} -c "kdestroy; echo kerberos | kinit ldapuser${X}; rm -f ${TESTFILE}" &> /dev/null
+    print_PASS
+  done
+}
+
+function print_usage {
+  local problem_name=$(basename $0 | sed -e 's/^lab-//')
+  cat << EOF
+This script controls the setup and grading of this lab.
+Usage: lab ${problem_name} COMMAND
+       lab ${problem_name} -h|--help
+COMMAND is one of:
+    setup - perform any setup steps for this lab on this machine
+    grade - perform any grading steps and report on this machine
+EOF
+}
+
+function lab_setup {
+    VMNAME=$1
+    case $VMNAME in
+        desktop)
+            ERROR_MESSAGE="$CLNT_ERR"
+            install_pkgs $CLNT_PKG
+            update_authconfig
+            print_SUCCESS
+            ;;
+        server)
+            ERROR_MESSAGE="$SERV_ERR"
+            install_pkgs $SERV_PKG
+            update_authconfig
+            install_keytab server$X
+            make_shares
+            update_firewall
+            systemd_cmds nfs-server
+            systemd_cmds nfs-secure-server
+            print_SUCCESS
+            ;;
+        *)
+            # Should never get here, but what the hey....
+            print_FAIL && echo "Please run the lab-nfsmount script on both the desktop and server"
+            ;;
+    esac
+}
+
+function lab_grade {
+    VMNAME=$1
+    case $VMNAME in
+        desktop)
+            check_enabled
+            grade_nfsv4mount
+            print_SUCCESS
+            ;;
+        server)
+            # Obviously adjust this to actual commands if script needs
+            # to run on server - and adjust the catchall message with *)
+            print_FAIL && echo "Please run the grading for this lab on the desktop."
+            ;;
+        *)
+            # Should never get here, but what the hey....
+            print_FAIL && echo "Please run the grading for this lab on the desktop."
+            ;;
+    esac
+}
+
+# Main area
+
+# Check if to be run as root (must do this first)
+if [[ "${RUN_AS_ROOT}" == 'true' ]] && [[ "${EUID}" -gt "0" ]] ; then
+  if [[ -x /usr/bin/sudo ]] ; then
+    ${SUDO:-sudo} $0 "$@"
+    exit
+  else
+    # Fail out if not running as root
+    check_root
+  fi
+fi
+
+# Process command line
+# Parse input
+case $1 in
+    setup|grade)
+        CMD=$1
+        ;;
+    -h|--help)
+        print_usage
+        exit 0
+        ;;
+    *)
+        echo Bad option $1
+        print_usage
+        exit 1
+        ;;
+esac
+# Validation
+[ -z "$CMD" ] && debug "Missing command" && print_usage && exit 1
+
+# Get local system information
+get_X
+
+# Branch based on short (without number) hostname
+case $MYHOST in
+    desktop|server)
+        lab_$CMD $MYHOST
+        ;;
+    *)
+        debug "Bad or missing hostname - $MYHOST"
+        debug "This command needs to be run on desktop or server"
+        exit 3
+        ;;
+esac

@@ -1,0 +1,172 @@
+#!/bin/bash
+#
+# Copyright 2014 Red Hat, Inc.
+#
+# NAME
+#     lab-bootvm - setup script for RH134/RH199/RH299 bootvm lab
+#
+# SYNOPSIS
+#     lab-bootvm {setup|reset}
+#
+# DESCRIPTION
+#     This script is the lab setup script for the RH134/RH199 bootvm 
+#     lab.
+#     It should only be executed on serverX.example.com. or bootvm
+#
+# CHANGELOG
+#   * Thu Jun 12 2014 Wander Boessenkool <wboessen@redhat.com>
+#   - original code
+
+# Initialize and set some variables
+MYHOST=""
+CMD=""
+DEBUG=true
+IMAGEURL="http://classroom.example.com/pub/materials/bootvm.img"
+VMMEMSIZE=512
+SNAPIMAGE=/home/student/.images/bootvm.ovl
+
+# Source library of functions
+source /usr/local/bin/labtool.shlib
+trap on_exit EXIT
+
+# Additional functions for this shell script
+function print_usage {
+  local problem_name=$(basename $0 | sed -e 's/^lab-//')
+  cat << EOF
+This script controls the setup and grading of this lab.
+Usage: lab ${problem_name} COMMAND
+       lab ${problem_name} -h|--help
+COMMAND is one of:
+    setup - perform any setup steps for this lab on this machine
+EOF
+#   grade - perform any grading steps and report on this machine
+}
+
+function check_student {
+
+if [[ $(whoami) != "student" ]] ; then
+    log 'Not running run as student = Fail'
+    ERROR_MESSAGE='This script must be run as student!'
+    exit 1
+fi
+
+}
+
+
+function lab_setup {
+    VMNAME=$1
+    case $VMNAME in
+        desktop)
+            print_FAIL && echo "The setup script needs to be run on server"
+            ;;
+        server)
+            echo -n "Killing existing bootvm...  "
+            killall -9 qemu-kvm &> /dev/null
+            print_PASS
+            echo -n "Downloading base bootvm image...  "
+            mkdir -p /home/student/.images &> /dev/null
+            if [ ! -f /home/student/.images/bootvm.img ]; then
+              wget ${IMAGEURL} -O /home/student/.images/bootvm.img &> /dev/null
+              RESULT=$?
+              if [ "${RESULT}" -ne 0 ]; then
+	        print_FAIL
+	        echo "Error downloading bootvm image"
+	        exit 132
+	      fi
+            fi
+            rm /home/student/.images/bootvm.ovl &> /dev/null
+            if [ ! -f  /home/student/.images/bootvm.ovl ]; then
+              qemu-img create -f qcow2 -b /home/student/.images/bootvm.{img,ovl} &> /dev/null
+            fi
+            print_PASS
+            echo -n "Starting bootvm machine...  "
+            /usr/libexec/qemu-kvm --no-kvm -hda ${SNAPIMAGE} -boot d -m ${VMMEMSIZE} -localtime & &>/dev/null && print_PASS || print_FAIL
+            echo "When bootvm is running you can connect to VNC localhost:0"
+            echo "to view the console"
+            echo -n "Starting console view...  "
+            sleep 3s
+            vinagre localhost:0 & &> /dev/null && print_PASS || print_FAIL
+            ;;
+        *)
+            # Should never get here, but what the hey....
+            print_FAIL && echo "The setup script needs to be run on server"
+            ;;
+    esac
+
+}
+
+function lab_reset {
+    VMNAME=$1
+    case $VMNAME in
+        desktop)
+            print_FAIL && echo "The setup script needs to be run on server"
+            ;;
+        server)
+            echo -n "Killing existing bootvm...  "
+            killall -9 qemu-kvm &> /dev/null
+            echo -n "Downloading base bootvm image...  "
+            mkdir -p /home/student/.images &> /dev/null
+            wget ${IMAGEURL} -O /home/student/.images/bootvm.img &> /dev/null
+            RESULT=$?
+            if [ "${RESULT}" -ne 0 ]; then
+              print_FAIL
+              echo "Error downloading bootvm image"
+              exit 132
+            fi
+            rm /home/student/.images/bootvm.ovl &>/dev/null
+            qemu-img create -f qcow2 -b /home/student/.images/bootvm.{img,ovl} &> /dev/null
+            print_PASS
+            echo -n "Starting bootvm machine...  "
+            /usr/libexec/qemu-kvm --no-kvm -hda ${SNAPIMAGE} -boot d -m ${VMMEMSIZE} -localtime & &>/dev/null && print_PASS || print_FAIL
+            echo "When bootvm is running you can connect to VNC localhost:0"
+            echo "to view the console"
+            echo -n "Starting console view...  "
+            sleep 3s
+            vinagre localhost:0 & &> /dev/null && print_PASS || print_FAIL
+            ;;
+        *)
+            # Should never get here, but what the hey....
+            print_FAIL && echo "The setup script needs to be run on server"
+            ;;
+    esac
+}
+
+# Main area
+
+# Fail out if not running as root
+check_student
+
+# Process command line
+# Parse input
+case $1 in
+    setup|reset)
+        CMD=$1
+        ;;
+    -h|--help)
+        print_usage
+        exit 0
+        ;;
+    *)
+        echo Bad option $1
+        print_usage
+        exit 1
+        ;;
+esac
+# Validation
+[ -z "$CMD" ] && debug "Missing command" && print_usage && exit 1
+
+# Get local system information
+get_X
+
+# Branch based on short (without number) hostname
+case $MYHOST in
+    desktop|server)
+        lab_$CMD $MYHOST
+        ;;
+    *)
+        debug "Bad or missing hostname - $MYHOST"
+        debug "This command needs to be run on desktop or server"
+        exit 3
+        ;;
+esac
+

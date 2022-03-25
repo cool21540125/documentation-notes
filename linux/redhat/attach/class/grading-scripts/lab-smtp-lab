@@ -1,0 +1,433 @@
+#!/bin/bash
+#
+# Copyright 2014 Red Hat, Inc.
+#
+# NAME
+#     lab-smtp-lab - setup/grading script for RH254/RH299 SMTP practice
+#
+# SYNOPSIS
+#     lab-smtp-lab {setup|grade}
+#
+#     This script only works on both desktopX and serverX.
+#
+# DESCRIPTION
+#     This script is the setup/grading script for a RH254 SMTP
+#     lab exercise.
+#
+# CHANGELOG
+#   * Tue May 27 2014 Rudy Kastl <rkastl@redhat.com>
+#   - original code
+
+# Initialize and set some variables
+MYHOST=""
+CMD=""
+DEBUG=true
+
+# Source library of functions
+source /usr/local/bin/labtool.shlib
+trap on_exit EXIT
+
+# Additional functions for this shell script
+function print_usage {
+  local problem_name=$(basename $0 | sed -e 's/^lab-//')
+  cat << EOF
+This script controls the setup and grading of this lab.
+Usage: lab ${problem_name} COMMAND
+       lab ${problem_name} -h|--help
+COMMAND is one of:
+    setup - perform any setup steps for this lab on this machine
+    grade - perform any grading steps and report on this machine
+EOF
+}
+
+
+#function grade_services {
+#  echo -n "* Checking for upower service "
+#  if systemctl is-active upower.service &> /dev/null
+#  then
+#    print_PASS
+#  else
+#    print_FAIL
+#    echo "upower service not found."
+#
+#  fi
+#  echo -n "* Checking for rsyslog service "
+#  if systemctl is-active rsyslog.service &> /dev/null
+#  then
+#    print_FAIL
+#    echo "rsyslog service is running."
+#  else
+#    print_PASS
+#  fi
+#}
+
+function setup_mutt {
+  echo "Setting up mutt... "
+  yum -y install mutt &>/dev/null
+  mkdir -p /home/student/Mail &>/dev/null
+  chown student:student /home/student/Mail &>/dev/null
+  # get certificate from client
+  wget -O /home/student/.mutt_certificates http://desktop${X}.example.com/dovecot.pem &>/dev/null
+  chown student:student /home/student/.mutt_certificates &>/dev/null
+  chmod 600 /home/student/.mutt_certificates &>/dev/null
+}
+
+function setup_mailserver {
+   echo "Setting up dovecot... "
+   yum -y install dovecot &>/dev/null
+   (echo "mail_location = mbox:~/mail:INBOX=/var/mail/%u" >> /etc/dovecot/conf.d/10-mail.conf) &>/dev/null
+   (echo "disable_plaintext_auth = no" >> /etc/dovecot/conf.d/10-auth.conf) &>/dev/null
+   (echo "protocols = imap" >> /etc/dovecot/dovecot.conf) &>/dev/null
+   cat > /etc/dovecot/conf.d/10-master.conf << EOF
+service imap-login {
+  inet_listener imap {
+  }
+  inet_listener imaps {
+  }
+}
+service pop3-login {
+  inet_listener pop3 {
+  }
+  inet_listener pop3s {
+  }
+}
+service lmtp {
+  unix_listener lmtp {
+  }
+}
+service imap {
+}
+service pop3 {
+}
+service auth {
+  unix_listener auth-userdb {
+  }
+  unix_listener /var/spool/postfix/private/auth {
+    mode = 0660
+    user = postfix
+    group = postfix
+  }
+}
+service auth-worker {
+}
+service dict {
+  unix_listener dict {
+  }
+}
+EOF
+   
+   echo "Generating new dovecot certificate... "
+   mv /etc/pki/dovecot/certs/dovecot.pem /etc/pki/dovecot/certs/dovecot.pem.backup &>/dev/null
+   mv /etc/pki/dovecot/private/dovecot.pem /etc/pki/dovecot/private/dovecot.pem.backup &>/dev/null
+
+cat > /etc/pki/dovecot/dovecot-openssl.cnf  << EOF
+[ req ]
+default_bits = 1024
+encrypt_key = yes
+distinguished_name = req_dn
+x509_extensions = cert_type
+prompt = no
+
+[ req_dn ]
+# country (2 letter code)
+#C=FI
+
+# State or Province Name (full name)
+#ST=
+
+# Locality Name (eg. city)
+#L=Helsinki
+
+# Organization (eg. company)
+#O=Dovecot
+
+# Organizational Unit Name (eg. section)
+OU=IMAP server
+
+# Common Name (*.example.com is also possible)
+CN=imap${X}.example.com
+
+# E-mail contact
+emailAddress=postmaster@example.com
+
+[ cert_type ]
+nsCertType = server
+EOF
+
+openssl req -new -x509 -nodes -config /etc/pki/dovecot/dovecot-openssl.cnf -out /etc/pki/dovecot/certs/dovecot.pem -keyout /etc/pki/dovecot/private/dovecot.pem -days 365 &>/dev/null
+chown root:root /etc/pki/dovecot/certs/dovecot.pem /etc/pki/dovecot/private/dovecot.pem &>/dev/null
+chmod 0600 /etc/pki/dovecot/certs/dovecot.pem /etc/pki/dovecot/private/dovecot.pem &>/dev/null
+openssl x509 -subject -fingerprint -noout -in /etc/pki/dovecot/certs/dovecot.pem &>/dev/null
+
+#   /usr/libexec/dovecot/mkcert.sh &>/dev/null
+   systemctl enable dovecot &>/dev/null
+   systemctl restart dovecot &>/dev/null
+
+   echo -n "Setting up postfix... "
+   yum -y install postfix &>/dev/null
+   postconf -e "inet_interfaces = all" &>/dev/null
+   postconf -e "mynetworks = 172.25.0.0/24" &>/dev/null
+   postconf -e "smtpd_sasl_auth_enable = yes" &>/dev/null
+   postconf -e "smtpd_sasl_type = dovecot" &>/dev/null
+   postconf -e "smtpd_sasl_path = private/auth" &>/dev/null
+   postconf -e "smtpd_recipient_restrictions =  permit_mynetworks, permit_sasl_authenticated, reject_unauth_destination" &>/dev/null
+   postconf -e "smtpd_tls_security_level = may" &>/dev/null
+
+   postconf -e "smtpd_tls_cert_file = /etc/pki/tls/certs/postfix.pem" &>/dev/null
+   postconf -e "smtpd_tls_key_file = /etc/pki/tls/private/postfix.pem" &>/dev/null
+#   cat >> /etc/postfix/master.cf << EOF
+(echo "submission inet n       -       n       -       -       smtpd" >> /etc/postfix/master.cf) &>/dev/null
+#  -o syslog_name=postfix/submission
+#  -o smtpd_tls_security_level=encrypt
+#  -o smtpd_sasl_auth_enable=yes
+#  -o smtpd_reject_unlisted_recipient=no
+#  -o smtpd_client_restrictions=$mua_client_restrictions
+#  -o smtpd_helo_restrictions=$mua_helo_restrictions
+#  -o smtpd_sender_restrictions=$mua_sender_restrictions
+#  -o smtpd_recipient_restrictions=permit_sasl_authenticated,reject
+#  -o milter_macro_daemon_name=ORIGINATING
+#EOF
+   echo "Generating new postfix certificates... "
+#   yum -y install crypto-utils &>/dev/null
+#   genkey --days 356 smtp${X}.example.com
+   mv /etc/pki/tls/certs/postfix.pem /etc/pki/postfix/certs/postfix.pem.backup &>/dev/null
+   mv /etc/pki/tls/private/postfix.pem /etc/pki/postfix/private/postfix.pem.backup &>/dev/null
+
+cat > /etc/pki/tls/postfix-openssl.cnf  << EOF
+[ req ]
+default_bits = 1024
+encrypt_key = yes
+distinguished_name = req_dn
+x509_extensions = cert_type
+prompt = no
+
+[ req_dn ]
+# country (2 letter code)
+#C=FI
+
+# State or Province Name (full name)
+#ST=
+
+# Locality Name (eg. city)
+#L=Helsinki
+
+# Organization (eg. company)
+#O=Dovecot
+
+# Organizational Unit Name (eg. section)
+OU=SMTP server
+
+# Common Name (*.example.com is also possible)
+CN=smtp${X}.example.com
+
+# E-mail contact
+emailAddress=postmaster@example.com
+
+[ cert_type ]
+nsCertType = server
+EOF
+
+openssl req -new -x509 -nodes -config /etc/pki/tls/postfix-openssl.cnf -out /etc/pki/tls/certs/postfix.pem -keyout /etc/pki/tls/private/postfix.pem -days 365 &>/dev/null
+chown root:root /etc/pki/tls/certs/postfix.pem /etc/pki/tls/private/postfix.pem &>/dev/null
+chmod 0600 /etc/pki/tls/certs/postfix.pem /etc/pki/tls/private/postfix.pem &>/dev/null
+openssl x509 -subject -fingerprint -noout -in /etc/pki/tls/certs/postfix.pem &>/dev/null
+
+   systemctl enable postfix &>/dev/null
+   systemctl restart postfix &>/dev/null
+
+   echo "Setting up firewall... "
+   firewall-cmd --permanent --add-service=smtp &>/dev/null 
+   firewall-cmd --permanent --add-port=587/tcp &>/dev/null
+   firewall-cmd --permanent --add-port=993/tcp &>/dev/null
+   firewall-cmd --reload &>/dev/null
+
+   echo "Setting up user student... "
+   usermod -aG mail student &>/dev/null
+
+   echo "Installing httpd to share cert... "
+   yum -y install httpd &>/dev/null
+   cp /etc/pki/dovecot/certs/dovecot.pem /var/www/html/ &>/dev/null
+   chmod 444 /var/www/html/dovecot.pem
+   systemctl start httpd &>/dev/null
+   systemctl enable httpd &>/dev/null
+   firewall-cmd --permanent --add-service=http &>/dev/null
+   firewall-cmd --reload &>/dev/null
+}
+
+function grade_email {
+  echo -n "Checking E-mail is present in student inbox... "
+  if grep "Subject:.*server.*mail lab.*" /var/mail/student &> /dev/null
+  then
+    print_PASS
+  else
+    print_FAIL
+    echo "The email did not arrive or has the wrong Subject header entry."
+    exit 0
+  fi
+}
+
+function grade_postfix {
+  echo -n "Checking for Postfix configuration... "
+  if ! grep "relayhost.*=.*\[smtp.*.example.com\]:587" /etc/postfix/main.cf &>/dev/null
+  then
+    print_FAIL
+    echo "The /etc/postfix/main.cf configuration file does not have a correct relayhost directive."
+    exit 0
+  elif ! grep "inet_interfaces.*=.*loopback-only.*" /etc/postfix/main.cf &>/dev/null
+  then
+    print_FAIL
+    echo "The /etc/postfix/main.cf configuration file does not have a correct inet_interfaces directive."
+    exit 0
+  elif ! grep "myorigin.*=.*desktop.*.example.com.*" /etc/postfix/main.cf &>/dev/null
+  then
+    print_FAIL
+    echo "The /etc/postfix/main.cf configuration file does not have a correct myorigin directive."
+    exit 0
+  elif ! grep "mydestination.*= *" /etc/postfix/main.cf &>/dev/null
+  then
+    print_FAIL
+    echo "The /etc/postfix/main.cf configuration file does not have a correct mydestination directive."
+    exit 0
+  elif ! grep "local_transport.*=.*error:.*" /etc/postfix/main.cf &>/dev/null
+  then
+    print_FAIL
+    echo "The /etc/postfix/main.cf configuration file does not have a correct local_transport directive."
+    exit 0
+  elif ! grep "mynetworks.*=.*127.0.0.0/8.*" /etc/postfix/main.cf &>/dev/null
+  then
+    print_FAIL
+    echo "The /etc/postfix/main.cf configuration file does not have a correct mynetworks IPv4 directive."
+    exit 0
+  elif ! grep "mynetworks.*=.*\[::1\]/128.*" /etc/postfix/main.cf &>/dev/null
+  then
+    print_FAIL
+    echo "The /etc/postfix/main.cf configuration file does not have a correct mynetworks IPv6 directive."
+    exit 0
+  else
+   print_PASS
+  fi
+}
+
+function grade_postfix_sasl_tls {
+  echo -n "Checking for Postfix TLS and SASL configuration... "
+  if ! grep "smtp_use_tls.*=.*yes" /etc/postfix/main.cf &>/dev/null
+  then
+    print_FAIL
+    echo "The /etc/postfix/main.cf configuration file does not have a correct smtp_use_tls directive."
+    exit 0
+  elif ! grep "smtp_tls_loglevel.*=.*1" /etc/postfix/main.cf &>/dev/null
+  then
+    print_FAIL
+    echo "The /etc/postfix/main.cf configuration file does not have a correct smtp_tls_loglevel directive."
+    exit 0
+  elif ! grep "smtp_tls_security_level.*=.*encrypt" /etc/postfix/main.cf &>/dev/null
+  then
+    print_FAIL
+    echo "The /etc/postfix/main.cf configuration file does not have a correct smtp_tls_security_level directive."
+    exit 0
+  elif ! grep "smtp_sasl_security_options.*=.*noanonymous" /etc/postfix/main.cf &>/dev/null
+  then
+    print_FAIL
+    echo "The /etc/postfix/main.cf configuration file does not have a correct smtp_sasl_security_options directive."
+    exit 0
+  elif ! grep "smtp_sasl_password_maps.*=.*hash:/etc/postfix/sasl_passwd" /etc/postfix/main.cf &>/dev/null
+  then
+    print_FAIL
+    echo "The /etc/postfix/main.cf configuration file does not have a correct smtp_sasl_password_maps directive."
+    exit 0
+  elif ! [ -f /etc/postfix/sasl_passwd ]
+  then
+    print_FAIL
+    echo "The /etc/postfix/sasl_passwd file does not exist."
+    exit 0
+  elif ! grep "smtp.*.example.com:587.*student:student" /etc/postfix/sasl_passwd &>/dev/null
+  then
+    print_FAIL
+    echo "The /etc/postfix/sasl_passwd file does not exist."
+    exit 0
+  elif ! [ -f /etc/postfix/sasl_passwd.db ]
+  then
+    print_FAIL
+    echo "The /etc/postfix/sasl_passwd.db file does not exist. Did you run postmap?"
+    exit 0
+  else
+   print_PASS
+  fi
+}
+
+function lab_setup {
+  VMNAME=$1
+  case $VMNAME in
+    server)
+      echo "Setting up server machine... "
+      setup_mutt
+      ;;
+    desktop)
+      echo "Setting up desktop machine... "
+      setup_mailserver
+      ;;
+    *)
+      # Should never get here, but what the hey....
+      print_FAIL && echo "The setup script needs to be run on server"
+      ;;
+  esac
+}
+
+function lab_grade {
+  VMNAME=$1
+  case $VMNAME in
+    desktop)
+      grade_email
+      ;;
+    server)
+      grade_postfix
+      grade_postfix_sasl_tls
+      ;;
+    *)
+      # Should never get here, but what the hey....
+      print_FAIL && echo "The grade script needs to be run on desktop"
+      ;;
+  esac
+}
+
+# Main area
+
+# Be sure to run as root (must do this first)
+if [[ "$EUID" -gt "0" ]] ; then
+  sudo $0 "$@"
+  exit
+fi
+
+# Process command line
+# Parse input
+case $1 in
+  setup|grade)
+    CMD=$1
+    ;;
+  -h|--help)
+    print_usage
+    exit 0
+    ;;
+  *)
+    echo Bad option $1
+    print_usage
+    exit 1
+    ;;
+esac
+# Validation
+[ -z "$CMD" ] && debug "Missing command" && print_usage && exit 1
+
+# Get local system information
+get_X
+
+# Branch based on short (without number) hostname
+case $MYHOST in
+  desktop|server)
+    lab_$CMD $MYHOST
+    ;;
+  *)
+    debug "Bad or missing hostname - $MYHOST"
+    debug "This command needs to be run on desktop or server"
+    exit 3
+    ;;
+esac

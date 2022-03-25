@@ -1,0 +1,122 @@
+#!/bin/bash
+#
+# Copyright 2014 Red Hat, Inc.
+#
+# NAME
+#     lab-mariadb-restore - setup script for RH254/RH299 MariaDB exercise
+#
+# SYNOPSIS
+#     lab-mariadb-restore setup
+#
+#     This script only works on serverX.example.com.
+#
+# DESCRIPTION
+#     This script performs the setup for the MariaDB backup restore
+#     exercise for RH254.
+#
+# CHANGELOG
+#   * Wed Jun 11 2014 Will Dinyes <wdinyes@redhat.com>
+#   - replaced rh255.dump with inventory.dump
+#   * Mon Jun  9 2014 Douglas Silva <dsilva@redhat.com>
+#   - original code
+
+# Initialize and set some variables
+MYHOST=""
+CMD=""
+DEBUG='true'
+RUN_AS_ROOT='true'
+
+# Source library of functions
+source /usr/local/bin/labtool.shlib
+trap on_exit EXIT
+
+# Additional functions for this shell script
+function print_usage {
+  local problem_name=$(basename $0 | sed -e 's/^lab-//')
+  cat << EOF
+This script controls the setup and grading of this lab.
+Usage: lab ${problem_name} COMMAND
+       lab ${problem_name} -h|--help
+COMMAND is one of:
+    setup - perform any setup steps for this lab on this machine
+EOF
+}
+
+function lab_setup {
+  VMNAME=$1
+  case $VMNAME in
+    desktop)
+      print_FAIL && echo "The setup script needs to be run on server"
+      ;;
+    server)
+      # Obviously adjust this to actual commands if script needs
+      # to run on server - and adjust the catchall message with *)
+      echo "Installing MariaDB"
+      yum groupinstall -y mariadb mariadb-client
+      echo "Starting MariaDB service"
+      systemctl start mariadb.service
+      echo "Enabling MariaDB service"
+      systemctl enable mariadb.service
+      echo "Configuring MariaDB on firewall"
+      firewall-cmd --permanent --add-service=mysql
+      firewall-cmd --reload
+      echo "Importing data to MariaDB"
+      cd /tmp
+      wget http://content.example.com/courses/rhce/rhel7.0/materials/mariadb/inventory.dump
+      mv /tmp/inventory.dump /home/student
+      chown student:student /home/student/inventory.dump
+      echo "Done"
+      ;;
+    *)
+      # Should never get here, but what the hey....
+      print_FAIL && echo "The setup script needs to be run on server"
+      ;;
+  esac
+}
+
+# Main area
+
+# Check if to be run as root (must do this first)
+if [[ "${RUN_AS_ROOT}" == 'true' ]] && [[ "${EUID}" -gt "0" ]] ; then
+  if [[ -x /usr/bin/sudo ]] ; then
+    ${SUDO:-sudo} $0 "$@"
+    exit
+  else
+    # Fail out if not running as root
+    check_root
+  fi
+fi
+
+# Process command line
+# Parse input
+case $1 in
+  setup)
+    CMD=$1
+    ;;
+  -h|--help)
+    print_usage
+    exit 0
+    ;;
+  *)
+    echo Bad option $1
+    print_usage
+    exit 1
+    ;;
+esac
+# Validation
+[[ -z "$CMD" ]] && debug "Missing command" && print_usage && exit 1
+
+# Get local system information
+get_X
+
+# Branch based on short (without number) hostname
+case $MYHOST in
+  desktop|server)
+    lab_$CMD $MYHOST
+    ;;
+  *)
+    debug "Bad or missing hostname - $MYHOST"
+    debug "This command needs to be run on desktop or server"
+    exit 3
+    ;;
+esac

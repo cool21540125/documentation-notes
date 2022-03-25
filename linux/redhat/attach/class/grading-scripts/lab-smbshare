@@ -1,0 +1,412 @@
+#!/bin/bash
+#
+# Copyright 2014 Red Hat, Inc.
+#
+# NAME
+#     lab-smbshare - grading script for RH254/RH299 SMB practice
+#
+# SYNOPSIS
+#     lab-smbshare grade
+#
+#     This script only works on serverX.example.com.
+#
+# DESCRIPTION
+#     This script is the grading script for a RH254 SMB practice
+#     exercise.
+#
+# CHANGELOG
+#   * Fri Jun 20 2014 Rudy Kastl <rkastl@redhat.com>
+#   - updated smb grading
+#   * Thu Jun 16 2014 Rudy Kastl <rkastl@redhat.com>
+#   - spotted another small issue in grading scripts
+#   * Thu Jun  3 2014 Rudy Kastl <rkastl@redhat.com>
+#   - grading scripts update
+#   * Thu May 15 2014 Rudy Kastl <rkastl@redhat.com>
+#   - commit for NFS and SMB setup/grading scripts
+
+# Initialize and set some variables
+MYHOST=""
+CMD=""
+
+SERV_PKG=""
+CLNT_PKG=""
+
+# Source library of functions
+source /usr/local/bin/labtool.shlib
+trap on_exit EXIT
+LOG_TAG=$(basename $0)
+
+# Additional functions for this shell script
+function srv_exit {
+  # call debug with msg and exit with code
+  DEBUG=true
+  debug "$1"
+  exit $2
+}
+
+function install_pkgs {
+  # install the package that provides the service
+  echo "Installing packages ..."
+  yum -y install $@ &> /dev/null || \
+    srv_exit "yum failed: $?" 150
+}
+
+# Grading scripts server
+function check_samba_installed {
+  echo -n "Checking for samba rpm package... "
+  if rpm -q samba &>/dev/null
+  then
+    print_PASS
+  else
+    print_FAIL
+    echo "The samba rpm is not installed... "
+  fi
+}
+
+function check_enabled_smb {
+  echo -n "Checking smb service is enabled... "
+  if systemctl is-enabled smb &> /dev/null
+  then
+    print_PASS
+  else
+    print_FAIL
+    echo "Service smb is not enabled."
+    return 1
+  fi
+}
+
+function check_isactive_smb {
+  echo -n "Checking smb service is started... "
+  if systemctl is-active smb &> /dev/null
+  then
+    print_PASS
+  else
+    print_FAIL
+    echo "Service smb is not started."
+    return 1
+  fi
+}
+
+function check_smb_config {
+  echo -n "Checking for correct /etc/samba/smb.conf file... "
+  if ! grep '.*workgroup.*=.*mycompany.*' /etc/samba/smb.conf &>/dev/null
+  then
+    print_FAIL
+    echo "The workgroup entry in /etc/samba/smb.conf is not correct."
+    return 1
+  elif ! (grep '.*security.*=.*user.*' /etc/samba/smb.conf) &>/dev/null
+    then
+      print_FAIL
+      echo "The security  entry in /etc/samba/smb.conf is not correct."
+      return 1
+  elif ! (grep '\[smbshare\]' /etc/samba/smb.conf) &>/dev/null
+    then
+      print_FAIL
+      echo "The [smbshare] section does not exist in /etc/samba/smb.conf."
+      return 1
+  elif ! (grep '.*write.*list.*=.*@marketing' /etc/samba/smb.conf) &>/dev/null && ! (grep '.*write.*list.*=.*+marketing' /etc/samba/smb.conf) &>/dev/null
+    then
+      print_FAIL
+      echo "The write list entry is not correct in /etc/samba/smb.conf."
+      return 1
+  else
+    print_PASS
+  fi
+}
+
+function check_smb_share_dir_exists {
+  echo -n "Checking /smbshare directory exists... "
+  if [ -d /smbshare ]
+  then
+    print_PASS
+  else
+    print_FAIL
+    echo "The /smbshare directory does not exist."
+    return 1
+  fi
+}
+
+function check_smb_share_selinux_context {
+  echo -n "Checking /smbshare selinux context... "
+  if (ls -Zd /smbshare | grep samba_share_t) &>/dev/null
+  then
+    print_PASS
+  else
+    print_FAIL
+    echo "The selinux context of /smbshare is not correct."
+    return 1
+  fi
+}
+
+function check_smb_system_user_groupmember {
+  echo -n "Checking for system user brian... "
+  if ! grep brian /etc/passwd &>/dev/null
+  then
+    print_FAIL
+    echo "User brian does not exist."
+    return 1
+  elif ! (id brian |grep marketing) &>/dev/null
+  then
+    print_FAIL
+    echo "User brian is not a member of the marketing group."
+    return 1
+  elif ! (grep brian /etc/passwd | grep '/sbin/nologin') &>/dev/null
+  then
+    print_FAIL
+    echo "User brian is not a samba only user."
+    return 1
+  else
+    print_PASS
+  fi
+}
+
+function check_smb_system_user {
+  echo -n "Checking for system user rob... "
+  if ! grep rob /etc/passwd &>/dev/null
+  then
+    print_FAIL
+    echo "User rob does not exist."
+    return 1
+  elif ! (grep rob /etc/passwd | grep '/sbin/nologin') &>/dev/null
+  then
+    print_FAIL
+    echo "User rob is not a samba only user."
+    return 1
+  else
+    print_PASS
+  fi
+}
+
+function check_smb_user_groupmember {
+  echo -n "Checking for samba user brian... "
+  if grep brian /var/lib/samba/private/passdb.tdb &>/dev/null
+  then
+    print_PASS
+  else
+    print_FAIL
+    echo "User brian does not exist in Samba."
+    return 1
+  fi
+}
+
+function check_smb_user {
+  echo -n "Checking for samba user rob... "
+  if grep rob /var/lib/samba/private/passdb.tdb &>/dev/null
+  then
+    print_PASS
+  else
+    print_FAIL
+    echo "User rob does not exist in Samba."
+    return 1
+  fi
+}
+
+
+#function check_firewalld {
+#  echo -n "Checking for correct firewall settings..."
+#}
+
+
+
+# grading scripts desktop
+function check_cifs_utils_installed {
+  echo -n "Checking for cifs-utils rpm package... "
+  if rpm -q cifs-utils &>/dev/null
+  then
+    print_PASS
+  else
+    print_FAIL
+    echo "The rpm package cifs-utils is not installed."
+    return 1
+  fi
+}
+
+function check_cifs_multiuser_mountpoint {
+  echo -n "Checking for /mnt/multiuser mountpoint... "
+  if [ -d /mnt/multiuser ]
+  then
+    print_PASS
+  else
+    print_FAIL
+    echo "The directory /mnt/multiuser does not exist."
+    return 1
+  fi
+}
+
+function check_cifs_multiuser_fstab {
+  echo -n "Checking for multiuser fstab entry... "
+  if ! grep '//server.*/smbshare.*/mnt/multiuser.*cifs.*' /etc/fstab &>/dev/null
+  then
+    print_FAIL
+    echo "There is no fstab entry for the smb share //serverX/smbshare."
+    return 1
+  elif ! (grep '//server.*/smbshare.*/mnt/multiuser.*cifs.*' /etc/fstab |grep credentials) &>/dev/null
+  then
+    print_FAIL
+    echo "No credentials directive present in the fstab entry for //serverX/smbshare."
+    return 1
+  elif ! (grep '//server.*/smbshare.*/mnt/multiuser.*cifs.*' /etc/fstab |grep multiuser) &>/dev/null
+  then
+    print_FAIL
+    echo "The fstab entry for //serverX/smbshare is missing the multiuser mount option."
+    return 1
+  else
+    print_PASS
+  fi
+}
+
+function check_cifs_multiuser_mount {
+  echo -n "Checking for multiuser mount... "
+  if ! (mount | grep '//server${X}/smbshare.*/mnt/multiuser.*cifs.*') &>/dev/null
+  then
+    print_FAIL
+    echo "The //serverX/smbshare share is not mounted on /mnt/multiuser"
+    return 1
+  else
+    print_PASS
+  fi
+}
+
+function check_cifs_system_user_groupmember {
+  echo -n "Checking for system user brian... "
+  if ! grep brian /etc/passwd &>/dev/null
+  then
+    print_FAIL
+    echo "User brian does not exist."
+    return 1
+  else
+    print_PASS
+  fi
+}
+
+function check_cifs_system_user {
+  echo -n "Checking for system user rob... "
+  if ! grep rob /etc/passwd &>/dev/null
+  then
+    print_FAIL
+    echo "User rob does not exist."
+    return 1
+  else
+    print_PASS
+  fi
+}
+
+function check_cifs_user_perm {
+  echo -n "Checking for user permissions on /mnt/multiuser... "
+  rm -f /mnt/multiuser/grade-brian.txt &>/dev/null
+  if ! (su - brian -c 'echo 'grade' >/mnt/multiuser/grade-brian.txt') &>/dev/null
+  then
+    print_FAIL
+    echo "User brian is not allowed to write to /mnt/multiuser. Are the permission correct for /smbshare on server? Did you add the correct credentials with cifscreds?"
+    return 1
+  elif ! (su - rob -c 'grep grade /mnt/multiuser/grade-brian.txt') &>/dev/null
+  then
+    print_FAIL
+    echo "User rob is not allowed to read a file created by user brian. Did you set the SGID bit on /smbshare on serverX? Did you add the correct credentials with cifscreds?"
+    return 1
+  else
+    print_PASS
+  fi
+}
+
+
+
+function print_usage {
+echo "This script controls the setup and grading of this lab."
+echo "Usage: $(basename $0) COMMAND"
+echo "       $(basename $0) -h|--help"
+echo "COMMAND is one of:"
+echo "    grade - perform any grading steps and report on this machine"
+
+}
+
+function lab_grade {
+    VMNAME=$1
+    case $VMNAME in
+        desktop)
+            FAIL=0
+            #check_cifs_utils_installed || FAIL=1
+            #check_cifs_multiuser_mountpoint || FAIL=1
+            #check_cifs_multiuser_fstab || FAIL=1
+            #check_cifs_multiuser_mount || FAIL=1
+            #check_cifs_system_user_groupmember || FAIL=1
+            #check_cifs_system_user || FAIL=1
+            #check_cifs_user_perm || FAIL=1
+            echo "Please run the grading script on the server system."
+            ;;
+        server)
+            FAIL=0
+            check_samba_installed || FAIL=1
+            check_isactive_smb || FAIL=1
+            check_enabled_smb || FAIL=1
+            check_smb_config || FAIL=1
+            check_smb_share_dir_exists || FAIL=1
+            check_smb_share_selinux_context || FAIL=1
+            check_smb_system_user_groupmember || FAIL=1
+            check_smb_user_groupmember || FAIL=1
+            check_smb_system_user || FAIL=1
+            check_smb_user || FAIL=1
+            echo
+            echo -n "Overall result: "
+            if [ ${FAIL} -eq 0 ]; then
+              print_PASS
+              echo "Congratulations! You've passed all requirements."
+            else
+              print_FAIL
+              echo "Please check your work and try again."
+            fi
+            ;;
+        *)
+            # Should never get here, but what the hey....
+            print_FAIL && echo "Something went wrong. Ask your instructor for assistance."
+            ;;
+    esac
+}
+
+# Main area
+
+# Check if to be run as root (must do this first)
+if [[ "${RUN_AS_ROOT}" == 'true' ]] && [[ "${EUID}" -gt "0" ]] ; then
+  if [[ -x /usr/bin/sudo ]] ; then
+    ${SUDO:-sudo} $0 "$@"
+    exit
+  else
+    # Fail out if not running as root
+    check_root
+  fi
+fi
+
+# Process command line
+# Parse input
+case $1 in
+    grade)
+        CMD=$1
+        ;;
+    -h|--help)
+        print_usage
+        exit 0
+        ;;
+    *)
+        echo Bad option $1
+        print_usage
+        exit 1
+        ;;
+esac
+# Validation
+[ -z "$CMD" ] && debug "Missing command" && print_usage && exit 1
+
+# Get local system information
+get_X
+
+# Branch based on short (without number) hostname
+case $MYHOST in
+    desktop|server)
+        lab_$CMD $MYHOST
+        ;;
+    *)
+        debug "Bad or missing hostname - $MYHOST"
+        debug "This command needs to be run on desktop or server"
+        exit 3
+        ;;
+esac
+

@@ -1,0 +1,245 @@
+#!/bin/bash
+#
+# Copyright 2014 Red Hat, Inc.
+#
+# NAME
+#     lab-kickstart - grading script for RH134/RH199/RH299 kickstart lab
+#
+# SYNOPSIS
+#     lab-network {setup|grade}
+#
+# DESCRIPTION
+#     This script is the lab grading script for the RH134/RH199 kickstart
+#     lab. It can be executed on desktopX and serverX.
+#
+# CHANGELOG
+#   * Wed May  7 2014 George Hacker <ghacker@redhat.com>
+#   - fixed curl so it fails when the kickstart file has bad perms
+#   * Mon Apr 21 2014 George Hacker <ghacker@redhat.com>
+#   - original code (inspired by Rudy's grading code for the comp review)
+
+PATH=/usr/bin:/bin:/usr/sbin:/sbin
+
+# Initialize and set some variables
+MYHOST=""
+CMD=""
+DEBUG='true'
+RUN_AS_ROOT='true'
+
+SERV_PKG=httpd
+SERVICE=httpd
+FW_SVC=http
+KSFILES=/var/www/html/ks-config
+
+# Values to check in the Kickstart configuration file
+INSTALL_URL=http://classroom.example.com/content/rhel7.0/x86_64/dvd/
+DISK_SIZE=5120
+ISSUE_STRING='Kickstarted for class'
+
+# Source library of functions
+function_lib=labtool.shlib
+content=content.example.com
+cd /usr/local/bin
+url_prefix=http://${content}/courses/rhce/rhel7.0/grading-scripts
+# If functions are not found locally, download them
+if [[ ! -f ${function_lib} ]] ; then
+  if ! ${sudo} curl -s -f -O ${url_prefix}/${function_lib} ; then
+    echo "Error: unable to download grading functions!" 1>&2
+    echo 'Please contact your instructor.' 1>&2
+    exit 2
+  fi
+fi
+source /usr/local/bin/labtool.shlib
+
+# Additional functions for this shell script
+function print_usage {
+  local problem_name=$(basename $0 | sed -e 's/^lab-//')
+  cat << EOF
+This script controls the setup and grading of this lab.
+Usage: lab ${problem_name} COMMAND
+       lab ${problem_name} -h|--help
+COMMAND is one of:
+    setup - perform any setup steps for this lab on this machine
+    grade - perform any grading steps and report on this machine
+EOF
+}
+
+function lab_setup {
+  VMNAME=$1
+  case $VMNAME in
+    desktop)
+      # Configure desktopX web server and open firewall for
+      # publishing kickstart file.
+      if ! rpm -q --quiet ${SERV_PKG}
+      then
+	echo 'Installing necessary software.'
+	yum install -y ${SERV_PKG} &> /dev/null
+      fi
+      echo "Starting ${SERVICE} service."
+      systemctl enable ${SERVICE} &> /dev/null
+      systemctl start ${SERVICE} &> /dev/null
+      echo "Opening up firewall ports."
+      firewall-cmd --add-service=${FW_SVC} &> /dev/null
+      firewall-cmd --permanent --add-service=${FW_SVC} &> /dev/null
+      mkdir -p ${KSFILES}
+      print_SUCCESS
+      ;;
+    server)
+      # Obviously adjust this to actual commands if script needs
+      # to run on server - and adjust the catchall message with *)
+      print_FAIL && echo "The setup script needs to be run on desktop"
+      ;;
+    *)
+      # Should never get here, but what the hey....
+      print_FAIL && echo "The setup script needs to be run on desktop"
+      ;;
+  esac
+}
+
+function lab_grade {
+  VMNAME=$1
+  case $VMNAME in
+    desktop)
+      # File to check to Kickstart configuration correctness
+      KSFILE=/root/anaconda-ks.cfg
+      # Confirm kickstart file is available via HTTP
+      rm -f ${KSFILE}
+      echo -n 'Kickstart file available via HTTP ..... '
+      if curl http://localhost/ks-config/kickstart.cfg -s -f -o ${KSFILE}
+      then
+	print_PASS
+      else
+	print_FAIL
+	exit 1
+      fi
+      # Scan it and confirm correct changes made
+      echo -n 'Confirming installation media ......... '
+      if grep -q "^url.*--url=\"${INSTALL_URL}\"" ${KSFILE}
+      then
+	print_PASS
+      else
+	print_FAIL
+      fi
+      echo -n 'Checking installed disk size .......... '
+      if grep -q "^part.*--size=${DISK_SIZE}" ${KSFILE}
+      then
+	print_PASS
+      else
+	print_FAIL
+      fi
+      echo -n 'Confirming network configuration ...... '
+      if grep -q '^network.*--bootproto=dhcp' ${KSFILE}
+      then
+	print_PASS
+      else
+	print_FAIL
+      fi
+      echo -n 'Checking software package selection ... '
+      if grep -q '^cloud-init' ${KSFILE}
+      then
+	print_FAIL
+      elif grep -q '^httpd' ${KSFILE}
+      then
+	print_PASS
+      else
+	print_FAIL
+      fi
+      # Clean up after ourselves
+      rm -f ${KSFILE}
+      ;;
+    server)
+      # Files to check for install correctness
+      KSFILE=/root/anaconda-ks.cfg
+      NETFILE=/etc/sysconfig/network-scripts/ifcfg-eth0
+      echo -n 'Confirming installation media ......... '
+      if grep -q "^url.*--url=\"${INSTALL_URL}\"" ${KSFILE}
+      then
+	print_PASS
+      else
+	print_FAIL
+      fi
+      echo -n 'Checking installed disk size .......... '
+      if grep -q "^part.*--size=${DISK_SIZE}" ${KSFILE}
+      then
+	print_PASS
+      else
+	print_FAIL
+      fi
+      echo -n 'Confirming network configuration ...... '
+      if grep -q '^BOOTPROTO=.*dhcp' ${NETFILE}
+      then
+	print_PASS
+      else
+	print_FAIL
+      fi
+      echo -n 'Checking software package selection ... '
+      if grep -q '^cloud-init' ${KSFILE}
+      then
+	print_FAIL
+      elif rpm --quiet -q httpd
+      then
+	print_PASS
+      else
+	print_FAIL
+      fi
+      echo -n 'Checking effects of kickstart %post ... '
+      if tail -n 1 /etc/issue | grep -q "${ISSUE_STRING}"
+      then
+	print_PASS
+      else
+	print_FAIL
+      fi
+      ;;
+    *)
+      # Should never get here, but what the hey....
+      print_FAIL && echo "The grade script needs to be run on desktop"
+      ;;
+  esac
+}
+
+# Main area
+
+# Check if to be run as root (must do this first)
+if [[ "${RUN_AS_ROOT}" == 'true' ]] && [[ "${EUID}" -gt "0" ]] ; then
+  if [[ -x /usr/bin/sudo ]] ; then
+    ${SUDO:-sudo} $0 "$@"
+    exit
+  else
+    # Fail out if not running as root
+    check_root
+  fi
+fi
+
+# Process command line
+# Parse input
+case $1 in
+  setup|grade)
+    CMD=$1
+    ;;
+  -h|--help)
+    print_usage
+    exit 0
+    ;;
+  *)
+    echo Bad option $1
+    print_usage
+    exit 1
+    ;;
+esac
+# Validation
+[[ -z "$CMD" ]] && debug "Missing command" && print_usage && exit 1
+
+# Get local system information
+get_X
+
+# Branch based on short (without number) hostname
+case $MYHOST in
+  desktop|server)
+    lab_$CMD $MYHOST
+    ;;
+  *)
+    debug "Bad or missing hostname - $MYHOST"
+    debug "This command needs to be run on desktop or server"
+    exit 3
+    ;;
+esac

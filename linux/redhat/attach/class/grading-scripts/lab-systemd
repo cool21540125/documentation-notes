@@ -1,0 +1,171 @@
+#!/bin/bash
+#
+# NAME
+#     lab-systemd - setup/grading script for RH254 services lab
+#
+# SYNOPSIS
+#     lab-systemd {setup|grade}
+#
+#     This script only works on serverX.example.com.
+#
+# DESCRIPTION
+#     This script is the lab grading script for the 254 services lab.
+#
+# CHANGELOG
+#   * Tue Feb  4 2014 Susan Lauber <slauber@redhat.com>
+#   - original code
+
+# Initialize and set some variables
+MYHOST=""
+CMD=""
+DEBUG='true'
+RUN_AS_ROOT='true'
+
+# Source library of functions
+source /usr/local/bin/labtool.shlib
+trap on_exit EXIT
+
+# Additional functions for this shell script
+function print_usage {
+  local problem_name=$(basename $0 | sed -e 's/^lab-//')
+  cat << EOF
+This script controls the setup and grading of this lab.
+Usage: lab ${problem_name} COMMAND
+       lab ${problem_name} -h|--help
+COMMAND is one of:
+    setup - perform any setup steps for this lab on this machine
+    grade - perform any grading steps and report on this machine
+EOF
+}
+
+function grade_services {
+  echo -n "* Checking rsyslog service is enabled... "
+
+  if systemctl is-enabled rsyslog.service &> /dev/null
+  then
+    print_PASS
+  else
+    print_FAIL
+    echo "rsyslog service is not enabled."
+  fi
+
+  echo -n "* Checking rsyslog service is running... "
+
+  if systemctl is-active rsyslog.service &> /dev/null
+  then
+    print_PASS
+  else
+    print_FAIL
+    echo "rsyslog service is not running."
+  fi
+
+  echo -n "* Checking default target... "
+
+  if [ "$(systemctl get-default)" = 'graphical.target' ]
+  then
+    print_PASS
+  else
+    print_FAIL
+    echo "Incorrect default target."
+  fi
+}
+
+function lab_setup {
+  VMNAME=$1
+  case $VMNAME in
+    desktop)
+      print_FAIL && echo "The setup script needs to be run on server"
+      ;;
+    server)
+
+      # Set target
+      if ! systemctl set-default multi-user.target &> /dev/null
+      then
+        print_FAIL
+        echo "Failed setting target."
+      fi
+
+      # Set target
+      if ! systemctl disable rsyslog.service &> /dev/null
+      then
+        print_FAIL
+        echo "Failed disabling service."
+      fi
+
+      # Stop service
+      if ! systemctl stop rsyslog.service  &> /dev/null
+      then
+        print_FAIL
+        echo "Failed stopping service."
+      fi
+
+      ;;
+    *)
+      # Should never get here, but what the hey....
+      print_FAIL && echo "The setup script needs to be run on server"
+      ;;
+  esac
+}
+
+function lab_grade {
+  VMNAME=$1
+  case $VMNAME in
+    desktop)
+      print_FAIL && echo "The grade script needs to be run on server"
+      ;;
+    server)
+      grade_services
+      ;;
+    *)
+      # Should never get here, but what the hey....
+      print_FAIL && echo "The grade script needs to be run on server"
+      ;;
+  esac
+}
+
+# Main area
+
+# Check if to be run as root (must do this first)
+if [[ "${RUN_AS_ROOT}" == 'true' ]] && [[ "${EUID}" -gt "0" ]] ; then
+  if [[ -x /usr/bin/sudo ]] ; then
+    ${SUDO:-sudo} $0 "$@"
+    exit
+  else
+    # Fail out if not running as root
+    check_root
+  fi
+fi
+
+# Process command line
+# Parse input
+case $1 in
+  setup|grade)
+    CMD=$1
+    ;;
+  -h|--help)
+    print_usage
+    exit 0
+    ;;
+  *)
+    echo Bad option $1
+    print_usage
+    exit 1
+    ;;
+esac
+# Validation
+[ -z "$CMD" ] && debug "Missing command" && print_usage && exit 1
+
+# Get local system information
+get_X
+
+# Branch based on short (without number) hostname
+case $MYHOST in
+  desktop|server)
+    lab_$CMD $MYHOST
+    ;;
+  *)
+    debug "Bad or missing hostname - $MYHOST"
+    debug "This command needs to be run on desktop or server"
+    exit 3
+    ;;
+esac

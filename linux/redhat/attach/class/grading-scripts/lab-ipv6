@@ -1,0 +1,252 @@
+#!/bin/bash
+#
+# Copyright 2014 Red Hat, Inc.
+#
+# NAME
+#     lab-ipv6 - grading script for RH254/RH299 IPv6 lab
+#
+# SYNOPSIS
+#     lab-ipv6 {setup|grade}
+#
+#     This script only works on server.
+#
+# DESCRIPTION
+#     This script performs the grading steps for the link aggregation
+#     lab for RH254. It looks for a bonded interface with a specific
+#     name, checks to see if it has the correct slave interfaces, then
+#     makes sure it is using the correct bonding mode. This script also
+#     looks for a bridge with a specific name that is based upon the
+#     bonded interface. It also confirms that the IPv4 network settings
+#     are correct.
+
+#     Blessed IPv6 subnet = fddb:fe2a:ab1e:0000::/64
+#
+# CHANGELOG
+#   * Fri Jun  6 2014 George Hacker <ghacker@redhat.com>
+#   - original code based off of lab-bondbridge
+
+PATH=/usr/bin:/bin:/usr/sbin:/sbin
+
+# Initialize and set some variables
+MYHOST=''
+CMD=''
+DEBUG='true'
+RUN_AS_ROOT='true'
+
+virt_iface='eno1'
+addr_IP4='192.168.0.100/24'
+addr_IP6='fddb:fe2a:ab1e::c0a8:64/64'
+gateway_IP4='192.168.0.254/24'
+gateway_IP6='fddb:fe2a:ab1e::c0a8:00fe/64'
+ping_timeout=5
+
+# Source library of functions
+source /usr/local/bin/labtool.shlib
+#trap on_exit EXIT
+
+# Additional functions for this shell script
+function print_usage {
+  local problem_name=$(basename $0 | sed -e 's/^lab-//')
+  cat << EOF
+This script controls the setup and grading of this lab.
+Usage: lab ${problem_name} COMMAND
+       lab ${problem_name} -h|--help
+COMMAND is one of:
+    grade - perform any grading steps and report on this machine
+    setup - perform any setup steps for this lab on this machine
+EOF
+}
+
+function grade_ipv4 {
+  echo -n 'IPv4 address is correct ....... '
+  if ip addr show dev ${virt_iface} | grep -q "inet ${addr_IP4} "; then
+    print_PASS
+  else
+    print_FAIL
+  fi
+  echo -n 'IPv4 gateway can be reached ... '
+  if ping -c 1 -W ${ping_timeout} ${gateway_IP4%/*} &> /dev/null; then
+    print_PASS
+  else
+    print_FAIL
+  fi
+}
+
+function grade_ipv6 {
+  echo -n 'IPv6 address is correct ....... '
+  if ip addr show dev ${virt_iface} | grep -q "inet6 ${addr_IP6} "; then
+    print_PASS
+  else
+    print_FAIL
+  fi
+  echo -n 'IPv6 gateway can be reached ... '
+  if ping6 -c 1 -W ${ping_timeout} ${gateway_IP6%/*} &> /dev/null; then
+    print_PASS
+  else
+    print_FAIL
+  fi
+}
+
+function lab_setup {
+  VMNAME=$1
+  case $VMNAME in
+    server)
+      echo -n 'Setting up for IPv6 practice or lab ... '
+      if ip link | grep -q "${virt_iface}"; then
+        print_FAIL
+	echo 'Warning: virtual network device already exists.'
+	exit 1
+      else
+	# Steve Bonneville <sbonnevi@redhat.com>
+	#
+	# This script creates a network interface, eno1,
+	# which is connected to an "invisible" bridge hidden
+	# in a network namespace.
+	#
+	# Also hidden in that namespace is a
+	# "host" on 192.168.0.254 that won't respond to
+	# pings unless eno1 or eno2 are configured with 
+	# an address on the 192.168.0.0/24 network!
+	#
+	# To reset this script to normal, from the default
+	# namespace just run "ip netns del hidden" and it'll
+	# clean everything up!
+	#
+	# To inspect the hidden namespace from inside, start
+	# a subshell with "ip netns exec hidden bash" and then
+	# run normal networking commands.  You can get back to
+	# the default namespace by exiting the subshell.  
+	#   "ip netns exec bash" is to network interfaces what
+	#   "chroot"             is to file systems
+	#
+	# Documentation in ip-netns(8).
+	#
+	cat > /usr/local/sbin/bondbridge << EOF
+#!/bin/bash
+# Pardon the dirty SELinux hack, didn't feel like writing a policy
+# module just for this.
+
+OLDENFORCE=\$(getenforce)
+setenforce 0
+
+# create namespace
+ip netns add hidden
+
+# Activate ::1 inside namespace
+ip netns exec hidden ip link set dev lo up
+
+# Add bridge inside "hidden" namespace and turn on
+ip netns exec hidden brctl addbr hiddenbr0
+ip netns exec hidden ip link set dev hiddenbr0 up
+
+# Add virtual patch cables to bridge
+# the eno1/eno2 ends are student-visible
+ip link add ${virt_iface} type veth peer name ${virt_iface}-port
+ip link set ${virt_iface}-port netns hidden up
+ip netns exec hidden brctl addif hiddenbr0 ${virt_iface}-port
+
+# Attach virtual patch cable to bridge inside namespace and
+# assign its far side addresses.
+ip netns exec hidden ip link add inside0 type veth peer name inside0-port
+ip netns exec hidden brctl addif hiddenbr0 inside0-port
+ip netns exec hidden ip link set inside0-port up
+ip netns exec hidden ip link set inside0 up
+ip netns exec hidden ip addr add ${gateway_IP4} dev inside0 
+ip netns exec hidden ip addr add ${gateway_IP6} dev inside0 
+
+setenforce \${OLDENFORCE}
+EOF
+	chmod +x /usr/local/sbin/bondbridge
+	cat > /etc/systemd/system/hiddenbridge.service << EOF
+[Unit]
+Description=Create a virtual network interface for RHEL SAIII training (RH254)
+Before=NetworkManager.service
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/sbin/bondbridge
+RemainAfterExit=yes
+ExecStopPost=ip netns del hidden
+
+[Install]
+WantedBy=network.target
+EOF
+	systemctl daemon-reload
+	systemctl enable hiddenbridge.service &> /dev/null
+	systemctl start hiddenbridge.service
+	print_SUCCESS
+      fi
+      ;;
+    desktop )
+      print_FAIL && echo "The setup script needs to be run on server"
+      ;;
+    *)
+      # Should never get here, but what the hey....
+      print_FAIL && echo "The setup script needs to be run on server"
+      ;;
+  esac
+}
+
+function lab_grade {
+  VMNAME=$1
+  case $VMNAME in
+    desktop)
+      print_FAIL && echo "The grade script needs to be run on server"
+      ;;
+    server)
+      grade_ipv4
+      grade_ipv6
+      ;;
+    *)
+      # Should never get here, but what the hey....
+      print_FAIL && echo "The grade script needs to be run on server"
+      ;;
+  esac
+}
+
+# Main area
+
+# Check if to be run as root (must do this first)
+if [[ "${RUN_AS_ROOT}" == 'true' && "${EUID}" -gt "0" ]] ; then
+  if [[ -x /usr/bin/sudo ]] ; then
+    ${SUDO:-sudo} $0 "$@"
+    exit
+  else
+    # Fail out if not running as root
+    check_root
+  fi
+fi
+
+# Process command line
+# Parse input
+case $1 in
+  setup|grade)
+    CMD=$1
+    ;;
+  -h|--help)
+    print_usage
+    exit 0
+    ;;
+  *)
+    echo Bad option $1
+    print_usage
+    exit 1
+    ;;
+esac
+# Validation
+[[ -z "$CMD" ]] && debug "Missing command" && print_usage && exit 2
+
+# Get local system information
+get_X
+
+# Branch based on short (without number) hostname
+case $MYHOST in
+  desktop|server)
+    lab_$CMD $MYHOST
+    ;;
+  *)
+    debug "Bad or missing hostname - $MYHOST"
+    debug "This command needs to be run on desktop or server"
+    exit 3
+    ;;
+esac

@@ -1,0 +1,1130 @@
+#!/bin/bash
+#
+# Copyright 2014 Red Hat, Inc.
+#
+# NAME
+#     lab-sa1-review - grading script for RH124 comprehensive review
+#
+# SYNOPSIS
+#     lab-sa1-review {setup|grade}
+#
+# DESCRIPTION
+#     This script is the RH124 comprehensive review lab setup/grading
+#     script. It should only be executed on serverX.example.com.
+#
+# CHANGELOG
+#   * Tue Jul  8 2014 George Hacker <ghacker@redhat.com>
+#   - corrected a regular expression that improperly matches IP addresses
+#   * Thu Jun  5 2014 George Hacker <ghacker@redhat.com>
+#   - added support for ILT/VT/ROL disk device differences
+#   * Wed Apr 23 2014 George Hacker <ghacker@redhat.com>
+#   - fixed broken regular expressions in grading
+#   * Mon Apr 21 2014 Rudy Kastl <rkastl@redhat.com>
+#   - original code
+
+PATH=/usr/bin:/bin:/usr/sbin:/sbin
+
+# Initialize and set some variables
+MYHOST=""
+CMD=""
+DEBUG='true'
+RUN_AS_ROOT='true'
+
+
+# Source library of functions
+source /usr/local/bin/labtool.shlib
+trap on_exit EXIT
+
+# Additional functions for this shell script
+function print_usage {
+  local problem_name=$(basename $0 | sed -e 's/^lab-//')
+  cat << EOF
+This script controls the setup and grading of this lab.
+Usage: lab ${problem_name} COMMAND
+       lab ${problem_name} -h|--help
+COMMAND is one of:
+    setup - perform any setup steps for this lab on this machine
+    grade - perform any grading steps and report on this machine
+EOF
+}
+
+function srv_exit {
+  # call debug with msg and exit with code
+  DEBUG=true
+  debug "$1"
+  exit $2
+}
+
+# FIXME - this function isn't called (delete?).
+#function install_packages {
+#  echo -n "Installing packages...  "
+#  yum -y install "$@" &> /dev/null
+#  RESULT=$?
+#  if [ "${RESULT}" -ne 0 ]; then
+#    print_FAIL
+#    echo "Error installing needed packages"
+#    exit 132
+#  fi
+#  print_PASS
+#}
+
+### Setup functions for sa1 comprehensive review
+
+function setup_top {
+  echo "Setting up the process for the top exercise."
+  if [ ! -f /root/cpuhog ]; then
+    base64 -d > /root/cpuhog <<EOF
+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
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAAAAAVAAAAAAADgBEAAAAAAAAAAAAAAAAAAAQAAAAAAAAABAAAAAAAAAAwAAAAAAAAA
+4ANAAAAAAAANAAAAAAAAANQFQAAAAAAAGQAAAAAAAAAQDmAAAAAAABsAAAAAAAAACAAAAAAAAAAa
+AAAAAAAAABgOYAAAAAAAHAAAAAAAAAAIAAAAAAAAAPX+/28AAAAAmAJAAAAAAAAFAAAAAAAAABgD
+QAAAAAAABgAAAAAAAAC4AkAAAAAAAAoAAAAAAAAAPQAAAAAAAAALAAAAAAAAABgAAAAAAAAAFQAA
+AAAAAAAAAAAAAAAAAAMAAAAAAAAAABBgAAAAAAACAAAAAAAAAEgAAAAAAAAAFAAAAAAAAAAHAAAA
+AAAAABcAAAAAAAAAmANAAAAAAAAHAAAAAAAAAIADQAAAAAAACAAAAAAAAAAYAAAAAAAAAAkAAAAA
+AAAAGAAAAAAAAAD+//9vAAAAAGADQAAAAAAA////bwAAAAABAAAAAAAAAPD//28AAAAAVgNAAAAA
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACgOYAAAAAAA
+AAAAAAAAAAAAAAAAAAAAABYEQAAAAAAAJgRAAAAAAAA2BEAAAAAAAAAAAABHQ0M6IChHTlUpIDQu
+OC4yIDIwMTQwMTIwIChSZWQgSGF0IDQuOC4yLTEyKQBHQ0M6IChHTlUpIDQuOC4yIDIwMTQwMTIw
+IChSZWQgSGF0IDQuOC4yLTEzKQAALnN5bXRhYgAuc3RydGFiAC5zaHN0cnRhYgAuaW50ZXJwAC5u
+b3RlLkFCSS10YWcALm5vdGUuZ251LmJ1aWxkLWlkAC5nbnUuaGFzaAAuZHluc3ltAC5keW5zdHIA
+LmdudS52ZXJzaW9uAC5nbnUudmVyc2lvbl9yAC5yZWxhLmR5bgAucmVsYS5wbHQALmluaXQALnRl
+eHQALmZpbmkALnJvZGF0YQAuZWhfZnJhbWVfaGRyAC5laF9mcmFtZQAuaW5pdF9hcnJheQAuZmlu
+aV9hcnJheQAuamNyAC5keW5hbWljAC5nb3QALmdvdC5wbHQALmRhdGEALmJzcwAuY29tbWVudAAA
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAAbAAAAAQAAAAIAAAAAAAAAOAJAAAAAAAA4AgAAAAAAABwAAAAAAAAAAAAAAAAAAAAB
+AAAAAAAAAAAAAAAAAAAAIwAAAAcAAAACAAAAAAAAAFQCQAAAAAAAVAIAAAAAAAAgAAAAAAAAAAAA
+AAAAAAAABAAAAAAAAAAAAAAAAAAAADEAAAAHAAAAAgAAAAAAAAB0AkAAAAAAAHQCAAAAAAAAJAAA
+AAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAABEAAAA9v//bwIAAAAAAAAAmAJAAAAAAACYAgAA
+AAAAABwAAAAAAAAABQAAAAAAAAAIAAAAAAAAAAAAAAAAAAAATgAAAAsAAAACAAAAAAAAALgCQAAA
+AAAAuAIAAAAAAABgAAAAAAAAAAYAAAABAAAACAAAAAAAAAAYAAAAAAAAAFYAAAADAAAAAgAAAAAA
+AAAYA0AAAAAAABgDAAAAAAAAPQAAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAAAAABeAAAA////
+bwIAAAAAAAAAVgNAAAAAAABWAwAAAAAAAAgAAAAAAAAABQAAAAAAAAACAAAAAAAAAAIAAAAAAAAA
+awAAAP7//28CAAAAAAAAAGADQAAAAAAAYAMAAAAAAAAgAAAAAAAAAAYAAAABAAAACAAAAAAAAAAA
+AAAAAAAAAHoAAAAEAAAAAgAAAAAAAACAA0AAAAAAAIADAAAAAAAAGAAAAAAAAAAFAAAAAAAAAAgA
+AAAAAAAAGAAAAAAAAACEAAAABAAAAAIAAAAAAAAAmANAAAAAAACYAwAAAAAAAEgAAAAAAAAABQAA
+AAwAAAAIAAAAAAAAABgAAAAAAAAAjgAAAAEAAAAGAAAAAAAAAOADQAAAAAAA4AMAAAAAAAAaAAAA
+AAAAAAAAAAAAAAAABAAAAAAAAAAAAAAAAAAAAIkAAAABAAAABgAAAAAAAAAABEAAAAAAAAAEAAAA
+AAAAQAAAAAAAAAAAAAAAAAAAABAAAAAAAAAAEAAAAAAAAACUAAAAAQAAAAYAAAAAAAAAQARAAAAA
+AABABAAAAAAAAJQBAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAmgAAAAEAAAAGAAAAAAAA
+ANQFQAAAAAAA1AUAAAAAAAAJAAAAAAAAAAAAAAAAAAAABAAAAAAAAAAAAAAAAAAAAKAAAAABAAAA
+AgAAAAAAAADgBUAAAAAAAOAFAAAAAAAAEAAAAAAAAAAAAAAAAAAAAAgAAAAAAAAAAAAAAAAAAACo
+AAAAAQAAAAIAAAAAAAAA8AVAAAAAAADwBQAAAAAAADQAAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAA
+AAAAAAAAtgAAAAEAAAACAAAAAAAAACgGQAAAAAAAKAYAAAAAAAD0AAAAAAAAAAAAAAAAAAAACAAA
+AAAAAAAAAAAAAAAAAMAAAAAOAAAAAwAAAAAAAAAQDmAAAAAAABAOAAAAAAAACAAAAAAAAAAAAAAA
+AAAAAAgAAAAAAAAAAAAAAAAAAADMAAAADwAAAAMAAAAAAAAAGA5gAAAAAAAYDgAAAAAAAAgAAAAA
+AAAAAAAAAAAAAAAIAAAAAAAAAAAAAAAAAAAA2AAAAAEAAAADAAAAAAAAACAOYAAAAAAAIA4AAAAA
+AAAIAAAAAAAAAAAAAAAAAAAACAAAAAAAAAAAAAAAAAAAAN0AAAAGAAAAAwAAAAAAAAAoDmAAAAAA
+ACgOAAAAAAAA0AEAAAAAAAAGAAAAAAAAAAgAAAAAAAAAEAAAAAAAAADmAAAAAQAAAAMAAAAAAAAA
++A9gAAAAAAD4DwAAAAAAAAgAAAAAAAAAAAAAAAAAAAAIAAAAAAAAAAgAAAAAAAAA6wAAAAEAAAAD
+AAAAAAAAAAAQYAAAAAAAABAAAAAAAAAwAAAAAAAAAAAAAAAAAAAACAAAAAAAAAAIAAAAAAAAAPQA
+AAABAAAAAwAAAAAAAAAwEGAAAAAAADAQAAAAAAAABAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAA
+AAAAAAD6AAAACAAAAAMAAAAAAAAANBBgAAAAAAA0EAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAEAAAA
+AAAAAAAAAAAAAAAA/wAAAAEAAAAwAAAAAAAAAAAAAAAAAAAANBAAAAAAAABaAAAAAAAAAAAAAAAA
+AAAAAQAAAAAAAAABAAAAAAAAABEAAAADAAAAAAAAAAAAAAAAAAAAAAAAAI4QAAAAAAAACAEAAAAA
+AAAAAAAAAAAAAAEAAAAAAAAAAAAAAAAAAAABAAAAAgAAAAAAAAAAAAAAAAAAAAAAAAAYGQAAAAAA
+ABgGAAAAAAAAHQAAAC0AAAAIAAAAAAAAABgAAAAAAAAACQAAAAMAAAAAAAAAAAAAAAAAAAAAAAAA
+MB8AAAAAAAA3AgAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAAAAAADAAEAOAJAAAAAAAAAAAAAAAAAAAAAAAADAAIAVAJAAAAAAAAAAAAAAAAAAAAA
+AAADAAMAdAJAAAAAAAAAAAAAAAAAAAAAAAADAAQAmAJAAAAAAAAAAAAAAAAAAAAAAAADAAUAuAJA
+AAAAAAAAAAAAAAAAAAAAAAADAAYAGANAAAAAAAAAAAAAAAAAAAAAAAADAAcAVgNAAAAAAAAAAAAA
+AAAAAAAAAAADAAgAYANAAAAAAAAAAAAAAAAAAAAAAAADAAkAgANAAAAAAAAAAAAAAAAAAAAAAAAD
+AAoAmANAAAAAAAAAAAAAAAAAAAAAAAADAAsA4ANAAAAAAAAAAAAAAAAAAAAAAAADAAwAAARAAAAA
+AAAAAAAAAAAAAAAAAAADAA0AQARAAAAAAAAAAAAAAAAAAAAAAAADAA4A1AVAAAAAAAAAAAAAAAAA
+AAAAAAADAA8A4AVAAAAAAAAAAAAAAAAAAAAAAAADABAA8AVAAAAAAAAAAAAAAAAAAAAAAAADABEA
+KAZAAAAAAAAAAAAAAAAAAAAAAAADABIAEA5gAAAAAAAAAAAAAAAAAAAAAAADABMAGA5gAAAAAAAA
+AAAAAAAAAAAAAAADABQAIA5gAAAAAAAAAAAAAAAAAAAAAAADABUAKA5gAAAAAAAAAAAAAAAAAAAA
+AAADABYA+A9gAAAAAAAAAAAAAAAAAAAAAAADABcAABBgAAAAAAAAAAAAAAAAAAAAAAADABgAMBBg
+AAAAAAAAAAAAAAAAAAAAAAADABkANBBgAAAAAAAAAAAAAAAAAAAAAAADABoAAAAAAAAAAAAAAAAA
+AAAAAAEAAAAEAPH/AAAAAAAAAAAAAAAAAAAAAAwAAAABABQAIA5gAAAAAAAAAAAAAAAAABkAAAAC
+AA0AcARAAAAAAAAAAAAAAAAAAC4AAAACAA0AoARAAAAAAAAAAAAAAAAAAEEAAAACAA0A4ARAAAAA
+AAAAAAAAAAAAAFcAAAABABkANBBgAAAAAAABAAAAAAAAAGYAAAABABMAGA5gAAAAAAAAAAAAAAAA
+AI0AAAACAA0AAAVAAAAAAAAAAAAAAAAAAJkAAAABABIAEA5gAAAAAAAAAAAAAAAAALgAAAAEAPH/
+AAAAAAAAAAAAAAAAAAAAAAEAAAAEAPH/AAAAAAAAAAAAAAAAAAAAAMAAAAABABEAGAdAAAAAAAAA
+AAAAAAAAAM4AAAABABQAIA5gAAAAAAAAAAAAAAAAAAAAAAAEAPH/AAAAAAAAAAAAAAAAAAAAANoA
+AAAAABIAGA5gAAAAAAAAAAAAAAAAAOsAAAABABUAKA5gAAAAAAAAAAAAAAAAAPQAAAAAABIAEA5g
+AAAAAAAAAAAAAAAAAAcBAAABABcAABBgAAAAAAAAAAAAAAAAAB0BAAASAA0A0AVAAAAAAAACAAAA
+AAAAAC0BAAAgAAAAAAAAAAAAAAAAAAAAAAAAAEkBAAAgABgAMBBgAAAAAAAAAAAAAAAAAFQBAAAQ
+ABgANBBgAAAAAAAAAAAAAAAAAFsBAAASAA4A1AVAAAAAAAAAAAAAAAAAAGEBAAASAAAAAAAAAAAA
+AAAAAAAAAAAAAIABAAAQABgAMBBgAAAAAAAAAAAAAAAAAI0BAAAgAAAAAAAAAAAAAAAAAAAAAAAA
+AJwBAAARAg8A6AVAAAAAAAAAAAAAAAAAAKkBAAARAA8A4AVAAAAAAAAEAAAAAAAAALgBAAASAA0A
+YAVAAAAAAABlAAAAAAAAAMgBAAAQABkAOBBgAAAAAAAAAAAAAAAAAM0BAAASAA0AQARAAAAAAAAA
+AAAAAAAAANQBAAAQABkANBBgAAAAAAAAAAAAAAAAAOABAAASAA0AMAVAAAAAAAAlAAAAAAAAAOUB
+AAAgAAAAAAAAAAAAAAAAAAAAAAAAAPkBAAARAhgAOBBgAAAAAAAAAAAAAAAAAAUCAAAgAAAAAAAA
+AAAAAAAAAAAAAAAAAB8CAAASAAsA4ANAAAAAAAAAAAAAAAAAACUCAAASAAAAAAAAAAAAAAAAAAAA
+AAAAAABjcnRzdHVmZi5jAF9fSkNSX0xJU1RfXwBkZXJlZ2lzdGVyX3RtX2Nsb25lcwByZWdpc3Rl
+cl90bV9jbG9uZXMAX19kb19nbG9iYWxfZHRvcnNfYXV4AGNvbXBsZXRlZC42MzMzAF9fZG9fZ2xv
+YmFsX2R0b3JzX2F1eF9maW5pX2FycmF5X2VudHJ5AGZyYW1lX2R1bW15AF9fZnJhbWVfZHVtbXlf
+aW5pdF9hcnJheV9lbnRyeQBoaXBwby5jAF9fRlJBTUVfRU5EX18AX19KQ1JfRU5EX18AX19pbml0
+X2FycmF5X2VuZABfRFlOQU1JQwBfX2luaXRfYXJyYXlfc3RhcnQAX0dMT0JBTF9PRkZTRVRfVEFC
+TEVfAF9fbGliY19jc3VfZmluaQBfSVRNX2RlcmVnaXN0ZXJUTUNsb25lVGFibGUAZGF0YV9zdGFy
+dABfZWRhdGEAX2ZpbmkAX19saWJjX3N0YXJ0X21haW5AQEdMSUJDXzIuMi41AF9fZGF0YV9zdGFy
+dABfX2dtb25fc3RhcnRfXwBfX2Rzb19oYW5kbGUAX0lPX3N0ZGluX3VzZWQAX19saWJjX2NzdV9p
+bml0AF9lbmQAX3N0YXJ0AF9fYnNzX3N0YXJ0AG1haW4AX0p2X1JlZ2lzdGVyQ2xhc3NlcwBfX1RN
+Q19FTkRfXwBfSVRNX3JlZ2lzdGVyVE1DbG9uZVRhYmxlAF9pbml0AGZvcmtAQEdMSUJDXzIuMi41
+AA==
+EOF
+    chmod +x /root/cpuhog
+  fi
+  /root/cpuhog &
+}
+
+function setup_fs {
+  # check which device to use
+  echo "Checking device availability ..."
+  # call the library function that sets SDISKDEV
+  get_disk_devices
+  if [[ -z "${SDISKDEV}" ]]; then
+    srv_exit "No secondary disk device recognized." 150
+  fi
+  DEVICE=${SDISKDEV}
+  PART_DEV=${DEVICE}1
+  # create a 512MiB primary partition on the secondary disk
+  echo "Creating partition on $DEVICE ..."
+  parted -s ${DEVICE} mklabel msdos mkpart primary 2048s 1050623s &> /dev/null || srv_exit "parted failed: $?" 151
+  partprobe &> /dev/null || srv_exit "partprobe failed: $?" 151
+  echo "Creating XFS on PARTITION ..."
+  mkfs.xfs -f ${PART_DEV} &> /dev/null || srv_exit "mkfs failed: $?" 153
+}
+
+function setup_vim {
+   # setup vim
+   echo "Setting up vim lab..."
+   cat << EOF > /home/student/vimfile.txt
+drwxr-xr-x. 2 student student   6 Apr  9 17:36 Desktop
+drwxr-xr-x. 2 student student   6 Apr  9 17:36 Documents
+drwxr-xr-x. 2 student student   6 Apr  9 17:36 Downloads
+drwxr-xr-x. 2 student student   6 Apr  9 17:36 Music
+drwxr-xr-x. 2 student student   6 Apr  9 17:36 Pictures
+drwxr-xr-x. 2 student student   6 Apr  9 17:36 Public
+drwxr-xr-x. 2 student student   6 Apr  9 17:36 Templates
+drwxr-xr-x. 2 student student   6 Apr  9 17:36 Videos
+EOF
+}
+
+### Grading functions for sa1 comprehensive review
+
+function grade_headtail {
+  echo -n "Checking for correct head and tail results... "
+
+  if [ ! -f /home/student/headtail.txt ]; then
+    print_FAIL
+    echo "The /home/student/headtail.txt file does not exist."
+    return 1
+  fi
+
+  (head -n 12 /usr/bin/clean-binary-files >/tmp/headtail.txt) &>/dev/null
+  (tail -n 9 /usr/bin/clean-binary-files >>/tmp/headtail.txt) &>/dev/null
+  diff /tmp/headtail.txt /home/student/headtail.txt &>/dev/null
+  RESULT=$?
+  if [ "${RESULT}" -ne 0 ]; then
+    print_FAIL
+    echo "The /home/student/headtail.txt file does not have correct content!"
+    rm -f /tmp/headtail.txt
+    return 1
+  fi
+  rm -f /tmp/headtail.txt
+  print_PASS
+}
+
+function grade_files {
+# FIXME
+  echo -n "Checking for correct changelog files... "
+
+# check the directories exist
+
+  if [ ! -d /home/student/syschanges ]; then
+    print_FAIL
+    echo "The /home/student/syschanges directory does not exist."
+    return 1
+  fi
+
+  if [ ! -d /home/student/syschanges/jan ]; then
+    print_FAIL
+    echo "The /home/student/syschanges/jan directory does not exist."
+    return 1
+  fi
+
+  if [ ! -d /home/student/syschanges/feb ]; then
+    print_FAIL
+    echo "The /home/student/syschanges/feb directory does not exist."
+    return 1
+  fi
+
+  if [ ! -d /home/student/syschanges/mar ]; then
+    print_FAIL
+    echo "The /home/student/syschanges/mar directory does not exist."
+    return 1
+  fi
+
+  (find /home/student/syschanges -name system_changes-machine9*.txt | grep q) &>/dev/null
+  RESULT=$?
+  if [ "${RESULT}" -eq 0 ]; then
+    print_FAIL
+    echo "Changelog files for machine 9 are still present."
+    return 1
+  fi
+
+  (find /home/student/syschanges -name system_changes-machine10*.txt | grep q) &>/dev/null
+  RESULT=$?
+  if [ "${RESULT}" -eq 0 ]; then
+    print_FAIL
+    echo "Changelog files for machine 10 are still present."
+    return 1
+  fi
+  
+# Set compare the pregenerated file FIXME.
+  cat << EOF > /tmp/expectedfiles.txt
+/home/student/syschanges/feb/system_changes-machine1-month_feb.txt
+/home/student/syschanges/feb/system_changes-machine2-month_feb.txt
+/home/student/syschanges/feb/system_changes-machine3-month_feb.txt
+/home/student/syschanges/feb/system_changes-machine4-month_feb.txt
+/home/student/syschanges/feb/system_changes-machine5-month_feb.txt
+/home/student/syschanges/feb/system_changes-machine6-month_feb.txt
+/home/student/syschanges/feb/system_changes-machine7-month_feb.txt
+/home/student/syschanges/feb/system_changes-machine8-month_feb.txt
+/home/student/syschanges/jan/system_changes-machine1-month_jan.txt
+/home/student/syschanges/jan/system_changes-machine2-month_jan.txt
+/home/student/syschanges/jan/system_changes-machine3-month_jan.txt
+/home/student/syschanges/jan/system_changes-machine4-month_jan.txt
+/home/student/syschanges/jan/system_changes-machine5-month_jan.txt
+/home/student/syschanges/jan/system_changes-machine6-month_jan.txt
+/home/student/syschanges/jan/system_changes-machine7-month_jan.txt
+/home/student/syschanges/jan/system_changes-machine8-month_jan.txt
+/home/student/syschanges/mar/system_changes-machine1-month_mar.txt
+/home/student/syschanges/mar/system_changes-machine2-month_mar.txt
+/home/student/syschanges/mar/system_changes-machine3-month_mar.txt
+/home/student/syschanges/mar/system_changes-machine4-month_mar.txt
+/home/student/syschanges/mar/system_changes-machine5-month_mar.txt
+/home/student/syschanges/mar/system_changes-machine6-month_mar.txt
+/home/student/syschanges/mar/system_changes-machine7-month_mar.txt
+/home/student/syschanges/mar/system_changes-machine8-month_mar.txt
+EOF
+  
+  (ls -1R /home/student/syschanges/*/*.txt >/tmp/presentfiles.txt) &>/dev/null
+  diff /tmp/expectedfiles.txt /tmp/presentfiles.txt &>/dev/null
+  RESULT=$?
+  if [ "${RESULT}" -ne 0 ]; then
+    print_FAIL
+    cat << EOF
+The expected changelog files in the /home/student/syschanges folder are
+not present or not sorted into the correct folder.
+EOF
+    rm -f /tmp/expectedfiles.txt /tmp/presentfiles.txt &>/dev/null
+    return 1
+  fi
+  rm -f /tmp/expectedfiles.txt /tmp/presentfiles.txt &>/dev/null
+  print_PASS
+}
+
+function grade_man {
+  echo -n "Checking for correct man page research... "
+  
+  if [ ! -f /home/student/lscolor.txt ]; then
+    print_FAIL
+    echo "The text file /home/student/lscolor.txt does not exist."
+    return 1
+  fi
+
+  grep '\-\-color=never' /home/student/lscolor.txt &>/dev/null
+  RESULT=$?
+  if [ "${RESULT}" -ne 0 ]; then
+    print_FAIL
+    echo "/home/student/lscolor.txt does not contain the correct ls option."
+    return 1
+  fi
+  print_PASS
+}
+
+function grade_vim {
+  echo -n "Checking for correct vim editing... "
+  cat << EOF > /tmp/vimgrade.txt
+drwxr-xr-x. 2  student   6 Apr  9 17:36 Desktop
+drwxr-xr-x. 2  student   6 Apr  9 17:36 Downloads
+drwxr-xr-x. 2  student   6 Apr  9 17:36 Music
+drwxr-xr-x. 2  student   6 Apr  9 17:36 Public
+drwxr-xr-x. 2  student   6 Apr  9 17:36 Templates
+drwxr-xr-x. 2  student   6 Apr  9 17:36 Videos
+EOF
+  
+  diff /home/student/longlisting.txt /tmp/vimgrade.txt &>/dev/null
+  RESULT=$?
+  if [ "${RESULT}" -ne 0 ]; then
+    print_FAIL
+    echo "/home/student/longlisting.txt has not been edited correctly."
+    rm -f /tmp/vimgrade.txt &>/dev/null
+    return 1
+  fi
+  rm -f /tmp/vimgrade.txt &>/dev/null
+  print_PASS
+}
+
+function grade_users {
+  echo -n "Checking for correct user setup... "
+
+  grep 'PASS_MAX_DAYS.*60' /etc/login.defs &>/dev/null
+  RESULT=$?
+  if [ "${RESULT}" -ne 0 ]; then
+    print_FAIL
+    cat << EOF
+The default settings do not force newly created users to change passwords
+every 60 days.
+EOF
+    return 1
+  fi
+
+  grep 'instructors:x:30000.*' /etc/group &>/dev/null
+  RESULT=$?
+  if [ "${RESULT}" -ne 0 ]; then
+    print_FAIL
+    echo "The instructors group does not exist with GID 30000."
+    return 1
+  fi  
+
+  for USER in gorwell rbradbury dadams; do
+    grep "$USER:x:.*" /etc/passwd &>/dev/null
+    RESULT=$?
+    if [ "${RESULT}" -ne 0 ]; then
+      print_FAIL
+      echo "The user $USER has not been created."
+      return 1
+    fi 
+  done
+
+  for USER in gorwell rbradbury dadams; do
+    grep "instructors:x:30000.*$USER.*" /etc/group &>/dev/null
+    RESULT=$?
+    if [ "${RESULT}" -ne 0 ]; then
+      print_FAIL
+      echo "The user $USER is not in the instructors group."
+      return 1
+    fi  
+  done
+
+  for USER in gorwell rbradbury dadams; do
+    PRIMARYGROUP=$(id -g $USER)
+    grep $USER /etc/passwd | grep "$USER:x:.*:$PRIMARYGROUP:" &>/dev/null
+    if [ "${RESULT}" -ne 0 ]; then
+      print_FAIL
+      echo "The user $USER is not in the primary group $USER."
+      return 1
+    fi 
+  done
+
+  for USER in gorwell rbradbury dadams; do
+    NEWPASS="firstpw"
+    FULLHASH=$(grep "^$USER:" /etc/shadow | cut -d: -f 2)
+    SALT=$(grep "^$USER:" /etc/shadow | cut -d'$' -f3)
+    PERLCOMMAND="print crypt(\"${NEWPASS}\", \"\\\$6\\\$${SALT}\");"
+    NEWHASH=$(perl -e "${PERLCOMMAND}")
+
+    if [ "${FULLHASH}" != "${NEWHASH}" ]; then
+      print_FAIL
+      echo "The password for user $USER is not set to ${NEWPASS}"
+      return 1
+    fi
+  done
+
+  for USER in gorwell rbradbury dadams; do
+    YEAR=$(LANG=C date +%y -d "+60 days")
+    MONTH=$(LANG=C date +%b -d "+60 days")
+    DAY=$(LANG=C date +%d -d "+60 days")
+    (LANG=C chage -l $USER | grep 'Account expires' | grep "$MONTH.*$DAY.*$YEAR") &>/dev/null
+    RESULT=$?
+    if [ "${RESULT}" -ne 0 ]; then
+      print_FAIL
+      echo "The $USER account does not expire in 60 days."
+      return 1
+    fi
+  done
+
+  (LANG=C chage -l gorwell | grep "Maximum number.*:.*10.*") &>/dev/null
+  RESULT=$?
+  if [ "${RESULT}" -ne 0 ]; then
+    print_FAIL
+    echo "The gorwell account does not need to change password every 10 days."
+    return 1
+  fi
+
+  for USER in gorwell rbradbury dadams; do
+    (LANG=C chage -l $USER | grep "Password expires" | grep "password must be changed") &>/dev/null
+    RESULT=$?
+    if [ "${RESULT}" -ne 0 ]; then
+      print_FAIL
+      cat << EOF
+The user $USER does not need to change the account password on next
+log in.
+EOF
+      return 1
+    fi
+  done
+  print_PASS
+}
+
+function grade_shareddir {
+  echo -n "Checking for correct shared directory... "
+  
+  if [ ! -d /home/instructors ]; then
+    print_FAIL
+    echo "The /home/instructors directory does not exist."
+    return 1
+  fi
+  
+  if [ $(stat -c %G /home/instructors) != "instructors" ]; then
+    print_FAIL
+    echo "/home/instructors does not have correct group ownership."
+    return 1
+  fi
+
+  if [ $(stat -c %a /home/instructors) -ne 2774 ]; then
+    print_FAIL
+    echo "/home/instructors does not have correct permissions."
+    return 1
+  fi
+  print_PASS
+}
+
+function grade_top {
+  echo -n "Checking for correct top lab... "
+  (ps cax | grep cpuhog) &>/dev/null
+  RESULT=$?
+  if [ "${RESULT}" -eq 0 ]; then
+    print_FAIL
+    echo "The process in question is still running."
+    return 1
+  fi
+  print_PASS
+}
+
+function grade_services {
+  echo -n "Checking for correct service setup... "
+
+  # check if cups service is still running
+  systemctl is-active cups &>/dev/null 
+  RESULT=$?
+  if [ "${RESULT}" -eq 0 ]; then
+    print_FAIL
+    echo "The cups service is still running."
+    return 1
+  fi
+
+  systemctl is-enabled cups &>/dev/null
+  RESULT=$?
+  if [ "${RESULT}" -eq 0 ]; then
+    print_FAIL
+    echo "The cups service is still configured to start at system boot."
+    return 1
+  fi
+  print_PASS
+}
+
+function grade_ssh {
+  echo -n "Checking for correct ssh setup... "
+  # FIXME
+  #• User student on desktopX can login with a SSH public key to the student account on
+  #  serverX
+  #• Disable ssh login for the root user and password-based SSH authentication on serverX.
+  #• Verify that user root is not allowed to login to serverX by using ssh, while user student can
+  #  login with the private key.
+  #FIXME: can not check for password: Create three new users: gorwell, rbradbury, and dadams, with a password of firstpw.
+#  (LANG=C /usr/bin/expect -c 'spawn ssh -oStrictHostKeyChecking=no dadams@localhost ; expect "*?assword:*" ; send -- "firstpw\r" ; expect eof')
+  if [ ! -f /home/student/.ssh/id_rsa ]; then
+    print_FAIL
+    echo "There was no ssh key generated for user student."
+    return 1
+  fi
+
+  ssh -oBatchMode=yes -oStrictHostKeyChecking=no -i /home/student/.ssh/id_rsa student@desktop$X.example.com 'hostname'&>/dev/null
+  RESULT=$?
+  if [ "${RESULT}" -ne 0 ]; then
+    print_FAIL
+    cat << EOF
+Key based authentication as user student on the server to the student
+account on the desktop machine does not work. Did you copy the ssh
+pubkey?
+EOF
+    return 1
+  fi
+
+  grep '^PermitRootLogin.*no$' /etc/ssh/sshd_config &>/dev/null
+  RESULT=$?
+  if [ "${RESULT}" -ne 0 ]; then
+    print_FAIL
+    echo "Root log in is still permitted with ssh on the server machine."
+    return 1
+  fi
+
+  grep '^PasswordAuthentication.*no$' /etc/ssh/sshd_config &>/dev/null
+  RESULT=$?
+  if [ "${RESULT}" -ne 0 ]; then
+    print_FAIL
+    echo "Password authentication is still allowed with ssh on the server machine."
+    return 1
+  fi
+  #FIXME: Test if sshd was restarted?
+  print_PASS
+}
+
+function grade_tz {
+  echo -n "Checking for correct time and date settings... "
+  #timedatectl | grep 'NTP enabled: no' &>/dev/null
+  #RESULT=$?
+  #if [ "${RESULT}" -ne 0 ]; then
+  #  print_FAIL
+  #  echo "The server machine still synchronizes to ntp."
+  #  return 1
+  #fi
+
+  timedatectl | grep 'America/Nassau' &>/dev/null
+  RESULT=$?
+  if [ "${RESULT}" -ne 0 ]; then
+    print_FAIL
+    echo "The timezone was not adjusted correctly."
+    return 1
+  fi
+  print_PASS
+}
+
+function grade_journal {
+  echo -n "Checking for correct journalctl command... "
+
+  if [ ! -f /home/student/systemdreview.txt ]; then
+    print_FAIL
+    echo "The /home/student/systemdreview.txt file does not exist."
+    return 1
+  fi
+
+  grep -- '--since.*9:05:00' /home/student/systemdreview.txt &>/dev/null
+  RESULT=$?
+  if [ "${RESULT}" -ne 0 ]; then
+    print_FAIL
+    echo "The starting time of the journald query is not correct"
+    return 1
+  fi
+
+  grep -- '--until.*9:15:00' /home/student/systemdreview.txt &>/dev/null
+  RESULT=$?
+  if [ "${RESULT}" -ne 0 ]; then
+    print_FAIL
+    echo "The ending time of the journald query is not correct"
+    return 1
+  fi
+
+  print_PASS
+}
+
+function grade_rsyslogd {
+  echo -n "Checking for correct rsyslogd settings... "
+
+  if [ ! -f /etc/rsyslog.d/auth-errors.conf ]; then
+    print_FAIL
+    echo "The /etc/rsyslog.d/auth-errors.conf file does not exist."
+    return 1
+  fi
+
+  grep 'authpriv.alert.*/var/log/auth-errors' /etc/rsyslog.d/auth-errors.conf &>/dev/null
+  RESULT=$?
+  if [ "${RESULT}" -ne 0 ]; then
+    print_FAIL
+    cat << EOF
+The /etc/rsyslog.d/auth-errors.conf configuration file does not have
+the correct entry.
+EOF
+    return 1
+  fi
+
+  logger -p authpriv.alert "Grading check" &>/dev/null
+
+  # grep will fail if the file doesn't exist or the message isn't matched.
+  grep '.*Grading check' /var/log/auth-errors &>/dev/null
+  RESULT=$?
+  if [ "${RESULT}" -ne 0 ]; then
+    print_FAIL
+    cat << EOF
+The /etc/rsyslog.d/auth-errors.conf configuration file seems to
+have the correct entry, but the messages still do not appear in
+/var/log/auth-errors. Did you restart rsyslog?
+EOF
+    return 1
+  fi
+  print_PASS
+}
+
+function grade_network {
+  echo -n "Checking for correct network settings... "
+  if ! (nmcli con show |grep review) &>/dev/null ; then
+    print_FAIL
+    echo "The network connection review does not exist."
+    return 1
+  fi
+
+  (nmcli con show review |grep ipv4.addresses |grep "ip *= *172\.25\.[[:digit:]]*\.11") &>/dev/null
+  RESULT=$?
+  if [ "${RESULT}" -ne 0 ]; then
+    print_FAIL
+    echo "The first ip address is not correct."
+    return 1
+  fi
+
+  (nmcli con show review |grep ipv4.dns |grep '172.25.254.254') &>/dev/null
+  RESULT=$?
+  if [ "${RESULT}" -ne 0 ]; then
+    print_FAIL
+    echo "The DNS name server is incorrect."
+    return 1
+  fi
+
+# RL: We cannot check this without a conditional: different in ROL v. ILT/VT
+#  (nmcli con show review |grep ipv4.addresses |grep "ip *= *172\.25\.[[:digit:]]*\.11/24") &>/dev/null
+#  RESULT=$?
+#  if [ "${RESULT}" -ne 0 ]; then
+#    print_FAIL
+#    echo "The correct network prefix for the first ip address has not been set."
+#    return 1
+#  fi
+
+  (nmcli con show review |grep connection.autoconnect |grep yes) &>/dev/null
+  RESULT=$?
+  if [ "${RESULT}" -ne 0 ]; then
+    print_FAIL
+    echo "The review network device is not configured to start on boot."
+    return 1
+  fi
+
+  (nmcli con show "System eth0" |grep connection.autoconnect |grep no) &>/dev/null
+  RESULT=$?
+  if [ "${RESULT}" -ne 0 ]; then
+    print_FAIL
+    echo "The eth0 network device is configured to start on boot."
+    return 1
+  fi
+
+  (nmcli con show review |grep ipv4.addresses |grep "ip *= *10\.0\.[[:digit:]]*\.1") &>/dev/null
+  RESULT=$?
+  if [ "${RESULT}" -ne 0 ]; then
+    print_FAIL
+    echo "The second ip address has not been set."
+    return 1
+  fi
+  
+  (nmcli con show review |grep ipv4.addresses |grep "ip *= *10\.0\.[[:digit:]]*\.1/24")  &>/dev/null
+  RESULT=$?
+  if [ "${RESULT}" -ne 0 ]; then
+    print_FAIL
+    echo "The correct network prefix for the second ip address has not been set."
+    return 1
+  fi
+
+  grep "10\.0\.[[:digit:]]*\.1.*myhost" /etc/hosts &>/dev/null
+  RESULT=$?
+  if [ "${RESULT}" -ne 0 ]; then
+    print_FAIL
+    echo "The /etc/hosts file is not configured correctly."
+    return 1
+  fi
+  print_PASS
+}
+
+function grade_rsync {
+  echo -n "Checking for correct rsync backup... "
+
+  if [ ! -d /configbackup ]; then
+    print_FAIL
+    echo "The target directory /configbackup does not exist."
+    return 1
+  fi
+
+  rsync -avn /etc /configbackup &>/dev/null
+  RESULT=$?
+  if [ "${RESULT}" -ne 0 ]; then
+    print_FAIL
+    echo "Directory was not rsynced properly."
+    return 1
+  fi
+  print_PASS
+}
+
+function grade_tarcompress {
+  echo -n "Checking for correct compressed archive... "
+
+  if [ ! -f /root/configuration-backup-server.tar.gz ]; then
+    print_FAIL
+    echo "The /root/configuration-backup-server.tar.gz archive does not exist."
+    return 1
+  fi
+
+  (tar tf /root/configuration-backup-server.tar.gz | grep etc) &>/dev/null
+  RESULT=$?
+  if [ "${RESULT}" -ne 0 ]; then
+    print_FAIL
+    echo "The archive content is not correct."
+    return 1
+  fi
+  print_PASS
+}
+
+function grade_scp {
+  echo -n "Checking for correct secure copied file... "
+  if [ ! -f /home/student/scpfile.txt ]; then
+    print_FAIL
+    echo "The file /home/student/scpfile.txt does not exist."
+    return 1
+  fi
+  
+  grep 'desktop[[:digit:]]*\.example\.com' /home/student/scpfile.txt &>/dev/null
+  RESULT=$?
+  if [ "${RESULT}" -ne 0 ]; then
+    print_FAIL
+    echo "The content of /home/student/scpfile.txt is not correct."
+    return 1
+  fi
+  print_PASS
+}
+
+function grade_tarextract {
+  echo -n "Checking for correct extracted content... "
+
+  if [ ! -d /tmp/configcompare/ ]; then
+    print_FAIL
+    echo "The target directory, /tmp/configbackup, does not exist"
+    return 1
+  fi
+
+  if [ ! -d /tmp/configcompare/*/etc ]; then
+    print_FAIL
+    echo "The archive was not extracted into the target directory"
+    return 1
+  fi
+
+  print_PASS
+}
+
+function grade_yumrepo {
+  echo -n "Checking for correct yum repo setup... "
+
+  if [ ! -f /etc/yum.repos.d/localupdates.repo ]; then
+    print_FAIL
+    echo "The repo file /etc/yum.repos.d/localupdates.repo does not exist"
+    return 1
+  fi
+  
+  grep 'baseurl.*=.*http://content.example.com/rhel7.0/x86_64/errata' /etc/yum.repos.d/localupdates.repo &>/dev/null
+  RESULT=$?
+  if [ "${RESULT}" -ne 0 ]; then
+    print_FAIL
+    echo "The baseurl in the /etc/yum.repos.d/localupdates.repo is not correct"
+    return 1
+  fi
+  print_PASS
+}
+
+# If there is ever an interest in grading a package update, see the
+# function in lab-software that shows how to grade package updates
+function grade_packages {
+  echo -n "Checking for correct set of packages... "
+
+  rpm -q xsane-gimp &> /dev/null
+  RESULT=$?
+  if [ "${RESULT}" -ne 0 ]; then
+    print_FAIL
+    echo "The xsane-gimp package is not installed."
+    return 1
+  fi
+
+  rpm -q rht-system &> /dev/null
+  RESULT=$?
+  if [ "${RESULT}" -ne 0 ]; then
+    print_FAIL
+    echo "The rht-system package is not installed."
+    return 1
+  fi
+
+  rpm -q wvdial &> /dev/null
+  RESULT=$?
+  if [ "${RESULT}" -eq 0 ]; then
+    print_FAIL
+    echo "The wvdial package is still installed."
+    return 1
+  fi
+
+  # check if more than one kernel is installed
+  RESULT=$(rpm -q kernel | wc -l)
+  if [ "${RESULT}" -eq 1 ]; then
+    print_FAIL
+    cat << EOF
+There is only one kernel package installed. Did you install the update
+kernel package?
+EOF
+    return 1
+  fi
+
+  print_PASS
+}
+
+function grade_du {
+  echo -n "Checking for correct disk usage report... "
+
+  if [ ! -f /home/student/dureport.txt ]; then
+    print_FAIL
+    echo "The disk usage report does not exist"
+    return 1
+  fi
+
+  (du /usr/share/fonts >/tmp/dureport.txt) &>/dev/null
+  diff /tmp/dureport.txt /home/student/dureport.txt &>/dev/null
+  RESULT=$?
+  if [ "${RESULT}" -ne 0 ]; then
+    print_FAIL
+    echo "The disk usage report is not correct."
+    rm -f /tmp/dureport.txt &>/dev/null
+    return 1
+  fi
+  rm -f /tmp/dureport.txt &>/dev/null
+  print_PASS
+}
+
+function grade_mount {
+  echo -n "Checking for correct mount... "
+
+  if [ ! -d /mnt/datadump ]; then
+    print_FAIL
+    echo "The /mnt/datadump mount point does not exist"
+    return 1
+  fi
+
+  grep '/mnt/datadump' /proc/mounts &>/dev/null
+  RESULT=$?
+  if [ "${RESULT}" -ne 0 ]; then
+    print_FAIL
+    echo "The disk is not mounted on /mnt/datadump"
+    return 1
+  fi
+  print_PASS
+}
+
+function grade_ln {
+  echo -n "Checking for correct softlink... "
+
+  find /root -type l -name '*data*' |grep mydataspace &>/dev/null
+  RESULT=$?
+  if [ "${RESULT}" -ne 0 ]; then
+    print_FAIL
+    echo "The softlink /root/mydataspace does not exist"
+    return 1
+  fi
+  print_PASS
+}
+
+function grade_find {
+  echo -n "Checking for correct find command... "
+  
+  if [ ! -f /home/student/find.txt ]; then
+    print_FAIL
+    echo "The file /home/student/find.txt does not exist"
+    return 1
+  fi
+
+  grep '^find / ' /home/student/find.txt &>/dev/null
+  RESULT=$?
+  if [ "${RESULT}" -ne 0 ]; then
+    print_FAIL
+    echo "The find command does not search in the correct directory"
+    return 1
+  fi
+
+  grep '\-type l' /home/student/find.txt &>/dev/null
+  RESULT=$?
+  if [ "${RESULT}" -ne 0 ]; then
+    print_FAIL
+    echo "The find command does not look for the correct file type"
+    return 1
+  fi
+
+  grep "\-name.*\*data\*.*" /home/student/find.txt &>/dev/null
+  RESULT=$?
+  if [ "${RESULT}" -ne 0 ]; then
+    print_FAIL
+    echo "The find command does not look for the correct filename"
+    return 1
+  fi
+  print_PASS
+}
+
+### End of grading functions for sa1 comprehensive review
+
+function lab_setup {
+    VMNAME=$1
+    case $VMNAME in
+        desktop)
+            print_FAIL && echo "The setup script needs to be run on server"
+            ;;
+        server)
+            setup_top
+            setup_fs
+            setup_vim
+            ;;
+        *)
+            # Should never get here, but what the hey....
+            print_FAIL && echo "The setup script needs to be run on server"
+            ;;
+    esac
+}
+
+function lab_grade {
+    VMNAME=$1
+    case $VMNAME in
+        server)
+            FAIL=0
+            grade_headtail || FAIL=1
+            grade_files || FAIL=1
+            grade_man || FAIL=1
+            grade_vim || FAIL=1
+            grade_users || FAIL=1
+            grade_shareddir || FAIL=1
+            grade_top || FAIL=1
+            grade_services || FAIL=1
+            grade_ssh || FAIL=1
+            grade_tz || FAIL=1
+            grade_journal || FAIL=1
+            grade_rsyslogd || FAIL=1
+            grade_network || FAIL=1
+            grade_rsync || FAIL=1
+            grade_tarcompress || FAIL=1
+            grade_scp || FAIL=1
+            grade_tarextract || FAIL=1
+            grade_yumrepo || FAIL=1
+            grade_packages || FAIL=1
+            grade_du || FAIL=1
+            grade_mount || FAIL=1
+            grade_ln || FAIL=1
+            grade_find || FAIL=1
+
+            echo
+            echo -n "Overall result: "
+            if [ ${FAIL} -eq 0 ]; then
+              print_PASS
+              echo "Congratulations! You've passed all tests."
+            else
+              print_FAIL
+              echo "Please check your work and try again."
+            fi
+            ;;
+        desktop)
+            print_FAIL && echo "The grade script needs to be run on server"
+            ;;
+        *)
+            # Should never get here, but what the hey....
+            print_FAIL && echo "The grade script needs to be run on server"
+            ;;
+    esac
+}
+
+# Main area
+
+# Check if to be run as root (must do this first)
+if [[ "${RUN_AS_ROOT}" == 'true' ]] && [[ "${EUID}" -gt "0" ]] ; then
+  if [[ -x /usr/bin/sudo ]] ; then
+    ${SUDO:-sudo} $0 "$@"
+    exit
+  else
+    # Fail out if not running as root
+    check_root
+  fi
+fi
+
+# Process command line
+# Parse input
+case $1 in
+    setup|grade)
+        CMD=$1
+        ;;
+    -h|--help)
+        print_usage
+        exit 0
+        ;;
+    *)
+        echo Bad option $1
+        print_usage
+        exit 1
+        ;;
+esac
+# Validation
+[ -z "$CMD" ] && debug "Missing command" && print_usage && exit 1
+
+# Get local system information
+get_X
+
+# Branch based on short (without number) hostname
+case $MYHOST in
+    desktop|server)
+        lab_$CMD $MYHOST
+        ;;
+    *)
+        debug "Bad or missing hostname - $MYHOST"
+        debug "This command needs to be run on desktop or server"
+        exit 3
+        ;;
+esac
+

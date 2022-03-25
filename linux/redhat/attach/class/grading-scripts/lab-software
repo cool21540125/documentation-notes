@@ -1,0 +1,170 @@
+#!/bin/bash
+#
+# Copyright 2014 Red Hat, Inc.
+#
+# NAME
+#     lab-software - grading script for RH124/RH199/RH299 software mgmt lab
+#
+# SYNOPSIS
+#     lab-software grade
+#
+# DESCRIPTION
+#     This script is the lab grading script for the RH124/RH199 software
+#     management lab. It should only be executed on serverX.example.com.
+#
+# CHANGELOG
+#   * Wed Jul  9 2014 George Hacker <ghacker@redhat.com>
+#   - changed grading logic to avoid hard-coding specific package versions:
+#   - two installed kernels means the kernel RPM was updated and examine
+#   - yum.log for package updates
+#   * Tue Feb  4 2014 Susan Lauber <slauber@redhat.com>
+#   - migrated RHEL6 scripts including work by Rob Locke (20101130)
+
+# Initialize and set some variables
+MYHOST=""
+#DEBUG='true'
+run_as_root='true'
+
+new_packages='xsane-gimp rht-system'
+upd_packages='yum'
+del_packages='wvdial'
+
+yum_logfile=/var/log/yum.log
+
+# Source library of functions
+source /usr/local/bin/labtool.shlib
+trap on_exit EXIT
+
+# Additional functions for this shell script
+function print_usage {
+  local problem_name=$(basename $0 | sed -e 's/^lab-//')
+  cat << EOF
+This script controls the setup and grading of this lab.
+Usage: lab ${problem_name} COMMAND
+       lab ${problem_name} -h|--help
+COMMAND is one of:
+    setup - perform any setup steps for this lab on this machine
+    grade - perform any grading steps and report on this machine
+EOF
+}
+
+function check_new {
+  echo -n "Checking for ${new_packages} ... "
+  success=1
+  for package in ${new_packages} ; do
+    rpm -q ${package} &>/dev/null || success=0
+  done
+  [ ${success} -eq 1 ] && print_PASS || (print_FAIL; exit 1)
+}
+
+function check_kernel {
+  echo -n "Checking update of kernel ... "
+  success=1
+  numkernels=$(rpm -q kernel | wc -l)
+  # More than one kernel RPM means it was updated
+  [ ${numkernels} -gt 1 ] || success=0
+  [ ${success} -eq 1 ] && print_PASS || print_FAIL
+}
+
+function check_update {
+  echo -n "Checking for updates to ${upd_packages} ... "
+  success=1
+  # Examine yum.log to see if package was updated
+  for package in ${upd_packages} ; do
+    grep "Updated: ${package}-" ${yum_logfile} &>/dev/null || success=0
+  done
+  [ ${success} -eq 1 ] && print_PASS || print_FAIL
+}
+
+function check_remove {
+  echo -n "Checking for removal of ${del_packages} ... "
+  success=1
+  for package in ${del_packages} ; do
+    rpm -q ${package} &>/dev/null && success=0
+  done
+  [ ${success} -eq 1 ] && print_PASS || print_FAIL
+}
+
+function lab_setup {
+  VMNAME=$1
+  case $VMNAME in
+    desktop)
+      print_FAIL && echo "The setup script needs to be run on server"
+      ;;
+    server)
+      echo 'Done. No setup required for this lab.'
+      ;;
+    *)
+      # Should never get here, but what the hey....
+      print_FAIL && echo "The setup script needs to be run on desktop"
+      ;;
+  esac
+}
+
+function lab_grade {
+  VMNAME=$1
+  case $VMNAME in
+    desktop)
+      print_FAIL && echo "The grade script needs to be run on server"
+      ;;
+    server)
+      echo 'Starting grading ...'
+      echo
+      check_kernel
+      check_new
+      #check_update
+      check_remove
+      ;;
+    *)
+      # Should never get here, but what the hey....
+      print_FAIL && echo "The grade script needs to be run on desktop"
+      ;;
+  esac
+}
+
+# Main area
+
+# Check if to be run as root (must do this first)
+if [[ "${run_as_root}" == 'true' ]] && [[ "${EUID}" -gt "0" ]] ; then
+  if [[ -x /usr/bin/sudo ]] ; then
+    ${SUDO:-sudo} $0 "$@"
+    exit
+  else
+    # Fail out if not running as root
+    check_root
+  fi
+fi
+
+# Process command line
+# Parse input
+case $1 in
+  setup|grade)
+    cmd=$1
+    ;;
+  -h|--help)
+    print_usage
+    exit 0
+    ;;
+  *)
+    echo Bad option $1
+    print_usage
+    exit 1
+    ;;
+esac
+# Validation
+[ -z "${cmd}" ] && debug "Missing command" && print_usage && exit 1
+
+# Get local system information
+get_X
+
+# Branch based on short (without number) hostname
+case $MYHOST in
+  desktop|server)
+    lab_${cmd} ${MYHOST}
+    ;;
+  *)
+    debug "Bad or missing hostname - ${MYHOST}"
+    debug "This command needs to be run on desktop or server"
+    exit 3
+    ;;
+esac

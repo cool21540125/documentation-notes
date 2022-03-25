@@ -1,0 +1,291 @@
+#!/bin/bash
+#
+# Copyright 2014 Red Hat, Inc.
+#
+# NAME
+#     lab-nfsshare - grading script for RH254/RH299 NFS practice exercise
+#
+# SYNOPSIS
+#     lab-nfsshare grade
+#
+#     This script only works on both desktopX and serverX.
+#
+# DESCRIPTION
+#     This script is the grading script for a RH254 NFS practice
+#     exercise.
+#
+# CHANGELOG
+#   * Mon Jun 16 2014 George Hacker <ghacker@redhat.com>
+#   - fixed this script so that it runs as root (required)
+#   * Thu May 15 2014 Rudy Kastl <rkastl@redhat.com>
+#   - original code
+
+# Initialize and set some variables
+MYHOST=""
+CMD=""
+RUN_AS_ROOT=true
+
+SERV_PKG="sssd krb5-workstation"
+CLNT_PKG="sssd krb5-workstation"
+SERV_ERR="Error running script. Did you reset the server before running this script? \
+Contact your instructor if you continue to see this message."
+CLNT_ERR="Error running script. Did you reset the desktop before running this script? \
+Contact your instructor if you continue to see this message."
+
+# Source library of functions
+source /usr/local/bin/labtool.shlib
+trap on_exit EXIT
+LOG_TAG=$(basename $0)
+
+# Additional functions for this shell script
+function srv_exit {
+  # call debug with msg and exit with code
+  DEBUG=true
+  debug "$1"
+  exit $2
+}
+
+# Grading scripts server
+function check_enabled_nfs_server {
+  echo -n "Checking nfs-server service is enabled... "
+  if systemctl is-enabled nfs-server &> /dev/null
+  then
+    print_PASS
+  else
+    print_FAIL
+    echo "Service nfs-server is not enabled."
+    return 1
+  fi
+}
+
+function check_isactive_nfs_server {
+  echo -n "Checking nfs-server service is started... "
+  if systemctl is-active nfs-server &> /dev/null
+  then
+    print_PASS
+  else
+    print_FAIL
+    echo "Service nfs-server is not started."
+    return 1
+  fi
+}
+
+function check_nfs_share_dir_exists {
+  echo -n "Checking /nfsshare directory exists... "
+  if [ -d /nfsshare ]
+  then
+    print_PASS
+  else
+    print_FAIL
+    echo "The /nfsshare directory does not exist."
+    return 1
+  fi
+}
+
+function check_nfs_export {
+  echo -n "Checking for correct /etc/exports file... "
+  if ! grep '/nfsshare' /etc/exports &>/dev/null
+  then
+    print_FAIL
+    echo "The /nfsshare entry in /etc/exports does not exist."
+    return 1
+  elif ! (grep '/nfsshare' /etc/exports |grep 'desktop') &>/dev/null
+    then
+      print_FAIL
+      echo "The /nfsshare entry in /etc/exports does not export to the desktopX system."
+      return 1
+  elif ! (grep '/nfsshare' /etc/exports |grep 'rw') &>/dev/null
+    then
+      print_FAIL
+      echo "The /nfsshare entry in /etc/exports does not export with read-write permission."
+      return 1
+  else
+    print_PASS
+  fi
+}
+
+function check_exportfs {
+  echo -n "Checking if the server knows about the exported directory... "
+  if exportfs -v |grep '/nfsshare' &>/dev/null
+  then
+    print_PASS
+  else
+    print_FAIL
+    echo "Did you forget to run: exportfs -r?"
+    return 1
+  fi
+}
+
+# Grading scripts desktop
+function check_nfs_mountpoint {
+  echo -n "Checking /mnt/nfsshare directory exists..."
+  if [ -d /mnt/nfsshare ]
+  then
+    print_PASS
+  else
+    print_FAIL
+    echo "The /mnt/nfsshare directory does not exist."
+    return 1
+  fi
+}
+
+function check_nfs_fstab {
+  echo -n "Checking for correct /etc/fstab entry..."
+  if ! (grep 'server.*:/nfsshare.*/mnt/nfsshare.*nfs.*' /etc/fstab) &>/dev/null
+  then
+    print_FAIL
+    echo "The /etc/fstab entry is not present or not correct."
+    return 1
+  else
+    print_PASS
+  fi
+}
+
+function check_nfs_mounted {
+  echo -n "Checking for mounted nfs share ..."
+  if ! (mount |grep 'server.*:/nfsshare.*/mnt/nfsshare.*nfs4') &>/dev/null
+  then
+    print_FAIL
+    echo "The nfs share is not mounted."
+    return 1
+  else
+    print_PASS
+  fi
+}
+
+function check_nfsmount_writeable {
+  echo -n "Checking if nfs mount is writeable for nfsnobody ..."
+  rm -f /mnt/nfsshare/mytestfile123321.txt &>/dev/null
+  if ! touch /mnt/nfsshare/mytestfile123321.txt &>/dev/null
+  then
+    print_FAIL
+    echo "The nfs share is not writable by nfsnobody."
+    return 1
+  else
+    print_PASS
+  fi
+}
+
+
+function print_usage {
+echo "This script controls the setup and grading of this lab."
+echo "Usage: $(basename $0) COMMAND"
+echo "       $(basename $0) -h|--help"
+echo "COMMAND is one of:"
+echo "    setup - perform any setup steps for this lab on this machine"
+echo "    grade - perform any grading steps and report on this machine"
+
+}
+
+function lab_setup {
+    VMNAME=$1
+    case $VMNAME in
+        desktop)
+            ERROR_MESSAGE="$CLNT_ERR"
+            echo "This lab does not require setup."
+            print_SUCCESS
+            ;;
+        server)
+            ERROR_MESSAGE="$SERV_ERR"
+            echo "This lab does not require setup."
+            print_SUCCESS
+            ;;
+        *)
+            # Should never get here, but what the hey....
+            print_FAIL && echo "This lab does not require setup."
+            ;;
+    esac
+}
+
+function lab_grade {
+    VMNAME=$1
+    case $VMNAME in
+        desktop)
+            FAIL=0
+            echo "Grading exercise IP-based NFS..."
+            check_nfs_mountpoint || FAIL=1
+            check_nfs_fstab || FAIL=1
+            check_nfs_mounted || FAIL=1
+            check_nfsmount_writeable || FAIL=1
+            echo
+            echo -n "Overall result: "
+            if [ ${FAIL} -eq 0 ]; then
+              print_PASS
+              echo "Congratulations! You've passed all requirements."
+            else
+              print_FAIL
+              echo "Please check your work and try again."
+            fi
+            ;;
+        server)
+            FAIL=0
+            echo "Grading exercise IP-based NFS..."
+            check_isactive_nfs_server || FAIL=1
+            check_enabled_nfs_server || FAIL=1
+            check_nfs_share_dir_exists || FAIL=1
+            check_nfs_export || FAIL=1
+            check_exportfs || FAIL=1
+            echo
+            echo -n "Overall result: "
+            if [ ${FAIL} -eq 0 ]; then
+              print_PASS
+              echo "Congratulations! You've passed all requirements."
+            else
+              print_FAIL
+              echo "Please check your work and try again."
+            fi
+            ;;
+        *)
+            # Should never get here, but what the hey....
+            print_FAIL && echo "Something went wrong. Ask your instructor for assistance."
+            ;;
+    esac
+}
+
+# Main area
+
+# Check if to be run as root (must do this first)
+if [[ "${RUN_AS_ROOT}" == 'true' ]] && [[ "${EUID}" -gt "0" ]] ; then
+  if [[ -x /usr/bin/sudo ]] ; then
+    ${SUDO:-sudo} $0 "$@"
+    exit
+  else
+    # Fail out if not running as root
+    check_root
+  fi
+fi
+
+# Process command line
+# Parse input
+case $1 in
+    setup|grade)
+        CMD=$1
+        ;;
+    -h|--help)
+        print_usage
+        exit 0
+        ;;
+    *)
+        echo Bad option $1
+        print_usage
+        exit 1
+        ;;
+esac
+# Validation
+[ -z "$CMD" ] && debug "Missing command" && print_usage && exit 1
+
+# Get local system information
+get_X
+
+# Branch based on short (without number) hostname
+case $MYHOST in
+    desktop|server)
+        lab_$CMD $MYHOST
+        ;;
+    *)
+        debug "Bad or missing hostname - $MYHOST"
+        debug "This command needs to be run on desktop or server"
+        exit 3
+        ;;
+esac
+

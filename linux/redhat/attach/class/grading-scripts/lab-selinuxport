@@ -1,0 +1,176 @@
+#!/bin/bash
+#
+# Copyright 2014 Red Hat, Inc.
+#
+# NAME
+#     lab-selinuxport - setup script for RH254/RH299 SELinux exercise
+#
+# SYNOPSIS
+#     lab-selinuxport {setup|grade}
+#
+#     The setup function only works on serverX.example.com.
+#     The grading function  only works on desktopX.example.com.
+#
+# DESCRIPTION
+#     This script performs setup/grading for a RH254 SELinux
+#     practice exercise.
+#
+# CHANGELOG
+#   * Fri May  9 2014 Wander Boessenkool <wboessen@redhat.com>
+#   - added grading/setup script for SELinux port security
+
+# Initialize and set some variables
+MYHOST=""
+CMD=""
+DEBUG='true'
+RUN_AS_ROOT='true'
+
+SECRETCONTENT="Nobody expects the spanish inquisition!"
+
+
+# Source library of functions
+source /usr/local/bin/labtool.shlib
+trap on_exit EXIT
+
+# Additional functions for this shell script
+function print_usage {
+  local problem_name=$(basename $0 | sed -e 's/^lab-//')
+  cat << EOF
+This script controls the setup and grading of this lab.
+Usage: lab ${problem_name} COMMAND
+       lab ${problem_name} -h|--help
+COMMAND is one of:
+    setup - perform any setup steps for this lab on this machine
+    grade - perform any grading steps and report on this machine
+EOF
+}
+
+function install_httpd {
+  yum -y install httpd &> /dev/null
+}
+
+function configure_httpd {
+  sed -i '/^Listen/s/^.*$/Listen 82/' /etc/httpd/conf/httpd.conf &>/dev/null
+}
+
+function create_content {
+  cat > /var/www/html/secret.html << EOF
+${SECRETCONTENT}
+EOF
+  cat > /var/www/html/index.html << EOF
+Hello
+EOF
+}
+
+function start_httpd {
+  systemctl enable httpd.service &> /dev/null
+  systemctl start httpd.service &> /dev/null
+  return 0
+}
+
+function test_content {
+  STRING=$(curl http://${SERVERX}:82/secret.html 2> /dev/null)
+  EXITCODE=$?
+  if [ ! "${EXITCODE}" -eq 0 ]; then
+    print_FAIL
+    echo "Could not download http://${SERVERX}:82/secret.html"
+    return 1
+  fi
+  if [ ! "${STRING}" == "${SECRETCONTENT}" ]; then
+    print_FAIL
+    echo "Did not receive correct content"
+    return 2
+  fi
+  print_PASS
+}
+
+
+function lab_setup {
+  VMNAME=$1
+  case $VMNAME in
+    desktop)
+      print_FAIL && echo "The setup script needs to be run on server"
+      ;;
+    server)
+      echo -n "Installing packages...  "
+      install_httpd && print_SUCCESS || print_FAIL
+      echo -n "Configuring httpd...  "
+      configure_httpd && print_SUCCESS || print_FAIL
+      echo -n "Creating content...  "
+      create_content && print_SUCCESS || print_FAIL
+      echo -n "Enabling and Starting httpd...  "
+      start_httpd && print_SUCCESS || print_FAIL
+      ;;
+    *)
+      # Should never get here, but what the hey....
+      print_FAIL && echo "The setup script needs to be run on server"
+      ;;
+  esac
+}
+
+function lab_grade {
+  VMNAME=$1
+  case $VMNAME in
+    desktop)
+      echo -n "Testing http access over port 82...  "
+      test_content
+      return 0
+      ;;
+    server)
+      # Obviously adjust this to actual commands if script needs
+      # to run on server - and adjust the catchall message with *)
+      print_FAIL && echo "The grade script needs to be run on desktop"
+      ;;
+    *)
+      # Should never get here, but what the hey....
+      print_FAIL && echo "The grade script needs to be run on desktop"
+      ;;
+  esac
+}
+
+# Main area
+
+# Check if to be run as root (must do this first)
+if [[ "${RUN_AS_ROOT}" == 'true' ]] && [[ "${EUID}" -gt "0" ]] ; then
+  if [[ -x /usr/bin/sudo ]] ; then
+    ${SUDO:-sudo} $0 "$@"
+    exit
+  else
+    # Fail out if not running as root
+    check_root
+  fi
+fi
+
+# Process command line
+# Parse input
+case $1 in
+  setup|grade)
+    CMD=$1
+    ;;
+  -h|--help)
+    print_usage
+    exit 0
+    ;;
+  *)
+    echo Bad option $1
+    print_usage
+    exit 1
+    ;;
+esac
+# Validation
+[[ -z "$CMD" ]] && debug "Missing command" && print_usage && exit 1
+
+# Get local system information
+get_X
+
+# Branch based on short (without number) hostname
+case $MYHOST in
+  desktop|server)
+    lab_$CMD $MYHOST
+    ;;
+  *)
+    debug "Bad or missing hostname - $MYHOST"
+    debug "This command needs to be run on desktop or server"
+    exit 3
+    ;;
+esac

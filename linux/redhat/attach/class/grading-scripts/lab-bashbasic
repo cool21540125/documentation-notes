@@ -1,0 +1,233 @@
+#!/bin/bash
+#
+# Copyright 2014 Red Hat, Inc.
+#
+# NAME
+#     lab-bashbasic - grading script for RH254/RH299 shell prog lab
+#
+# SYNOPSIS
+#     lab-bashbasic {setup|grade|clean}
+#
+#     This script only works on serverX.example.com.
+#
+# DESCRIPTION
+#     This script performs the setup and grading steps for one of the
+#     shell programming labs for RH254.
+#
+# CHANGELOG
+#   * Tue Jun 10 2014 Chen Chang <cchang@redhat.com>
+#   - original code
+
+# Initialize and set some variables
+MYHOST=""
+CMD=""
+DEBUG=true
+
+# Source library of functions
+source /usr/local/bin/labtool.shlib
+trap on_exit EXIT
+
+# Additional functions for this shell script
+function print_usage {
+echo "This script controls the setup and grading of this lab."
+echo "Usage: $(basename $0) COMMAND"
+echo "       $(basename $0) -h|--help"
+echo "COMMAND is one of:"
+echo "    setup - perform any setup steps for this lab on this machine"
+echo "    clean - perform any clean steps for this lab on this machine"
+echo "    grade - perform any grading steps and report on this machine"
+
+}
+
+function lab_setup {
+    VMNAME=$1
+    case $VMNAME in
+        desktop)
+            print_FAIL && echo "The setup script needs to be run on server"
+            ;;
+        server)
+            mkdir -p /tmp/support
+
+            if [ $? -ne 0 ]; then
+                print_FAIL && echo "Failed creating /tmp/support."
+                return
+            fi
+
+            wget -q http://classroom.example.com/content/courses/rhce/rhel7.0/materials/newusers -O /tmp/support/newusers
+
+            if [ $? -ne 0 ]; then
+                print_FAIL && echo "Failed downloading newusers file."
+                return
+            fi
+            ;;
+        *)
+            print_FAIL && echo "The setup script needs to be run on server"
+            ;;
+    esac
+
+}
+
+function lab_clean {
+    VMNAME=$1
+    case $VMNAME in
+        desktop)
+            print_FAIL && echo "The clean script needs to be run on server"
+            ;;
+        server)
+            mkdir -p /tmp/support
+
+            if [ $? -ne 0 ]; then
+                print_FAIL && echo "Failed creating /tmp/support."
+                return
+            fi
+
+            wget -q http://classroom.example.com/content/courses/rhce/rhel7.0/materials/newusers -O /tmp/support/newusers
+
+            if [ $? -ne 0 ]; then
+                print_FAIL && echo "Failed downloading newusers file."
+                return
+            fi
+
+            for ACCOUNT in $(awk -F: '{print tolower(substr($1,1,1)$2)}' /tmp/support/newusers); do
+                 id $ACCOUNT &> /dev/null
+
+                 if [ $? -eq 0 ]; then
+                       userdel -r $ACCOUNT &> /dev/null
+                 fi
+            done
+
+            ;;
+        *)
+            print_FAIL && echo "The setup script needs to be run on server"
+            ;;
+    esac
+
+}
+
+function lab_grade {
+    VMNAME=$1
+    case $VMNAME in
+        desktop)
+            print_FAIL && echo "The grade script needs to be run on server"
+            ;;
+        server)
+            # Generate seed file
+
+            if [ ! -d /tmp/support ]; then
+                mkdir /tmp/support
+            fi
+
+            cat << SEEDEOF > /tmp/support/newusers
+Francine:Mceachern:30:1
+Homer:Solan:30:1
+Kennith:Pryor:60:2
+Jennifer:Short:60:2
+Carlton:Cartwright:90:3
+Bell:Stebbins:90:3
+SEEDEOF
+
+            cat << PASSWDGRADE > /tmp/support/passwd.grade
+fmceachern:Francine Mceachern
+hsolan:Homer Solan
+kpryor:Kennith Pryor
+jshort:Jennifer Short
+ccartwright:Carlton Cartwright
+bstebbins:Bell Stebbins
+PASSWDGRADE
+
+            cat << OUTPUTGRADE > /tmp/support/newusers.out.grade
+"Tier 1","2","33%"
+"Tier 2","2","33%"
+"Tier 3","2","33%"
+OUTPUTGRADE
+
+            # Remove accounts if already there
+            for ACCOUNT in fmceachern hsolan kpryor jshort ccartwright bstebbins; do 
+		userdel -r $ACCOUNT &>/dev/null
+            done
+
+
+            if [ ! -x /usr/local/sbin/mkaccounts ]; then
+                print_FAIL && echo "Executable script not found at /usr/local/sbin/mkaccounts."
+                return 
+            fi
+
+            (/usr/local/sbin/mkaccounts > /tmp/support/newusers.out) 2>/dev/null
+
+            # Replace old newusers file in case students need to retry
+            wget -q http://classroom.example.com/content/courses/rhce/rhel7.0/materials/newusers -O /tmp/support/newusers
+
+            if [ $? -ne 0 ]; then
+                print_FAIL && echo "Failed downloading newusers file."
+                return
+            fi
+
+            # Get relevant fields from entries created in /etc/passwd
+            tail -6 /etc/passwd | awk -F: '{print $1":"$5}' > /tmp/support/passwd
+
+            echo -n "Checking for correct entries in /etc/passwd... "
+            diff /tmp/support/passwd /tmp/support/passwd.grade &> /dev/null
+
+            if [ $? -eq 0 ]; then
+                print_PASS
+            else
+                print_FAIL && echo "Couldn't find entries in /etc/passwd for accounts."
+	
+            fi
+
+            echo -n "Checking for correct report... "
+            diff /tmp/support/newusers.out /tmp/support/newusers.out.grade &> /dev/null
+
+            if [ $? -eq 0 ]; then
+                print_PASS
+            else
+                print_FAIL && echo "Report contains incorrect data."
+            fi
+
+            ;;
+        *)
+            # Should never get here, but what the hey....
+            print_FAIL && echo "The grade script needs to be run on server"
+            ;;
+    esac
+}
+
+# Main area
+
+# Fail out if not running as root
+check_root
+
+# Process command line
+# Parse input
+case $1 in
+    setup|clean|grade)
+        CMD=$1
+        ;;
+    -h|--help)
+        print_usage
+        exit 0
+        ;;
+    *)
+        echo Bad option $1
+        print_usage
+        exit 1
+        ;;
+esac
+# Validation
+[ -z "$CMD" ] && debug "Missing command" && print_usage && exit 1
+
+# Get local system information
+get_X
+
+# Branch based on short (without number) hostname
+case $MYHOST in
+    desktop|server)
+        lab_$CMD $MYHOST
+        ;;
+    *)
+        debug "Bad or missing hostname - $MYHOST"
+        debug "This command needs to be run on desktop or server"
+        exit 3
+        ;;
+esac
+

@@ -1,0 +1,8 @@
+RHT_VENUE=ilt
+RHT_ENROLLMENT=8
+RHT_ROLE=foundation
+RHT_COURSE=rh124
+RHT_TITLE="Red Hat System Administration I"
+RHT_VMS="desktop server "
+RHT_MAXSTATIONS=20
+RHT_VMTREE=rhel7.0/x86_64

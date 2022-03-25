@@ -1,0 +1,257 @@
+#!/bin/bash
+#
+# Copyright 2014 Red Hat, Inc.
+#
+# NAME
+#     lab-ipaclient - grading script for RH134/RH199/RH299 ipaclient lab
+#
+# SYNOPSIS
+#     lab-ipaclient {setup|grade}
+#
+#     This setup function works on serverX.example.com.
+#     This grade function works on desktopX.example.com.
+#
+# DESCRIPTION
+#     This script is the lab grading script for the RH134/RH199 ipaclient
+#     lab.
+#
+# CHANGELOG
+#   * Thu Jun 12 2014 Wander Boessenkool <wboessen@redhat.com>
+#   - original code
+
+# Initialize and set some variables
+MYHOST=""
+CMD=""
+DEBUG='true'
+RUN_AS_ROOT='true'
+
+IPA_ADMIN_PASS="redhat123"
+IPAPASS="password"
+IPAUSER="ipauser"
+IPANEWPASS="redhat123"
+
+
+# Source library of functions
+source /usr/local/bin/labtool.shlib
+trap on_exit EXIT
+
+# Additional functions for this shell script
+function print_usage {
+  local problem_name=$(basename $0 | sed -e 's/^lab-//')
+  cat << EOF
+This script controls the setup and grading of this lab.
+Usage: lab ${problem_name} COMMAND
+       lab ${problem_name} -h|--help
+COMMAND is one of:
+    setup - perform any setup steps for this lab on this machine
+    grade - perform any grading steps and report on this machine
+EOF
+}
+
+function lab_setup {
+    VMNAME=$1
+    case $VMNAME in
+        desktop)
+            print_FAIL && echo "The setup script needs to be run on server"
+            # Put in the steps to set up the lab
+            # Change to the example of server) if should only run
+            # there - and adjust the catchall message with *)
+            ;;
+        server)
+            echo -n "Checking for existing IPA server... "
+            if [ -f /var/lib/ipa/sysrestore/sysrestore.state ]; then
+              print_FAIL
+              echo "IPA server seems to be already installed"
+              exit 132
+            else
+              print_PASS
+            fi
+            echo -n "Clearing HTTPS port... "
+            if [ -f /etc/httpd/conf.d/ssl.conf ]; then
+              mv /etc/httpd/conf.d/ssl.conf /etc/httpd/conf.d/ssl.conf.rhtorig
+            fi
+            print_PASS
+            echo -n "Installing packages, this may take a while... "
+            yum -y install ipa-server &> /dev/null
+            RESULT=$?
+            if [ "${RESULT}" -eq 0 ]; then
+              print_PASS
+            else
+              print_FAIL
+              echo "Problem installing packages."
+              exit 135
+            fi
+            echo -n "Configuring firewall settings... "
+            firewall-cmd --permanent --add-service=http --add-service=https --add-service=ntp --add-service=ldap --add-service=ldaps --add-service=kerberos --add-service=kpasswd &>/dev/null && firewall-cmd --reload &>/dev/null
+            RESULT=$?
+            if [ "${RESULT}" -eq 0 ]; then
+              print_PASS
+            else
+              print_FAIL
+              echo "Problems configuring firewall."
+              exit 134
+            fi
+            echo -n "Configuring IPA server, this will take a few minutes... "
+            echo "allow 172.25.0.0/16" >> /etc/chrony.conf
+            systemctl restart chronyd &> /dev/null
+            SERVERXUPPER=$(echo ${SERVERX} | tr 'a-z' 'A-Z')
+            ipa-server-install -N -a ${IPA_ADMIN_PASS} -p ${IPA_ADMIN_PASS} --hostname ${SERVERX} -n ${SERVERX} -r ${SERVERXUPPER} --idstart 2000 --idmax 4000 --no-ui-redirect -U &> /dev/null
+            IPARESULT=$?
+            if [ ${IPARESULT} -eq 0 ]; then
+              print_PASS
+            else
+              print_FAIL
+              echo "There was an issue configuring your IPA server."
+              exit 133
+            fi
+            echo -n "Adding IPA users... "
+            echo ${IPA_ADMIN_PASS} | kinit admin &>/dev/null
+            echo -e "${IPAPASS}\n${IPAPASS}" | ipa user-add ${IPAUSER} --first IPA --last User --password &>/dev/null
+            RESULT=$?
+            if [ "${RESULT}" -eq 0 ]; then
+              print_PASS
+            else
+              print_FAIL
+              echo "Problem adding users."
+              exit 136
+            fi
+            ;;
+        *)
+            # Should never get here, but what the hey....
+            print_FAIL && echo "The setup script needs to be run on server"
+            ;;
+    esac
+
+}
+
+function lab_grade {
+    VMNAME=$1
+    case $VMNAME in
+        desktop)
+            echo -n "Installing packages necessary for grading... "
+            yum -y install ipa-admintools &> /dev/null
+            RESULT=$?
+            if [ "${RESULT}" -eq 0 ]; then
+              print_PASS
+            else
+              print_FAIL
+              echo "Problem installing packages."
+              exit 0
+            fi
+            echo -n "Checking if admin credentials can be acquired... "
+            echo ${IPA_ADMIN_PASS} | kinit admin &>/dev/null
+            RESULT=$?
+            if [ "${RESULT}" -eq 0 ]; then
+              print_PASS
+            else
+              print_FAIL
+              echo "Problem acquiring admin credentials."
+              exit 0
+            fi
+            kdestroy &>/dev/null
+            echo -n "Checking for ${IPAUSER} credentials... "
+            echo ${IPANEWPASS} | kinit ${IPAUSER} &>/dev/null
+            RESULT=$?
+            if [ "${RESULT}" -eq 0 ]; then
+              print_PASS
+            else
+              print_FAIL
+              echo "Problem acquiring ${IPAUSER} credentials."
+              echo -n "Attempting to reset ${IPAUSER} password... "
+              echo ${IPA_ADMIN_PASS} | kinit admin &> /dev/null
+              RESULT=$?
+              echo -e "${IPAPASS}\n${IPAPASS}" | ipa user-mod ipauser --password &> /dev/null
+              RESULT=$[ ${RESULT} + $? ]
+              echo -e "${IPAPASS}\n${IPANEWPASS}\n${IPANEWPASS}" | kinit ${IPAUSER} &> /dev/null
+              RESULT=$[ ${RESULT} + $? ]
+              if [ "${RESULT}" -eq 0 ]; then
+                print_PASS
+              else
+                print_FAIL
+                echo "Problem acquiring ${IPAUSER} credentials."
+                echo "Make sure the ${IPAUSER} password is set to '${IPANEWPASS}'"
+                exit 0
+              fi
+            fi
+            echo -n "Removing ${IPAUSER} home directory... "
+            [ -n "${IPAUSER}" ] && rm -rf /home/${IPAUSER} &>/dev/null
+            print_PASS
+            echo -n "Attempting SSH access to ${IPAUSER}... "
+            IPAREALM=$(echo ${SERVERX} | tr 'a-z' 'A-Z')
+            echo "  ${DESKTOPX} = ${IPAREALM}" >> /etc/krb5.conf
+            ssh -o PasswordAuthentication=no -o PubKeyAuthentication=no -o GSSAPIAuthentication=yes ${IPAUSER}@${DESKTOPX} "id" &> /dev/null
+            RESULT=$?
+            if [ "${RESULT}" -eq 0 ]; then
+              print_PASS
+            else
+              print_FAIL
+              echo "SSH access failed."
+            fi
+            echo -n "Checking for home directory... "
+            IPAUSERHOMEDIR=$(getent passwd ipauser | cut -d: -f 6)
+            [ -n "${IPAUSERHOMEDIR}" ] && [ -d ${IPAUSERHOMEDIR} ]
+            RESULT=$?
+            if [ "${RESULT}" -eq 0 ]; then
+              print_PASS
+            else
+              print_FAIL
+              echo "Home directory not found for ${IPAUSER}."
+            fi
+            ;;
+        server)
+            print_FAIL && echo "The grade script needs to be run on desktop"
+            ;;
+        *)
+            # Should never get here, but what the hey....
+            print_FAIL && echo "The grade script needs to be run on desktop"
+            ;;
+    esac
+}
+
+# Main area
+
+# Check if to be run as root (must do this first)
+if [[ "${RUN_AS_ROOT}" == 'true' ]] && [[ "${EUID}" -gt "0" ]] ; then
+  if [[ -x /usr/bin/sudo ]] ; then
+    ${SUDO:-sudo} $0 "$@"
+    exit
+  else
+    # Fail out if not running as root
+    check_root
+  fi
+fi
+
+# Process command line
+# Parse input
+case $1 in
+    setup|grade)
+        CMD=$1
+        ;;
+    -h|--help)
+        print_usage
+        exit 0
+        ;;
+    *)
+        echo Bad option $1
+        print_usage
+        exit 1
+        ;;
+esac
+# Validation
+[ -z "$CMD" ] && debug "Missing command" && print_usage && exit 1
+
+# Get local system information
+get_X
+
+# Branch based on short (without number) hostname
+case $MYHOST in
+    desktop|server)
+        lab_$CMD $MYHOST
+        ;;
+    *)
+        debug "Bad or missing hostname - $MYHOST"
+        debug "This command needs to be run on desktop or server"
+        exit 3
+        ;;
+esac
+

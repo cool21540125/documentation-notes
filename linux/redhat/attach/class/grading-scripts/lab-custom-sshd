@@ -1,0 +1,244 @@
+#!/bin/bash
+#
+# NAME
+#     lab-custom-sshd - grading script for RH254/RH299 custom-sshd lab
+#
+# SYNOPSIS
+#     lab-custom-sshd grade
+#     lab-custom-sshd setup
+#
+# DESCRIPTION
+#     This script is the lab grading script for the RH254 custom-sshd lab.
+#
+# CHANGELOG
+#   * Thu Jun 12 2014 George Hacker <ghacker@redhat.com>
+#   - deploy private key & provide passwords for 'sudo -S' (RH254-139)
+#   * Thu Jun 12 2014 George Hacker <ghacker@redhat.com>
+#   - fixed line wrap issue at the end of sshd_config (RH254-136)
+#   * Thu Jun 12 2014 Wander Boessenkool <wboessen@redhat.com>
+#   - original code
+
+# Initialize and set some variables
+MYHOST=""
+CMD=""
+DEBUG='true'
+RUN_AS_ROOT='true'
+
+# Source library of functions
+source /usr/local/bin/labtool.shlib
+trap on_exit EXIT
+
+# Additional functions for this shell script
+function print_usage {
+  local problem_name=$(basename $0 | sed -e 's/^lab-//')
+  cat << EOF
+This script controls the setup and grading of this lab.
+Usage: lab ${problem_name} COMMAND
+       lab ${problem_name} -h|--help
+COMMAND is one of:
+    setup - perform any setup steps for this lab on this machine
+    grade - perform any grading steps and report on this machine
+EOF
+}
+
+function add_privkey {
+  mkdir -p /home/student/.ssh
+  cat > /home/student/.ssh/gradingkey << EOF
+-----BEGIN RSA PRIVATE KEY-----
+MIIEpAIBAAKCAQEA723EW9fU2uIm5p6urX9bCUTqwHqYrozvXCN6w1+wNDME3ndW
+UVRYIFpmVTlEfSMLkjtqU9ckM2+3XPSkMVoHdUGAxnFz57AaC4Q21Dkjol1W9eF/
+TOt+nyea+EJcXAYzLQce4edlLzCdrWWGFO9QDXOwSoEpxyynNahJTBnjH8WdbTA3
+/mqw+k/HKm4hHiep6w2IIXI7vREIqu6kFDj71UvdsXPmQT2PhR+aEQk5DRTmfxkr
+mzpGLsVL/w51SoVdZMNs7r4W5o0/3VNATFO+Pu3566KW2SaRLBPy7F8pVZpUkKti
+QUkov1GOZM20Ku4bTg1UT2ELuebaOwwdPS7M7wIDAQABAoIBAQDZ9jZUWcZXQJuj
+RH/GR/MLHCcM9E48UOayHUZrx5dz3aIoF8GHpl3XjhQsr0aPGLE2/UnNa0R0YtYt
+FDTJDKlPcEMX5D5cg68iHsl/J0kuTQSWMCMgVh3eK0LjkB3eVHKQIjRV+L3fWMWi
+DZMjSby5kkDBgpYS0K6jpUCcu9BMoWm22p/BWCTkwUUaIBMOlXrQdCJmkyB6hYIc
+81eGJ6e8ItCK/aJhYPkreFhlDedmS3PFms60Cj515NnamFP+Vw12uBINqno1DTrT
+X047Ou0GKS/XM+Q4JRf5zOkFkQwHU2IMvfGUmG9/J83fx2rNHTsn8+x5KsjRItaX
+wioNd8NxAoGBAP89s4WRUDiv1KBiIzhoRK9f6ewO8aC9f7lpqV4k+pINmuTNo+8S
+5LABT6zUXgr3G6lWbpK/9v1ePzY6M39DcqALvBCiW1vhS/2QPWkIRafp3UmLjKH3
+SI8qXjch+7CgREW3H8tj5nMr9wRhsHpBJzez+grW6ZLM4UdDtINSv8V3AoGBAPAk
+B2b/FKIbNjFhFj3aKfqKHSGJujKlFuvo6zapO4e6KftH4CmCUrNO2xroYHKUrjZI
+2Ztjh4z4hJwr1h00fx/kz7rYbhxPc5MhdYVz+sKHypsDdYNpzmNuqBbXdnGAlyzd
+OhYdHB1lW60TMfuwPFSDF8cajxtVNxM/vDTsE/JJAoGAB4c9XUos8I8XGWfrnAVP
+SVDt6F2EePY95y0bpsA2d8pY8Di0hh+riRlwzSsyXuZs9XCsMD3jPhPij2nmDPHj
+Vp8h++eeBDa/9AmmFgv9afd25G1uR3SwujBIuR2Se+IuQVQmZuxaZrk8Pu/WsbRs
+QLNZQ6qVFxRd7KktkNYG+/8CgYBvsiJrSsw7FnMfhqwEuvv5l9Iy7k/YDKfbtOvq
+8c5JtFKgmW7vf7mdw1jwbBOoV/WsNDhbKXE8Jb/wsAcYcHmMyS3CF7cnneEBF3gF
+ScviPa0Eaxh2tnkUEL1IWpGx+4DVklTZQlL4bVO17g66pd9547vklTrpGLrUTjnp
+V8FzWQKBgQCkbXU2SDykzakvNYwmVRCkP+JUzdyk5CP6Ej36sICy9Sqg6vblKjz6
+j04WUlTAcT2AiuLATbQJ3db8TxfcnamZoxp8aUWzuoWxIjfm6oJmQWiCoNWxSWE/
+3ZbDMT2ueesinlq+AGa1Y7sLr3Nn02jyDzG9feUst1CqfoIwzBjqNw==
+-----END RSA PRIVATE KEY-----
+EOF
+  chown -R student:student /home/student/.ssh
+  chmod 0700 /home/student/.ssh
+  chmod 0600 /home/student/.ssh/gradingkey
+}
+
+function add_pubkey {
+  mkdir -p /home/student/.ssh
+  cat >> /home/student/.ssh/authorized_keys << EOF
+ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDvbcRb19Ta4ibmnq6tf1sJROrAepiujO9cI3rDX7A0MwTed1ZRVFggWmZVOUR9IwuSO2pT1yQzb7dc9KQxWgd1QYDGcXPnsBoLhDbUOSOiXVb14X9M636fJ5r4QlxcBjMtBx7h52UvMJ2tZYYU71ANc7BKgSnHLKc1qElMGeMfxZ1tMDf+arD6T8cqbiEeJ6nrDYghcju9EQiq7qQUOPvVS92xc+ZBPY+FH5oRCTkNFOZ/GSubOkYuxUv/DnVKhV1kw2zuvhbmjT/dU0BMU74+7fnropbZJpEsE/LsXylVmlSQq2JBSSi/UY5kzbQq7htODVRPYQu55to7DB09Lszv student@desktop0.example.com
+EOF
+  chown -R student:student /home/student/.ssh
+  chmod 0700 /home/student/.ssh
+  chmod 0600 /home/student/.ssh/authorized_keys
+}
+
+function set_custom_ssh_ports {
+  sed -i '/^Port/d' /etc/ssh/sshd_config &>/dev/null
+  echo >> /etc/ssh/sshd_config
+  for PORT in 22 $@; do
+    echo "Port ${PORT}" >> /etc/ssh/sshd_config
+  done
+  systemctl restart sshd.service
+}
+
+function test_ssh {
+  PORT=$1
+  ssh -i /home/student/.ssh/gradingkey -o PasswordAuthentication=no -o StrictHostKeychecking=no -o GSSAPIAuthentication=no -p ${PORT} student@${SERVERX} date &> /dev/null
+  EXITCODE=$?
+  if [ ! "${EXITCODE}" -eq 0 ]; then
+    print_FAIL
+    echo " - Could not connect to ${SERVERX}:${PORT}"
+    return 1
+  fi
+  print_PASS
+}
+
+function test_zones {
+  ssh -t -i /home/student/.ssh/gradingkey -o PasswordAuthentication=no -o StrictHostKeychecking=no -o GSSAPIAuthentication=no student@${SERVERX} 'echo student | sudo -S firewall-cmd --get-zones' 2>/dev/null | grep -q work
+  RETURNCODE=$?
+  if [ ! "${RETURNCODE}" -eq 0 ]; then
+    print_FAIL
+    echo " - Could not verify existence of 'work' zone"
+    return 1
+  fi
+  ZONE=$(ssh -t -i /home/student/.ssh/gradingkey -o PasswordAuthentication=no -o StrictHostKeychecking=no -o GSSAPIAuthentication=no student@${SERVERX} "echo student | sudo -S firewall-cmd --get-zone-of-source=172.25.${X}.0/24 2> /dev/null" 2> /dev/null | tr -d '\r')
+  if [ ! "${ZONE}" == "work" ]; then
+    print_FAIL
+    echo " - work zone source not configured correctly"
+    return 1
+  fi
+  print_PASS
+}
+
+function test_services {
+  ssh -t -i /home/student/.ssh/gradingkey -o PasswordAuthentication=no -o StrictHostKeychecking=no -o GSSAPIAuthentication=no student@${SERVERX} 'echo student | sudo -S firewall-cmd --zone=work --query-service=ssh' &>/dev/null
+  RETURNCODE=$?
+  if [ ! "${RETURNCODE}" -eq 0 ]; then
+    print_FAIL
+    echo " - SSH not listed in work allowed services"
+    return 1
+  fi
+  ssh -t -i /home/student/.ssh/gradingkey -o PasswordAuthentication=no -o StrictHostKeychecking=no -o GSSAPIAuthentication=no student@${SERVERX} 'echo student | sudo -S firewall-cmd --zone=work --query-port=999/tcp' &>/dev/null
+  RETURNCODE=$?
+  if [ ! "${RETURNCODE}" -eq 0 ]; then
+    print_FAIL
+    echo " - Port 999/TCP not opened in work zone."
+    return 1
+  fi
+  print_PASS
+}
+
+function lab_setup {
+  VMNAME=$1
+  case $VMNAME in
+    desktop)
+      print_FAIL && echo "The setup script needs to be run on server"
+      ;;
+    server)
+      echo -n "Configuring custom SSHD settings...  "
+      add_pubkey &> /dev/null
+      set_custom_ssh_ports 999 &> /dev/null
+      print_SUCCESS
+      ;;
+    *)
+      # Should never get here, but what the hey....
+      print_FAIL && echo "The setup script needs to be run on desktop"
+      ;;
+  esac
+}
+
+function lab_grade {
+  VMNAME=$1
+  case $VMNAME in
+    desktop)
+      FAIL=0
+      echo "Steps to grade lab on desktop"
+      add_privkey
+      echo -n "Testing regular port 22 SSH access...  "
+      test_ssh 22 || ((FAIL+=1))
+      echo -n "Testing Custom port 999 SSH access...  "
+      test_ssh 999 || ((FAIL+=1))
+      echo -n "Testing for custom zone...  "
+      test_zones || ((FAIL+=1))
+      echo -n "Testing for custom service...  "
+      test_services || ((FAIL+=1))
+      echo
+      echo -n "Overall result: "
+      if [ ! "${FAIL}" -eq 0 ]; then
+        print_FAIL
+        echo " - ${FAIL} check(s) failed. Please correct and try again."
+      else
+        print_PASS
+      fi
+      ;;
+    server)
+      print_FAIL && echo "The grade script needs to be run on desktop"
+      ;;
+    *)
+      # Should never get here, but what the hey....
+      print_FAIL && echo "The grade script needs to be run on desktop"
+      ;;
+  esac
+}
+
+# Main area
+
+# Check if to be run as root (must do this first)
+if [[ "${RUN_AS_ROOT}" == 'true' ]] && [[ "${EUID}" -gt "0" ]] ; then
+  if [[ -x /usr/bin/sudo ]] ; then
+    ${SUDO:-sudo} $0 "$@"
+    exit
+  else
+    # Fail out if not running as root
+    check_root
+  fi
+fi
+
+# Process command line
+# Parse input
+case $1 in
+  setup|grade)
+    CMD=$1
+    ;;
+  -h|--help)
+    print_usage
+    exit 0
+    ;;
+  *)
+    echo Bad option $1
+    print_usage
+    exit 1
+    ;;
+esac
+# Validation
+[[ -z "$CMD" ]] && debug "Missing command" && print_usage && exit 1
+
+# Get local system information
+get_X
+
+# Branch based on short (without number) hostname
+case $MYHOST in
+  desktop|server)
+    lab_$CMD $MYHOST
+    ;;
+  *)
+    debug "Bad or missing hostname - $MYHOST"
+    debug "This command needs to be run on desktop or server"
+    exit 3
+    ;;
+esac

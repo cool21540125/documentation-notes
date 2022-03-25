@@ -1,0 +1,331 @@
+#!/bin/bash
+#
+# Copyright 2014 Red Hat, Inc.
+#
+# NAME
+#     lab-samba - grading script for RH134/RH199/RH299 Samba labs
+#
+# SYNOPSIS
+#     lab-samba {setup|grade}
+#
+#     This setup function works on serverX.example.com.
+#     This grade function works on desktopX.example.com.
+#
+# DESCRIPTION
+#     This script performs the setup and grading steps for the Samba
+#     lab for RH134/RH199.
+#
+# CHANGELOG
+#   * Mon Apr 21 2014 Unknown <unknown@redhat.com>
+#   - original code
+
+# Initialize and set some variables
+MYHOST=""
+CMD=""
+RUN_AS_ROOT='true'
+
+SERV_PKG="samba samba-client"
+CLNT_PKG="cifs-utils autofs"
+USERS="sherlock watson"
+SERV_ERR="Error running script. Did you reset the server before running this script? \
+Contact your instructor if you continue to see this message."
+
+# Source library of functions
+source /usr/local/bin/labtool.shlib
+trap on_exit EXIT
+LOG_TAG=$(basename $0)
+
+# Additional functions for this shell script
+function srv_exit {
+  # call debug with msg and exit with code
+  DEBUG=true
+  debug "$1"
+  exit $2
+}
+
+function install_pkgs {
+  # install the package that provides the service
+  echo "Installing packages ..."
+  yum -y install ${SERV_PKG} &> /dev/null || \
+    srv_exit "yum failed: $?" 150
+}
+
+function update_config {
+  # update the config file
+  echo "Updating configuration ..."
+  [ -e /etc/samba/smb.conf.rhtorig ] && srv_exit "smb.conf backup exists" 151
+  mv /etc/samba/smb.conf /etc/samba/smb.conf.rhtorig &> /dev/null || \
+    srv_exit "mv failed: $?" 151
+  cat > /etc/samba/smb.conf << EOF
+#
+# Created for the samba lab
+# Original config file now called smb.conf.rhtorig
+#
+[global]
+  workgroup = MYGROUP
+  server string = Samba Server Version %v
+  log file = /var/log/samba/log.%m
+  max log size = 50
+  security = user
+  passdb backend = tdbsam
+[homes]
+  comment = Home Directories
+  browseable = no
+  writeable = yes
+[public]
+  comment = Public Files
+  path = /shares/elementary
+  public = yes
+[bakerst]
+  comment = Baker Street Files
+  path = /shares/cases
+  browseable = no
+  writeable = yes
+  write list = @bakerst
+EOF
+}
+
+function setup_users {
+  # add two users for testing
+  echo "Adding users ..."
+  groupadd -g 10221 bakerst &> /dev/null || \
+    srv_exit "groupadd failed: $?" 152
+  for U in $USERS
+  do 
+    useradd -s /sbin/nologin $U &> /dev/null || \
+      srv_exit "useradd for $U failed: $?" 152
+  done
+  USERS="$USERS student"
+  for U in $USERS
+  do 
+    usermod -aG bakerst $U &> /dev/null || \
+      srv_exit "usermod for $U failed: $?" 152
+    echo -e "student\nstudent" | smbpasswd -s -a $U &> /dev/null || \
+      srv_exit "smbpasswd for $U failed: $?" 152
+  done
+}
+
+function make_shares {
+  # make share folders with appropriate permissions
+  echo "Creating share folders ..."
+  [ -d /shares ] && rm -rf /shares
+  mkdir -p /shares/{cases,elementary}
+  chgrp bakerst /shares/cases
+  chmod 3770 /shares/cases
+  chmod 555 /shares/elementary
+  
+  # create some content to find
+  echo "Success" > /shares/elementary/samba.txt
+  echo "Success" > /shares/cases/samba.txt
+  echo "Success" > /home/student/samba.txt
+  chown student:student /home/student/samba.txt
+  echo "The Adventures of ..." > /shares/cases/adventures.txt
+  echo "Is a very clever and dangerous person" > /shares/cases/moriarty.txt
+  chown watson /shares/cases/adventures.txt
+  chown sherlock /shares/cases/moriarty.txt
+}
+
+function fix_selinux {
+  # update selinux bools and types
+  echo "Updating selinux ..."
+  setsebool -P samba_enable_home_dirs on &> /dev/null || \
+    srv_exit "setsebool failed: $?" 153
+  chcon -R -t samba_share_t /shares &> /dev/null || \
+    srv_exit "chcon failed: $?" 153
+}
+
+function update_firewall {
+  # update firewall for samba
+  echo "Updating firewall ..."
+  firewall-cmd --permanent --add-service=samba --add-service=samba-client &> /dev/null || \
+    srv_exit "firewall add-service failed: $?" 154
+  firewall-cmd --reload &> /dev/null || \
+    srv_exit "firewall reload failed: $?" 154
+}
+
+function systemd_cmds {
+  # start and enable samba
+  echo "Start samba ..."
+  systemctl enable smb &> /dev/null || \
+    srv_exit "systemctl enable failed: $?" 155
+  systemctl start smb &> /dev/null || \
+    srv_exit "systemctl start failed: $?" 155
+}
+
+# Grading scripts
+function check_install {
+  echo -n "Checking the correct packages are installed... "
+  if ${RPM} -q ${CLNT_PKG} &> /dev/null
+  then
+    print_PASS
+  else
+    print_FAIL
+    echo "Missing one or more packages!"
+    exit 0
+  fi
+}
+
+function check_enabled {
+  echo -n "Checking autofs service is enabled... "
+  if systemctl is-enabled autofs &> /dev/null
+  then
+    print_PASS
+  else
+    print_FAIL
+    echo "Service autofs is not enabled."
+    exit 0
+  fi
+}
+
+function check_mounts {
+  MOUNTS="work docs cases"
+  echo "Checking availability of mounts first:"
+  echo -e "***\n*** If you see a message 'Password entry required ...'\n\
+*** Wait for it to time-out.\n***"
+  for M in ${MOUNTS}
+  do 
+    echo -n "  checking $M mount is available... "
+    if [[ $(su -c "cat /shares/$M/samba.txt" student 2> /dev/null) == "Success" ]]
+    then
+      print_PASS
+    else
+      print_FAIL
+      exit 0
+    fi
+  done
+  # These test should typically not fail unless the student explicitly adds 'ro' 
+  #  as a mount option. The default is 'rw' and the server is set 'ro' on public
+  echo "Now checking write access on mounts:"
+  for M in ${MOUNTS}
+  do
+    echo -n "  checking $M mount is correctly writeable... "
+    if su -c "echo testing > /shares/$M/grading.test" student &> /dev/null
+    then
+      case $M in
+        work|cases)
+          print_PASS
+          ;;
+        *)
+          print_FAIL
+          exit 0
+          ;;
+      esac
+    else
+      case $M in
+        work|cases)
+          print_FAIL
+          exit 0
+          ;;
+        *)
+          print_PASS
+          ;;
+      esac
+    fi
+  done
+}
+
+function print_usage {
+  local problem_name=$(basename $0 | sed -e 's/^lab-//')
+  cat << EOF
+This script controls the setup and grading of this lab.
+Usage: lab ${problem_name} COMMAND
+       lab ${problem_name} -h|--help
+COMMAND is one of:
+    setup - perform any setup steps for this lab on this machine
+    grade - perform any grading steps and report on this machine
+EOF
+}
+
+function lab_setup {
+    VMNAME=$1
+    case $VMNAME in
+        desktop)
+            print_FAIL && echo "Please run the setup for this lab on the server."
+            ;;
+        server)
+            ERROR_MESSAGE="$SERV_ERR"
+            install_pkgs
+            update_config
+            setup_users
+            make_shares
+            fix_selinux
+            update_firewall
+            systemd_cmds
+            print_SUCCESS
+            ;;
+        *)
+            # Should never get here, but what the hey....
+            print_FAIL && echo "The setup script needs to be run on server"
+            ;;
+    esac
+
+}
+
+function lab_grade {
+    VMNAME=$1
+    case $VMNAME in
+        desktop)
+            check_install
+            check_enabled
+            check_mounts
+            print_SUCCESS
+            ;;
+        server)
+            # Obviously adjust this to actual commands if script needs
+            # to run on server - and adjust the catchall message with *)
+            print_FAIL && echo "Please run the grading for this lab on the desktop."
+            ;;
+        *)
+            # Should never get here, but what the hey....
+            print_FAIL && echo "The grade script needs to be run on desktop"
+            ;;
+    esac
+}
+
+# Main area
+
+# Check if to be run as root (must do this first)
+if [[ "${RUN_AS_ROOT}" == 'true' ]] && [[ "${EUID}" -gt "0" ]] ; then
+  if [[ -x /usr/bin/sudo ]] ; then
+    ${SUDO:-sudo} $0 "$@"
+    exit
+  else
+    # Fail out if not running as root
+    check_root
+  fi
+fi
+
+# Process command line
+# Parse input
+case $1 in
+    setup|grade)
+        CMD=$1
+        ;;
+    -h|--help)
+        print_usage
+        exit 0
+        ;;
+    *)
+        echo Bad option $1
+        print_usage
+        exit 1
+        ;;
+esac
+# Validation
+[ -z "$CMD" ] && debug "Missing command" && print_usage && exit 1
+
+# Get local system information
+get_X
+
+# Branch based on short (without number) hostname
+case $MYHOST in
+    desktop|server)
+        lab_$CMD $MYHOST
+        ;;
+    *)
+        debug "Bad or missing hostname - $MYHOST"
+        debug "This command needs to be run on desktop or server"
+        exit 3
+        ;;
+esac
+

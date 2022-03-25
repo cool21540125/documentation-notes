@@ -1,0 +1,229 @@
+#!/bin/bash
+#
+# Copyright 2014 Red Hat, Inc.
+#
+# NAME
+#     lab-localusers - grading script for RH124/RH199 user management lab
+#
+# SYNOPSIS
+#     lab-localusers grade
+#
+#        grade - perform evaluation steps to the system
+#
+#     This script only works on serverX.example.com.
+#
+# DESCRIPTION
+#     This script grades the user management lab.
+#
+# CHANGELOG
+#   * Tue Feb  4 2014 Susan Lauber <sml@laubersolutions.com>
+#   - migrated from old RHEL6 scripts
+
+# Initialize and set some variables
+MYHOST=""
+CMD=""
+DEBUG='true'
+RUN_AS_ROOT='true'
+
+# Source library of functions
+source /usr/local/bin/labtool.shlib
+trap on_exit EXIT
+
+# Additional functions for this shell script
+function print_usage {
+  local problem_name=$(basename $0 | sed -e 's/^lab-//')
+  cat << EOF
+This script controls the setup and grading of this lab.
+Usage: lab ${problem_name} COMMAND
+       lab ${problem_name} -h|--help
+COMMAND is one of:
+    setup - perform any setup steps for this lab on this machine
+    grade - perform any grading steps and report on this machine
+EOF
+}
+
+function check_users {
+USERS="sspade dtracy bboop"
+GROUP=consultants
+GROUP_ID=40000
+ACCOUNT_EXPIRE=90
+# ACCOUNT_EXPIRE_REQ is the requirement in the lab.  s-c-users sets the
+# expire date to DATE+1 days (which is where the ACCOUNT_EXPIRE setting comes
+# in) But we are using CLI now so back to 90...
+ACCOUNT_EXPIRE_REQ=90
+PASSWORD_EXPIRE=30
+for U in $USERS
+do
+    echo -n "* Checking user account for ${U}... "
+    if grep -q $U /etc/passwd
+    then
+        print_PASS
+    else
+        print_FAIL
+        echo "No account found for ${U}."
+    fi
+done
+echo
+echo -n "* Checking for the $GROUP group... "
+G="$(grep $GROUP /etc/group | cut -d: -f3)"
+if [[ $G == $GROUP_ID ]]
+then
+    print_PASS
+else
+    print_FAIL
+    echo "The $GROUP group does not exist or does not have the correct gid."
+fi
+
+echo
+for U in $USERS
+do
+    echo -n "* Checking supplemental group membership for ${U}... "
+    if groups $U 2>/dev/null | grep -q $GROUP
+    then
+        print_PASS
+    else
+        print_FAIL
+        echo "The user $U is not in the $GROUP group."
+    fi
+done
+
+echo
+for U in $USERS
+do
+    echo -n "* Checking account expiration for ${U}... "
+    value="$(grep $U /etc/shadow | cut -d: -f8)"
+    # Should be whatever is in column 3 plus $ACCOUNT_EXPIRE
+   #EXPIRE_DATE=$(( $(grep $U /etc/shadow | cut -d: -f3) + $ACCOUNT_EXPIRE ))
+    # column three is 0 for must change next login.
+    # Should be today plus $ACCOUNT_EXPIRE
+    EXPIRE_DATE=$(echo $[ $(echo $[$(date +%s)/86400]) + $ACCOUNT_EXPIRE ])
+    if [[ $value == $EXPIRE_DATE ]]
+    #if [[ $value == $ACCOUNT_EXPIRE ]]
+    then
+        print_PASS
+    else
+        print_FAIL
+        echo "The account for $U is not set to expire in $ACCOUNT_EXPIRE_REQ days."
+    fi
+done
+
+echo
+for U in $USERS
+do
+    if [[ "$U" == bboop ]]
+    then
+      echo -n "* Checking password expiration for ${U}... "
+      value="$(grep $U /etc/shadow | cut -d: -f5)"
+      if [[ "$value" == 15 ]]
+      then
+          print_PASS
+      else
+          print_FAIL
+          echo "The password for $U is not set to expire in $PASSWORD_EXPIRE days."
+      fi
+    else
+      echo -n "* Checking password expiration for ${U}... "
+      value="$(grep $U /etc/shadow | cut -d: -f5)"
+      if [[ $value == $PASSWORD_EXPIRE ]]
+      then
+          print_PASS
+      else
+          print_FAIL
+          echo "The password for $U is not set to expire in $PASSWORD_EXPIRE days."
+      fi
+    fi
+done
+}
+
+function lab_setup {
+    VMNAME=$1
+    case $VMNAME in
+        desktop)
+            # Put in the steps to set up the lab
+            # Change to the example of server) if should only run
+            # there - and adjust the catchall message with *)
+            print_FAIL && echo "The setup script needs to be run on server"
+            ;;
+        server)
+            #echo "Steps to set up lab on server"
+            # Obviously adjust this to actual commands if script needs
+            # to run on server - and adjust the catchall message with *)
+	    echo 'Done. No setup required for lab-localusers'
+            ;;
+        *)
+            # Should never get here, but what the hey....
+            print_FAIL && echo "The setup script needs to be run on desktop"
+            ;;
+    esac
+
+}
+
+function lab_grade {
+    VMNAME=$1
+    case $VMNAME in
+        desktop)
+            # Put in the steps to grade the lab (use print_PASS or print_FAIL)
+            # Change to the example of server) if should only run
+            # there - and adjust the catchall message with *)
+            print_FAIL && echo "The grade script needs to be run on server"
+            ;;
+        server)
+            echo "Starting grading..."
+            # Obviously adjust this to actual commands if script needs
+            # to run on server - and adjust the catchall message with *)
+	    check_users
+            ;;
+        *)
+            # Should never get here, but what the hey....
+            print_FAIL && echo "The grade script needs to be run on desktop"
+            ;;
+    esac
+}
+
+# Main area
+
+# Check if to be run as root (must do this first)
+if [[ "${RUN_AS_ROOT}" == 'true' ]] && [[ "${EUID}" -gt "0" ]] ; then
+  if [[ -x /usr/bin/sudo ]] ; then
+    ${SUDO:-sudo} $0 "$@"
+    exit
+  else
+    # Fail out if not running as root
+    check_root
+  fi
+fi
+
+# Process command line
+# Parse input
+case $1 in
+    setup|grade)
+        CMD=$1
+        ;;
+    -h|--help)
+        print_usage
+        exit 0
+        ;;
+    *)
+        echo Bad option $1
+        print_usage
+        exit 1
+        ;;
+esac
+# Validation
+[ -z "$CMD" ] && debug "Missing command" && print_usage && exit 1
+
+# Get local system information
+get_X
+
+# Branch based on short (without number) hostname
+case $MYHOST in
+    desktop|server)
+        lab_$CMD $MYHOST
+        ;;
+    *)
+        debug "Bad or missing hostname - $MYHOST"
+        debug "This command needs to be run on desktop or server"
+        exit 3
+        ;;
+esac
+

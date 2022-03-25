@@ -1,0 +1,726 @@
+#!/bin/bash
+#
+# Copyright 2014 Red Hat, Inc.
+#
+# NAME
+#     lab-sa3-review - setup/grading script for RH254 comprehensive review
+#
+# SYNOPSIS
+#     lab-sa3-review {setup|grade}
+#
+#     The setup function works on both desktopX and serverX.
+#     The grading function only works on desktopX.example.com.
+#
+# DESCRIPTION
+#     This script performs the setup/grading for the RH254 Comprehensive
+#     Review lab.
+#
+# CHANGELOG
+#   * Fri May 30 2014 Wander Boessenkool <wboessen@redhat.com>
+#   - original code
+
+# Initialize and set some variables
+MYHOST=""
+CMD=""
+DEBUG='true'
+RUN_AS_ROOT='true'
+
+# Source library of functions
+source /usr/local/bin/labtool.shlib
+trap on_exit EXIT
+
+# Additional functions for this shell script
+function print_usage {
+  local problem_name=$(basename $0 | sed -e 's/^lab-//')
+  cat << EOF
+This script controls the setup and grading of this lab.
+Usage: lab ${problem_name} COMMAND
+       lab ${problem_name} -h|--help
+COMMAND is one of:
+    setup - perform any setup steps for this lab on this machine
+    grade - perform any grading steps and report on this machine
+EOF
+}
+
+
+function pad {
+  PADDING="..............................................................."
+  TITLE=$1
+  printf "%s%s  " "${TITLE}" "${PADDING:${#TITLE}}"
+}
+
+function install_packages {
+  pad "Installing packages"
+  yum -y install "$@" &> /dev/null
+  RESULT=$?
+  if [ "${RESULT}" -ne 0 ]; then
+    print_FAIL
+    echo "Error installing needed packages"
+    exit 132
+  fi
+  print_SUCCESS
+}
+
+function add_privkey {
+  mkdir -p /home/student/.ssh
+  cat > /home/student/.ssh/gradingkey << EOF
+-----BEGIN RSA PRIVATE KEY-----
+MIIEpAIBAAKCAQEA723EW9fU2uIm5p6urX9bCUTqwHqYrozvXCN6w1+wNDME3ndW
+UVRYIFpmVTlEfSMLkjtqU9ckM2+3XPSkMVoHdUGAxnFz57AaC4Q21Dkjol1W9eF/
+TOt+nyea+EJcXAYzLQce4edlLzCdrWWGFO9QDXOwSoEpxyynNahJTBnjH8WdbTA3
+/mqw+k/HKm4hHiep6w2IIXI7vREIqu6kFDj71UvdsXPmQT2PhR+aEQk5DRTmfxkr
+mzpGLsVL/w51SoVdZMNs7r4W5o0/3VNATFO+Pu3566KW2SaRLBPy7F8pVZpUkKti
+QUkov1GOZM20Ku4bTg1UT2ELuebaOwwdPS7M7wIDAQABAoIBAQDZ9jZUWcZXQJuj
+RH/GR/MLHCcM9E48UOayHUZrx5dz3aIoF8GHpl3XjhQsr0aPGLE2/UnNa0R0YtYt
+FDTJDKlPcEMX5D5cg68iHsl/J0kuTQSWMCMgVh3eK0LjkB3eVHKQIjRV+L3fWMWi
+DZMjSby5kkDBgpYS0K6jpUCcu9BMoWm22p/BWCTkwUUaIBMOlXrQdCJmkyB6hYIc
+81eGJ6e8ItCK/aJhYPkreFhlDedmS3PFms60Cj515NnamFP+Vw12uBINqno1DTrT
+X047Ou0GKS/XM+Q4JRf5zOkFkQwHU2IMvfGUmG9/J83fx2rNHTsn8+x5KsjRItaX
+wioNd8NxAoGBAP89s4WRUDiv1KBiIzhoRK9f6ewO8aC9f7lpqV4k+pINmuTNo+8S
+5LABT6zUXgr3G6lWbpK/9v1ePzY6M39DcqALvBCiW1vhS/2QPWkIRafp3UmLjKH3
+SI8qXjch+7CgREW3H8tj5nMr9wRhsHpBJzez+grW6ZLM4UdDtINSv8V3AoGBAPAk
+B2b/FKIbNjFhFj3aKfqKHSGJujKlFuvo6zapO4e6KftH4CmCUrNO2xroYHKUrjZI
+2Ztjh4z4hJwr1h00fx/kz7rYbhxPc5MhdYVz+sKHypsDdYNpzmNuqBbXdnGAlyzd
+OhYdHB1lW60TMfuwPFSDF8cajxtVNxM/vDTsE/JJAoGAB4c9XUos8I8XGWfrnAVP
+SVDt6F2EePY95y0bpsA2d8pY8Di0hh+riRlwzSsyXuZs9XCsMD3jPhPij2nmDPHj
+Vp8h++eeBDa/9AmmFgv9afd25G1uR3SwujBIuR2Se+IuQVQmZuxaZrk8Pu/WsbRs
+QLNZQ6qVFxRd7KktkNYG+/8CgYBvsiJrSsw7FnMfhqwEuvv5l9Iy7k/YDKfbtOvq
+8c5JtFKgmW7vf7mdw1jwbBOoV/WsNDhbKXE8Jb/wsAcYcHmMyS3CF7cnneEBF3gF
+ScviPa0Eaxh2tnkUEL1IWpGx+4DVklTZQlL4bVO17g66pd9547vklTrpGLrUTjnp
+V8FzWQKBgQCkbXU2SDykzakvNYwmVRCkP+JUzdyk5CP6Ej36sICy9Sqg6vblKjz6
+j04WUlTAcT2AiuLATbQJ3db8TxfcnamZoxp8aUWzuoWxIjfm6oJmQWiCoNWxSWE/
+3ZbDMT2ueesinlq+AGa1Y7sLr3Nn02jyDzG9feUst1CqfoIwzBjqNw==
+-----END RSA PRIVATE KEY-----
+EOF
+  chown -R student:student /home/student/.ssh
+  chmod 0700 /home/student/.ssh
+  chmod 0600 /home/student/.ssh/gradingkey
+}
+
+function add_pubkey {
+  mkdir -p /root/.ssh
+  cat >> /root/.ssh/authorized_keys << EOF
+ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDvbcRb19Ta4ibmnq6tf1sJROrAepiujO9cI3rDX7A0MwTed1ZRVFggWmZVOUR9IwuSO2pT1yQzb7dc9KQxWgd1QYDGcXPnsBoLhDbUOSOiXVb14X9M636fJ5r4QlxcBjMtBx7h52UvMJ2tZYYU71ANc7BKgSnHLKc1qElMGeMfxZ1tMDf+arD6T8cqbiEeJ6nrDYghcju9EQiq7qQUOPvVS92xc+ZBPY+FH5oRCTkNFOZ/GSubOkYuxUv/DnVKhV1kw2zuvhbmjT/dU0BMU74+7fnropbZJpEsE/LsXylVmlSQq2JBSSi/UY5kzbQq7htODVRPYQu55to7DB09Lszv student@desktop0.example.com
+EOF
+  chmod 0700 /root/.ssh
+  chmod 0600 /root/.ssh/authorized_keys
+}
+
+function add_hiddenbridge {
+  local INTERFACES="slave1 slave2"
+	local GATEWAY_IP="192.168.0.254/24"
+	local GATEWAY_IP6="fd00:ba5e:ba11:${X}::fe/64"
+      cat > /usr/local/sbin/hiddenbridge << EOF
+#!/bin/bash
+# Pardon the dirty SELinux hack, didn't feel like writing a policy module
+# just for this
+
+OLDENFORCE=\$(getenforce)
+setenforce 0
+
+ip netns add hidden
+ip netns exec hidden ip link set dev lo up
+ip netns exec hidden brctl addbr hiddenbr0
+ip netns exec hidden ip link set dev hiddenbr0 up
+for IFACE in ${INTERFACES}; do
+  ip link add "\${IFACE}" type veth peer name "\${IFACE}-port"
+  ip link set "\${IFACE}-port" netns hidden up
+  ip netns exec hidden brctl addif hiddenbr0 "\${IFACE}-port"
+done
+ip netns exec hidden ip link add inside0 type veth peer name inside0-port
+ip netns exec hidden brctl addif hiddenbr0 inside0-port
+ip netns exec hidden ip link set inside0-port up
+ip netns exec hidden ip link set inside0 up
+ip netns exec hidden ip addr add ${GATEWAY_IP} dev inside0 
+ip netns exec hidden ip addr add ${GATEWAY_IP6} dev inside0 
+
+setenforce \${OLDENFORCE}
+EOF
+  chmod +x /usr/local/sbin/hiddenbridge
+  cat > /etc/systemd/system/hiddenbridge.service << EOF
+[Unit]
+Description=Create two virtual network interfaces for Red Hat Enterprise Linux System Administration III training (RH254)
+Before=NetworkManager.service
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/sbin/hiddenbridge
+RemainAfterExit=yes
+ExecStopPost=ip netns del hidden
+
+[Install]
+WantedBy=network.target
+EOF
+  systemctl daemon-reload
+  systemctl enable hiddenbridge.service &> /dev/null
+  systemctl start hiddenbridge.service
+}
+
+function run_authconfig {
+  install_packages sssd sssd-ldap authconfig krb5-workstation
+  pad "Configuring Authentication"
+  authconfig --enableldap --ldapserver=ldaps://classroom.example.com --ldapbasedn=dc=example,dc=com --enableldaptls --ldaploadcacert=http://classroom.example.com/pub/example-ca.crt --enablekrb5 --krb5kdc=classroom.example.com --krb5adminserver=classroom.example.com --krb5realm=EXAMPLE.COM --enablesssd --enablesssdauth --update
+  RESULT=$?
+  if [ "${RESULT}" -ne 0 ]; then
+    print_FAIL
+    echo "Error configuring LDAP and Kerberos"
+    exit 133
+  fi
+  print_SUCCESS
+}
+
+function run_webapp {
+  pad "Creating web application files"
+  # Dump .php file in student homedir
+  cat > /home/student/myapp.php << 'EOF'
+<html>
+  <head>
+    <title>Best Ships in the 'Verse</title>
+  </head>
+  <body>
+    <?php
+    $dbhost = 'localhost';
+    $dbuser = 'picard';
+    $dbpass = 'makeitso';
+    $dbdb = 'ships';
+    $conn = mysqli_connect($dbhost, $dbuser, $dbpass, $dbdb);
+    if (! $conn) {
+      die('Unable to connect to database:' . mysql_error());
+    }
+    echo '<div>Connected to Database</div>';
+    $contents = mysqli_query($conn, "SELECT * from starships");
+    echo "<table><tr><th>ID</th><th>Name</th><th>Cost</th></tr>";
+    while ($row = mysqli_fetch_array($contents)) {
+      echo "<tr><td>" . $row['ShipID'] . "</td><td>" . $row['Name'];
+      echo "</td><td>" . $row['Alliance'] . "</td></tr>";
+    }
+    echo "</table>";
+    ?>
+  </body>
+</html>
+EOF
+  # Dump SQL data file in student homedir
+  cat > /home/student/mydb.mysqldump << 'EOF'
+CREATE DATABASE IF NOT EXISTS ships;
+CREATE USER 'picard'@'localhost' IDENTIFIED BY 'makeitso';
+GRANT ALL PRIVILEGES ON ships . * TO 'picard'@'localhost';
+USE ships;
+CREATE TABLE starships
+(
+  ShipID INT NOT NULL AUTO_INCREMENT,
+  Name VARCHAR(255) NOT NULL,
+  Alliance VARCHAR(255) NOT NULL,
+  PRIMARY KEY (ShipID)
+);
+INSERT INTO starships VALUES (NULL, "USS Enterprise", "Star Fleet");
+INSERT INTO starships VALUES (NULL, "Millenium Falcon", "Rebels");
+INSERT INTO starships VALUES (NULL, "Serenity", "Brown Coats");
+INSERT INTO starships VALUES (NULL, "Borg Cube", "Borg");
+INSERT INTO starships VALUES (NULL, "Tardis", "Doctors");
+INSERT INTO starships VALUES (NULL, "Galactica", "Humans");
+EOF
+  print_SUCCESS
+}
+
+function fetch_keytab {
+  local CLIENT=$1
+  pad "Downloading client keytab"
+  if ! wget -O /etc/krb5.keytab http://classroom.example.com/pub/keytabs/${CLIENT}.keytab &> /dev/null; then
+    print_FAIL
+    echo " - Could not download client keytab"
+    return 1
+  fi
+  print_SUCCESS
+  return 0
+}
+
+function configure_postfix {
+  pad "Configuring Postfix to accept all mail"
+  yum -y install postfix &> /dev/null
+  postconf -e 'inet_interfaces = all'
+  postconf -e 'mydestination = pcre:/etc/postfix/mydestinations'
+  cat > /etc/postfix/mydestinations << EOF
+/.*/ ACCEPT
+EOF
+  systemctl enable postfix.service &> /dev/null
+  systemctl restart postfix.service &> /dev/null
+  firewall-cmd --permanent --add-service=smtp &> /dev/null
+  firewall-cmd --reload &> /dev/null
+  print_SUCCESS
+}
+
+
+function lab_setup {
+  VMNAME=$1
+  case $VMNAME in
+    desktop)
+      add_privkey
+      run_authconfig
+      fetch_keytab desktop${X}
+      configure_postfix
+      ;;
+    server)
+      add_pubkey
+      add_hiddenbridge
+      run_authconfig
+      run_webapp
+      ;;
+    *)
+      # Should never get here, but what the hey....
+      print_FAIL && echo "The setup script needs to be run on desktop"
+      ;;
+  esac
+}
+
+function grade_ipv6_team {
+  pad "Checking Teaming configuration on server${X}"
+  local ADDRX
+  if [ "${X}" == "0" ]; then
+    ADDRX=""
+  else
+    ADDRX="${X}:"
+  fi
+  if ! ssh -oBatchMode=yes -oStrictHostKeyChecking=no -i /home/student/.ssh/gradingkey server${X}.example.com "ip link show team1" &> /dev/null ; then
+    print_FAIL
+    echo " - team1 device does not exist"
+    return 1
+  fi
+  if ! ssh -oBatchMode=yes -oStrictHostKeyChecking=no -i /home/student/.ssh/gradingkey server${X}.example.com "ip a s team1 | grep 'inet ' | awk '{print $2}'" 2> /dev/null | grep -q '192\.168\.0\.100/24'; then
+    print_FAIL
+    echo " - team1 device does not have correct IPv4 address"
+    return 1
+  fi
+  if ! ssh -oBatchMode=yes -oStrictHostKeyChecking=no -i /home/student/.ssh/gradingkey server${X}.example.com "ip a s team1 | grep 'inet6 ' | awk '{print $2}'" 2> /dev/null | grep -q "fd00:ba5e:ba11:${ADDRX}:1/64"; then
+    print_FAIL
+    echo " - team1 device does not have correct IPv6 address"
+    return 1
+  fi
+  if ! ssh -oBatchMode=yes -oStrictHostKeyChecking=no -i /home/student/.ssh/gradingkey server${X}.example.com "ping -c1 192.168.0.254" &> /dev/null ; then
+    print_FAIL
+    echo " - IPv4 ping failed"
+    return 1
+  fi
+  if ! ssh -oBatchMode=yes -oStrictHostKeyChecking=no -i /home/student/.ssh/gradingkey server${X}.example.com "ping6 -c1 fd00:ba5e:ba11:${ADDRX}:fe" &> /dev/null ; then
+    print_FAIL
+    echo " - IPv6 ping failed"
+    return 1
+  fi
+  print_PASS
+  return 0
+}
+
+function grade_dns {
+  pad "Checking caching nameserver configuration on server${X}"
+  OUTPUT=$(dig +time=1 @172.25.${X}.11 classroom.example.com)
+  RESULT=$?
+  if [ "${RESULT}" -eq 9 ]; then
+    print_FAIL
+    echo " - Nameserver on server${X} did not respond"
+    return 1
+  fi
+  if ! echo "${OUTPUT}" | grep -q -e "IN[[:space:]]*A[[:space:]]*172.25.254.254"&> /dev/null; then
+    print_FAIL
+    echo " - Server did not respond with correct answer"
+    return 1
+  fi
+  if ! echo "${OUTPUT}" | grep -q -e "SERVER:[[:space:]]*172.25.${X}.11" &> /dev/null; then
+    print_FAIL
+    echo " - Wrong server answered"
+    return 1
+  fi
+  print_PASS
+  return 0
+}
+
+function grade_smtp {
+  local LOCALSTRING=$(openssl rand -base64 16)
+  local REMOTESTRING=$(openssl rand -base64 16)
+  pad "Checking SMTP null client on server${X}"
+  if ! cat > /dev/tcp/server${X}.example.com/25 << EOF
+HELO desktop${X}.example.com
+MAIL FROM: testing@example.com
+RCPT TO: student@test.example.com
+DATA
+Subject: Test, please ignore
+
+${REMOTESTRING}
+.
+EOF
+  then
+    print_FAIL
+    echo " - Could not connect to SMTP port on server${X}"
+    return 1
+  fi
+  if ! cat > /dev/tcp/server${X}.example.com/25 << EOF
+HELO desktop${X}.example.com
+MAIL FROM: testing@example.com
+RCPT TO: student@server${X}.example.com
+DATA
+Subject: Test, please ignore
+
+${LOCALSTRING}
+.
+EOF
+  then
+    print_FAIL
+    echo " - Could not connect to SMTP port on server${X}"
+    return 1
+  fi
+  # Allow mail to be delivered, 2s should be enough
+  sleep 2s
+  if grep -q "${LOCALSTRING}" /var/spool/mail/student; then
+    print_FAIL
+    echo " - Mail for server${X}.example.com was relayed"
+    return 1
+  fi
+  if ! grep -q "${REMOTESTRING}" /var/spool/mail/student; then
+    print_FAIL
+    echo " - Mail was not relayed correctly."
+    return 1
+  fi
+  if ! ssh -oBatchMode=yes -oStrictHostKeyChecking=no -i /home/student/.ssh/gradingkey server${X}.example.com grep -q "${LOCALSTRING}" /var/spool/mail/student  &> /dev/null ; then
+    print_FAIL
+    echo " - Mail for server${X}.example.com was not delivered locally"
+    return 1
+  fi
+  if ssh -oBatchMode=yes -oStrictHostKeyChecking=no -i /home/student/.ssh/gradingkey server${X}.example.com grep -q "${REMOTESTRING}" /var/spool/mail/student  &> /dev/null ; then
+    print_FAIL
+    echo " - Mail that should have been relayed was delivered locally"
+    return 1
+  fi
+  print_PASS
+  return 0
+}
+
+function grade_iscsi {
+  pad "Checking iSCSI exports on server${X}"
+  yum -y install iscsi-initiator-utils &> /dev/null
+  #logout all targets
+  local TARGET
+  for TARGET in $(iscsiadm -m session -P0 2>&1 | grep Target | cut -d' ' -f4 2>/dev/null); do
+    iscsiadm -m node -T ${TARGET} -u &> /dev/null
+  done
+  #stop iscsi/iscsid
+  systemctl stop iscsi.service &> /dev/null
+  systemctl stop iscsid.service &> /dev/null
+  #remove all discoveries
+  rm -rf /var/lib/iscsi/nodes/* &> /dev/null
+  rm -rf /var/lib/iscsi/send_targets/* &> /dev/null
+  #set initiator name
+  echo "InitiatorName=iqn.2014-06.com.example:desktop${X}" > /etc/iscsi/initiatorname.iscsi
+  #start iscsi
+  systemctl start iscsi.service &> /dev/null
+  #check discoveries
+  iscsiadm -m discovery -t st -p 172.25.${X}.11 &> /dev/null
+  if ! iscsiadm -m discovery -P1 2>/dev/null | grep -q "Target: iqn.2014-06.com.example:server${X}.zoidberg"; then
+    print_FAIL
+    echo " - Could not discover target"
+    return 1
+  fi
+  # check login
+  iscsiadm -m  node -T iqn.2014-06.com.example:server${X}.zoidberg -l &> /dev/null
+  if ! iscsiadm -m session -P0 2> /dev/null | grep -q "iqn.2014-06.com.example:server${X}.zoidberg"; then
+    print_FAIL
+    echo " - Could not login to target"
+    return 1
+  fi
+  print_PASS
+  return 0
+}
+
+function grade_nfs {
+  pad "Checking NFS exports on server${X}"
+  local EXPORTDIR=/exports/hypnotoad
+  local EXPORTSERVER=server${X}.example.com
+  local EXPORT="${EXPORTSERVER}:${EXPORTDIR}"
+  local TEMPDIR=$(mktemp -d)
+  local TESTSTRING=$(openssl rand -base64 32)
+  if ! ssh -oBatchMode=yes -oStrictHostKeyChecking=no -i /home/student/.ssh/gradingkey ${EXPORTSERVER} [ -d "${EXPORTDIR}" ] &> /dev/null ; then
+    print_FAIL
+    echo " - Export directory does not exist on server${X}"
+    return 1
+  fi
+  if ! ssh -oBatchMode=yes -oStrictHostKeyChecking=no -i /home/student/.ssh/gradingkey ${EXPORTSERVER} [ -k "${EXPORTDIR}" ] &> /dev/null; then
+    print_FAIL
+    echo " - Export directory does not have sticky bit set"
+    return 1
+  fi
+  local PERMISSIONS=$(ssh -oBatchMode=yes -oStrictHostKeyChecking=no -i /home/student/.ssh/gradingkey ${EXPORTSERVER} ls -ld ${EXPORTDIR} | cut -d' ' -f1 2>/dev/null)
+  if [ ! "${PERMISSIONS}" == "drwxrwxrwt." ]; then
+    print_FAIL
+    echo " - Export directory permissions not set to 1777"
+    return 1
+  fi
+  systemctl start nfs-secure &> /dev/null
+  mount -osec=krb5p "${EXPORT}" "${TEMPDIR}" &> /dev/null
+  RESULT=$?
+  if [ ! "${RESULT}" -eq 0 ]; then
+    print_FAIL
+    echo " - Could not mount ${EXPORTDIR} using kerberized NFSv4"
+    umount "${TEMPDIR}" &> /dev/null
+    rmdir ${TEMPDIR} &> /dev/null
+    return 1
+  fi
+  ssh -oBatchMode=yes -oStrictHostKeyChecking=no -i /home/student/.ssh/gradingkey ${EXPORTSERVER} "echo \"${TESTSTRING}\" > /exports/hypnotoad/.testfile" &> /dev/null
+  if ! grep -q "${TESTSTRING}" ${TEMPDIR}/.testfile &> /dev/null; then
+    print_FAIL
+    echo " - Could not read file from export"
+    umount "${TEMPDIR}" &> /dev/null
+    rmdir ${TEMPDIR} &> /dev/null
+    return 1
+  fi
+  if ! (echo flops > ${TEMPDIR}/.moretests) &> /dev/null; then
+    print_FAIL
+    echo " - Could not write file to export"
+    umount "${TEMPDIR}" &> /dev/null
+    rmdir ${TEMPDIR} &> /dev/null
+    return 1
+  fi
+  print_PASS
+  umount "${TEMPDIR}" &> /dev/null
+  rmdir ${TEMPDIR} &> /dev/null
+  return 0
+}
+
+function grade_smb {
+  local READTESTSTRING=$(openssl rand -base64 64)
+  local WRITETESTSTRING=$(openssl rand -base64 64)
+  local EXPORTSERVER=server${X}.example.com
+  local EXPORT=bigbang
+  local UNC="//${EXPORTSERVER}/${EXPORT}"
+  local SMBUSER="penny"
+  local SMBPASS="I<3Sheldon"
+  pad "Checking SMB shares on server${X}"
+  #Install smbclient
+  yum -y install samba-client &> /dev/null
+  #Create a file in /exports/bigbang
+  ssh -oBatchMode=yes -oStrictHostKeyChecking=no -i /home/student/.ssh/gradingkey ${EXPORTSERVER} "rm -f /exports/bigbang/.testfile &> /dev/null; echo \"${READTESTSTRING}\" > /exports/bigbang/.testfile" &> /dev/null
+  # Check connection
+  if ! smbclient "${UNC}" "${SMBPASS}" -U "${SMBUSER}" -g -c '' &> /dev/null; then
+    print_FAIL
+    echo " - Could not connect to ${UNC} as ${SMBUSER}"
+    return 1
+  fi
+  # Check read
+  if ! smbclient "${UNC}" "${SMBPASS}" -U "${SMBUSER}" -g -c 'get .testfile -' 2>&1 | grep -q "${READTESTSTRING}" ; then
+    print_FAIL
+    echo " - Could not read from ${UNC} as ${SMBUSER}"
+    return 1
+  fi
+  # Check write
+  local TEMPFILE=$(basename $(mktemp -p .))
+  echo "${WRITETESTSTRING}" > "${TEMPFILE}"
+  if ! smbclient "${UNC}" "${SMBPASS}" -U "${SMBUSER}" -g -c "put ${TEMPFILE}" &> /dev/null; then
+    print_FAIL
+    echo " - Could not write to ${UNC} as ${SMBUSER}"
+    return 1
+  fi
+  if ! ssh -oBatchMode=yes -oStrictHostKeyChecking=no -i /home/student/.ssh/gradingkey ${EXPORTSERVER} "cat /exports/bigbang/${TEMPFILE}" 2> /dev/null | grep -q "${WRITETESTSTRING}"; then
+    print_FAIL
+    echo " - Write did not succeed"
+    return 1
+  fi
+  if ! [ "$(ssh -oBatchMode=yes -oStrictHostKeyChecking=no -i /home/student/.ssh/gradingkey ${EXPORTSERVER} "ls -l /exports/bigbang/${TEMPFILE} | cut -d ' ' -f4" 2> /dev/null)" == 'bigbang' ] ; then
+    print_FAIL
+    echo " - Ownership of new files not set correctly"
+    return 1
+  fi
+  print_PASS
+  return 0
+}
+
+function grade_httpd {
+  pad "Checking TLS secured web applications on server${X}"
+  local CERTFILE=$(mktemp -u)
+  local RESULT
+  local OUTPUT
+  wget -O "${CERTFILE}" http://classroom.example.com/pub/example-ca.crt &> /dev/null
+  OUTPUT=$(curl --cacert ${CERTFILE} https://www${X}.example.com:444 2> /dev/null)
+  RESULT=$?
+  if [ "${RESULT}" -eq 51 ]; then
+    print_FAIL
+    echo " - Webserver certificate for www${X} not signed by example.com CA"
+    return 1
+  fi
+  if [ "${RESULT}" -eq 60 ]; then
+    print_FAIL
+    echo " - Webserver certificate for www${X} not signed by example.com CA"
+    return 1
+  fi
+  if ! [ "${RESULT}" -eq 0 ]; then
+    print_FAIL
+    echo " - Could not establish secure connection with www${X}"
+    return 1
+  fi
+  if ! [[ "${OUTPUT}" =~ "is www${X}" ]]; then
+    print_FAIL
+    echo " - https://www${X}.example.com:444 returned incorrect content"
+    return 1
+  fi
+  OUTPUT=$(curl --cacert ${CERTFILE} https://webapp${X}.example.com:444 2> /dev/null)
+  RESULT=$?
+  if [ "${RESULT}" -eq 51 ]; then
+    print_FAIL
+    echo " - Webserver certificate for webapp${X} not signed by example.com CA"
+    return 1
+  fi
+  if [ "${RESULT}" -eq 60 ]; then
+    print_FAIL
+    echo " - Webserver certificate for webapp${X} not signed by example.com CA"
+    return 1
+  fi
+  if ! [ "${RESULT}" -eq 0 ]; then
+    print_FAIL
+    echo " - Could not establish secure connection with webapp${X}"
+    return 1
+  fi
+  if [[ "${OUTPUT}" =~ "Unable to connect" ]]; then
+    print_FAIL
+    echo " - Database connection could not be made"
+    return 1
+  fi
+  if ! [[ "${OUTPUT}" =~ "Galactica" ]]; then
+    print_FAIL
+    echo " - https://webapp${X}.example.com:444 returned incorrect content"
+    return 1
+  fi
+  print_PASS
+  return 0
+}
+
+function grade_script {
+  pad "Checking custom script on desktop${X}"
+  if ! [ -f /home/student/bin/myusers ]; then
+    print_FAIL
+    echo " - Script /home/student/bin/myusers not found"
+    return 1
+  fi
+  if ! [ -x /home/student/bin/myusers ]; then
+    print_FAIL
+    echo " - Script /home/student/bin/myusers not executable"
+    return 1
+  fi
+  useradd gekkehenkie -s /bin/tcsh &> /dev/null
+  local TESTFILE=$(mktemp)
+  grep -v ':/sbin/nologin$' /etc/passwd | cut -d: -f1 | sort > ${TESTFILE} 2> /dev/null
+  local USERLISTCORRECT=0
+  if  /home/student/bin/myusers userlist | diff - ${TESTFILE} &> /dev/null; then
+    USERLISTCORRECT=1
+  fi
+  local USERSHELLCORRECT=0
+  if [ "$(/home/student/bin/myusers userinfo gekkehenkie 2>/dev/null)" == "/bin/tcsh" ]; then
+    USERSHELLCORRECT=1
+  fi
+  userdel -r gekkehenkie &> /dev/null
+  rm -f ${TESTFILE}
+  if ! [ "${USERLISTCORRECT}" == "1" ]; then
+    print_FAIL
+    echo " - mysusers userlist returned incorrect data"
+    return 1
+  fi
+  if ! [ "${USERSHELLCORRECT}" == "1" ]; then
+    print_FAIL
+    echo " - mysusers userinfo returned incorrect data"
+    return 1
+  fi
+  if ! [ "$(/home/student/bin/myusers userinfo 2> /dev/null)" == "Please specify a username" ]; then
+    print_FAIL
+    echo " - No or incorrect message returned when running 'myusers userinfo'"
+    return 1
+  fi
+  if ! [ "$(/home/student/bin/myusers userinfo waaromleesjijdit 2> /dev/null)" == "invalid user" ]; then
+    print_FAIL
+    echo " - No or incorrect message returned when requesting invalid user"
+    return 1
+  fi
+  /home/student/bin/myusers userinfo &> /dev/null
+  local RESULT=$?
+  if ! [ "${RESULT}" == "132" ]; then
+    print_FAIL
+    echo " - Incorrect exit code returned when running 'myusers userinfo'"
+    return 1
+  fi
+  print_PASS
+  return 0
+}
+
+function lab_grade {
+  VMNAME=$1
+  case $VMNAME in
+    desktop)
+      FAIL=0
+      add_privkey &> /dev/null
+      grade_ipv6_team || (( FAIL += 1 ))
+      grade_dns || (( FAIL += 1 ))
+      grade_smtp || (( FAIL += 1 ))
+      grade_iscsi || (( FAIL += 1 ))
+      grade_nfs || (( FAIL += 1 ))
+      grade_smb || (( FAIL += 1 ))
+      grade_httpd || (( FAIL += 1 ))
+      grade_script || (( FAIL += 1 ))
+      echo
+      pad "Overall result"
+      if [ ${FAIL} -eq 0 ]; then
+	print_PASS
+	echo "Congratulations! You've passed all tests."
+      else
+	print_FAIL
+	echo "You failed ${FAIL} tests, please check your work and try again."
+      fi
+      ;;
+    server)
+      print_FAIL && echo "The grade script needs to be run on desktop"
+      ;;
+    *)
+      # Should never get here, but what the hey....
+      print_FAIL && echo "The grade script needs to be run on desktop"
+      ;;
+  esac
+}
+
+# Main area
+
+# Check if to be run as root (must do this first)
+if [[ "${RUN_AS_ROOT}" == 'true' ]] && [[ "${EUID}" -gt "0" ]] ; then
+  if [[ -x /usr/bin/sudo ]] ; then
+    ${SUDO:-sudo} $0 "$@"
+    exit
+  else
+    # Fail out if not running as root
+    check_root
+  fi
+fi
+
+# Process command line
+# Parse input
+case $1 in
+  setup|grade)
+    CMD=$1
+    ;;
+  -h|--help)
+    print_usage
+    exit 0
+    ;;
+  *)
+    echo Bad option $1
+    print_usage
+    exit 1
+    ;;
+esac
+# Validation
+[[ -z "$CMD" ]] && debug "Missing command" && print_usage && exit 1
+
+# Get local system information
+get_X
+
+# Branch based on short (without number) hostname
+case $MYHOST in
+  desktop|server)
+    lab_$CMD $MYHOST
+    ;;
+  *)
+    debug "Bad or missing hostname - $MYHOST"
+    debug "This command needs to be run on desktop or server"
+    exit 3
+    ;;
+esac

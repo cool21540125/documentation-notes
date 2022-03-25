@@ -1,0 +1,183 @@
+#!/bin/bash
+#
+# Copyright 2014 Red Hat, Inc.
+#
+# NAME
+#     lab-selinux - grading script for RH134/RH199/RH299 SELinux labs
+#
+# SYNOPSIS
+#     lab-selinux {setup|grade}
+#
+#     This script only works on serverX.example.com.
+#
+# DESCRIPTION
+#     This script performs the setup and grading steps for the SELinux
+#     lab for RH134/RH199.
+#
+# CHANGELOG
+#   * Mon Apr 21 2014 George Hacker <ghacker@redhat.com>
+#   - original code
+
+# Initialize and set some variables
+MYHOST=""
+CMD=""
+#DEBUG='true'
+RUN_AS_ROOT='true'
+
+SERV_PKG=httpd
+SERVICE=httpd
+FW_SVC=http
+OLDROOT=/var/www/html
+NEWROOT=/var/web-content
+
+# Source library of functions
+source /usr/local/bin/labtool.shlib
+trap on_exit EXIT
+
+# Additional functions for this shell script
+function print_usage {
+  local problem_name=$(basename $0 | sed -e 's/^lab-//')
+  cat << EOF
+This script controls the setup and grading of this lab.
+Usage: lab ${problem_name} COMMAND
+       lab ${problem_name} -h|--help
+COMMAND is one of:
+    setup - perform any setup steps for this lab on this machine
+    grade - perform any grading steps and report on this machine
+EOF
+}
+
+function lab_setup {
+    VMNAME=$1
+    case $VMNAME in
+        desktop)
+            print_FAIL && echo "The setup script needs to be run on server"
+            ;;
+        server)
+	    # install the package that provides the service
+	    if ! rpm -q --quiet ${SERV_PKG}
+	    then
+		yum install -y ${SERV_PKG} &> /dev/null
+	    fi
+	    # create and configure the new document root
+	    mkdir -p ${NEWROOT}
+	    sed -i -e "s:/var/www/html:${NEWROOT}:" /etc/httpd/conf/httpd.conf
+	    # activate the service immediately and persistently
+	    systemctl enable ${SERVICE} &> /dev/null
+	    systemctl start ${SERVICE} &> /dev/null
+	    # open the service ports immediately and persistently
+	    firewall-cmd --add-service=${FW_SVC} &> /dev/null
+	    firewall-cmd --permanent --add-service=${FW_SVC} &> /dev/null
+	    # extract the content in the service root
+	    base64 -d > /tmp/lab-content.$$ << EOF
+H4sIAGv8BFMAA+3W3W6CMAAFYK59ir7AsC2lRRMvl3ixi2XzniDWwCJgoCTs7VfNFpFMzOLfjOcL
+CWADBeUccYevUTPV0UKXlcsDpoaraP4UF7nRuXHOg1pSiO3a6q4p59Jh3KOMKUEVcygTXHKHNGea
+v1ddmai0l3Lqebo3dyc8SjKTZnrCvBEPPCGZcqViwpOUs4EdjfZGReAGI74bjQ8fKyl5m87cSsd1
+mZpPu7FK87qZ1Ll9upZprhdhPS7mHzo2YTmuK12GJluHZlzRwa2/lcfRSvvwUnNs8qB8/2D+N9v7
++fe4Lx3iX+qC2n7yXxZFb98dG7/T/Ld//+4/QZovdOMmJludNsff+982iUL/X8Nv/e8L0dv/oqf/
+d8ei/+9BO//nynvXsfxT+7K3n3+f+8whVwnRg/f/LEkrYheTaPL9HJBlUW73359fNoklcRKtjbaf
+6cq4yCYAAAAAAAAAAAAAAADAv/UFm4fF5wAoAAA=
+EOF
+	    tar -C ${NEWROOT} --selinux -xzf /tmp/lab-content.$$
+	    rm -f /tmp/lab-content.$$
+	    echo 'Done'
+            ;;
+        *)
+            # Should never get here, but what the hey....
+            print_FAIL && echo "The setup script needs to be run on server"
+            ;;
+    esac
+}
+
+function lab_grade {
+    VMNAME=$1
+    case $VMNAME in
+        desktop)
+            print_FAIL && echo "The grade script needs to be run on server"
+            ;;
+        server)
+	    echo -n 'Confirming SELinux is in enforcing mode...'
+	    if [ "$(getenforce)" = Enforcing ]
+	    then
+		print_PASS
+	    else
+		print_FAIL; exit 1
+	    fi
+	    echo -n 'Confirming files are in expected location...'
+	    if [ -f "${NEWROOT}/lab-content/index.html" ]
+	    then
+		print_PASS
+	    else
+		print_FAIL; exit 1
+	    fi
+	    echo -n 'Confirming the Apache DocumentRoot is unchanged...'
+	    if grep -q "^DocumentRoot.*${NEWROOT}" /etc/httpd/conf/httpd.conf
+	    then
+		print_PASS
+	    else
+		print_FAIL; exit 1
+	    fi
+	    # check to see if Apache is dishing out the right content
+	    CONTENT='This is the content for the SELinux chapter test.'
+	    echo -n 'Confirming the web content is accessible...'
+	    if curl -s --raw --url http://localhost/lab-content/ |
+	       grep -q "${CONTENT}"
+	    then
+		print_PASS
+	    else
+		print_FAIL; exit 1
+	    fi
+            ;;
+        *)
+            # Should never get here, but what the hey....
+            print_FAIL && echo "The grade script needs to be run on server"
+            ;;
+    esac
+}
+
+# Main area
+
+# Check if to be run as root (must do this first)
+if [[ "${RUN_AS_ROOT}" == 'true' ]] && [[ "${EUID}" -gt "0" ]] ; then
+  if [[ -x /usr/bin/sudo ]] ; then
+    ${SUDO:-sudo} $0 "$@"
+    exit
+  else
+    # Fail out if not running as root
+    check_root
+  fi
+fi
+
+# Process command line
+# Parse input
+case $1 in
+    setup|grade)
+        CMD=$1
+        ;;
+    -h|--help)
+        print_usage
+        exit 0
+        ;;
+    *)
+        echo Bad option $1
+        print_usage
+        exit 1
+        ;;
+esac
+# Validation
+[ -z "$CMD" ] && debug "Missing command" && print_usage && exit 1
+
+# Get local system information
+get_X
+
+# Branch based on short (without number) hostname
+case $MYHOST in
+    desktop|server)
+        lab_$CMD $MYHOST
+        ;;
+    *)
+        debug "Bad or missing hostname - $MYHOST"
+        debug "This command needs to be run on desktop or server"
+        exit 3
+        ;;
+esac

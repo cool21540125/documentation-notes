@@ -1,0 +1,408 @@
+#!/bin/bash
+#
+# Copyright 2014 Red Hat, Inc.
+#
+# NAME
+#     lab-acl - grading script for RH134/RH199/RH299 acl lab
+#
+# SYNOPSIS
+#     lab-acl grade
+#     lab-acl setup
+#
+#     This script only works on serverX.example.com.
+#
+# DESCRIPTION
+#     This script is the lab grading script for the RH134 acl lab.
+#
+# CHANGELOG
+#   * Thu Jun 12 2014 Wander Boessenkool <wboessen@redhat.com>
+#   - original code
+
+# Initialize and set some variables
+MYHOST=""
+CMD=""
+RUN_AS_ROOT='true'
+
+# Lab users
+USERS1="holmes watson"
+USERS2="lestrade gregson jones"
+# Practice users
+USERS3="thomas james"
+SERV_ERR="Error running script. Did you reset the server before running this script? \
+Contact your instructor if you continue to see this message."
+
+# Source library of functions
+source /usr/local/bin/labtool.shlib
+trap on_exit EXIT
+LOG_TAG=$(basename $0)
+
+# Setup scripts below here
+function srv_exit {
+  # call debug with msg and exit with code
+  DEBUG=true
+  debug "$1"
+  exit $2
+}
+
+function setup_users {
+  # add users for testing
+  echo "Adding users ..."
+  groupadd -g 10221 bakerstreet &> /dev/null || \
+    srv_exit "groupadd bakerstreet failed: $?" 150
+  groupadd -g 10100 scotlandyard &> /dev/null || \
+    srv_exit "groupadd scotlandyard failed: $?" 150
+  # Practice exercise groups below here
+  groupadd -g 10500 controller &> /dev/null || \
+    srv_exit "groupadd controller failed: $?" 150
+  groupadd -g 10501 sodor &> /dev/null || \
+    srv_exit "groupadd sodor failed: $?" 150
+  for U in $USERS1; do 
+    useradd -G bakerstreet $U &> /dev/null || \
+      srv_exit "useradd for $U failed: $?" 150
+    echo -n "redhat" | passwd --stdin $U &> /dev/null || \
+      srv_exit "passwd for $U failed: $?" 150
+  done
+  for U in $USERS2; do 
+    useradd -G scotlandyard $U &> /dev/null || \
+      srv_exit "useradd for $U failed: $?" 150
+    echo -n "redhat" | passwd --stdin $U &> /dev/null || \
+      srv_exit "passwd for $U failed: $?" 150
+  done
+  # Practice exercise users below here
+  for U in $USERS3; do 
+    useradd -G sodor $U &> /dev/null || \
+      srv_exit "useradd for $U failed: $?" 150
+    echo -n "redhat" | passwd --stdin $U &> /dev/null || \
+      srv_exit "passwd for $U failed: $?" 150
+  done
+  usermod -aG controller student &> /dev/null || \
+    srv_exit "usermod for student failed: $?" 150
+}
+
+function make_shares {
+  # make share folders with appropriate permissions
+  echo "Creating share folder ..."
+  [ -d /shares ] && rm -rf /shares
+  mkdir -p /shares/{cases,steamies}
+  
+  # create some content for the Lab
+  echo "The Adventures of ..." > /shares/cases/adventures.txt
+  echo "Is a very clever and dangerous person" > /shares/cases/moriarty.txt
+  echo "success" > /shares/cases/do_NOT_delete.grading.txt
+  chmod 755 /shares
+  chmod 770 /shares/cases
+  chmod 600 /shares/cases/*.txt
+  
+  # create some content for the practice exercise
+  chmod 2770 /shares/steamies
+  chgrp -R controller /shares/steamies
+  setfacl -m d:u::rwx -m d:g::rwx /shares/steamies
+  mkdir /shares/steamies/engines
+  echo "They're two, they're four, they're six, they're eight ..." > /shares/steamies/song.txt
+  echo "I have young kids, what can I say - sorry!" > /shares/steamies/kids.txt
+  echo -e "James - Shunting at Brendam docks\nPercy - Overnight mail run\n\
+Henry - Flying Kipper run\nThomas - Annie and Clarabel, Knapford line" > /shares/steamies/roster.txt
+  echo "Thomas he's the cheeky one" > /shares/steamies/engines/thomas.txt
+  echo "James is vain but lots of fun" > /shares/steamies/engines/james.txt
+  echo "Percy pulls the mail on time" > /shares/steamies/engines/percy.txt
+  echo "Gordon thunders down the line" > /shares/steamies/engines/gordon.txt
+  echo "Emily really knows her stuff" > /shares/steamies/engines/emily.txt
+  echo "Henry toots and huffs and puffs" > /shares/steamies/engines/henry.txt
+  echo "Edward wants to help and share" > /shares/steamies/engines/edward.txt
+  echo "Toby, well let's say, he's square" > /shares/steamies/engines/toby.txt
+  chmod -R 660 /shares/steamies/*.txt
+  cat > /shares/steamies/display_engines.sh << EOF
+#!/bin/bash
+cat song.txt
+for f in ./engines/*.txt; do
+  cat \$f
+done
+EOF
+  chmod 770 /shares/steamies/display_engines.sh
+}
+
+# Grading scripts below here
+function check_permissions {
+  # Directory permissions
+  echo -n "Checking /shares/cases directory permissions... "
+  if [[ $(ls -ld /shares/cases | cut -c1-10) = "drwxrws---" ]]; then
+    print_PASS
+  else
+    print_FAIL; echo "Expected permissions to be 'drwxrws---'"
+    exit 0
+  fi
+  
+  # Directory Group ownership
+  echo -n "Checking /shares/cases group ownership... "
+  if [[ $(ls -ld /shares/cases | cut -d" " -f4) = "bakerstreet" ]]; then
+    print_PASS
+  else
+    print_FAIL; echo "Expected group owner to be 'bakerstreet'"
+    exit 0
+  fi
+  
+  # Check file permissions were updated
+  echo "Checking existing files were updated"
+  if [ -e /shares/cases/do_NOT_delete.grading.txt ]; then
+    echo -n " to RW for user and group... "
+    if [[ $(ls -l /shares/cases/do_NOT_delete.grading.txt | cut -c1-10) = "-rw-rw----" ]]; then
+      print_PASS
+    else
+      print_FAIL; echo "Expected permissions to be '-rw-rw----'"
+      exit 0
+    fi
+    echo -n " to group ownership 'bakerstreet'... "
+    if [[ $(ls -l /shares/cases/do_NOT_delete.grading.txt | cut -d" " -f4) = "bakerstreet" ]]; then
+      print_PASS
+    else
+      print_FAIL
+      exit 0
+    fi
+  else
+    print_FAIL; echo -e "The 'do_NOT_delete.grading.txt' file is missing."
+    exit 0
+  fi
+
+  # Check ACLs
+  check_acls /shares/cases
+  check_acls /shares/cases/do_NOT_delete.grading.txt
+
+  # Verify with user checks
+  USERS="watson gregson"
+  for U in $USERS
+  do
+    echo -n "Checking user $U... "
+    # Probably a rerun after a "fail" in this loop -remove for next test
+    [ -d /shares/cases/$U.dir ] && rm -rf /shares/cases/$U.dir
+    su -c "mkdir /shares/cases/$U.dir" $U &> /dev/null
+    if [[ $? != 0 ]]; then
+      print_FAIL; echo "Failed to mkdir"
+      exit 0
+    fi
+    echo
+    # Check inherited (default) ACLs
+    check_acls /shares/cases/$U.dir
+
+    W1=0; W2=0; W3=0
+    su -c "echo success > /shares/cases/$U.dir/test.txt" holmes   2> /dev/null || W2=2
+    su -c "echo success > /shares/cases/$U.dir/test.txt" lestrade 2> /dev/null || W3=4
+    su -c "echo success > /shares/cases/$U.dir/test.txt" $U       2> /dev/null || W1=1
+    RES=$(($W1 + $W2 + $W3))
+    if [[ $RES != 0 ]]; then
+      print_FAIL; echo "Failed to write to file: $RES"
+      exit 0
+    fi
+    # Check inherited (default) file ACLs
+    check_acls /shares/cases/$U.dir/test.txt
+    
+    # This should never fail if the previous tests pass
+    W1=0; W2=0; W3=0
+    [[ $(su -c "cat /shares/cases/$U.dir/test.txt" $U) = "success" ]]       || W1=1
+    [[ $(su -c "cat /shares/cases/$U.dir/test.txt" holmes) = "success" ]]   || W2=2
+    [[ $(su -c "cat /shares/cases/$U.dir/test.txt" lestrade) = "success" ]] || W3=4
+    RES=$(($W1 + $W2 + $W3))
+    if [[ $RES != 0 ]]; then
+      print_FAIL; echo "Failed to read a file: $RES"
+      exit 0
+    fi
+  done
+  # Check jones - should be read only
+  echo -n "Checking user jones... "
+  su -c "mkdir /shares/cases/jones.dir" jones &> /dev/null
+  if [[ $? = 0 ]]; then
+    print_FAIL; echo "Jones should NOT be able to mkdir"
+    exit 0
+  fi
+  su -c "echo success > /shares/cases/test.txt" jones 2> /dev/null
+  if [[ $? = 0 ]]; then
+    print_FAIL; echo "Jones should NOT be able to write to a file"
+    exit 0
+  fi
+  if [[ $(su -c "cat /shares/cases/do_NOT_delete.grading.txt" jones) != "success" ]]; then
+    print_FAIL; echo "Jones should be able to read a file"
+    exit 0
+  fi
+  print_PASS
+  
+  # Check Student - should have NO privileges
+  echo -n "Checking user student... "
+  su -c "mkdir /shares/cases/jones.dir" student &> /dev/null
+  if [[ $? = 0 ]]; then
+    print_FAIL; echo "Student should NOT be able to mkdir"
+    exit 0
+  fi
+  su -c "echo success > /shares/cases/test.txt" student 2> /dev/null
+  if [[ $? = 0 ]]; then
+    print_FAIL; echo "Student should NOT be able to write to a file"
+    exit 0
+  fi
+  if [[ $(su -c "cat /shares/cases/do_NOT_delete.grading.txt" student &> /dev/null ) = "success" ]]; then
+    print_FAIL; echo "Student should NOT be able to read a file"
+    exit 0
+  fi
+  print_PASS
+}
+
+function check_acls {
+  # Determine if we are checking a dir or a file ACL
+  if [ -d $1 ]; then
+    # Dir - check execute bit, ACLs and default ACLs
+    X="x"
+    loop="a d"
+  else
+    # File - check no execute bit and ACLs only
+    X="-"
+    loop="a"
+  fi
+  # Loop over both default and standard ACLs as appropriate
+  for l in $loop; do
+    [[ $l = "d" ]] && echo "Checking default ACLs on $1" || echo "Checking ACLs on $1"
+    echo -n " Named ACLs... "
+    if ! getfacl -${l}c $1 2> /dev/null | grep -q user:jones; then
+      print_FAIL; echo "user:jones ACL not found"
+      exit 0
+    fi
+    if ! getfacl -${l}c $1 2> /dev/null | grep -q group:scotlandyard; then
+      print_FAIL; echo "group:scotlandyard ACL not found"
+      exit 0
+    fi
+    print_PASS
+    echo -n " Permissions... "
+    # Hand off to Permissions function
+    getfacl -${l}ec $1 2> /dev/null | check_acls_perms
+    [[ $? = 1 ]] && exit 0
+  done
+}
+
+function check_acls_perms {
+  # Step through the ACLs and check permissions
+  while read data
+  do
+    ACL=$(echo $data | cut -d: -f1-2)
+    # Test the effective permission if appropriate
+    if echo $data | grep -q effective; then
+      PERM=$(echo $data | cut -d: -f4)
+    else
+      PERM=$(echo $data | cut -d: -f3)
+    fi
+    case "$ACL" in
+      "user:jones")
+        if [[ $PERM != "r-$X" ]]; then
+          print_FAIL; echo "user jones [effective] permissions should be r-$X, not $PERM"
+          exit 1
+        fi
+      ;;
+      "other:")
+        if [[ $PERM != "---" ]]; then
+          print_FAIL; echo "other users should have NO permissions, not $PERM"
+          exit 1
+        fi
+      ;;
+      "") # Catch EOF (I think)
+      ;;
+      *) # All other permissions should be rwx
+        if [[ $PERM != "rw$X" ]]; then
+          print_FAIL; echo "$ACL [effective] permissions should be rw$X, not $PERM"
+          exit 1
+        fi
+      ;;
+    esac
+  done
+  print_PASS
+}
+
+function print_usage {
+  local problem_name=$(basename $0 | sed -e 's/^lab-//')
+  cat << EOF
+This script controls the setup and grading of this lab.
+Usage: lab ${problem_name} COMMAND
+       lab ${problem_name} -h|--help
+COMMAND is one of:
+    setup - perform any setup steps for this lab on this machine
+    grade - perform any grading steps and report on this machine
+EOF
+}
+
+function lab_setup {
+    VMNAME=$1
+    case $VMNAME in
+        desktop)
+            print_FAIL && echo "Please run the setup for this lab on the server."
+            ;;
+        server)
+            ERROR_MESSAGE="$SERV_ERR"
+            setup_users
+            make_shares
+            print_SUCCESS
+            ;;
+        *)
+            # Should never get here, but what the hey....
+            print_FAIL && echo "The setup script needs to be run on server."
+            ;;
+    esac
+
+}
+
+function lab_grade {
+    VMNAME=$1
+    case $VMNAME in
+        desktop)
+            print_FAIL && echo "Please run the grading for this lab on the server."
+            ;;
+        server)
+            check_permissions
+            print_SUCCESS
+            ;;
+        *)
+            # Should never get here, but what the hey....
+            print_FAIL && echo "The grade script needs to be run on server."
+            ;;
+    esac
+}
+
+# Main area
+
+# Check if to be run as root (must do this first)
+if [[ "${RUN_AS_ROOT}" == 'true' ]] && [[ "${EUID}" -gt "0" ]] ; then
+  if [[ -x /usr/bin/sudo ]] ; then
+    ${SUDO:-sudo} $0 "$@"
+    exit
+  else
+    # Fail out if not running as root
+    check_root
+  fi
+fi
+
+# Process command line
+# Parse input
+case $1 in
+    setup|grade)
+        CMD=$1
+        ;;
+    -h|--help)
+        print_usage
+        exit 0
+        ;;
+    *)
+        echo Bad option $1
+        print_usage
+        exit 1
+        ;;
+esac
+# Validation
+[ -z "$CMD" ] && debug "Missing command" && print_usage && exit 1
+
+# Get local system information
+get_X
+
+# Branch based on short (without number) hostname
+case $MYHOST in
+    desktop|server)
+        lab_$CMD $MYHOST
+        ;;
+    *)
+        debug "Bad or missing hostname - $MYHOST"
+        debug "This command needs to be run on desktop or server"
+        exit 3
+        ;;
+esac

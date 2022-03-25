@@ -1,0 +1,13 @@
+function_lib=labtool.shlib
+
+/usr/local/bin/
+- rht-add-kernel-args
+- rht-vmctl
+- rht-vmicons
+- rht-vmsetkeyboard
+- labtool.shlib
+
+/etc/
+- rht
+
+/ 

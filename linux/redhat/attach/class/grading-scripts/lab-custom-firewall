@@ -1,0 +1,206 @@
+#!/bin/bash
+#
+# NAME
+#     lab-custom-firewall - grading script for RH254/RH299 custom-firewall lab
+#
+# SYNOPSIS
+#     lab-custom-firewall setup
+#
+# DESCRIPTION
+#     This script is the lab grading script for the RH254  custom-firewall 
+#     lab.
+#     It should only be executed on serverX.example.com. or bootvm
+#
+# CHANGELOG
+#   * Thu Jun 12 2014 Wander Boessenkool <wboessen@redhat.com>
+#   - original code
+
+# lab-custom-firewall
+# Description: This script, based on singular argument, either does setup or
+# grading for the particular lab
+# Subcommands:
+#    setup - perform any configuration adjustments to the system
+#    grade - perform any evaluation steps to the system
+# The setup function needs to be run on desktop
+# The grade function needs to be run on server
+
+# Initialize and set some variables
+MYHOST=""
+CMD=""
+DEBUG='false'
+RUN_AS_ROOT='true'
+
+# Source library of functions
+source /usr/local/bin/labtool.shlib
+trap on_exit EXIT
+
+# Additional functions for this shell script
+function print_usage {
+  local problem_name=$(basename $0 | sed -e 's/^lab-//')
+  cat << EOF
+This script controls the setup and grading of this lab.
+Usage: lab ${problem_name} COMMAND
+       lab ${problem_name} -h|--help
+COMMAND is one of:
+    setup - perform any setup steps for this lab on this machine
+    grade - perform any grading steps and report on this machine
+EOF
+}
+
+function create_daemon {
+  cat > /usr/local/bin/silly.py << EOF
+#!/usr/bin/env python
+import socket
+import select
+import threading
+CLIENTS = []
+def run_in_thread(fn):
+  def run(*k, **kw):
+    t =threading.Thread(target=fn, args=k, kwargs=kw)
+    t.start()
+  return run
+
+class Server(object):
+  def __init__(self, port, message, lockdown):
+    self.message = message
+    self.lockdown = lockdown
+    self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    self.sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+    self.sock.bind(('', port))
+    self.sock.listen(128)
+    print self.sock
+  
+  @run_in_thread
+  def run(self):
+    global CLIENTS
+    while True:
+      conn, addr = self.sock.accept()
+      print "Connection from: ", addr
+      if self.lockdown is False:
+        if addr[0] not in CLIENTS:
+          CLIENTS.append(addr[0])
+        conn.send(self.message)
+      else:
+        if addr[0] in CLIENTS:
+          conn.send(self.message)
+        else:
+          conn.send('FAIL\n')
+      conn.shutdown(socket.SHUT_RDWR)
+      conn.close()
+    
+gatekeeper = Server(1001, 'Port 1002 is now open for your convenience\n', False)
+gatekeeper.run()
+keymaster = Server(1002, 'SUCCESS!\n', True)
+keymaster.run()
+EOF
+chmod 755 /usr/local/bin/silly.py
+}
+
+function create_service {
+  cat > /etc/systemd/system/silly.service << EOF
+[Unit]
+Description=A Silly little two-port service
+After=network.target
+
+[Service]
+ExecStart=/usr/local/bin/silly.py
+Restart=on-failure
+RestartSec=5s
+
+[Install]
+WantedBy=multi-user.target
+EOF
+}
+
+function enable_and_start_service {
+  systemctl daemon-reload &> /dev/null
+  systemctl enable silly.service &> /dev/null
+  systemctl start silly.service &> /dev/null
+}
+
+function lab_setup {
+  VMNAME=$1
+  case $VMNAME in
+    desktop)
+      print_FAIL && echo "The setup script needs to be run on server"
+      ;;
+    server)
+      echo -n "Setting up custom service...  "
+      FAIL=0
+      create_daemon || ((FAIL+=1))
+      create_service || ((FAIL+=1))
+      enable_and_start_service || ((FAIL+=1))
+      if [ "${FAIL}" -eq 0 ]; then
+        print_SUCCESS
+      else
+        print_FAIL
+      fi
+      ;;
+    *)
+      # Should never get here, but what the hey....
+      print_FAIL && echo "The setup script needs to be run on server"
+      ;;
+  esac
+}
+
+function lab_grade {
+  VMNAME=$1
+  case $VMNAME in
+    desktop)
+      print_FAIL && echo "This script does not provide grading"
+      ;;
+    server)
+      print_FAIL && echo "This script does not provide grading"
+      ;;
+    *)
+      print_FAIL && echo "This script does not provide grading"
+      ;;
+  esac
+}
+
+# Main area
+
+# Check if to be run as root (must do this first)
+if [[ "${RUN_AS_ROOT}" == 'true' ]] && [[ "${EUID}" -gt "0" ]] ; then
+  if [[ -x /usr/bin/sudo ]] ; then
+    ${SUDO:-sudo} $0 "$@"
+    exit
+  else
+    # Fail out if not running as root
+    check_root
+  fi
+fi
+
+# Process command line
+# Parse input
+case $1 in
+  setup|grade)
+    CMD=$1
+    ;;
+  -h|--help)
+    print_usage
+    exit 0
+    ;;
+  *)
+    echo Bad option $1
+    print_usage
+    exit 1
+    ;;
+esac
+# Validation
+[[ -z "$CMD" ]] && debug "Missing command" && print_usage && exit 1
+
+# Get local system information
+get_X
+
+# Branch based on short (without number) hostname
+case $MYHOST in
+  desktop|server)
+    lab_$CMD $MYHOST
+    ;;
+  *)
+    debug "Bad or missing hostname - $MYHOST"
+    debug "This command needs to be run on desktop or server"
+    exit 3
+    ;;
+esac

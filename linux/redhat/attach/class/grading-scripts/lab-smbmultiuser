@@ -1,0 +1,279 @@
+#!/bin/bash
+#
+# Copyright 2014 Red Hat, Inc.
+#
+# NAME
+#     lab-smbmultiuser - setup/grading script for RH254/RH299 SMB practice
+#
+# SYNOPSIS
+#     lab-smbmultiuser {setup|grade}
+#
+#     The setup function works on both desktopX and serverX.
+#     The grade function only works on desktopX.example.com.
+#
+# DESCRIPTION
+#     This script is the setup/grading script for a RH254 SMB
+#     multiuser practice exercise.
+#
+# CHANGELOG
+#   * Mon Jun 16 2014 George Hacker <ghacker@redhat.com>
+#   - fixed a bug that caused check_cifs_multiuser_mount to always fail
+#   * Tue Jun  3 2014 Rudy Kastl <rkastl@redhat.com>
+#   - original code
+
+# Initialize and set some variables
+MYHOST=""
+CMD=""
+RUN_AS_ROOT=true
+
+SERV_PKG="samba samba-client"
+CLNT_PKG=""
+SERV_ERR="Error running script. Did you reset the server before running this script? \
+Contact your instructor if you continue to see this message."
+CLNT_ERR="Error running script. Did you reset the desktop before running this script? \
+Contact your instructor if you continue to see this message."
+
+# Source library of functions
+source /usr/local/bin/labtool.shlib
+trap on_exit EXIT
+LOG_TAG=$(basename $0)
+
+# Additional functions for this shell script
+function srv_exit {
+  # call debug with msg and exit with code
+  DEBUG=true
+  debug "$1"
+  exit $2
+}
+
+function install_pkgs {
+  # install the package that provides the service
+  echo "Installing packages ..."
+  yum -y install $@ &> /dev/null || \
+    srv_exit "yum failed: $?" 150
+}
+
+function setup_server_samba {
+  echo "Setting up samba ..."
+  groupadd -r marketing &>/dev/null
+  mkdir -p /smbshare &>/dev/null
+  chgrp marketing /smbshare &>/dev/null
+  chmod 2775 /smbshare &>/dev/null
+  semanage fcontext -a -t samba_share_t '/smbshare(/.*)?' &>/dev/null
+  restorecon -vvFR /smbshare &>/dev/null
+  
+  echo "Adding Samba-only users brian and rob"
+  useradd -s /sbin/nologin -G marketing brian &>/dev/null
+  ((echo "redhat"; echo "redhat") | smbpasswd -s -a brian) &>/dev/null
+  useradd -s /sbin/nologin rob &>/dev/null
+  ((echo "redhat"; echo "redhat") | smbpasswd -s -a rob) &>/dev/null
+
+  echo "Configuring Samba"
+  (echo "[smbshare]" >> /etc/samba/smb.conf) &>/dev/null
+  (echo "path = /smbshare" >> /etc/samba/smb.conf) &>/dev/null
+  (echo "write list = @marketing" >> /etc/samba/smb.conf) &>/dev/null
+
+  echo "Starting and enabling Samba ..."
+  systemctl enable smb nmb &> /dev/null || srv_exit "systemctl enable failed: $?" 151
+  systemctl start smb nmb &> /dev/null || srv_exit "systemctl start failed: $?" 152
+
+  echo "Setting up firewall ..."
+  firewall-cmd --permanent --add-service=samba &>/dev/null
+  firewall-cmd --reload &>/dev/null
+}
+
+function setup_desktop_users {
+  echo "Setting up users brian and rob ..."
+  useradd brian &>/dev/null
+  (echo redhat | passwd --stdin brian) &>/dev/null
+  useradd rob &>/dev/null
+  (echo redhat | passwd --stdin rob) &>/dev/null
+}
+
+# grading scripts desktop
+function check_cifs_utils_installed {
+  echo -n "Checking for cifs-utils rpm package... "
+  if rpm -q cifs-utils &>/dev/null
+  then
+    print_PASS
+  else
+    print_FAIL
+    echo "The rpm package cifs-utils is not installed."
+    return 1
+  fi
+}
+
+function check_cifs_multiuser_mountpoint {
+  echo -n "Checking for /mnt/multiuser mountpoint... "
+  if [ -d /mnt/multiuser ]
+  then
+    print_PASS
+  else
+    print_FAIL
+    echo "The directory /mnt/multiuser does not exist."
+    return 1
+  fi
+}
+
+function check_cifs_multiuser_fstab {
+  echo -n "Checking for multiuser fstab entry... "
+  if ! grep '//server.*/smbshare.*/mnt/multiuser.*cifs.*' /etc/fstab &>/dev/null
+  then
+    print_FAIL
+    echo "There is no fstab entry for the smb share //serverX/smbshare."
+    return 1
+  elif ! (grep '//server.*/smbshare.*/mnt/multiuser.*cifs.*' /etc/fstab |grep credentials) &>/dev/null
+  then
+    print_FAIL
+    echo "No credentials directive present in the fstab entry for //serverX/smbshare."
+    return 1
+  elif ! (grep '//server.*/smbshare.*/mnt/multiuser.*cifs.*' /etc/fstab |grep multiuser) &>/dev/null
+  then
+    print_FAIL
+    echo "The fstab entry for //serverX/smbshare is missing the multiuser mount option."
+    return 1
+  else
+    print_PASS
+  fi
+}
+
+function check_cifs_multiuser_mount {
+  echo -n "Checking for multiuser mount... "
+  if ! (mount | grep "//server${X}/smbshare.*/mnt/multiuser.*cifs.*") &>/dev/null
+  then
+    print_FAIL
+    echo "The //serverX/smbshare share is not mounted on /mnt/multiuser"
+    return 1
+  else
+    print_PASS
+  fi
+}
+
+#function check_cifs_user_perm {
+#  echo -n "Checking for user permissions on /mnt/multiuser... "
+#  rm -f /mnt/multiuser/grade-brian.txt &>/dev/null
+#  if ! (su - brian -c 'echo 'grade' >/mnt/multiuser/grade-brian.txt') &>/dev/null
+#  then
+#    print_FAIL
+#    echo "User brian is not allowed to write to /mnt/multiuser. Are the permission correct #for /smbshare on server? Did you add the correct credentials with cifscreds?"
+#    return 1
+#  elif ! (su - rob -c 'grep grade /mnt/multiuser/grade-brian.txt') &>/dev/null
+#  then
+#    print_FAIL
+#    echo "User rob is not allowed to read a file created by user brian. Did you set the SGID #bit on /smbshare on serverX? Did you add the correct credentials with cifscreds?"
+#    return 1
+#  else
+#    print_PASS
+#  fi
+#}
+
+
+
+function print_usage {
+echo "This script controls the setup and grading of this lab."
+echo "Usage: $(basename $0) COMMAND"
+echo "       $(basename $0) -h|--help"
+echo "COMMAND is one of:"
+echo "    setup - perform any setup steps for this lab on this machine"
+echo "    grade - perform any grading steps and report on this machine"
+
+}
+
+function lab_setup {
+    VMNAME=$1
+    case $VMNAME in
+        desktop)
+            ERROR_MESSAGE="$CLNT_ERR"
+            setup_desktop_users
+            print_SUCCESS
+            ;;
+        server)
+            ERROR_MESSAGE="$SERV_ERR"
+            install_pkgs $SERV_PKG
+            setup_server_samba
+            print_SUCCESS
+            ;;
+        *)
+            # Should never get here, but what the hey....
+            print_FAIL && echo "Please run the lab-smbshare script on both the desktop and server"
+            ;;
+    esac
+}
+
+function lab_grade {
+    VMNAME=$1
+    case $VMNAME in
+        desktop)
+            FAIL=0
+            check_cifs_utils_installed || FAIL=1
+            check_cifs_multiuser_mountpoint || FAIL=1
+            check_cifs_multiuser_fstab || FAIL=1
+            check_cifs_multiuser_mount || FAIL=1
+            echo
+            echo -n "Overall result: "
+            if [ ${FAIL} -eq 0 ]; then
+              print_PASS
+              echo "Congratulations! You've passed all requirements."
+            else
+              print_FAIL
+              echo "Please check your work and try again."
+            fi
+            ;;
+        server)
+            FAIL=0
+            echo "Please run grade on the desktop system."
+            ;;
+        *)
+            # Should never get here, but what the hey....
+            print_FAIL && echo "Something went wrong. Ask your instructor for assistance."
+            ;;
+    esac
+}
+
+# Main area
+
+# Check if to be run as root (must do this first)
+if [[ "${RUN_AS_ROOT}" == 'true' ]] && [[ "${EUID}" -gt "0" ]] ; then
+  if [[ -x /usr/bin/sudo ]] ; then
+    ${SUDO:-sudo} $0 "$@"
+    exit
+  else
+    # Fail out if not running as root
+    check_root
+  fi
+fi
+
+# Process command line
+# Parse input
+case $1 in
+    setup|grade)
+        CMD=$1
+        ;;
+    -h|--help)
+        print_usage
+        exit 0
+        ;;
+    *)
+        echo Bad option $1
+        print_usage
+        exit 1
+        ;;
+esac
+# Validation
+[ -z "$CMD" ] && debug "Missing command" && print_usage && exit 1
+
+# Get local system information
+get_X
+
+# Branch based on short (without number) hostname
+case $MYHOST in
+    desktop|server)
+        lab_$CMD $MYHOST
+        ;;
+    *)
+        debug "Bad or missing hostname - $MYHOST"
+        debug "This command needs to be run on desktop or server"
+        exit 3
+        ;;
+esac
+

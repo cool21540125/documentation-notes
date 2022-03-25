@@ -1,0 +1,200 @@
+#!/bin/bash
+#
+# Copyright 2014 Red Hat, Inc.
+#
+# NAME
+#     lab-permissions - grading script for RH124/RH199/RH299 permissions labs
+#
+# SYNOPSIS
+#     lab-permissions {setup|grade}
+#
+#        setup - perform configuration adjustments to the system
+#        grade - perform evaluation steps to the system
+#
+#     The script only works on serverX.example.com.
+#
+# DESCRIPTION
+#     This script, based on singular argument, either does setup or
+#     grading for the permissions labs.
+#
+# CHANGELOG
+#   * Tue Feb  4 2014 Susan Lauber <sml@laubersolutions.com>
+#   - migrated RHEL6 scripts including work by Brian Butler and Rob Locke
+
+# Initialize and set some variables
+MYHOST=""
+CMD=""
+DEBUG='true'
+RUN_AS_ROOT='true'
+
+# Source library of functions
+source /usr/local/bin/labtool.shlib
+trap on_exit EXIT
+
+# Additional functions for this shell script
+function print_usage {
+  local problem_name=$(basename $0 | sed -e 's/^lab-//')
+  cat << EOF
+This script controls the setup and grading of this lab.
+Usage: lab ${problem_name} COMMAND
+       lab ${problem_name} -h|--help
+COMMAND is one of:
+    setup - perform any setup steps for this lab on this machine
+    grade - perform any grading steps and report on this machine
+EOF
+}
+
+function create_users {
+	for group in ateam stooges
+	do
+    	if grep "^$group:" /etc/group &> /dev/null
+    	then
+    		echo "$group already exists"
+    	else
+		groupadd -r $group
+    	fi
+	done
+	
+USERS1="alice andy"	
+	for user in $USERS1
+	do
+    	if id -u $user &> /dev/null
+    	then
+    		echo "$user already exists"
+    	else
+		useradd $user
+    	fi
+    	usermod -a -G ateam $user
+    	echo "password" | passwd --stdin $user
+	done
+USERS2="larry moe curly"
+	for user in $USERS2
+	do
+    	if id -u $user &> /dev/null
+    	then
+    		echo "$user already exists"
+    	else
+		useradd $user
+    	fi
+    	usermod -a -G stooges $user
+    	echo "password" | passwd --stdin $user
+	done
+}
+
+function check_stooges_dir {
+	if (ls -ld /home/stooges | cut -d' ' -f1,4 | grep "^drwxrws---. stooges$" &> /dev/null)
+	then
+	   print_PASS
+	else
+	   print_FAIL
+	   echo '/home/stooges is not setup for collaboration'
+	fi
+}
+
+function check_stooges_umask {
+	if (grep 'umask' /etc/profile | grep -q 7 ) && (grep 'umask' /etc/bashrc | grep -q 7) 
+	then
+	   print_PASS
+	else
+	   print_FAIL
+	   echo 'umask not changed'
+	fi
+}
+
+function lab_setup {
+    VMNAME=$1
+    case $VMNAME in
+        desktop)
+            # Put in the steps to set up the lab
+            # Change to the example of server) if should only run
+            # there - and adjust the catchall message with *)
+            print_FAIL && echo "The setup script needs to be run on server"
+            ;;
+        server)
+            echo "Setting up user accounts for lab-permissions"
+            # Obviously adjust this to actual commands if script needs
+            # to run on server - and adjust the catchall message with *)
+	    create_users > /dev/null
+            echo "Ready, you can now start your work"
+            ;;
+        *)
+            # Should never get here, but what the hey....
+            print_FAIL && echo "The setup script needs to be run on desktop"
+            ;;
+    esac
+
+}
+
+function lab_grade {
+    VMNAME=$1
+    case $VMNAME in
+        desktop)
+            # Put in the steps to grade the lab (use print_PASS or print_FAIL)
+            # Change to the example of server) if should only run
+            # there - and adjust the catchall message with *)
+            print_FAIL && echo "The grade script needs to be run on server"
+            ;;
+        server)
+            # Obviously adjust this to actual commands if script needs
+            # to run on server - and adjust the catchall message with *)
+            echo "Starting grading..."
+	    echo -n 'Checking that /home/stooges is setup for collaboration... '
+            check_stooges_dir 
+	    echo -n 'Checking that umask is changed... '
+            check_stooges_umask 
+	    echo "Lab grading complete"
+            ;;
+        *)
+            # Should never get here, but what the hey....
+            print_FAIL && echo "The grade script needs to be run on desktop"
+            ;;
+    esac
+}
+
+# Main area
+
+# Check if to be run as root (must do this first)
+if [[ "${RUN_AS_ROOT}" == 'true' ]] && [[ "${EUID}" -gt "0" ]] ; then
+  if [[ -x /usr/bin/sudo ]] ; then
+    ${SUDO:-sudo} $0 "$@"
+    exit
+  else
+    # Fail out if not running as root
+    check_root
+  fi
+fi
+
+# Process command line
+# Parse input
+case $1 in
+    setup|grade)
+        CMD=$1
+        ;;
+    -h|--help)
+        print_usage
+        exit 0
+        ;;
+    *)
+        echo Bad option $1
+        print_usage
+        exit 1
+        ;;
+esac
+# Validation
+[ -z "$CMD" ] && debug "Missing command" && print_usage && exit 1
+
+# Get local system information
+get_X
+
+# Branch based on short (without number) hostname
+case $MYHOST in
+    desktop|server)
+        lab_$CMD $MYHOST
+        ;;
+    *)
+        debug "Bad or missing hostname - $MYHOST"
+        debug "This command needs to be run on desktop or server"
+        exit 3
+        ;;
+esac
+

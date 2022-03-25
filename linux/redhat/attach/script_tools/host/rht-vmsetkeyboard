@@ -1,0 +1,175 @@
+#!/bin/bash
+#
+# Copyright 2014 Red Hat, Inc.
+#
+# NAME
+#     rht-vmsetkeyboard - loop through and adjust keyboard on all VMs
+#
+# SYNOPSIS
+#     rht-vmsetkeyboard VMNAME|all "layout"
+#
+# DESCRIPTION
+#     This tool loops through each VM: starting/remoting in/updating
+#     settings/saving. Use localectl list-x11-keymap-layouts to see a
+#     list of valid layouts as an argument.
+#
+# CHANGELOG
+#   * Wed Jul  2 2014 Robert Locke <rlocke@redhat.com>
+#   - original code
+
+PATH=/usr/bin:/bin:/usr/local/bin:/usr/sbin:/sbin:/usr/local/sbin
+
+# Source library of functions
+source /usr/local/lib/rhttool.shlib
+# trap on_exit EXIT
+
+function usage() {
+  cat <<EOF
+$0 is a script to automate setting keyboard to the VMs.
+
+Usage: $0 all <Layout>
+  will loop through all the VMs setting keyboard and saving
+
+Usage: $0 <VMNAME> <Layout>
+  will set the keyboard and save VMNAME
+
+Use "locatectl list-x11-keymap-layouts" to list valid RHEL7 <Layout>
+Use "system-config-keyboard --help" to list valid RHEL6 <Layout>
+
+EOF
+    exit 0
+}
+
+function parse_opts() {
+  [ "$#" -eq 2 ] || usage
+  VMNAME="${1}"
+  new_keyboard="${2}"
+  if [[ -z "${new_keyboard}" ]]; then
+    echo 'Warning: new keyboard not specified - nothing done.'
+    exit 1
+  fi
+}
+
+function keyit() {
+  vm_name=$1
+  new_keymap=$2
+  if ! is_running ${vm_name} ; then
+    rht-vmctl start ${vm_name}
+  fi
+  echo -n "Setting keyboard on ${vm_name}"
+  case ${vm_name} in
+    'classroom')
+      host_name=classroom.example.com
+      ;;
+    *)
+      host_name=${vm_name}${RHT_ENROLLMENT}.example.com
+      ;;
+  esac
+  if wait_tcp_port ${host_name} 22 ; then
+    push_sshkey ${host_name} &> /dev/null
+    # Verify what version we are running
+    if ssh -i /root/.ssh/.rhttoolkey root@${host_name} "which localectl" &> /dev/null ; then
+      # RHEL 7
+      echo "Appears to be RHEL 7"
+      # Verify new_keyboard is valid for version/tool
+      if ssh -i /root/.ssh/.rhttoolkey root@${host_name} "localectl list-x11-keymap-layouts | grep ${new_keyboard}" &> /dev/null ; then
+        # Perform keyboard change
+        ssh -i /root/.ssh/.rhttoolkey root@${host_name} "localectl set-x11-keymap ${new_keyboard} ; source /etc/vconsole.conf ; sed -i \"s/vconsole.keymap=[^ ]*/vconsole.keymap=\$KEYMAP/\" /etc/default/grub ; grub2-mkconfig > /boot/grub2/grub.cfg ; shutdown -h now" &> /dev/null
+      else
+        echo "Invalid keyboard layout - use localectl list-x11-keymap-layouts for list"
+        return
+      fi
+    else
+      # RHEL 6
+      echo "Appears to be RHEL 6"
+      # Verify new_keyboard is valid for version/tool
+      if ssh -i /root/.ssh/.rhttoolkey root@${host_name} "system-config-keyboard --help | grep ${new_keyboard}" &> /dev/null ; then
+        # Perform keyboard change
+        ssh -i /root/.ssh/.rhttoolkey root@${host_name} "system-config-keyboard --noui ${new_keyboard} ; shutdown -h now" &> /dev/null
+      else
+        echo "Invalid keyboard layout - use system-config-keyboard --help for list"
+        return
+      fi
+    fi
+    echo " Done."
+  else
+    echo " Unreachable."
+    return
+  fi
+  echo -n "Waiting for ${vm_name} to shutdown"
+  while is_running ${vm_name} ; do
+    echo -n "."
+    sleep 5
+  done
+  echo " Done."
+  echo -n "Saving and restarting ${vm_name}"
+  rht-vmctl save ${vm_name}
+}
+
+# Main code
+
+# If I need root privileges to run, then use sudo to call myself
+if [[ "$EUID" -gt "0" ]] ; then
+  debug 'Using sudo to become root.'
+  sudo $0 "$@"
+  exit
+fi
+
+parse_opts "$@"
+
+# Source some variables that we need - should provide:
+# RHT_VMS="desktop server"
+# RHT_ENROLLMENT=5
+source /etc/rht
+# Validate
+if [[ -z "${RHT_VMS}" || -z "${RHT_ENROLLMENT}" ]]; then
+  echo "Error: missing a needed variable from /etc/rht"
+  echo "RHT_VMS = '${RHT_VMS}'"
+  echo "RHT_ENROLLMENT = '${RHT_ENROLLMENT}'"
+  exit 1
+fi
+
+# Validate VMNAME
+match=0
+my_vms=${VMNAME}
+if [[ "${VMNAME}" == "all" ]]; then
+  [[ "${RHT_ENROLLMENT}" -eq 0 && -n "${RHT_VM0}" ]] && my_vms="${RHT_VM0} ${RHT_VMS}" || my_vms="${RHT_VMS}"
+  match=1
+else
+  for i in $RHT_VMS $RHT_VM0 ; do
+    [[ "$i" == "$VMNAME" ]] && match=1
+  done
+fi
+if [[ $match -eq 0 ]]; then
+  echo "Error: unrecognized VMNAME specified, ${VMNAME}."
+  usage
+  exit 1
+fi
+
+# If we are on foundation0 and classroom in VMNAME, then do classroom first
+if [[ ${RHT_ENROLLMENT} -eq 0 && $my_vms == *classroom* ]] ; then
+  # Should test/wait for redhat-survey to finish installing
+  if wait_tcp_port classroom.example.com 22 ; then
+    echo -n "Waiting for redhat-survey to install"
+    while ! ssh root@classroom.example.com "grep redhat-survey /var/log/yum.log" &> /dev/null ; do
+      echo -n "."
+      sleep 5
+    done
+    echo " Done."
+  else
+    echo " Unreachable."
+    exit 1
+  fi
+  keyit classroom ${new_keyboard}
+  # Wait for it to be up - complete guess that it gets close enough in 60
+  sleep 60
+fi
+
+# For each my_vms
+for vm_name in ${my_vms} ; do
+  # Skip classroom because we already did it
+  [[ "classroom" == "${vm_name}" ]] && continue
+  keyit ${vm_name} ${new_keyboard}
+done
+
+exit 0

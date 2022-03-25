@@ -1,0 +1,400 @@
+#!/bin/bash
+#
+# Copyright 2014 Red Hat, Inc.
+#
+# NAME
+#     lab-nfskrb5 - grading script for RH254/RH299 NFS practice exercise
+#
+# SYNOPSIS
+#     lab-nfskrb5 {setup|grade}
+#
+#     This script works on both serverX and desktopX.
+#
+# DESCRIPTION
+#     This script performs the setup and grading steps for the
+#     Protecting NFS Exports RH254 practice exercise.
+#
+# CHANGELOG
+#   * Sat Jun 14 2014 Rudy Kastl <rkastl@redhat.com>
+#   - fixed script to run as nonroot
+#   * Tue Jun  3 2014 Rudy Kastl <rkastl@redhat.com>
+#   - grading script update
+
+# Initialize and set some variables
+MYHOST=""
+CMD=""
+
+SERV_PKG="sssd krb5-workstation"
+CLNT_PKG="sssd krb5-workstation"
+SERV_ERR="Error running script. Did you reset the server before running this script? \
+Contact your instructor if you continue to see this message."
+CLNT_ERR="Error running script. Did you reset the desktop before running this script? \
+Contact your instructor if you continue to see this message."
+
+# Source library of functions
+source /usr/local/bin/labtool.shlib
+trap on_exit EXIT
+LOG_TAG=$(basename $0)
+
+# Additional functions for this shell script
+function srv_exit {
+  # call debug with msg and exit with code
+  DEBUG=true
+  debug "$1"
+  exit $2
+}
+
+function install_pkgs {
+  # install the package that provides the service
+  echo "Installing packages ..."
+  yum -y install $@ &> /dev/null || \
+    srv_exit "yum failed: $?" 150
+}
+
+function update_authconfig {
+  # update the authconfig for ldap & krb5
+  echo "Updating authconfig for ldap & krb5 ..."
+  authconfig \
+    --enableldap \
+    --enableldaptls \
+    --ldapserver=ldaps://classroom.example.com \
+    --ldapbasedn=dc=example,dc=com \
+    --ldaploadcacert=http://classroom.example.com/pub/example-ca.crt \
+    --enablekrb5 \
+    --krb5realm=EXAMPLE.COM \
+    --krb5kdc=classroom.example.com \
+    --krb5adminserver=classroom.example.com \
+    --enablesssd \
+    --enablesssdauth \
+    --enablemkhomedir \
+    --update &> /dev/null || \
+    srv_exit "authconfig failed: $?" 151
+}
+
+# Grading scripts server
+function check_enabled_nfs_server {
+  echo -n "Checking nfs-server service is enabled... "
+  if systemctl is-enabled nfs-server &> /dev/null
+  then
+    print_PASS
+  else
+    print_FAIL
+    echo "Service nfs-server is not enabled."
+    return 1
+  fi
+}
+
+function check_isactive_nfs_server {
+  echo -n "Checking nfs-server service is started... "
+  if systemctl is-active nfs-server &> /dev/null
+  then
+    print_PASS
+  else
+    print_FAIL
+    echo "Service nfs-server is not started."
+    return 1
+  fi
+}
+
+
+
+#function check_firewalld {
+#  echo -n "Checking for correct firewall settings..."
+#}
+
+function check_server_keytab {
+  echo -n "Checking correct krb5.keytab exists... "
+  if ! klist -k /etc/krb5.keytab 2> /dev/null | grep -q nfs/server${X}\.example\.com &> /dev/null; then
+    print_FAIL
+    echo "Correct keytab not found."
+    return 1
+  else
+    print_PASS
+  fi
+}
+
+function check_nfs_secure_labelexport {
+  echo -n "Checking for correct RPCNFSDARGS... "
+  if grep 'RPCNFSDARGS="-V.*4.2"' /etc/sysconfig/nfs &>/dev/null
+  then
+    print_PASS
+  else
+    print_FAIL
+    echo "NFS Version 4.2 has not been enabled on the server."
+    return 1
+  fi
+}
+
+function check_enabled_nfs_secure_server {
+  echo -n "Checking nfs-server service is enabled... "
+  if systemctl is-enabled nfs-secure-server &> /dev/null
+  then
+    print_PASS
+  else
+    print_FAIL
+    echo "Service nfs-secure-server is not enabled."
+    return 1
+  fi
+}
+
+function check_isactive_nfs_secure_server {
+  echo -n "Checking nfs-secure-server service is started... "
+  if systemctl is-active nfs-secure-server &> /dev/null
+  then
+    print_PASS
+  else
+    print_FAIL
+    echo "Service nfs-secure-server is not started."
+    return 1
+  fi
+}
+
+function check_nfs_secure_share_dir_exists {
+  echo -n "Checking /securenfs directory exists... "
+  if [ -d /securenfs ]
+  then
+    print_PASS
+  else
+    print_FAIL
+    echo "The /securenfs directory does not exist."
+    return 1
+  fi
+}
+
+function check_nfs_secure_export {
+  echo -n "Checking for correct /etc/exports file... "
+  if ! grep '/securenfs' /etc/exports &>/dev/null
+  then
+    print_FAIL
+    echo "The /securenfs entry in /etc/exports does not exist."
+    return 1
+  elif ! (grep '/securenfs' /etc/exports |grep 'desktop') &>/dev/null
+    then
+      print_FAIL
+      echo "The /securenfs entry in /etc/exports does not export to the desktopX system."
+      return 1
+  elif ! (grep '/securenfs' /etc/exports |grep 'rw'|grep 'sec=krb5p') &>/dev/null
+    then
+      print_FAIL
+      echo "The /securenfs entry in /etc/exports does not export with read-write permission and krb5p security."
+      return 1
+  else
+    print_PASS
+  fi
+}
+
+function check_secure_exportfs {
+  echo -n "Checking if the server knows about the exported directory... "
+  if exportfs -v |grep '/securenfs' &>/dev/null
+  then
+    print_PASS
+  else
+    print_FAIL
+    echo "Did you forget to run: exportfs -r?"
+    return 1
+  fi
+}
+
+
+# grading scripts desktop
+function check_desktop_keytab {
+  echo -n "Checking correct krb5.keytab exists... "
+  if ! klist -k /etc/krb5.keytab 2> /dev/null | grep -q nfs/desktop${X}\.example\.com &> /dev/null; then
+    print_FAIL
+    echo "Correct keytab not found."
+    return 1
+  else
+    print_PASS
+  fi
+}
+
+function check_enabled_nfs_secure {
+  echo -n "Checking nfs-secure service is enabled... "
+  if systemctl is-enabled nfs-secure &> /dev/null
+  then
+    print_PASS
+  else
+    print_FAIL
+    echo "Service nfs-secure is not enabled."
+    return 1
+  fi
+}
+
+function check_isactive_nfs_secure {
+  echo -n "Checking nfs-secure service is started... "
+  if systemctl is-active nfs-secure &> /dev/null
+  then
+    print_PASS
+  else
+    print_FAIL
+    echo "Service nfs-secure is not started."
+    return 1
+  fi
+}
+
+function check_nfs_secure_mountpoint {
+  echo -n "Checking /mnt/secureshare directory exists..."
+  if [ -d /mnt/secureshare ]
+  then
+    print_PASS
+  else
+    print_FAIL
+    echo "The /mnt/secureshare directory does not exist."
+    return 1
+  fi
+}
+
+function check_nfs_secure_fstab {
+  echo -n "Checking for correct /etc/fstab entry for the secure export..."
+  if ! (grep 'server.*:/securenfs.*/mnt/secureshare.*nfs.*' /etc/fstab |grep 'sec=krb5p' |grep 'v4.2') &>/dev/null
+  then
+    print_FAIL
+    echo "The /etc/fstab entry is not present or not correct for the secure nfs share."
+    return 1
+  else
+    print_PASS
+  fi
+}
+
+function check_nfs_secure_mounted {
+  echo -n "Checking for mounted nfs share ..."
+  if ! (mount |grep 'server.*:/securenfs.*/mnt/secureshare.*nfs4') &>/dev/null
+  then
+    print_FAIL
+    echo "The nfs share is not mounted."
+    return 1
+  else
+    print_PASS
+  fi
+}
+
+
+function print_usage {
+    echo "This script controls the setup and grading of this lab."
+    echo "Usage: $(basename $0) COMMAND"
+    echo "       $(basename $0) -h|--help"
+    echo "COMMAND is one of:"
+    echo "    setup - perform any setup steps for this lab on this machine"
+    echo "    grade - perform any grading steps and report on this machine"
+
+}
+
+function lab_setup {
+    VMNAME=$1
+    case $VMNAME in
+        desktop)
+            ERROR_MESSAGE="$CLNT_ERR"
+            install_pkgs $CLNT_PKG
+            update_authconfig
+            print_SUCCESS
+            ;;
+        server)
+            ERROR_MESSAGE="$SERV_ERR"
+            install_pkgs $SERV_PKG
+            update_authconfig
+            print_SUCCESS
+            ;;
+        *)
+            # Should never get here, but what the hey....
+            print_FAIL && echo "Please run the lab-nfsshare script on both the desktop and server"
+            ;;
+    esac
+}
+
+function lab_grade {
+    VMNAME=$1
+    case $VMNAME in
+        desktop)
+            FAIL=0
+            echo "Grading exercise Kerberos NFS..."
+            check_desktop_keytab || FAIL=1
+            check_isactive_nfs_secure || FAIL=1
+            check_enabled_nfs_secure || FAIL=1
+            check_nfs_secure_mountpoint || FAIL=1
+            check_nfs_secure_fstab || FAIL=1
+            check_nfs_secure_mounted || FAIL=1
+            echo
+            echo -n "Overall result: "
+            if [ ${FAIL} -eq 0 ]; then
+              print_PASS
+              echo "Congratulations! You've passed all requirements."
+            else
+              print_FAIL
+              echo "Please check your work and try again."
+            fi
+            ;;
+        server)
+            FAIL=0
+            echo "Grading Kerberos NFS..."
+            check_server_keytab || FAIL=1
+            check_nfs_secure_labelexport || FAIL=1
+            check_isactive_nfs_secure_server || FAIL=1
+            check_enabled_nfs_secure_server || FAIL=1
+            check_nfs_secure_share_dir_exists || FAIL=1
+            check_nfs_secure_export || FAIL=1
+            check_secure_exportfs || FAIL=1
+            echo
+            echo -n "Overall result: "
+            if [ ${FAIL} -eq 0 ]; then
+              print_PASS
+              echo "Congratulations! You've passed all requirements."
+            else
+              print_FAIL
+              echo "Please check your work and try again."
+            fi
+            ;;
+        *)
+            # Should never get here, but what the hey....
+            print_FAIL && echo "Something went wrong. Ask your instructor for assistance."
+            ;;
+    esac
+}
+
+# Main area
+
+# Check if to be run as root (must do this first)
+RUN_AS_ROOT=true
+if [[ "${RUN_AS_ROOT}" == 'true' ]] && [[ "${EUID}" -gt "0" ]] ; then
+  if [[ -x /usr/bin/sudo ]] ; then
+    ${SUDO:-sudo} $0 "$@"
+    exit
+  else
+    # Fail out if not running as root
+    check_root
+  fi
+fi
+
+# Process command line
+# Parse input
+case $1 in
+    setup|grade)
+        CMD=$1
+        ;;
+    -h|--help)
+        print_usage
+        exit 0
+        ;;
+    *)
+        echo Bad option $1
+        print_usage
+        exit 1
+        ;;
+esac
+# Validation
+[ -z "$CMD" ] && debug "Missing command" && print_usage && exit 1
+
+# Get local system information
+get_X
+
+# Branch based on short (without number) hostname
+case $MYHOST in
+    desktop|server)
+        lab_$CMD $MYHOST
+        ;;
+    *)
+        debug "Bad or missing hostname - $MYHOST"
+        debug "This command needs to be run on desktop or server"
+        exit 3
+        ;;
+esac
+

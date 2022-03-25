@@ -1,0 +1,180 @@
+#!/bin/bash
+#
+# Copyright 2014 Red Hat, Inc.
+#
+# NAME
+#     lab-nice - setup script for RH134/RH199/RH299 nice lab
+#
+# SYNOPSIS
+#     lab-nice {setup|grade}
+#
+#     This script only works on desktopX.example.com.
+#
+# DESCRIPTION
+#     This script performs setup and grading for the RH134/RH199
+#     process management lab.
+#
+# CHANGELOG
+#   * Mon Apr 21 2014 Unknown <unknown@redhat.com>
+#   - original code
+
+# Initialize and set some variables
+MYHOST=""
+CMD=""
+DEBUG='true'
+RUN_AS_ROOT='true'
+LOG_TAG=lab-nice
+
+# Source library of functions
+source /usr/local/bin/labtool.shlib
+trap on_exit EXIT
+
+# Additional functions for this shell script
+function print_usage {
+  local problem_name=$(basename $0 | sed -e 's/^lab-//')
+  cat << EOF
+This script controls the setup and grading of this lab.
+Usage: lab ${problem_name} COMMAND
+       lab ${problem_name} -h|--help
+COMMAND is one of:
+    setup - perform any setup steps for this lab on this machine
+    grade - perform any grading steps and report on this machine
+    clean - perform any cleanup steps necessary
+EOF
+}
+
+function start_nice_processes {
+  nice -n 2 sha1sum /dev/zero &
+  nice -n -2 md5sum /dev/zero &
+}
+
+function lab_setup {
+    VMNAME=$1
+    case $VMNAME in
+        desktop)
+            echo "Setting up lab-nice"
+            start_nice_processes & > /dev/null
+            echo "Ready, you can now start your work"
+            ;;
+        server)
+            print_FAIL && echo "The setup script needs to be run on desktop"
+            ;;
+        *)
+            # Should never get here, but what the hey....
+            print_FAIL && echo "The setup script needs to be run on desktop"
+            ;;
+    esac
+
+}
+
+function check_process_nice {
+  PROCESS=$1
+  NICEVALUE=$2
+  NICESET=$(ps -onice $(pgrep "${1}") | tail -n +2)
+  NUMBEROFPROCS=$(pgrep "${1}" | wc -l)
+  if [ "${NUMBEROFPROCS}" -gt 1 ]; then 
+    print_FAIL
+    echo "  More than one ${PROCESS} processes found"
+    return
+  fi
+  if [ "${NUMBEROFPROCS}" -lt 1 ]; then 
+    print_FAIL
+    echo "  No ${PROCESS} process found"
+    return
+  fi
+  if [ "${NICEVALUE}" -eq "${NICESET}" ]; then
+    print_PASS
+  else
+    print_FAIL
+    echo "  Nice value found for ${1}: ${NICESET}"
+    echo "  Nice value required for ${1}: ${NICEVALUE}"
+  fi
+}
+
+
+function lab_grade {
+    VMNAME=$1
+    case $VMNAME in
+        desktop)
+            echo "Starting grading..."
+            echo -n "Checking for 'sha1sum' niceness... "
+            check_process_nice sha1sum 10
+            echo -n "Checking for 'md5sum' niceness...  "
+            check_process_nice md5sum 10
+            ;;
+        server)
+            print_FAIL && echo "The grade script needs to be run on desktop"
+            ;;
+        *)
+            # Should never get here, but what the hey....
+            print_FAIL && echo "The grade script needs to be run on desktop"
+            ;;
+    esac
+}
+
+function lab_clean {
+    VMNAME=$1
+    case $VMNAME in
+        desktop)
+            echo "Cleaning up..."
+            killall -q sha1sum &> /dev/null
+            killall -q md5sum &> /dev/null
+            echo "Done."
+            ;;
+        server)
+            print_FAIL && echo "The grade script needs to be run on desktop"
+            ;;
+        *)
+            # Should never get here, but what the hey....
+            print_FAIL && echo "The grade script needs to be run on desktop"
+            ;;
+    esac
+}
+
+# Main area
+
+# Check if to be run as root (must do this first)
+if [[ "${RUN_AS_ROOT}" == 'true' ]] && [[ "${EUID}" -gt "0" ]] ; then
+  if [[ -x /usr/bin/sudo ]] ; then
+    ${SUDO:-sudo} $0 "$@"
+    exit
+  else
+    # Fail out if not running as root
+    check_root
+  fi
+fi
+
+# Process command line
+# Parse input
+case $1 in
+    setup|grade|clean)
+        CMD=$1
+        ;;
+    -h|--help)
+        print_usage
+        exit 0
+        ;;
+    *)
+        echo Bad option $1
+        print_usage
+        exit 1
+        ;;
+esac
+# Validation
+[ -z "$CMD" ] && debug "Missing command" && print_usage && exit 1
+
+# Get local system information
+get_X
+
+# Branch based on short (without number) hostname
+case $MYHOST in
+    desktop|server)
+        lab_$CMD $MYHOST
+        ;;
+    *)
+        debug "Bad or missing hostname - $MYHOST"
+        debug "This command needs to be run on desktop or server"
+        exit 3
+        ;;
+esac
+

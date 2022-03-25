@@ -1,0 +1,67 @@
+#!/bin/bash
+#
+# Copyright 2014 Red Hat, Inc.
+#
+# NAME
+#     rht-vmicons - create new "view desktop" icons
+#
+# SYNOPSIS
+#     rht-vmicons
+#
+# DESCRIPTION
+#     This tool removes existing RHT desktop icons and creates new
+#     "view desktop" icons.
+#
+# CHANGELOG
+#   * Thu Jul 10 2014 Robert Locke <rlocke@redhat.com>
+#   - shift f0 infrastructure VMs from RHT_VMS to RHT_VM0
+#   * Wed Jun 11 2014 Robert Locke <rlocke@redhat.com>
+#   - shift desktop icons to use hidden "viewstart" option in rht-vmctl
+#   * Wed May  7 2014 Robert Locke <rlocke@redhat.com>
+#   - original code
+
+PATH=/usr/bin:/bin:/usr/sbin:/sbin
+
+# Source some variables that we need - should provide:
+# RHT_VMS="desktop server"
+source /etc/rht
+# Validate
+if [[ -z "${RHT_VMS}" ]]; then
+  echo "Error: missing a needed variable from /etc/rht"
+  echo "RHT_VMS = '${RHT_VMS}'"
+  exit 1
+fi
+
+# Source library of functions
+source /usr/local/lib/rhttool.shlib
+# trap on_exit EXIT
+
+desktop_dir=/home/kiosk/Desktop
+
+# Remove existing desktop icons
+rm -f ${desktop_dir}/rht-*.desktop
+
+[[ ! -d ${desktop_dir} ]] && mkdir -p ${desktop_dir}
+
+# If on foundation0 then create composite list of VMS
+[[ ${RHT_ENROLLMENT} -eq 0 && -n "${RHT_VM0}" ]] && my_vms="${RHT_VM0} ${RHT_VMS}" || my_vms=${RHT_VMS}
+
+# For each my_vms, create a desktop icon.
+for vm_name in ${my_vms} ; do
+  cat > ${desktop_dir}/rht-${vm_name}.desktop <<-EOF
+#!/usr/bin/env xdg-open
+[Desktop Entry]
+Name=View ${vm_name^}
+GenericName=View ${vm_name^}
+X-GNOME-FullName=${vm_name^} VM
+Exec=rht-vmctl viewstart ${vm_name,,}
+Terminal=false
+Icon=fedora-logo-sprite
+Type=Application
+StartupNotify=true
+Categories=GTK;GNOME;Utility;Accessibility;
+Name[en_US]=View ${vm_name^}
+EOF
+  chmod +x ${desktop_dir}/rht-${vm_name}.desktop
+done
+exit 0

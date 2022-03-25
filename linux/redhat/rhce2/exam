@@ -1,0 +1,41 @@
+
+# resize -> 300M
+lvextend -r -L 300M /dev/vgName/lvName
+
+pvs
+vgs
+lvs
+
+pvcreate /dev/vdb1
+vgcreate vgName /dev/vdb1
+lvcreate -n lvName -L 512M vgName
+
+crontab -e
+23 14 * * * /bin/echo heyYO
+
+# UserName擁有的所有檔案
+find / -user UserName -type f 2> /dev/null
+
+# 把UserName擁有的檔案們, Copy到 /root/abc (-a:保留屬性)
+find / -user UserName -type f -exec cp -a {} /root/abc \;
+# 最後面的 「\;」把它理解成 cp 逐個 Copy 時, 換行的概念
+
+# 把某人的東西, 殺光光~~
+find / -user UserName -exec rm -rf {} \;
+
+# 把無主家目錄砍光~
+find /home -nouser -exec rm -rf {} \;
+
+# 指定PE 大小 (老欸有強調有考!!)
+vgcreate -s 8M
+
+# 建立 vfat fs
+mkfs -t vfat
+
+# 重設lv大小
+lvextend -r -L 300M /dev/vgName/lvName
+
+
+# Multi-User mount 必考
+
+
