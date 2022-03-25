@@ -4,10 +4,10 @@
 我的使用環境如下
 
 ```sh
-$ uname -a
+$# uname -a
 Linux tonynb 3.10.0-514.el7.x86_64 \#1 SMP Tue Nov 22 16:42:41 UTC 2016 x86_64 x86_64 x86_64 GNU/Linux
 
-$ hostnamectl
+$# hostnamectl
    Static hostname: tonynb
          Icon name: computer-laptop
            Chassis: laptop
@@ -18,11 +18,11 @@ $ hostnamectl
             Kernel: Linux 3.10.0-514.el7.x86_64
       Architecture: x86-64
 
-$ cat /etc/centos-release
-CentOS Linux release 7.5.1804 (Core)
+$# cat /etc/centos-release
+CentOS Linux release 7.9.2009 (Core)
 
-$ rpm --query centos-release
-centos-release-7-5.1804.4.el7.centos.x86_64
+$# rpm --query centos-release
+centos-release-7-9.2009.0.el7.centos.x86_64
 ```
 
 - RHEL (RedHat Enterprise Linux) :
@@ -1196,6 +1196,7 @@ EOT
 ### 重要選擇性資訊
 yum-config-manager --enable ${中括號裡面的名稱}
 # 上面有 2 個支線可用來追蹤, 如果要選擇其他的話, 則使用此指令更改安裝來源, ex:
+# yum-config-manager --enable nginx-stable
 # yum-config-manager --enable nginx-mainline
 
 
@@ -1868,11 +1869,13 @@ sed -i 's/# DBPassword=/DBPassword=zabbix/' /etc/zabbix/zabbix_proxy.conf
 
 # Install zabbix-agent 4.0
 
-- 2020/12/25
+- 2022/03/25
 - [ZabbixOfficial-zabbix-packages](https://repo.zabbix.com/zabbix/4.0/rhel/7/x86_64/)
 
 ```bash
-$# VERSION=4.0.31
+### 先到這邊看最新版本 https://repo.zabbix.com/zabbix/4.0/rhel/7/x86_64/
+$# VERSION=4.0.39
+
 $# rpm -ivh https://repo.zabbix.com/zabbix/4.0/rhel/7/x86_64/zabbix-agent-${VERSION}-1.el7.x86_64.rpm
 
 ### Config
@@ -1881,8 +1884,8 @@ $# vim /etc/zabbix/zabbix_agentd.conf
 #Server=[zabbix server ip]
 #Hostname=[ Hostname of client system ]
 
-Server=192.168.2.158,192.168.1.200  # ← 誰可以監控我
-Hostname=vm157                      # ← 我這台 Agent 叫啥
+Server=192.168.2.158,192.168.1.200  # ← 誰來問我, 我就告訴他
+ServerActive=192.168.2.158          # ← 我會主動跟他回報
 # ↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑
 
 $# systemctl start zabbix-agent
@@ -1981,10 +1984,31 @@ systemctl enable zabbix-server
 - [Download and install Zabbix](https://www.zabbix.com/download?zabbix=5.0&os_distribution=red_hat_enterprise_linux&os_version=7&db=mysql&ws=nginx)
 
 ```bash
+### 法1. 由 Yum Repo 安裝最新 zabbix-agent2
 rpm -Uvh https://repo.zabbix.com/zabbix/5.0/rhel/7/x86_64/zabbix-release-5.0-1.el7.noarch.rpm
 yum clean all
 
 yum install -y zabbix-agent2
+
+systemctl start zabbix-agent2
+systemctl enable zabbix-agent2
+systemctl status zabbix-agent2
+
+### 法2. 由 rpm 指定版本安裝 zabbix-agent2
+# 先到這邊查看要安裝的版本 https://repo.zabbix.com/zabbix/5.0/rhel/7/x86_64/
+VERSION=5.0.21
+
+rpm -ivh https://repo.zabbix.com/zabbix/5.0/rhel/7/x86_64/zabbix-agent-${VERSION}-1.el7.x86_64.rpm
+
+### Config
+vim /etc/zabbix/zabbix_agent2.conf
+# ↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓
+#Server=[zabbix server ip]
+#Hostname=[ Hostname of client system ]
+
+Server=192.168.2.158,192.168.1.200  # ← 誰來問我, 我就告訴他
+ServerActive=192.168.2.158          # ← 我會主動跟他回報
+# ↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑
 
 systemctl start zabbix-agent2
 systemctl enable zabbix-agent2

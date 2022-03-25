@@ -43,6 +43,14 @@ ssh -R 5.6.7.8:9999:localhost:80 host147.aws.example.com
 # ※ 若 Client 沒有 固定IP(而且也不透過VPN) 的話, 則設為 yes 或許是唯一解了
 ```
 
+```conf
+# /etc/ssh/sshd_config
+
+UsePAM yes
+# default: yes
+# 如果設定成 no, 則將來機器只能藉由 /etc/passwd & /etc/shadow 來做認證
+```
+
 OpenSSH 也允許 forwarded remote port 到 0 (遇到再說了~)
 
 
