@@ -2386,6 +2386,32 @@ jsonnet /tmp/demo.jsonnet
 ```
 
 
+# Install Taskfile
+
+- 2022/03/28
+- [Install Taskfile](https://taskfile.dev/#/installation?id=installation)
+- [Github release binary](https://github.com/go-task/task/releases)
+
+### 法1 - 腳本安裝最新版
+
+```bash
+### 此方式預設安裝到 ./bin
+sh -c "$(curl --location https://taskfile.dev/install.sh)" -- -d
+
+# (需要 sudo 權限) 安裝到 /usr/local/bin
+sh -c "$(curl --location https://taskfile.dev/install.sh)" -- -d -b /usr/local/bin
+```
+
+### 法2 - 使用 go build
+
+> 必須先安裝好 golang
+
+```bash
+### 適用於 golang 1.15+ (早期版本 golang 參考官網)
+go install github.com/go-task/task/v3/cmd/task@latest
+```
+
+
 # 語言套件
 
 - 2018/10/04
