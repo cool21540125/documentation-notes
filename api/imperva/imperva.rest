@@ -1,0 +1,6 @@
+@api_id={{imperva_api_id}}
+@api_key={{imperva_api_key}}
+@site_id={{site_id}}
+
+### purge imperva site cache
+POST https://my.incapsula.com/api/prov/v1/sites/cache/purge?api_id={{api_id}}&api_key={{api_key}}&site_id={{site_id}}

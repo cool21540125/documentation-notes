@@ -1,0 +1,9 @@
+
+@host=https://{{drone_host}}
+
+
+# User List - https://docs.drone.io/api/users/users_list/
+### 
+GET {{host}}/api/users
+Authorization: Bearer {{drone_token}}
+

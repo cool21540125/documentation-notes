@@ -1,0 +1,19 @@
+
+@host=https://{{drone_host}}
+
+# https://docs.drone.io/api/builds/build_list/
+
+
+### Build List
+GET {{host}}/api/repos/{{$dotenv owner}}/{{$dotenv repo}}/builds/
+Authorization: Bearer {{drone_token}}
+
+
+### Build Info
+GET {{host}}/api/repos/{{$dotenv owner}}/{{$dotenv repo}}/builds/10
+Authorization: Bearer {{drone_token}}
+
+
+###
+GET {{host}}/api/repos/demo/delta-ops/builds/
+Authorization: Bearer {{drone_token}}

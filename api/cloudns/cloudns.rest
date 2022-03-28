@@ -1,0 +1,79 @@
+
+@api=https://api.cloudns.net
+
+# ------------------------------
+### 重要參數
+@domain=
+# ------------------------------
+
+
+# https://www.cloudns.net/wiki/article/48/
+### Register Domain Zone - 註冊新的域名到 ClouDNS
+POST {{api}}/dns/register.json
+    ?auth-id={{cloudns_auth_id}}
+    &auth-password={{cloudns_auth_password}}
+    &domain-name={{domain}}
+    &zone-type=master
+    &ns[]=ns1.cloudns.net
+    &ns[]=ns2.cloudns.net
+    &ns[]=ns3.cloudns.net
+    &ns[]=ns4.cloudns.net
+
+
+
+# https://www.cloudns.net/wiki/article/134/
+### Get zone information - 查詢域名的狀態
+GET {{api}}/dns/get-zone-info.json
+    ?auth-id={{cloudns_auth_id}}
+    &auth-password={{cloudns_auth_password}}
+    &domain-name={{domain}}
+
+
+
+# https://www.cloudns.net/wiki/article/57/
+### List records - 列出域名底下的解析紀錄
+GET {{api}}/dns/records.json
+    ?auth-id={{cloudns_auth_id}}
+    &auth-password={{cloudns_auth_password}}
+    &domain-name={{domain}}
+
+
+
+# https://www.cloudns.net/wiki/article/58/
+### name= Add record - 增加域名解析紀錄
+# @name domain_record
+POST {{api}}/dns/add-record.json
+    ?auth-id={{cloudns_auth_id}}
+    &auth-password={{cloudns_auth_password}}
+    &domain-name={{domain}}
+    &record-type=A
+    &host=www
+    &record=10.10.10.10
+    &ttl=900
+
+
+###
+@record_id={{domain_record.response.body.data.id}}
+
+
+
+# https://www.cloudns.net/wiki/article/59/
+### Delete record - 移除域名解析紀錄
+POST {{api}}/dns/delete-record.json
+    ?auth-id={{cloudns_auth_id}}
+    &auth-password={{cloudns_auth_password}}
+    &domain-name={{domain}}
+    &record-id={{record_id}}
+
+
+
+# https://www.cloudns.net/wiki/article/60/
+### Modify record - 修改解析紀錄
+POST {{api}}/dns/mod-record.json
+    ?auth-id={{cloudns_auth_id}}
+    &auth-password={{cloudns_auth_password}}
+    &domain-name={{domain}}
+    &record-id={{record_id}}
+    &host=test
+    &record=6.7.8.9
+    &ttl=300

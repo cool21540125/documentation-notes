@@ -1,0 +1,42 @@
+# Reference:
+#     
+# --------------------------------
+
+
+
+# --- Develop ---
+@url=http://127.0.0.1:8080
+@user=
+@password=
+
+
+
+
+# --- Team Production ---
+@url=
+@user=
+@password=
+
+
+
+
+### Login
+# @name login
+POST {{url}}/api/users/v1/auth/
+Content-Type: application/json
+
+{
+    "username": "{{user}}",
+    "password": "{{password}}"
+}
+
+###
+@token={{login.response.body.token}}
+
+
+
+### 查詢清單
+GET {{url}}/api/v1/assets/assets/
+Content-Type: application/json-rpc
+Accept: application/json
+Authorization: Bearer {{token}}

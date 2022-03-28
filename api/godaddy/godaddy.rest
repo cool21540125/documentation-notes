@@ -1,0 +1,12 @@
+# Godaddy API - https://developer.godaddy.com/keys
+
+@API_KEY={{godaddy_Key}}
+@API_SECRET={{godaddy_Secret}}
+@URL=https://api.godaddy.com
+
+@domain=
+
+###
+GET {{URL}}/v1/domains/available
+    ?domain={{domain}}
+Authorization: sso-key {{API_KEY}}:{{API_SECRET}}

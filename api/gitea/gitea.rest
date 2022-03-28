@@ -1,0 +1,28 @@
+# Reference:
+#     http://DOMAIN/api/swagger#/admin
+# ----------------------------------------
+@URL=
+# ----------------------------------------
+
+
+### Version
+GET {{URL}}/api/v1/version
+Authorization: token {{gitea_token}}
+
+
+
+### Notification List
+GET {{URL}}/api/v1/notifications/new
+Authorization: token {{gitea_token}}
+
+
+
+### List Orgs
+GET {{URL}}/api/v1/admin/orgs
+Authorization: token {{gitea_token}}
+
+
+
+### List Users in Org
+GET {{URL}}/api/v1/orgs/delta-ops/members
+Authorization: token {{gitea_token}}

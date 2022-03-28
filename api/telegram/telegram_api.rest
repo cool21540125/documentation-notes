@@ -1,0 +1,46 @@
+# Reference:
+#    https://core.telegram.org/bots/api
+# ----------------------------------------
+@URL=https://api.telegram.org
+# ----------------------------------------
+
+
+
+// A simple method for testing your bot's auth token. Requires no parameters. Returns basic information about the bot in form of a User object.
+### 查看 token 所屬的 Bot 的基本資訊 - https://core.telegram.org/bots/api#getme
+GET {{URL}}/bot{{tg_token}}/getMe
+
+
+
+// Use this method to receive incoming updates using long polling (wiki). An Array of Update objects is returned.
+### 查看 token 所屬 Bot 的歷史對話記錄 - https://core.telegram.org/bots/api#getupdates
+GET {{URL}}/bot{{tg_token}}/getUpdates
+
+
+
+// Use this method to get up to date information about the chat (current name of the user for one-on-one conversations, current username of a user, group or channel, etc.). Returns a Chat object on success.
+### 查看 token 所屬 Bot 所在的特定 chat_id 的基本資訊 - https://core.telegram.org/bots/api#getchat
+GET {{URL}}/bot{{tg_token}}/getChat
+Content-Type: application/json
+
+{
+    "chat_id": "{{tg_chat_id}}"
+}
+
+
+
+// Use this method to send text messages. On success, the sent Message is returned.
+### 發送消息 - https://core.telegram.org/bots/api#sendmessage
+GET {{URL}}/bot{{tg_token}}/sendMessage
+Content-Type: application/json
+
+{
+    "chat_id": "{{tg_chat_id}}",
+    "parse_mode": "MarkdownV2",
+    "text": "RestClient test on `{{$localDatetime 'YYYY-MM-DD HH:mm:ss'}}`"
+}
+
+
+
+// 
+### 

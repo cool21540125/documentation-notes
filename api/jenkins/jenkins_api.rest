@@ -1,0 +1,26 @@
+# Reference:
+#     https://www.jenkins.io/doc/book/using/remote-access-api/
+# ---------------------------------------------------
+@URL=https://{{jenkins_user}}:{{jenkins_token}}@{{jenkins_domain}}
+
+# ↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓
+@job_name = 
+# ↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑
+
+
+### 列出 Jenkins Server 所有的 JenkinsJobs
+GET {{URL}}/api/json?tree=jobs[fullName,displayName,url]
+
+
+
+### 取得 特定JenkinsJob 的 Builds History
+GET {{URL}}/job/{{job_name}}/api/json?tree=builds[number,id,timestamp,result,duration]
+
+
+
+### Jenkins 節點資訊, 可看到每個 JenkinsJob 最後一次的建置狀態
+GET {{URL}}/api/json?pretty=true
+
+
+
+###
