@@ -2,7 +2,7 @@ version: "3.8"
 
 services:
   gitea:
-    image: gitea/gitea:1.16.3
+    image: gitea/gitea:1.16.5
     container_name: gitea
     hostname: gitea
     restart: always
