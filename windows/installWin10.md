@@ -21,3 +21,41 @@
 5. `wsl --update`  -> 5.10.60.1 (2021/12/07)
 6. `Win + R` -> `store` -> 尋找 `Ubuntu` -> `取得` -> 等他一陣子下載 & 安裝
 7. 
+
+
+wsl 相對於 win10 的路徑: `\\wsl$\Ubuntu\home\tony`
+
+
+# Install choco
+
+- 2022/04/19
+- [INSTALLING CHOCOLATEY](https://chocolatey.org/install)
+
+### 法1
+
+```powershell
+### 系統管理員執行
+Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))
+```
+
+### 法2
+
+直接安裝 `node.js`, 裏頭其中一步驟可勾選安裝 choco
+
+
+# Install gcc
+
+- [exec: "gcc": executable file not found in %PATH% when trying go build](https://stackoverflow.com/questions/43580131/exec-gcc-executable-file-not-found-in-path-when-trying-go-build)
+
+1. 先安裝好 `choco`
+2. `choco install mingw -y`
+    - 系統管理員執行
+3. 把上述安裝好的路徑, 加入到 **環境變數**
+
+```bat
+$ gcc --version
+gcc.exe (MinGW-W64 x86_64-posix-seh, built by Brecht Sanders) 11.2.0
+Copyright (C) 2021 Free Software Foundation, Inc.
+This is free software; see the source for copying conditions.  There is NO
+warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+```

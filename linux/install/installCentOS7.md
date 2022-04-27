@@ -591,10 +591,37 @@ PS1='[\u@\h \W$(__docker_machine_ps1)]\$ '
 
 # Install Podman
 
-- 2021/09/25
+- 2022/04/27
+- [Building from scratch](https://podman.io/getting-started/installation#building-from-scratch)
 
 ```bash
-### EPEL 裏頭就有
+$# yum install \
+  btrfs-progs-devel \
+  conmon \
+  containernetworking-plugins \
+  containers-common \
+  crun \
+  device-mapper-devel \
+  git \
+  glib2-devel \
+  glibc-devel \
+  glibc-static \
+  go \
+  golang-github-cpuguy83-md2man \
+  gpgme-devel \
+  iptables \
+  libassuan-devel \
+  libgpg-error-devel \
+  libseccomp-devel \
+  libselinux-devel \
+  make \
+  pkgconfig -y
+# 上頭的 crun 為 C 版本的 rumtime
+# 如果沒有事先編譯安裝(or 加入相關 Repo), 是無法安裝這東西的
+# 如果沒有的話, 系統會使用 runc 來代替 (Golang 版本的 runtime)
+
+
+### EPEL 裏頭就有 (但是版本比較舊)
 $# yum install podman -y
 
 ### 預設來說, podman 一般使用者就可以使用了
@@ -1000,80 +1027,54 @@ $ sudo systemctl start redis
 
 
 # Install Git (CentOS7 default repo -> git v-1.8 太舊了~~)
-- 2017/11/26
+- 2022/04/06
+- [install_git2.x_on_centos.md](https://gist.github.com/nhahv/7077a638b57f7d91ebe9a3c6caebbe4f)
 - [How To Install Git on CentOS 7](https://blacksaildivision.com/git-latest-version-centos)
 - [Choose a version](https://github.com/git/git/releases) ( 以2.14.3版為例 )
 - [Choose a version 有時候Github會掛掉...](https://mirrors.edge.kernel.org/pub/software/scm/git/)
 
-1. Dependancy
+### I. 預設 repo yum install (只會安裝舊版-v1.8)
 ```sh
 # 所需套件
 $# yum install -y autoconf libcurl-devel expat-devel gcc kernel-headers openssl-devel perl-devel zlib-devel gettext-devel
 # 上頭的 gettext-devel 會安裝 git 1.8.3
 # 其實可以不安裝它... 只是最後, git 會被安裝在 /usr/local/bin/git
-# root 環境變數裡面沒有它, 所以 root 要再設個軟連結~
+```
 
-### https://mirrors.edge.kernel.org/pub/software/scm/git/
 
-# 下載 (v2.14.3)
-$ wget https://github.com/git/git/archive/v2.14.3.tar.gz
+### II. 第三方 yum install (裝新版)
 
-# (v2.14.5)
-$ wget https://mirrors.edge.kernel.org/pub/software/scm/git/git-2.14.5.tar.gz
-# (v2.19)
-$ wget https://mirrors.edge.kernel.org/pub/software/scm/git/git-2.19.1.tar.gz
+```bash
+yum install -y http://opensource.wandisco.com/centos/7/git/x86_64/wandisco-git-release-7-1.noarch.rpm
+yum install git
+git --version
+```
 
-# Install (v2.14.3)
-$ tar zxf v2.14.3.tar.gz
-$ cd git-2.14.3/
-$ make clean
-$ make configure
-GIT_VERSION = 2.14.3
-    GEN configure
 
-$ ./configure --prefix=/usr/local
-$ make
-$# make install
+### III. 編譯安裝 (可裝最新版)
 
-$ git --version
-git version 2.14.3
-# DONE
+- [Github git src](https://github.com/git/git/tags)
+- [git mirror](https://mirrors.edge.kernel.org/pub/software/scm/git/)
 
-# Install (v2.19)
-$ mkdir git2.19
-$ tar zxf git-2.19.1.tar.gz
-$ cd git-2.19.1
-$ make configure
+```bash
+VERSION=2.19.1
+$# wget https://mirrors.edge.kernel.org/pub/software/scm/git/git-${VERSION}.tar.gz
+
+$# mkdir git${VERSION}
+$# tar zxf git-${VERSION}.tar.gz
+$# cd git-2.19.1
+$# make configure
 GIT_VERSION = 2.19.1
     GEN configure
 
-$ ./configure --prefix=/usr/local
+$# ./configure --prefix=/usr/local
 $# make && make install
-```
-
-一般使用者可使用 git 了!!
-
-但是 root 找不到 git, 解法如下:
-
-```sh
-$# git
-bash: git: command not found...
-
-$# echo $PATH
-/usr/local/sbin:/sbin:/bin:/usr/sbin:/usr/bin:/root/bin
 
 $# ln -s /usr/local/bin/git /usr/local/sbin/git
-#         ^^^^^ 可以連到這裡        ^^^^^ 藉由這裡
-
-$# which git
-/usr/local/sbin/git
 
 $# git --version
-git version 2.14.3
+git version 2.19.1
 ```
-
-
-
 
 
 # Install net-tools

@@ -11,8 +11,9 @@ C:\Users\tony
 
 # Windows 10 檔案路徑
 
-> C:\Windows\System32\drivers\etc\HOSTS
-
+```
+C:\Windows\System32\drivers\etc\HOSTS  # win10 的 /etc/hosts
+```
 
 # 認證
 
