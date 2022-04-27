@@ -533,21 +533,9 @@ $ git branch -vv
 
 > 取消追蹤遠端分支, 語法`git branch -d -r origin/<remote branch name>`
 ```sh
-$ git tree
-*   d3de22d (HEAD -> master, origin/master)  修改了XXX
-|\
-| | 287b263 (origin/develop) 這邊這邊~~~~
-...
-
 # 取消追蹤 origin 這個 remote 的 develop 分支
 $ git branch -d -r origin/develop
 Deleted remote-tracking branch origin/develop (was 287b263).
-
-$ git tree
-*   d3de22d (HEAD -> master, origin/master)  修改了XXX
-|\
-| | 287b263 這邊這邊~~~~
-...
 ```
 
 

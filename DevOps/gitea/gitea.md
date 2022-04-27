@@ -114,27 +114,26 @@ cat /home/git/.ssh/id_rsa.pub >> /home/git/.ssh/authorized_keys
 ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQDKjBhZCCTau6MYeugB3glTBeVjUjytP2ZTivIYnbzw/hoxH4AKFJ/PpRMgYqc84lmO7rsiw8A4MxgSlTno8xvBIxrHcHo4O3vhfM6F0QvQnkHcy5hyFw3y3jaenGNvi/LzhSbAafYH1L6fAdf4lwV1XsZMvKmDXFmXJZnl/GfZ5PgfQ7k1L3topGPnY1dPPZGUmytvOEhvJw5mbXwUaQ9co8PG2d+b7wHusTFQ2tJ6hQiW5YsvvBHiX9fzt9cAv/AvgZp4rgnKjryEJU6+rTOtHkdjECFAtI0i+eyQDzWcN22IJ8NiS1MGFDlrpwDR+CykZWt71yrgpDdnIOhUs7lvb89jegjnUB1vGC/wMgsnm8/Pr1mPig9lBUuei9t1h+XMrzBu3AhbNHlhtJqLWTD0S99WpVunLMP6wYnpfc1JIc9dIx1hBS5b9xQUYmPrgNPftP1p13/bzqeiYSjKtuPCGTVSN59I4H1KwkBAaI96/7Tdik6eGlJFin3s2suloKwCoFyLfQdKYUPTrPcSaVqZ3iJ3a5IboZdWrMHnnyJh3rLQfwSD593FsBeYELyhY/hObzlK3R91S43NNsMVCf8zWMre4SwsnK1zIz/fyokdyr0TU6x+xtNIWuCn1zH3bsiEK16LVBEiONgln8Er3bwZWwxpg4YHzV8wMJkP/MpM2w== Gitea Host Key
 
 # 此為 User 透過 Web, 自行加入 Client 的 ~/.ssh/id_rsa.pub
-command="/app/gitea/gitea --config=/data/gitea/conf/app.ini serv key-4",no-port-forwarding,no-X11-forwarding,no-agent-forwarding,no-pty ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQC3aIWdIubUizyFt7A6UM1SRvkO9xjndwcM6+D2N5dAU3icEzi8d02nM01mENeKZ1DedjEgqNmKpVUOew2jZUlVjjqlyfpLECOa/5BdJWSokU1/sAl9XoTfSiO0KOJ7dD/kmJs30js5PJox4pP3N0FfteW11olGCEdwmtU9HWvphLyKvZS1pIIjoGpmRxUx7mWlOqIYuJx+Iaw623HLztuWg4ilU4WJCnDQLaizbm9TFDlDqSu/OdABo4OAwzJX1L66rWy9JfAWDuUgf+8Gaoh4banLIyi4vETcqpu0E3t+Po5Ah32DEN2pHykJccFcOEvFeRtbejQfXzBiUUnbAD98o2/BpqMMMm7iMAfzq5ㄣ+4tl+ogsqmvvK48JUsY1C59oRG+D99B9zOpfviMXwsNur1fLO6azNjvJetG++8cwDYQ+sRXvfvk3OcIyEZXKVinXb2+AZ/cwOB8coHTaztYspfGLGPSnwVjwzGx3JPJJdGgVJ8WqZFJjhPT+E75NL6tw= cool21540125@gmail.com
+command="/usr/local/bin/gitea --config=/data/gitea/conf/app.ini serv key-4",no-port-forwarding,no-X11-forwarding,no-agent-forwarding,no-pty ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQC3aIWdIubUizyFt7A6UM1SRvkO9xjndwcM6+D2N5dAU3icEzi8d02nM01mENeKZ1DedjEgqNmKpVUOew2jZUlVjjqlyfpLECOa/5BdJWSokU1/sAl9XoTfSiO0KOJ7dD/kmJs30js5PJox4pP3N0FfteW11olGCEdwmtU9HWvphLyKvZS1pIIjoGpmRxUx7mWlOqIYuJx+Iaw623HLztuWg4ilU4WJCnDQLaizbm9TFDlDqSu/OdABo4OAwzJX1L66rWy9JfAWDuUgf+8Gaoh4banLIyi4vETcqpu0E3t+Po5Ah32DEN2pHykJccFcOEvFeRtbejQfXzBiUUnbAD98o2/BpqMMMm7iMAfzq5ㄣ+4tl+ogsqmvvK48JUsY1C59oRG+D99B9zOpfviMXwsNur1fLO6azNjvJetG++8cwDYQ+sRXvfvk3OcIyEZXKVinXb2+AZ/cwOB8coHTaztYspfGLGPSnwVjwzGx3JPJJdGgVJ8WqZFJjhPT+E75NL6tw= cool21540125@gmail.com
 ```
 
 ### Step4. 在宿主機, 建立一個 executable
 
 ```bash
-mkdir -p /app/gitea
-touch /app/gitea/gitea
-echo 'ssh -p 2222 -o StrictHostKeyChecking=no git@127.0.0.1 "SSH_ORIGINAL_COMMAND=\"$SSH_ORIGINAL_COMMAND\" $0 $@"' > /app/gitea/gitea
+touch /usr/local/bin/gitea
+echo 'ssh -p 2222 -o StrictHostKeyChecking=no git@127.0.0.1 "SSH_ORIGINAL_COMMAND=\"$SSH_ORIGINAL_COMMAND\" $0 $@"' > /usr/local/bin/gitea
 #            ^^^^ Host 與 Container mapping port
-chmod u+x /app/gitea/gitea
-cat /app/gitea/gitea
-ll /app/gitea/gitea
+chmod u+x /usr/local/bin/gitea
+cat /usr/local/bin/gitea
+ll /usr/local/bin/gitea
 ```
 
 
 ## 說明
 
 1. SSH Request 發送到宿主機, 使用 git user. 執行像是 `git clone git@repo:user/repo.git`
-2. 位於宿主機的 `/home/git/.ssh/authorized_keys`, command 會去執行 `/app/gitea/gitea`
-3. `/app/gitea/gitea` 專發宿主機的 SSH Request 到 2222 port, 後續再 mapping 到 Container 22
+2. 位於宿主機的 `/home/git/.ssh/authorized_keys`, command 會去執行 `/usr/local/bin/gitea`
+3. `/usr/local/bin/gitea` 專發宿主機的 SSH Request 到 2222 port, 後續再 mapping 到 Container 22
 4. Host 藉由 git user 的 `/home/git/.ssh/authorized_keys` 來作主機 → Container 認證成功, 最後由 SSH request forward 到 Gitea Container
 
 將來如果 Web 增加新的 key, 則宿主機也會跟著增加
