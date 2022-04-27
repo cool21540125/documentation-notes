@@ -10,10 +10,18 @@ Makefile 是用來管理 編譯 的軟體
 makefile 由 **rules** 所組成
 
 ```makefile
-target ... : prerequest ...
+target1 ... : prerequest ...
+    # ↓ 命令行
     recipe
     ...
     ...
+    # ↑ 命令行
+target2 ...: prerequest ...
+    # ↓ 命令行
+    recipe
+    ...
+    ...
+    # ↑ 命令行
 ```
 
 
@@ -23,8 +31,11 @@ target ... : prerequest ...
 
 
 ```bash
-### 使用 Makefile 裡頭的第一個 target
+### 執行 Makefile 裏頭第一個 target
 $# make
+
+### 執行 Makefile 裏頭的 install instruction 這個 target
+$# make install
 
 ### 
 $# make
