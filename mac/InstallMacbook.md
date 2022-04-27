@@ -188,3 +188,34 @@ version:
   OsArch: linux/amd64
   Version: 3.3.1
 ```
+
+
+# Install gvm
+
+- 2022/04/04
+- [Install go with gvm on MacOS Big Sur](https://blog.bullgare.com/2020/11/install-go-with-gvm-on-macos-big-sur/)
+
+```bash
+### FUCK! 要先裝 xcode
+$# 
+
+### Install & Usage
+$# bash < <(curl -s -S -L https://raw.githubusercontent.com/moovweb/gvm/master/binscripts/gvm-installer)
+$# source /Users/tony/.gvm/scripts/gvm
+
+### 列出所有可安裝
+$# gvm listall
+
+### 列出所有已安裝
+$# gvm list
+
+$# gvm install go1.16.15
+Downloading Go source...
+Installing go1.16.15...
+ * Compiling...
+/Users/tony/.gvm/scripts/install: line 84: go: command not found
+ERROR: Failed to compile. Check the logs at /Users/tony/.gvm/logs/go-go1.16.15-compile.log
+ERROR: Failed to use installed version
+
+### Conclusion: 才不想裝 xcode 這爛東西! 因此放棄!!
+```
