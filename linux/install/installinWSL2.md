@@ -77,3 +77,80 @@ go version go1.17.8 linux/amd64
 $# chmod u+w -R ~/.gvm/
 $# gvm implode
 ```
+
+
+# Install golang
+
+```bash
+### 選擇版本
+$# VERSION=1.17.9
+$# wget https://dl.google.com/go/go$VERSION.linux-amd64.tar.gz
+$# sudo tar -xvf go$VERSION.linux-amd64.tar.gz
+$# sudo mv go /usr/local
+```
+
+# Install podman
+
+- 2022/04/28
+- [Building from scratch](https://podman.io/getting-started/installation#building-from-scratch)
+
+```bash
+### 必須先安裝好 golang
+
+$# apt-get install \
+  btrfs-progs \
+  git \
+  golang-go \
+  go-md2man \
+  iptables \
+  libassuan-dev \
+  libbtrfs-dev \
+  libc6-dev \
+  libdevmapper-dev \
+  libglib2.0-dev \
+  libgpgme-dev \
+  libgpg-error-dev \
+  libprotobuf-dev \
+  libprotobuf-c-dev \
+  libseccomp-dev \
+  libselinux1-dev \
+  libsystemd-dev \
+  pkg-config \
+  runc \
+  uidmap
+#
+# runc : (by golang) default OCI Runtime (起碼需要 > 1.0.0)
+# crun : (by pure C) much faster OCI Runtime
+# conmon : monitor OCI Runtimes
+# 
+
+$# git clone https://github.com/containers/podman.git
+$# cd podman
+
+### 選擇要編譯安裝的版本
+$# VERSION=v3.4.7
+$# git checkout $VERSION
+
+### 確保目前 golang 符合最低要求的版本
+$# go version
+$# head -n 3 go.mod | tail -n 1
+
+###
+$# sudo apt-get install -y libapparmor-dev
+
+###
+$# sudo mkdir -p /etc/containers
+$# sudo curl -L -o /etc/containers/registries.conf https://src.fedoraproject.org/rpms/containers-common/raw/main/f/registries.conf
+$# sudo curl -L -o /etc/containers/policy.json https://src.fedoraproject.org/rpms/containers-common/raw/main/f/default-policy.json
+
+###
+$# make BUILDTAGS=""
+# ↑
+# ↓ 視情況使用囉
+$# make BUILDTAGS="selinux seccomp"
+
+$# sudo make install PREFIX=/usr
+```
+
+
+#
