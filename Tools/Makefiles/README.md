@@ -31,14 +31,14 @@ target2 ...: prerequest ...
 
 
 ```bash
-### 執行 Makefile 裏頭第一個 target
+### 執行 Makefile 第一個 target
 $# make
 
-### 執行 Makefile 裏頭的 install instruction 這個 target
-$# make install
+### 執行 all 的這個 target
+$# make all
 
-### 
-$# make
+### 錯誤訊息備註
+$# make XXX
 missing separator stop
 # 要注意 makefile 裡頭的 **命令行部分**, 是否都是 tab 開頭!
 ```
