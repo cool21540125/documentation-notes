@@ -1,11 +1,38 @@
 
+# Note
+
+- `brew install xxx` 的東西, 似乎都會建立軟連結在 `/usr/local/bin/` 裏頭
+- 環境變數檔, 放在 `/etc/paths` 及 `/etc/paths.d/*`
+- 幾個還沒有分得很清楚的路徑
+  - /usr/local/bin
+  - /usr/local/Cellar
+  - /Library/Frameworks/
+
+
+# brew
+
+- [List of all packages installed using Homebrew](https://apple.stackexchange.com/questions/101090/list-of-all-packages-installed-using-homebrew)
+
+```zsh
+### 列出 brew 已安裝套件
+brew list
+
+### 升級套件
+brew upgrade xxx
+# ex: 升級 python3.10
+# brew upgrade python3.10
+# 但不確定能否正常就是了!!
+
+### 
+```
+
 
 # Install Postgresql 11
 
 - 2020/01/27
 - https://installvirtual.com/install-postgresql-11-on-mac-os-x-via-brew/
 
-```bash
+```zsh
 ### Install
 $# brew search postgresql
 $# brew install postgresql@11
@@ -54,7 +81,7 @@ Or, if you don\'t want/need a background service you can just run:
 
 用底下這樣可成功, 似乎是需要 postgresql 的某個 C Library 的東西
 
-```bash
+```zsh
 brew install postgresql
 
 env LDFLAGS='-L/usr/local/lib -L/usr/local/opt/openssl/lib
@@ -67,7 +94,7 @@ env LDFLAGS='-L/usr/local/lib -L/usr/local/opt/openssl/lib
 
 - https://podman.io/getting-started/installation
 
-```bash
+```zsh
 $ brew install podman
 # 會花有點久, 裝一堆東西
 
@@ -190,32 +217,14 @@ version:
 ```
 
 
-# Install gvm
+# Uninstall golang
 
-- 2022/04/04
-- [Install go with gvm on MacOS Big Sur](https://blog.bullgare.com/2020/11/install-go-with-gvm-on-macos-big-sur/)
+- 2022/05/05
+- [How to uninstall Go?](https://stackoverflow.com/questions/42186003/how-to-uninstall-go)
 
-```bash
-### FUCK! 要先裝 xcode
-$# 
+```zsh
+which go
 
-### Install & Usage
-$# bash < <(curl -s -S -L https://raw.githubusercontent.com/moovweb/gvm/master/binscripts/gvm-installer)
-$# source /Users/tony/.gvm/scripts/gvm
-
-### 列出所有可安裝
-$# gvm listall
-
-### 列出所有已安裝
-$# gvm list
-
-$# gvm install go1.16.15
-Downloading Go source...
-Installing go1.16.15...
- * Compiling...
-/Users/tony/.gvm/scripts/install: line 84: go: command not found
-ERROR: Failed to compile. Check the logs at /Users/tony/.gvm/logs/go-go1.16.15-compile.log
-ERROR: Failed to use installed version
-
-### Conclusion: 才不想裝 xcode 這爛東西! 因此放棄!!
+sudo rm -rf /usr/local/go
+sudo rm /etc/paths.d/go
 ```
