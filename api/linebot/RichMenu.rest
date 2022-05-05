@@ -1,0 +1,98 @@
+@URL=https://{{$dotenv DOMAIN}}
+@CHANNEL_SECRET={{$dotenv CHANNEL_SECRET}}
+@CHANNEL_ACCESS_TOKEN={{$dotenv CHANNEL_ACCESS_TOKEN}}
+@RECV_CHANNEL_ID1={{$dotenv RECV_CHANNEL_ID}}
+@ReplyToken={{$dotenv ReplyToken}}
+
+
+
+### Create a rich menu - 
+# https://developers.line.biz/en/docs/messaging-api/using-rich-menus/#create-a-rich-menu
+# https://developers.line.biz/en/reference/messaging-api/#rich-menu-object
+POST https://api.line.me/v2/bot/richmenu
+Content-Type: application/json
+Authorization: Bearer {{CHANNEL_ACCESS_TOKEN}}
+
+{
+  "size":{
+      "width":2500,
+      "height":1686
+  },
+  "selected": true,
+  "name": "LINE Developers Info",
+  "chatBarText": "Tap to open",
+  "areas": [
+      {
+          "bounds": {
+              "x": 34,
+              "y": 24,
+              "width": 169,
+              "height": 193
+          },
+          "action": {
+              "type": "uri",
+              "uri": "https://developers.line.biz/en/news/"
+          }
+      },
+      {
+          "bounds": {
+              "x": 229,
+              "y": 24,
+              "width": 207,
+              "height": 193
+          },
+          "action": {
+              "type": "uri",
+              "uri": "https://www.line-community.me/en/"
+          }
+      },
+      {
+          "bounds": {
+              "x": 461,
+              "y": 24,
+              "width": 173,
+              "height": 193
+          },
+          "action": {
+              "type": "uri",
+              "uri": "https://engineering.linecorp.com/en/blog/"
+          }
+      }
+  ]
+}
+
+
+# richMenuId:
+# richmenu-fde729a0ba7b5af0e98cdaea4f176d94
+
+
+
+### Validate rich menu object - (無法直接使用)
+# https://developers.line.biz/en/reference/messaging-api/#validate-rich-menu-object
+POST https://api.line.me/v2/bot/richmenu/validate 
+Content-Type: application/json
+Authorization: Bearer {{CHANNEL_ACCESS_TOKEN}}
+
+{
+    "size": {
+        "width": 2500,
+        "height": 1686
+    },
+    "selected": false,
+    "name": "Nice richmenu",
+    "chatBarText": "Tap here",
+    "areas": [
+        {
+            "bounds": {
+                "x": 0,
+                "y": 0,
+                "width": 2500,
+                "height": 1686
+            },
+            "action": {
+                "type": "postback",
+                "data": "action=buy&itemid=123"
+            }
+        }
+    ]
+}

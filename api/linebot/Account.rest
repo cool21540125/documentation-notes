@@ -1,0 +1,26 @@
+
+@URL=https://{{$dotenv DOMAIN}}
+@CHANNEL_SECRET={{$dotenv CHANNEL_SECRET}}
+@CHANNEL_ACCESS_TOKEN={{$dotenv CHANNEL_ACCESS_TOKEN}}
+@RECV_CHANNEL_ID1={{$dotenv RECV_CHANNEL_ID}}
+@ReplyToken={{$dotenv ReplyToken}}
+
+
+# https://developers.line.biz/en/docs/messaging-api/linking-accounts/#page-title
+# 2022/04/22 用途尚未了解, 佔忽略
+# ------------------------------------
+
+
+### Issue link token - 
+# https://developers.line.biz/en/reference/messaging-api/#issue-link-token
+# @name IssueLinkToken
+POST https://api.line.me/v2/bot/user/{{RECV_CHANNEL_ID1}}/linkToken
+Authorization: Bearer {{CHANNEL_ACCESS_TOKEN}}
+
+
+###
+@linkToken={{IssueLinkToken.response.body.linkToken}}
+
+
+
+###
