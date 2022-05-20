@@ -31,7 +31,10 @@ DROP USER '<帳號>'@'<HOST>';
 ```
 
 
-## 更改密碼
+## 更改密碼 重設密碼
+
+- reset password
+
 ```sql
 > ALTER USER '<使用者帳號>' IDENTIFIED BY '<新密碼>';
 ALTER USER 'demo'@'localhost' IDENTIFIED BY 'password123';

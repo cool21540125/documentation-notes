@@ -21,7 +21,7 @@
 
 ## Control node
 
-- 在安裝好 ansible 的機器上面, 運行 [ansible](https://docs.ansible.com/ansible/latest/user_guide/intro_adhoc.html#intro-adhoc) 或是 `ansible-playbook`, 操作所有已安裝 python 的節點.
+- 在安裝好 ansible 的機器上面, 運行 `ansible` / `ansible-playbook`, 操作所有已安裝 python 的節點.
 - Windows 無法作為 control node
 
 
