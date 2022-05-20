@@ -251,6 +251,7 @@ variable | /var/mail <br> /var/spool/news | /var/run <br> /var/lock
             /cron.weekly                    # 最新一次執行 weekly crontab 的時間
             /cron.monthly                   # 最新一次執行 monthly crontab 的時間
         /cron/                          # 週期性 工作排程
+            /root                           # root user 輸入 「crontab -l」、「crontab -e」 的時候看到的
         /mail/                          # 所有使用者的 信件資料夾集中處 ; 系通收到新信, 會放到這; 等待寄出的 email
             /root
             /tony

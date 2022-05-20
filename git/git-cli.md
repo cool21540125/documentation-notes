@@ -44,7 +44,9 @@ git config --global alias.lg "log --color --graph --pretty=format:'%Cred%h%Crese
 
 git config --global alias.lgg "log --pretty=format:'%C(yellow)%h%Cred%d %Creset%s%Cblue [%cn]%Creset' --decorate"
 
+# ↓ 使用上會有問題, 這個可在 Win 上頭, 編輯 config 使用, 不過無法設定成 alias (須修復才可用)
 git config --global alias.lggg "log --pretty=format:"%C(yellow)%h%Cred%d\\ %Creset%s%Cblue\\ [%cn]%Creset" --decorate --numstat"
+
 
 ### git pu
 git config --global alias.pu "push"

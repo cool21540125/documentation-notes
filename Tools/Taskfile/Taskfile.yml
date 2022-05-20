@@ -9,11 +9,21 @@ vars:
   CONTAINER_IMAGE: "{{.CONTAINER_IMAGE_NAME}}:{{.CONTAINER_IMAGE_TAG}}"
   # CURRENT: {{now | date "2006-01-02"}}
 
+env:
+  AGE: 30
+
+dotenv: ['.env']
+
 tasks:
   hi:
-    desc: Say Hello~
+    desc: Say Hi by export
     cmds:
       # export NAME=Tony && task hi
+      - echo Hello~ {{.NAME}}, {{.AGE}}
+    
+  hi2:
+    desc: Say Hi by .env
+    cmds:
       - echo Hello~ {{.NAME}}
 
   build:

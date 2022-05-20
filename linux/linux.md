@@ -1066,6 +1066,8 @@ $ echo $?
 $ test -r file1 # readable
 $ echo $?
 0
+
+$ test -s xxx  # 檔名 是否存在 && 為非空白檔案
 ```
 
 ```bash

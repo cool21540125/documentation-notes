@@ -1,11 +1,38 @@
 
+# Note
+
+- `brew install xxx` 的東西, 似乎都會建立軟連結在 `/usr/local/bin/` 裏頭
+- 環境變數檔, 放在 `/etc/paths` 及 `/etc/paths.d/*`
+- 幾個還沒有分得很清楚的路徑
+  - /usr/local/bin
+  - /usr/local/Cellar
+  - /Library/Frameworks/
+
+
+# brew
+
+- [List of all packages installed using Homebrew](https://apple.stackexchange.com/questions/101090/list-of-all-packages-installed-using-homebrew)
+
+```zsh
+### 列出 brew 已安裝套件
+brew list
+
+### 升級套件
+brew upgrade xxx
+# ex: 升級 python3.10
+# brew upgrade python3.10
+# 但不確定能否正常就是了!!
+
+### 
+```
+
 
 # Install Postgresql 11
 
 - 2020/01/27
 - https://installvirtual.com/install-postgresql-11-on-mac-os-x-via-brew/
 
-```bash
+```zsh
 ### Install
 $# brew search postgresql
 $# brew install postgresql@11
@@ -54,7 +81,7 @@ Or, if you don\'t want/need a background service you can just run:
 
 用底下這樣可成功, 似乎是需要 postgresql 的某個 C Library 的東西
 
-```bash
+```zsh
 brew install postgresql
 
 env LDFLAGS='-L/usr/local/lib -L/usr/local/opt/openssl/lib
@@ -67,7 +94,7 @@ env LDFLAGS='-L/usr/local/lib -L/usr/local/opt/openssl/lib
 
 - https://podman.io/getting-started/installation
 
-```bash
+```zsh
 $ brew install podman
 # 會花有點久, 裝一堆東西
 
@@ -187,4 +214,17 @@ version:
   GoVersion: go1.16.6
   OsArch: linux/amd64
   Version: 3.3.1
+```
+
+
+# Uninstall golang
+
+- 2022/05/05
+- [How to uninstall Go?](https://stackoverflow.com/questions/42186003/how-to-uninstall-go)
+
+```zsh
+which go
+
+sudo rm -rf /usr/local/go
+sudo rm /etc/paths.d/go
 ```
