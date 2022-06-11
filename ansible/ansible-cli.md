@@ -25,6 +25,22 @@ $# ansible hosts -m ansible.builtin.shell -a "echo 最常用的方式"
 ```
 
 
+## 主機群組
+
+```bash
+### 查看有哪幾台主機沒被分類到群組
+$# ansible ungrouped --list-hosts
+  hosts (4):
+    gitclient
+    gitclient01.ksu
+    gitclient02.ksu
+    gitclient03.ksu
+# /etc/ansible/hosts 有 4 台主機, 並沒有被分類為特定群組
+
+
+$# 
+```
+
 ## Example - 管理檔案
 
 ```bash

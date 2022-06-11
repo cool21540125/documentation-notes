@@ -5,37 +5,42 @@
 - 網管的東西
 
 
-
 # 網路的一些基本概念 (好像也不是非常重要)
 
-> 網路有 2個派系: `ISO` 及 `IEEE`. ISO(1970) 提出了個 成本很貴的 OSI 7層協定; IEEE(1982) 提出了一連串的網路協定
+- 網路有 2 個派系: ISO & IEEE
+    - ISO(1970) 提出了個 成本很貴的 OSI 7 層協定
+    - IEEE(1982) 提出了一連串的網路協定
 
 Standard     | Description
------------- | -------------
+------------ | ------------------------------------
 IEEE 802.3   | Ethernet (乙太網路)
 IEEE 802.11  | Wireless LAN & Mesh (無線區域網路)
 IEEE 802.15  | Wireless PAN (藍芽)
 ...          | 還有其他 9487 種...
 
-> 早期, *網路卡製造商* 都會在 **網路卡** 上面 直接燒錄 `Mac Address(實體位置)` 在它的 ROM 上面, 但還是會有 不同網卡有相同 `Mac Address` 的事情發生(2個人相同身分證字號啦!!). 所以, 近一、二十年來, 都改成可以用 *驅動程式* 來更改 `Mac Address` 了.
+早期, *網路卡製造商* 都會在 **網路卡** 上面 直接燒錄 `Mac Address(實體位置)` 在它的 ROM 上面, 但還是會有 不同網卡有相同 `Mac Address` 的事情發生(2個人相同身分證字號啦!!). 所以, 近一、二十年來, 都改成可以用 *驅動程式* 來更改 `Mac Address` 了.
 
 
 ## 802.3 - Ethernet 乙太網路
 
 - 使用 CSMA/CD 傳輸資料
-- 現今 `乙太網路標準` 分為 2 個: 一個由 DEC、Intl、Xerox 共同制定的 `DIX乙太網路標準`; 另一個是由 IEEE 802委員會所制定的 `IEEE 802.3乙太網路標準`
+- 現今 `乙太網路標準` 分為 2 個
+    - 由 DEC、Intl、Xerox 共同制定的 `DIX 乙太網路標準`
+    - 由 IEEE 802委員會所制定的 `IEEE 802.3乙太網路標準`
 
 
 ## 802.11 - Wireless LAN 無線區域網路
 
 - 採用 CSMA/CA 傳輸資料
-- 傳輸資料分為 2 種, 一種是 **有透過 AP傳輸** ; 一種是 **沒有透過 AP傳輸** (也稱為 `Ad-Hoc`). note: AP(Access Point)
+- 傳輸資料分為 2 種:
+    - **有透過 AP 傳輸**
+    - **沒有透過 AP 傳輸** (也稱為 `Ad-Hoc`)
+-NOTE: AP(Access Point)
 
 
 ## 802.15 - Wireless PAN 藍芽
 
-- (我還不知道它怎麼傳輸資料...)
-
+- 尚未研究
 
 
 # 網路設備
@@ -59,19 +64,21 @@ IEEE 802.15  | Wireless PAN (藍芽)
 ## 2. 集線器(Hub)
 
 -  OSI `實體層` 的運作
-- 依照 `會不會對訊號作 重製/再生`(需不需要插電(大誤)), 分為 `Active Hub(要插電)` 跟 `Passive Hub(不用插電)`
-- 現今多數都是 `Active Hub`
-- `Active Hub` 幾乎涵蓋了 **Repeater** 的功能了~
-- `Active Hub` 還可增加 SNMP(Simple Network Management Protocol) 的模組, 來 `監控網路的狀況`
+- 依照 會不會對訊號作 重製/再生(需不需要插電(大誤)), 分為:
+    -  Active Hub(要插電)  <-- 現今多數都是這個
+        - 幾乎涵蓋了 **Repeater** 的功能了~
+        - 可增加 SNMP(Simple Network Management Protocol) 的模組, 用來 監控網路的狀況
+    - Passive Hub(不用插電)
 
 
 ## 3. 橋接器(Bridge)
 
-- 屬於 OSI `資料連結層` 的運作 (只認得`實體位置` 只認得`實體位置` 只認得`實體位置` )
+- 屬於 OSI `資料連結層` 的運作
+    - 只認得 實體位置
 - 主要功能: `轉送廣播訊框, 篩選直接訊框`
 - 依照 `MAC Address` 決定資料傳輸的方向, 來提高網路效率
 - 它懂 `訊框` , 但看不懂 `封包`
-- 收到 封包 時, 會查詢`路由表(Routing Table), 或稱為 橋接表(Bridge Table)`, 來決定是否要傳輸到其他區段 or 只傳輸到自己的區段
+- 收到 訊框 時, 會查詢`路由表(Routing Table), 或稱為 橋接表(Bridge Table)`, 來決定是否要傳輸到其他區段 or 只傳輸到自己的區段
 - 橋接器 收到資料, 會 **自動學習** 網路所在的 電腦硬體位置
 - 目的之一, 讓網路上的 `各個網段獨立運作`, 各自網路流量不會互相影響
 - 設計不良的網路架構, 會產生 `廣播風暴`, 會如何我也不知道.... 細節就不寫了...
@@ -84,7 +91,9 @@ IEEE 802.15  | Wireless PAN (藍芽)
 ## 4. 交換器(Switch)
 
 - 屬於 OSI `資料連結層` 的運作(狹義上), 基本上, 它具有 **橋接器** 的功能
-- **企業級的交換器** 通常可進行 `虛擬區域網路的分割`, 將一台 實體交換器, 設定成 多台虛擬且獨立的交換器
+- **企業級的交換器** 通常可進行 `虛擬區域網路(VLAN) 的分割`, 將一台 實體交換器, 設定成 多台虛擬且獨立的交換器
+- 主要目的:
+    - 區域網路內, 封包的交換 (直接使用 mac 而非 IP, 因此速度較 Router 快些)
 - 交換器 有2個以上的 通道, 對每一個 port提供 獨享頻寬
 - 轉送 **廣播訊框** ; 篩選 **直接訊框** ; 提供 **保障頻寬**
 
@@ -92,7 +101,9 @@ IEEE 802.15  | Wireless PAN (藍芽)
 ## 5. 路由器(Router)
 
 - 屬於 OSI `網路層` 的運作
-- 主要目的: 切割網域
+- 主要目的:
+    - 切割網域
+    - 繞送封包 (重點在 如何把風暴發送到另一個子網路)
 - 看得懂 `IP Address`
 - 可以隔離網路的廣播(能有效避免 `廣播風暴`)
 - 進行 `封包切割`, 用以連接 `MTU(最大傳輸單位)` 大小不一致的異質性網路
@@ -106,23 +117,14 @@ IEEE 802.15  | Wireless PAN (藍芽)
 - 讓 不同網路協定 的資料可以相互傳輸 (講不同語言的人互相溝通的翻譯人員啦!!)
 
 
-
 # TCP/IP Protocol
 
 ![TCP/IP Protocol](../img/protocol_main.jpg)
 
 Source: https://www.distributednetworks.com/dhcp-tcp-ip/module3/images/protocol_main.gif
 
-- 應用程式層 Application
-    - `TCP模型` 與 `應用程式` 的中介, 協同運作、資料交換介面 等
-    - 常見的有:
-        - Hypertext Transfer Protocol (HTTP)
-        - File Transfer Protocol (FTP)
-        - Simple Mail Transfer Protocol (SMTP)
-        - Terminal Emulation Protocol (Telnet)
-        - Domain Name System (DNS) : 主機名稱 解析為 ip
-        - Routing Information Protocol (RIP) : 動態路由通訊協定之一
-        - Simple Network Management Protocol (SNMP) : 網路管理的通訊協定
+- 
+
 - (主機)傳輸層 Transport
     - 應用程式之間的 `點對點通訊`
     - 只提供 `路由` 與 `定址` 的判斷 (封包收送後排序)
@@ -137,7 +139,6 @@ Source: https://www.distributednetworks.com/dhcp-tcp-ip/module3/images/protocol_
         - Internet Control Message Protocol (ICMP) - 偵測 及 回報IP封包錯誤訊息
         - Internet Group Management Protocol (IGMP) - 負責管理 *Multicast 群組*
         - Internet Protocol (IP) - 可路由的通訊協定, 負責 `定址`、`路由`、`切割`、`重組`封包
-
 - 網路介面層 Network Interface Layer
     - 收發資料(實體訊框 Frame)
     - 發送 ip 對應到 mac address

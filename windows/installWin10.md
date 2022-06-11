@@ -1,4 +1,5 @@
 
+Win10 安裝一堆有的沒的
 
 # Install MINGW64
 
@@ -33,9 +34,25 @@ wsl 相對於 win10 的路徑: `\\wsl$\Ubuntu\home\tony`
 
 ### 法1
 
+必須使用系統管理權限
+
 ```powershell
-### 系統管理員執行
-Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))
+### install
+> Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))
+
+### 升級 choco
+> choco upgrade Chocolatey
+
+### 列出本地 choco 安裝了哪些 && 其相關資訊
+> choco list -li
+
+### 列出遠端 choco 可用套件
+> choco list
+# ↑ 這個會列出遠端所有可安裝的套件...
+
+### choco 版本
+> choco --version
+1.1.0
 ```
 
 ### 法2
@@ -52,10 +69,20 @@ Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManage
     - 系統管理員執行
 3. 把上述安裝好的路徑, 加入到 **環境變數**
 
-```bat
-$ gcc --version
+```powershell
+> gcc --version
 gcc.exe (MinGW-W64 x86_64-posix-seh, built by Brecht Sanders) 11.2.0
 Copyright (C) 2021 Free Software Foundation, Inc.
 This is free software; see the source for copying conditions.  There is NO
 warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+```
+
+
+# Install hugo
+
+```powershell
+# (系統管理員執行) 先安裝好 choco
+> choco install hugo
+
+> hugo version
 ```

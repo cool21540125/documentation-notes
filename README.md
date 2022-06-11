@@ -23,7 +23,7 @@ node          | Nodejs v6.11
 other         | 不屬於以上的都放這~~
 pg            | Programming(without Python) && Design Pattern
 PKI           | PKI 基礎架構 && Certificates, ...
-python        | Python 3.6
+python        | Python 3.6+
 RabbitMQ      | 就... RabbitMQ
 ssg           | Single Page Generator, ex: HUGO
 ts            | TypeScript

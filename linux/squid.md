@@ -1,8 +1,27 @@
-# squid - HTTP Cache Proxy Server
+squid - HTTP Cache Proxy Server
 
 - 2019/12/30
 - https://dywang.csie.cyut.edu.tw/dywang/linuxserver/node138.html
 - http://linux.vbird.org/linux_server/0420squid.php
+
+
+Linux 代理伺服器的軟體, ex: `squid`, `v2ray`, ...
+
+小型環境不值得架設 Proxy!!! 
+
+- `/etc/squid/squid.conf` : squid設定主檔
+- `/etc/squid/mime.conf` : 設定 squid 所支援的 Internet 上面的檔案格式(mime)
+- `/usr/sbin/squid` : squid 主程式
+- `/var/spool/squid` : squid 快取目錄
+- `/usr/lib64/squid/` : squid 額外控制模組, ex: 密碼認證等
+
+預設如下:
+
+* 3128 TCP port (可能還有 3130 UDP port)
+* 只給 localhost
+* 快取 Disk 100M
+* 快取 RAM 8M
+* 使用 squid 這個 User
 
 
 ## Install
