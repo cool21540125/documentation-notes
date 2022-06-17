@@ -1,77 +1,52 @@
 # EC2
 
-- 2020/10/10
+- 讓 EC2 找到自身的 meta-data, 但只能在 *Web Console* && *CLI*, 這動作本身不需要權限
+    - `curl http://169.254.169.254/latest/meta-data`
+    - https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/instancedata-data-retrieval.html
 
 
-### Initialize
+# EC2 使用 IPv6
 
-```bash
-sudo -i
-hostnamectl set-hostname ec2-vm1
+- 2018/11/22
 
+### 1. VPC
 
-### Python3
-yum install -y python3
+Action > Edit CIDRs > Add IPv6 CIDR > Close
 
+- IPv4 CIDR : `172.31.0.0/16`
+- IPv6 CIDR : `2406:da14:b3f:b900::/56`
 
-### Docker
-yum install -y docker
-systemctl start docker
-systemctl enable docker
-usermod -aG docker ec2-user
-docker pull python:3
-docker pull redis:alpine
-docker pull drone/drone:1
-docker pull drone/agent:1
+### 2. Subnets
 
-curl -L https://github.com/docker/compose/releases/latest/download/docker-compose-$(uname -s)-$(uname -m) -o /usr/local/bin/docker-compose
-chmod +x /usr/local/bin/docker-compose
-# 此時root因PATH 依然找不到 docker-compose, 但 ec2-user 可
+Actions > Edit IPv6 CIDRs > Add IPv6 CIDR > `01` > Save > Close
 
+- IPv4 CIDR : `172.31.32.0/20`
+- IPv6 CIDR : **2406:da14:b3f:b9`01`::/64**
 
-### Certbot
-wget -r --no-parent -A 'epel-release-*.rpm' http://dl.fedoraproject.org/pub/epel/7/x86_64/Packages/e/
-rpm -Uvh dl.fedoraproject.org/pub/epel/7/x86_64/Packages/e/epel-release-*.rpm
-yum-config-manager --enable epel*
-yum install -y certbot python2-certbot-nginx
+### 3. Route Table
 
+Actions > Edit routes > Edit routes > `::/128` > Save routes Close
 
-### Nginx
-amazon-linux-extras install -y nginx1
-nginx -v  # nginx version: nginx/1.18.0
-systemctl start nginx
-systemctl enable nginx
+Destination                | Target             | Status
+-------------------------- | ------------------ | ----------------------
+172.31.0.0/16              | local              | active
+2406:da14:b3f:b900::/56    | local              | active
+::/128                     | igw-b6xxxxd2       | active
 
+### 4. EC2
 
-### ssh-keygen
-exit
-ssh-keygen -C "tony@ec2-vm1" -f ~/.ssh/id_rsa -P ''
-cat ~/.ssh/id_rsa.pub
+Actions > Networking > Manage IP Addresses > Assign new IP > `2406:da14:b3f:b901:9:8:7:6` > Yes, Update > Cancel
 
-mkdir proj
-mkdir -p composes/drone composes/redis
+IPv6 : **2406:da14:b3f:b901:9:8:7:6**
+
+### 5. 測試
+
+```sh
+ssh -i <YOUR_KEY> ID@IPv6
 ```
 
+結果無法連線, 估計是 Route Table 那邊有錯
 
-### AMI spec
+# 額外補充
 
-- i系列: (資源昂貴又有限)支援 `NVMe`, IOPS 超巨大. 但是開機之後 data 就不見了(被AWS回收了)
-- v系列: Memory優化
-
-
-### EBS spec
-
-- io: 優化磁碟 IO 操作, 可達 64000 iOPS, 但 $ 分成 `容量` && `IO數` 來計費
-    - io1
-    - io2
-- gp: IOPS 隨著 `容量` 增加(無法彈性選擇), 且 IOPS 最高也只有到 16000
-    -gp1 這種的好像已經沒了(2020/12)
-    -gp2
-    -gp3
-
-
-# Other
-
-額外補充(不知道該不該寫在這)
-
-AWS 似乎有支援 `ceph`(檔案系統), 可支援 `Object Storage` && `Block Storage`
+- AWS 似乎有支援 `ceph`(檔案系統), 可支援 `Object Storage` && `Block Storage`
