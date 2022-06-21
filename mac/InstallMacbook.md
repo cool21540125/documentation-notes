@@ -228,3 +228,39 @@ which go
 sudo rm -rf /usr/local/go
 sudo rm /etc/paths.d/go
 ```
+
+
+# Install aws
+
+- [Installing or updating the latest version of the AWS CLI](https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html)
+
+```bash
+### Install or update the AWS CLI
+#   Command line - Current user
+
+### Step1. 製作 choices.xml && 編輯安裝的使用者家目錄: /Users/tony
+
+### Step2.
+curl "https://awscli.amazonaws.com/AWSCLIV2.pkg" -o "AWSCLIV2.pkg"
+# 東西會安裝到 /Users/tony/aws-cli
+
+ln -s /Users/tony/aws-cli/aws ~/bin/aws
+ln -s /Users/tony/aws-cli/aws_completer ~/bin/aws_completer
+
+aws --version
+# aws-cli/2.7.9 Python/3.9.11 Darwin/21.5.0 exe/x86_64 prompt/off
+
+
+### -------------- Configure --------------
+### 法1. 僅配置預設
+aws configure
+
+### 法2. 配置多個命名環境
+PROFILE_NAME=
+aws configure --profile $PROFILE_NAME
+
+# 將來就可透過底下這樣子, 來切換 cli 環境
+export AWS_PROFILE=$PROFILE_NAME
+
+```
+
