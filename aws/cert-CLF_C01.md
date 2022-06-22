@@ -191,3 +191,193 @@ Networking    | -    | -    | -
     - Gateway Load Balancer
         - 2020/11 新增, 但這個與 VPC 較相關
 - 配置 ELB, 後面必須要有 **Target Groups** & 對此設定他的 **Security Group** 來 allow traffic
+
+
+# Database & Analytics
+
+## RDS, Relational DataBase
+
+- 需 run on EC2 (非 Serverless)
+- AWS RDS, SaaS, Serverless. 有幾個常見的 DB:
+    - MS SQL
+    - MySQL
+    - PostgreSQL
+    - ...
+    - Aurora (AWS 針對底下的 distribution 做了優化)
+        - MySQL (5X 倍速優化)
+        - PostgreSQL (3X 倍速優化)
+- 東西存放在 EBS
+- RDS 最多可配置 5 個 Read Replicas (scalability)
+    - 可 Cross AZ
+        - multi-az -> HA
+        - multi-region -> read-replication scalability (但仍可作為 backup)
+    - 可 Auto-Scaling, 一次 10~64 GB
+- 可配置 Multi-Region Read
+    - 不過 Cross-Region Replication 的流量費用要留意
+    - App 就近讀取
+
+
+### Aurora
+
+- 比原生(OpenSource) 的還貴上 20% 以上, 但效能較強
+- 此為 AWS Cloud Native Servie
+
+
+### ElasticCache
+
+- 有兩種
+    - Redis
+    - Memcache
+- 需 run on EC2 (非 Serverless)
+
+
+### DynamoDB
+
+- HA + Cross 3 AZ replication 的 NoSQL
+    - Key-Value
+- Serverless DB
+- Auto-Scaling 成本低
+- 可依照訪問頻率選擇底下的儲存模式的 Table Class
+    - Standard
+    - Infrequent Access, IA
+- 本身並無 Create Database 的概念
+    - 動作為 Create Table, 如下範例
+    - ```
+      TableName: Products
+  
+      Primary Key
+          Partition Key (needed)
+          SortKey (optional)
+  
+      Attributes
+          name
+          age
+          ...
+          (每筆資料的欄位都可不同)
+      ```
+- DynamoDB - Global Table
+    - 可作 active-active r/w replication
+
+
+#### DynamoDB Accelerator, DAX
+
+- DynamoDB fully managed in-memory cache
+    - DynamoDB 專用的快取
+    - 10x performance improvement
+
+
+### RedShift
+
+- RedShift 為 *Columnar Storage* (非 row based)
+- Data WareHoust
+    - OLAP
+- 可下 SQL
+- 基於 PostgreSQL 的 DB, 但非 OLTP(Online Transaction Processing)
+    - Note: OLAP(Online Analytical Processing)
+- 用來做 analyze 及 data warehouse
+    - 10x performance
+- Massively Parallel Query Execution, MBP Engine
+- 可下 SQL, 並整合 BI
+    - ex: QuickSight, Tableau, ...
+
+
+### Amazon EMR, Elastic MapReduce
+
+- 用來建 Hadoop Cluster
+    - Hadoop ecosystem: Apache Spark, HBase, Presto, Flink, ...
+- EMR 用來管 EC2 Instances, config, ...
+    - 可 Auto-Scaling
+    - 可用 Spot Instance (可能 loss instance)
+- Use Case:
+    - ML, Data Processing, Web Indexing, Big Data, ...
+
+
+### Amazon Athena
+
+- Serverless query service to perform analytics against s3 objects
+    - 可下 SQL 對 S3 查詢
+- 支援 csv, json, ORC, Avor, Parquet(built on Presto)
+- Charge: USD $5/TB second
+    - 因為 by scan 量收費, 若 data 有做 Compress 或 columnar 方式儲存, 可省下 $$
+- Use Case:
+    - ```mermaid
+        flowchart LR;
+        User -- load data --> s3;
+        s3 -- Query & Analyze --> Athena;
+        Athena -- Report & Dashboard --> QuickSight;
+      ```
+    - BI / analytics / reporting, analyze & query VPC Flow Logs, ELB Logs / CloudTrail trails, serverless SQL analyze S3, ...
+
+
+### AWS QuickSight
+
+- Serverless ML powered BI service to create interactive dashboard.
+- 可 Auto-Scaling, auto embeddable
+- 整合了 RDS, Aurora, Athena, RedShift, S3, ...
+- Use Case:
+    - Business analytics, Create Visualization, Perform ad-hoc analysis, Get Business insights using data, ...
+
+
+### Document DB
+
+- Aurora 為 AWS 基於 PostgreSQL/MySQL 的實作
+- Document (同上)    MongoDB 的實作
+- Replication 為 Cross 3 AZ
+    - HA
+
+
+### Amazon Neptune
+
+- Graph DB
+- Use Case: social network relation, ...
+- Replication Cross 3 AZ
+    - 可高達 15 個 Read Replicas
+
+
+### Amazon QLDB, Quantum Ledger Database
+
+- 可下 SQL
+- 量子記帳本 DB
+    - Financial Transactional Ledger
+- 非去中心化 (de-centralize, 此仍為 Centralization)
+- Serverless, HA
+- Replication 3 AZ
+- 可看到所有 Data 變更的 History (Ledger)
+    - 資料皆為 Immutable (無法刪除)
+    - 資料具備 Cryptographic Signature, 確保資料不會被刪除
+- 相較於 Common Ledger Blockchain framework, 快上 2~3 倍
+
+
+### Amazon Managed Blockchain
+
+- de-centralization, 去中心化唷
+- 可執行 Transaction without the need of trust
+- 常被拿來與 Hyperledger Fabric, Etherenum 比較
+
+
+## DMS, Database Migration Services
+
+```mermaid
+flowchart LR;
+src["Source DB"] -- DMS --> db["AWS Target DB"];
+```
+
+- Migration 過程可離線, 但建議離線 or 避免寫入, 以確保資料一致
+
+
+## AWS Glue
+
+```mermaid
+flowchart LR;
+s3 -- extract --> glue["Glue ETL"];
+RDS -- extract --> glue;
+glue -- load --> RedShift;
+```
+
+- AWS managed extract, transform and load service(ETL)
+    - Data Catalog Service
+- Serverless
+- 家族服務:
+    - Glue Data Catalog
+        - catalog of databases
+        - 可整合 Athena, RedShift, EMR
