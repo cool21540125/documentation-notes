@@ -181,7 +181,7 @@ Networking    | -    | -    | -
     - Agility: 指雲服務, 只需透過點點點, 就可以快速有資源來操作
 
 
-# ELB, Elastic Load Balancer
+## ELB, Elastic Load Balancer
 
 - Load Balancer: 用來 轉發/分攤 流量的 server
 - AWS 提供的 Load Balancer
@@ -191,6 +191,20 @@ Networking    | -    | -    | -
     - Gateway Load Balancer
         - 2020/11 新增, 但這個與 VPC 較相關
 - 配置 ELB, 後面必須要有 **Target Groups** & 對此設定他的 **Security Group** 來 allow traffic
+
+
+## ASG, Auto Scaling Group
+
+- 可手動調整規模 OR 配置相關參數, 來做 auto scaling
+    - Minimum Size
+    - Actual Size/Desired Capacity
+    - Maximum Size
+- 調整的策略可以是 by CPU 或 by Network in/out 或 ...
+- 而這些 scaling 的 strategy, 可以是 manual, 或是 dynamic:
+    - Simple/Step Scaling - ex: CPU > 70%, then +1 台機器 && CPU < 30%, then -1 台機器 (這樣則是兩條策略規則 )
+    - Target Tracking Scaling - ex: 設定  ASG CPU
+    - Scheduled Scaling
+    - Predictive Scaling
 
 
 # Database & Analytics
@@ -381,3 +395,304 @@ glue -- load --> RedShift;
     - Glue Data Catalog
         - catalog of databases
         - 可整合 Athena, RedShift, EMR
+
+
+# Other Compute Services: ECS, Lambda, Batch, Lightsail
+
+## ECS, Elastic Container Service
+
+- 用來 Launch Container
+    - 需自行維護 EC2, ECS 則用來 start/stop Container
+- 可整合至 ALB(Application Load Balancer)
+
+
+## Farget
+
+- Serverless
+- 同 ECS 用來 Launch Container, 但不需要自行維護 Infra
+
+
+## ECR, Elastic Container Registry
+
+- Private Registry
+- 用來存 ECS/Farget 所運行的 image
+
+
+## Lambda
+
+- 最初最初, 雲服務最早的 Serverless 為 AWS Lambda, 當時是 `Serveless == FaaS`
+- 目前 Runtime 並非任何語言任何版本都有, 僅部分語言有支援
+    - 目前無 Docker Runtime
+- Charge: Pay per request and compute time
+    - charge by call & running duration
+    - Free tier: 每月 100w 次 && 40w GB Compute Time
+        - 約 40w sec (with 1G RAM)
+        - 約 320w sec (with 128G RAM)
+    - 超過免費額度, 後續 60w GB/sec for $1
+- Event-Driven
+- 可藉由 CloudWatch 來做 monitoring
+- 每個 Lambda Function 可設定打 10GB RAM
+- 比較特別的是, Lambda Container Image
+    - 可用 Lambda 運行容器服務, 但是 Image 需要實作 Lambda Runtime API
+- Use Case
+    - User 上傳 png -> S3, 背後 trigger 把 png 縮小後, 另外儲存, 可用 Lambda
+    - Serverless CRON Job. 藉由 **CloudWatch** 或 **EventBridge** Event 來 trigger Lambda FN
+
+
+## API Gateway
+
+- Serverless & Scalable
+    - RESTful API
+    - WebSocket API
+
+
+```mermaid
+flowchart LR;
+
+User -- request --> api["API Gateway"];
+api -- trigger --> Lambda;
+```
+
+
+## API Batch
+
+- 背後會起 EC2 或 Spot Instance 來運行 Batch job
+    - 因此非 Serverless
+- Batch Job 背後其實是個 Docker Image, 運行在 ECS (用來跑 Batch Job)
+
+
+## Compare Batch and Lambda
+
+catalog      | Batch                      | Lambda
+------------ | -------------------------- | ----------------
+timeout      | No                         | Yes, 15 mins
+Runtime      | Any                        | Specific
+Storage      | EBS, instance storage, ... | Limited
+infra        | 背後為 ECS & EC2            | Serverless
+
+
+## AWS Lightsail
+
+- Lightsail 是個 Virtual Server
+    - Storage, DB, Networking (我忘了這邊在寫啥了)
+- 此為 EC2, RDS, ELB, EBS, R53, ... 的替代方案
+    - lightsail 是個 Standalone Service
+- Cloud Beginner 可用這個
+    - 很像 Synology 上頭的服務... 點點點就起服務了
+    - UI 導向
+- 可用來做 Dev, Test Envir
+- 有 HA, 但無 Auto-Scaling
+- 幾乎無法與其他 AWS Services 整合 (幾乎自成一體)
+
+
+# Deployments, Managing Infrastructure at Scale
+
+- 各種部署到 AWS 的方式 & 服務
+
+
+## CloudFormation
+
+- User 定義 Template, 並藉由 Tempalte(JSON, YAML) 建立 Stack
+    - AWS 則在背後 提供 Resources
+- IaaS
+    - 可只用來管 Infra
+- JSON, YAML config, 告知 SG, EC2, S3 (if ELB), 它會建立 Resource
+    - 若要刪除 Resources, 也可由 CloudFormation 來刪除. 他會一併刪除依賴 
+- Infra 內的 Resources, 都有相同的 tag(方便辨識)
+- 可用 **CloudFormation Template**, 協助估 Cost
+- 例如 Dev Env
+    - 可設定 08:00 ~ 17:00 開 Env, 其餘時間關閉. 可 Cost Down
+- 幾乎支援 All AWS Services
+
+
+## AWS CDK, Cloud Deployment Kit
+
+- 可用各種程式語言來定義 infra, CDK 會將此 compile 成 CloudFormation 所需要的 JSON/YAML
+    - 感覺很像是給 Developer 玩的=.=
+- 因此可用 CDK 來一口氣 Deploy: Infra && Your Code
+
+```mermaid
+flowchart LR;
+
+code["Your Code"] --> cdk["CDK CLI"];
+cdk --> tmpl["CloudFormation Template"];
+tmpl --> CloudFormation;
+```
+
+
+## AWS Beanstalk
+
+- 給純 Dev 用的
+    - PaaS
+    - 只能用來管 Code
+    - 如果 Dev 懶得 config Server, 懶得 config DB, ...
+- Charge: Beanstalk is free. 但對於背後的 Resources 收費
+- Monitoring
+    - 有 BeansTalk 自己的 Monitoring, 叫做 **Health Agent**, 他用來 push metrics 到 **CloudWatch** && publish **Health Events**
+- Beanstalk 背後會去使用 CloudFormation
+- Example, 有個 3-tier APP
+    - ```mermaid
+      flowchart LR;
+
+      subgraph asg
+        az1["EC2"];
+        az2["EC2"];
+      end
+
+      User --> elb["Multi-AZ ELB"];
+      elb --> asg;
+      asg --> ElasticCache;
+      asg --> RDS;
+      ```
+
+
+## AWS CodeDeploy
+
+- Hybrid Cloud
+    - 可用 EC2 或 On-Premise Server
+    - 但是機器上面必須安裝 *CodeDeploy Agent*
+- 不同於 Beanstalk, 比較放任一些 (不知道這在講啥)
+    - 不依賴於 CloudFormation && Beanstalk
+
+
+## AWS CodeCommit
+
+- 地位等同於 Git Repo
+
+
+## AWS CodeBuild
+
+- Serverless, Scalable, HA
+- 可在 Cloud 做 Build Code
+    - compile, test, 產生 package
+- 可到 **CodeCommit** pull, build 出 Artifacts
+- Charge: 只對 Build Time 收 $$
+
+
+## AWS CodePipeline
+
+- 用來組織 CodeCommit, CodeBuild (做 CI/CD 啦)
+    - AWS CI/CD 的核心服務
+    - Code -> Build -> Test -> Profision -> Deploy
+- CodePipeline Orchestration
+    - CodeCommit -> CodeBuild -> CodeDeploy -> ... (ex: Elastic Beanstalk, ...)
+- 可 fast delivery, rapid update
+
+
+## AWS CodeArtifact
+
+- 用來管理 Code 依賴. code dependencies, artifact management, ...
+    - 也稱為 Code Dependencies
+    - CodeBuild 可到 CodeArtifact 拉 dependencies
+- Work with: Maven, pip, yum, npm, NuGet, Gradle, yarn, twine, ...
+
+
+## AWS CodeStar
+
+- 用來管理 Development Activities 的 UI
+- Developer 快速建造 CI/CD 的好幫手
+- 用來整合 **CodeCommit** && **CodeBuild** && **CodePipeline**
+- 用這東西背後會一併 Create (反過來說, 如果不用 **CodeStar** 的話, 底下這些都需要自行處理):
+    - CodeCommit
+    - CodeBuild
+    - CodeDeploy
+    - CodePipeline
+    - monitoring
+    - Elastic Beanstalk
+    - EC2
+    - Cloud9
+- 若要刪除 Project 的話, 先刪除 **Cloud9**, 再來刪除 **CodeStar** Project
+
+
+## AWS Cloud9
+
+- Cloud IDE
+- edit the code "in-the-cloud"
+
+
+## AWS SSM, Systmes Manager
+
+- Hybrid. 可管 EC2 && On-Premise instances
+- 用來做
+    - automative patching
+    - enhance compliance
+    - 對整個 EC2 fleets 下指令(有點像 ansible...)
+    - 協助儲存 param configuration
+        - by **SSM Parameter Store**
+- For Win & Mac & Linux
+- 機器需安裝 *SSM Agent* (某些類型的 EC2 預設已安裝)
+
+
+### SSM Session Manager - Systems Manager
+
+- 用來 access EC2 的一種方式
+    - by *SSM Session Manager* (免開 ssh port)
+- 也會 send log -> **S3** or **CloudWatch**
+    - 需要有合適的 IAM Role: `AmazonSSMManagedInstanceCore`
+
+
+## AWS OpsWorks
+
+- 此為 AWS 魔改 Chef & Puppet
+    - 若上 AWS 前已在使用, 則可接續使用 **AWS OpsWorks**
+    - 用來配置主機
+- 讓 ops 用來管理 cloud/on-premise instance
+- `AWS OpsWorks = Managed Chef & Puppet`
+    - AWS OpsWork 為 SSM 另一套替代品
+
+
+# Global Infrastructure Section
+
+- Cloudfront (CDN), Edge Locations, 也稱為 Points of Presence
+- S3 Transfer Acceleration, 加速 upload/download
+- AWS Global Accelerator, 加速 App availability & performance
+
+
+## Route53
+
+- 分成四種 routing policy
+    - Simple Routing Policy
+        - 路由到標的 Server 不做 Security Check
+    - Weighted Routing Policy
+        - 路由到標的 Server, 會排除掉 unreachable 的機器
+    - Latency Routing Policy
+        - 依 TTL, Routing 到最快的 Node
+    - Failover Routing Policy
+        - 可設定 Primary Node 與 Failover Node
+        - 之前用到的 DNSPod 也有這樣的配置
+
+
+## CloudFront
+
+- CDN
+- 其中一個功能可做 DDoS Protection
+- 整合 Shield, AWS Web Application Firewall (WAF)
+- by using CloudFront's *Origin Access Identity(OAI)* to enhance security
+    - ```mermaid
+        flowchart LR;
+
+        User --> Edge;
+        Edge -- private --> S3;
+        S3 -- OAI --> oia["Origin Access Identity + S3 Bucket Policy"]
+      ```
+- Cloudfront 可作為 ingress(入口), 來上傳 file -> S3
+    - ```mermaid
+      flowchart LR;
+      
+      subgraph origin
+        S3;
+        http["HTTP Server"];
+      end
+      
+      client --> cloudfront["Cloudfron(Local Cache)"];
+      cloudfront --> origin;
+      ```
+
+
+## S3 Transfer Acceleration
+
+
+
+
+
+## 
