@@ -15,6 +15,8 @@
 
 ## cross-origin
 
+CORS, Access Control Allow Origin
+
 ```
 https://www.example.com:443
 ^^^^^   ^^^^^^^^^^^^^^^ ^^^

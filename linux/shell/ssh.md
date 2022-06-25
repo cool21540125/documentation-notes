@@ -74,6 +74,14 @@ ssh -G ec2 | egrep -i User
 ssh user@host
 # 也可使用
 ssh -l user host
+
+### 讓 SSH Agent 設定一把金鑰
+ssh-add -k $SSH_PEM_NAME
+# adds private key identities to the OpenSSH authentication agent
+# 用途是, 將來做 ssh -A $HOST 以後, 會攜帶此金鑰的身份到 $HOST, 並可在 $HOST, 使用上述設定好的 Identity, 再次 ssh 到 $OTHER_HOST
+
+### 列出 SSH Agent 所擁有的 Identities
+ssh-add -L
 ```
 
 
