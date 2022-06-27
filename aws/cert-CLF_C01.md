@@ -39,14 +39,16 @@ Networking    | -    | -    | -
         - ex: "arn:aws:s3:::mybucket"
 - 又例如 Policy example: AdministratorAccess
     - Policy ARN: "am:aws:iam::aws:policy/AdministratorAccess"
-    - ```json
+    - ```jsonc
       {
           "Version": "2012-10-17",
           "Statement": [
               {
-                  "Effect": "Allow",
-                  "Action": "*",
-                  "Resource": "*"
+                  "Effect": "Allow",  // "Allow" 或 "Deny"
+                  "Principle": {},  // 此 Policy 附加的對象, ex: 「{"AWS": ["arn:aws:iam:...:root"]}」
+                  "Action": "*",  // 或為 []
+                  "Resource": "*",  // 或為 []
+                  "Condition": []  // (optional)
               }
           ]
       }
@@ -143,7 +145,7 @@ Networking    | -    | -    | -
 - 長久保存的話, 建議使用 EBS
 
 
-# EBS, Elastic Block Storage
+## EBS, Elastic Block Storage
 
 - 為 Network Device
     - 只能同時掛載到一台 Instance
@@ -153,7 +155,7 @@ Networking    | -    | -    | -
             - 做 EBS snapshot, 不需要 detatch, 但建議
 
 
-# EFS, Elastic File System
+## EFS, Elastic File System
 
 - 可 attach 到 EC2 Instance 的 NFS
     - 可跨 az
@@ -162,7 +164,7 @@ Networking    | -    | -    | -
     - 可省達 92%
 
 
-# Amazon FSx
+## Amazon FSx
 
 - 可使用 3rd 的 FS
     - AWS FSx for Luster (Linux & Cluster)
@@ -218,6 +220,7 @@ Networking    | -    | -    | -
     - PostgreSQL
     - ...
     - Aurora (AWS 針對底下的 distribution 做了優化)
+        - Provision Server
         - MySQL (5X 倍速優化)
         - PostgreSQL (3X 倍速優化)
 - 東西存放在 EBS
