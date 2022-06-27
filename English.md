@@ -107,6 +107,8 @@ LDAP   | Lightweight Directory Access Protocol       | 集中驗證            |
 NAT    | Network Address Translation                 | IPv4               |
 NFS    | Network File System                         | Linux              |
 OCSP   | Online Certificate Status Protocol          | 在線憑證狀態協定    |
+OLAP   | Online Analytics Processing                 | 線上分析處理        | 
+OLTP   | Online Transaction Processing               | 線上交易處理        | 
 PERT   | Program Evaluation and Review Technique     | 專案管理           | [PERT 網路分析法](https://wiki.mbalib.com/zh-tw/PERT%E7%BD%91%E7%BB%9C%E5%88%86%E6%9E%90%E6%B3%95)
 POC    | Proof of Concept                            | DevOps             |
 SEO    | Search Engine Optimization                  | FrontEnd           |

@@ -347,4 +347,54 @@ ALB --> Task3;
 - 如果要 Expose EKS Service, 則需要設定 **Load Balancer**
 
 
+## Cognito
+
+> Provides authentication && authorization && user management for your web and mobile apps. Your users can sign in directly with a user name and password, or through a third party such as Facebook, Amazon, Google or Apple.
+> 
+> Offers user pools and identity pools. User pools are user directories that provide sign-up and sign-in options for your app users. Identity cagnito pools provide AWS credentials to grant your users access to other AWS services.
+
+
+# Databases
+
+- DB Types
+    - RDBMS(=SQL/OLTP)
+        - RDS, Aurora, MySQL, ...
+    - NoSQL
+        - DynamoDB (~JSON)
+        - ElastiCache (key-value pairs)
+        - Neptune (graphs)
+    - Object Store
+        - S3
+        - Glacier
+    - Data Warehouse (=SQL Analytics/BI)
+        - Redshift (OLAP)
+        - Athena
+            - Query data on S3
+    - Search
+        - OpenSearch
+    - Graphs
+        - Neptune
+
+
+## RDS
+
+- provision EC2 instance && EBS Volume type & size
+- Security
+    - SG
+    - KMS
+    - SSL for encryption in transits
+    - IAM Authentication
+- RDBMS/OLTP
+- Performance 依賴於 EC2 && EBS spec
+- Storage
+    - RDS 具有 storage auto-scaling
+- Cost
+    - based on EC2 && EBS
+
+
+## Aurora
+
+
+
+
 # 
