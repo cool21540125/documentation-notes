@@ -378,23 +378,225 @@ ALB --> Task3;
 
 ## RDS
 
-- provision EC2 instance && EBS Volume type & size
-- Security
-    - SG
-    - KMS
-    - SSL for encryption in transits
-    - IAM Authentication
 - RDBMS/OLTP
-- Performance 依賴於 EC2 && EBS spec
-- Storage
-    - RDS 具有 storage auto-scaling
+- 自行準備 EC2 instance && EBS Volume type & size
+    - 但無須自行維護機器, OS
+    - Storage
+        - RDS 具有 storage auto-scaling
+        - use EBS volumes
+- 區分成 5 個了解方向:
+    - Operations
+        - 須自行處理 replicas, ec2 scaling, EBS restore, App Change, ...
+    - Security
+        - 自行處理 Security Group, KMS, SSL for encryption in transits, IAM Authentication
+    - Reliability
+        - 支援 Read-Replica && Multi AZ
+    - Performance 依賴於 EC2 && EBS spec
+    - Cost
+        - based on EC2 && EBS
+
+
+### Aurora
+
+- RDS 旗下的其中一款 Engine Type, 地位等同於 RDS MySQL, RDS PostgreSQL, ...
+    - AWS 魔改 MySQL/PostgreSQL 以後的 RDBMS
+        - CloudNative
+    - Operations
+        - 相較於其他 Type, less operations
+        - auto scaling storage
+        - Auto Scaling
+            - 一次 10GB, 最多可擴充達 128 TB
+    - Security
+        - 同 RDS
+    - Reliability
+        - AWS 自行幫忙處理好 6 replicas, across 3 AZ - HA
+        - Global for Disaster Recovery / latency purpose
+    - Performance
+        - MySQL && Postgresql 效能的 5x && 3x (宣稱)
+    - Cost 
+        - Pay for use
+
+
+## ElastiCache
+
+- Managed Redis 或 Memcache
+- 需要提供 EC2 instance type
+- Operations
+    - 同 RDS
+- Security
+    - 自行處理 KMS, Security Group, IAM
+    - if redis, 本身無 IAM 驗證, 但可藉由 RedisAuth 做驗證
+- Reliability
+    - Clustering, Multi AZ
+- Performance
+    - 毫秒級快取
 - Cost
-    - based on EC2 && EBS
+    - Pay for usage
+- ElastiCache - Redis
+    - 支援 Multi AZ && Read Replicas(sharding)
+    - Security
+- ElastiCache - Memcache
+    - 
 
 
-## Aurora
+## DynamoDB
+
+同 [CLF-C01 - DynamoDB](./cert-CLF_C01.md#dynamodb)
+
+- Operations
+    - Serverless -> 無需 operations
+    - Auto Scaling
+- Security
+    - IAM Policy
+    - KMS encryption
+    - SSL in flight
+- Reliability
+    - Multi AZ, Backups
+- Performance
+    - 毫秒等級 latency
+    - 若要 caching, 可搭配 DynamoDB Accelerator, DAX
+- Cost
+    - Pay for usage
 
 
+## S3
+
+- Operations
+    - Serverless, no operations needed
+- Security
+    - IAM
+    - Bucket Policy
+    - ACL
+    - Encryption
+        - SSE-S3
+        - SSE-KMS
+        - SSE-C
+        - client side encryption
+        - SSL in transit
+- Reliability
+    - 有多種類型可選擇, 但可用性都很多 9 就對了. 支援 Cross-Region Replication, CRR
+        - S3 Standard
+        - S3 IA
+        - S3 One Zone IA
+        - Glacier
+        - 等等
+- Performance
+    - 最大物件 5TB
+- Cost
+    - Pay for storage usage
+    - infinite storage
+
+
+## Athena
+
+- Query Engine on S3
+    - Serverless
+    - use SQL query on S3
+- log analytics
+- Operations
+    - Serverless, no operations needed
+- Security
+    - IAM + S3 security
+- Reliability
+    - use Presto Engine, HA
+- Performance
+    - Query scale based on data size
+- Cost
+    - per query / per TB of data scanned
+
+```mermaid
+flowchart LR;
+
+user <-- "load data" --> S3;
+Athena -- Query/Analyze --> S3;
+Athena -- Report/Dashboard --> QuickSight;
+```
+
+
+## AWS Redshift
+
+- based on PostgreSQL, use SQL query
+    - Columnar Storage (非  row based)
+    - Analytics / BI / Data Warehouse
+- 為 OLAP, 可用來做 analyze && data warehouse
+    - 可達 PB 量級
+    - 不適用於 OLTP
+    - 整合了 BI tools, ex: **AWS Quicksight** OR **Tableau**
+- Redshift Cluster
+    - 1 ~ 128 nodes, 每個 node 可達 128 TB
+    - Leader Node  : Query planning && aggregating query results
+    - Compute Node : Perform queries && return to Leader
+- Redshift Spectrum
+    - 可直接對 S3 query (免 load)
+        - Query -> *Redshift Cluter* 內的 *Leader Node*
+        - *Leader Node* 分派給 *Compute Nodes*
+        - *Compute Nodes* 再分派給 *Redshift Spectrum*
+        - *Redshift Spectrum* 會對 S3 做資料查詢
+    - 也就是說, 資料不會進入我們的 Nodes, 會在 *Redshift Spectrum*(AWS Service) 查詢完後回傳結果
+- Operations
+    - like RDS
+- Security
+    - 存在於 VPC 之中, using IAM
+    - KMS
+    - Backup & Restore
+    - monitoring
+- Reliability
+    - 無 Multi AZ
+    - 自行對 Cluster 做 cross-region snapshot(point-in-time backup)
+        - 可 manual 或 automatically
+            - 若 auto, AWS 每隔 8 hrs 或 異動打 5 GB, 會做 snapshot
+    - 可藉由配置 auto copy snapshot Cluster 到其他的 Region, 來加強 Disaster Recovery Strategy
+- Performance
+    - 因 Massively Parallel Query Execution(MPP) Engine, 因而 high-performance
+    - 宣稱比其他 10x 於其他 WareHouse
+- Cost
+    - pay for node provisioned
+    - 宣稱僅其他 WareHouse 1/10 Cost
+- Redshift Enhanced VPC Routing
+    - COPY / UNLOAD COMMAND, 可免藉由 public internet 來 copy data
+- 有三種 Load Data -> Redshift 的方式
+    - 使用 Kinesis Data Firehose, KDF
+        - KDF 由不同 source 蒐集資料, 倒入 Redshift Cluster
+        - 藉由 COPY COMMAND, S3 -> Redshift
+            - ```
+              copy customer
+              from 's3://my_bucket/my_data'
+              iam_role 'arn:aws:iam::123456887123:role/MyRedshiftRole'
+              ```
+        - EC2 Instance, JDBC driver
+            - EC2 data -> Redshift Cluster
+    - By using COPY COMMAND, 可從 S3, DynamoDB, DMS, other DB 來 load data
+
+```mermaid
+flowchart LR;
+
+rc1["Redshift Cluster 0"];
+rc2["Redshift Cluster 0'"];
+c1["Cluster Snapshot"];
+c2["Copied Snapshot"];
+
+subgraph Region1
+    rc1 -- "Take Snapshot" --> c1;
+end
+
+subgraph Region2
+    c2 -- Restore --> rc2;
+end
+
+c1 -- Auto/Manual Copy --> c2;
+```
+
+
+## AWS Glue
+
+- 
+
+
+## AWS Neptune
+
+- 
 
 
 # 
+
+
