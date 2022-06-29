@@ -4,6 +4,14 @@
 # EC2
 
 
+## EC2 Hibernate
+
+- 有點像是, 把 Instance Stop, 就像一般電腦睡眠一樣, RAM state 被保留
+    - 加速下次開機時間(OS never stop)
+- cross OS
+- hibernation period < 60 days (無法長久 hybernate)
+
+
 
 # SQS, SNS, Kinesis, ActiveMQ
 
@@ -192,7 +200,7 @@
 - kDF 本身支援 AWS Lambda
 - KDF 可 batch write to...
     - 3rd
-        - Data Dog, Splunk, MongoDBZ, ...
+        - Data Dog, Splunk, MongoDB, ...
     - AWS Services
         - s3, RedShift, OpenSearch, ...
     - Custom
@@ -376,13 +384,15 @@ ALB --> Task3;
         - Neptune
 
 
-## RDS
+## RDS, Relational Database Service
 
+- 允許在 RDS 裡頭開 RDB
 - RDBMS/OLTP
 - 自行準備 EC2 instance && EBS Volume type & size
     - 但無須自行維護機器, OS
     - Storage
         - RDS 具有 storage auto-scaling
+            - 可自動偵測 Disk 用量, 並視情況 Scaling EBS
         - use EBS volumes
 - 區分成 5 個了解方向:
     - Operations
@@ -394,6 +404,25 @@ ALB --> Task3;
     - Performance 依賴於 EC2 && EBS spec
     - Cost
         - based on EC2 && EBS
+- Read Replicas
+    - 如果使用的話, Connection String 必須修改
+    - Read Replicas 僅需要 Read 權限即可
+    - 因 RDS 為 managed service, Same Region && Different AZ, sync Data 不需流量費用
+        - 但若跨 Region, 則需要 $$
+- Reliability
+    - 如果要設定 Multi-AZ 非常簡單, 僅需 Enable 即可. 而且服務可免中斷
+        - Sync 過程, 有分成 SYNC 及 ASYNC
+
+
+### RDS Backups
+
+- Backup (自動)
+    - Full      : 每天 
+    - Transaction logs : 每 5 分鐘
+        - 因此可隨時還原 5 分鐘前資料
+    - 預設保留 7 天, 但可增至 35 天
+- DB Snapshot (手動觸發)
+    - 可自行決定保留多久
 
 
 ### Aurora
@@ -589,14 +618,83 @@ c1 -- Auto/Manual Copy --> c2;
 
 ## AWS Glue
 
-- 
+- ETL, Serverless
+- Glue Data Catalog - catalog of datasets
+    - 
+    
+
+
+```mermaid
+flowchart LR;
+
+S3 -- Extract --> Glue;
+RDS -- Extract --> Glue;
+
+Glue -- load --> Redshift;
+```
+
+```mermaid
+flowchart LR;
+
+glue["Glue Data Crawler"];
+gdc["Glue Data Catalog"];
+gjob["Glue Jobs(ETL)"];
+
+S3 --> glue;
+RDS --> glue;
+DynamoDB --> glue;
+JDBC --> glue;
+
+glue -- write metadata --> gdc;
+
+glue -- ETL --> gjob;
+
+gdc -- Data Discovery --> Athena;
+gdc -- Data Discovery --> r["Redshift Spectrum"];
+gdc -- Data Discovery --> EMR;
+```
 
 
 ## AWS Neptune
 
-- 
+- Graph DB
+- Use Case
+    - Social Network
+    - Wikipedia
+- Point-in-time recovery
+    - 不斷 backup to S3
+- Security
+    - KMS encryption + HTTPS
+- Reliability
+    - HA, multi-az, up to 15 read replicas
+- Performance
+- Cost: Pay per node provisioned (類似 RDS)
+
+
+## OpenSearch
+
+- 可適用於 Big Data
+    - Search / Indexing
+- 整合了 *Kinesis Data Firehose*, *AWS IoT*, *CloudWatch Logs*, ...
+- Operations
+    - 類似 RDS
+- Security
+    - Cognito
+    - IAM
+    - KMS encryption
+    - SSL
+    - VPC
+- Reliability
+    - Multi AZ, Clustering
+- Performance
+    - Based on ElasticSearch; PB 量級
+- Cost
+    - Pay per node provisioned (類似 RDS)
 
 
 # 
 
 
+## CloudTrail
+
+- Enable governance, compliance, operational auditing, and risk auditing of AWS account.

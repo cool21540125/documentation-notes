@@ -97,6 +97,7 @@ DHCP   | Dynamic Host Configuration Protocol         | TCP/IP             |
 DMZ    | Demilitarized Zone                          | 資安               |
 DN     | Distinguished Name                          | 集中驗證            |
 EIP    | Elastic IP                                  | AWS                | 固定IP
+ETL    | Extract, Transform, Load                    | 分析               | 
 GDPR   | General Data Protection Regulation          | 資安               |
 GWF    | Great Fire Wall                             | 監控               | 中國長城...
 IANA   | Internet Assigned Number Authority          | 網際網路為只指派機構 | 

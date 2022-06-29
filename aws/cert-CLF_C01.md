@@ -80,6 +80,7 @@ Networking    | -    | -    | -
     - 把特定 Roles assign 給 EC2 來提供 Credentials
     - 作法:
         - EC2 > Actions > Security > Modify IAM Role
+- 初始化 EC2, 使用到 *User data* 的話, 務必寫上 *Shebang Line*, 沒寫會出錯
 - EC2 Instance 購買的 Options
     - On-Demand
     - Reserved
@@ -114,8 +115,8 @@ Networking    | -    | -    | -
 ## EC2 Image Builder
 
 - 用來自動化 create/maintain/validate/test
-- AMI, container for EC2 instance
-- 服務免費, 只對 Resource 收費
+- AMI(Amazon Machine Image), container for EC2 instance
+- Charge: 只對 Resource 收費(本身免費)
 - 需要 allow **Image Builder** access Resources, 需要有 3 個 IAM Role
     - EC2InstanceProfileForImageBuilder
     - EC2InstanceProfileForImageBuilderECRContainerBuilder
@@ -138,6 +139,8 @@ Networking    | -    | -    | -
 - 若要刪除 instance, 需 terminate instance && Deregister AMI && Delete EBS snapshot
 
 
+# EC2 Storage
+
 ## EC2 Instance Store
 
 - 相較於 EBS 快很多, 因為直接使用硬體
@@ -153,6 +156,11 @@ Networking    | -    | -    | -
     - 只能存在於 az, 無法跨 az
         - 若要跨 az/region, 可藉由 snapshot
             - 做 EBS snapshot, 不需要 detatch, 但建議
+- EBS snapshot
+    - 可將 EBS 做這個, 然後搬到其他 az 去做 attach/restore, 即可變相的 cross az
+    - EBS snapshot archive 以後, 又可省下 75% 的費用
+        - 但是還原非常費時, 24~27 hrs
+    - 可以 Enable *Recycle Bin for EBS Snapshow* (資源回收桶, 預設沒啟用) 防止誤砍
 
 
 ## EFS, Elastic File System
@@ -166,7 +174,7 @@ Networking    | -    | -    | -
 
 ## Amazon FSx
 
-- 可使用 3rd 的 FS
+- 可使用 3rd 的 FileSystem
     - AWS FSx for Luster (Linux & Cluster)
     - AWS FSx for Windows File Server
     - AWS FSx for NetApp ONTAP
@@ -207,6 +215,25 @@ Networking    | -    | -    | -
     - Target Tracking Scaling - ex: 設定  ASG CPU
     - Scheduled Scaling
     - Predictive Scaling
+
+
+# S3, Simple Storage Service
+
+- 物件儲存, 本身 Cross Region
+    - Object Size Limit : 5 GB
+    - 雖說 Bucket Name 跨 Region, 但 Bucket 仍須給定 Region
+- Object file, ex: `s3://BucketName/123/456/orz.txt`
+    - Key         : `123/456/orz.txt` (Object Paths)
+    - Prefix      : `/123/456/`
+    - Object Name : `orz.txt`
+- Security
+    - User Based
+        - allow 特定有權限的 IAM access
+    - Resource Based
+        - Bucket Policy : Cross IAM. ex: Public Access
+        - Object ACL
+        - Bucket ACL
+    - 若要訪問, 上述兩著需要其一 Vaild && 不存在 Deny
 
 
 # Database & Analytics
@@ -312,7 +339,7 @@ Networking    | -    | -    | -
 ### Amazon Athena
 
 - Serverless query service to perform analytics against s3 objects
-    - 可下 SQL 對 S3 查詢
+    - 可下 SQL 對 S3 查詢做分析
 - 支援 csv, json, ORC, Avor, Parquet(built on Presto)
 - Charge: USD $5/TB second
     - 因為 by scan 量收費, 若 data 有做 Compress 或 columnar 方式儲存, 可省下 $$
