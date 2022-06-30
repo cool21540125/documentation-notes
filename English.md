@@ -3,21 +3,15 @@
 ## Vocabulary
 
 - ad-hoc(ad hoc) : 特設, 專案的, 臨時的, 特定目的的
-- alphanumeric : 標點符號
-- artificially : 人為地
 - attributes (headers)
 - authentication : 認證
-- auto-positioning : 自動定位
 - authorization : 授權
 - backlog : 積壓
 - back slash : 反斜線
-- behind the scenes : 幕後
 - boilerplate: 樣板
 - bootstrap configuration file : 引導程序配置文件
 - cascade: 串連
-- confined : 受限
-- congestion : 擁塞
-- contention : 爭奪, 爭用
+- compliance : 
 - cow, copy-on-write strategy: 寫時復制策略
 - credential : 憑證
 - cryptographically : 加密
@@ -25,36 +19,23 @@
 - eligible : 有資格的
 - enumerable : 可列舉的
 - expression : 運算式
-- fabric : 布, 結構, 構造, 品質, 織品
+- fabric : 結構, 構造
 - failure-prone : 容易失敗
-- FWIW : for what it's worth (用在 `不知道講出來有沒有用, 但就我所知是這樣` 的情境)
-- gotcha : 陷阱
-- hassle : 麻煩
-- IIUC : if I understood correctly
-- imitate/mimic : 模仿
+- governance : 
 - immutable : 不可變的
-- in favor of : 有利於, 取而代之
-- intelliSense : 提示
-- IOW : in other words
 - IP Masquerade: IP掩蔽
 - linter : code 語法 check
 - malformed : 異常
 - marshal : 整頓
 - masquerade : 偽裝
-- more or less : 或多或少
 - one-off : 一次性
 - on the fly : 動態產生
-- opaque : 含糊的, 不透明的
-- Operation not permitted : 不具有此指另作用的檔案 的權限
 - orchestrate : 編排
-- oval : 橢圓形
 - overlap : 交疊
 - passphrase : 密語; 嚴格來講, 此非密碼 (Not a password)
 - payload (body)
 - perimeter network : (同 DMZ)
 - permission : 許可
-- Permission denied : 無權使用此指令
-- persist : 堅持, 持續
 - poller : 輪循器
 - portal : 門戶
 - replica : 即時備援 (即時複製一份到其他節點的概念, HA), 資料備份的另一種可行性作法
@@ -64,7 +45,6 @@
 - SIGSEGV : 記憶體區段錯誤
 - slirp4netns : User-mode networking for unprivileged network namespaces
 - snippets : 片段
-- space bar : 空白鍵
 - sponsor : 發起人
 - starting from scratch : 從零開始
 - strike a balance : 沖帳
@@ -75,9 +55,7 @@
 - under the hood : 在引擎蓋底下(有點封裝的概念, 複雜的細節人家幫你包好了)
 - unmarshal: 解組
 - validate : 驗證
-- vast : 極大的
 - wildcard characters : 萬用字元 (「*」啦)
-- whichever : 任何
 - whiteout : 抹除 (overlay2 FS 的 lower 有檔案, upper 使用此方式來偽移除檔案)
 - wireframe : 線框
 - workaround : 解決方法
