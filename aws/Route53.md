@@ -11,12 +11,38 @@
     - Failure
     - Latency based
         - 會依照 user 所在位置, 去訪問他能訪問到最小 TTL 的位置
+        - 會與 Health Check 搭配
     - Geolocation
     - Multi-Value Answer
     - Geoproximity (using Route53 Traffic Flow feature)
 
 
+## Health Check
 
+- 假如 APP 本身 cross region, 為了 HA, Route53 可以設定 Health Check
+    - 
+- Health Check, 為了達成 Automated DNS Failover
+    - Health checks that monitor an endpoint
+        - 世界各地 15 個 Health Checker 會對 endpoint 做 check
+            - 因此, 被監控的 Resource, 需要允許 Health Checker's IP Range 做訪問
+        - 18% 以上說 health, 即被視為正常
+    - Health checks that monitor other health checks (calculated health check)
+        - 可對 *Parent Health Check* 設定最多 256 個 *Child Health Check*
+        - 讓 *Child Health Check* 針對單一 Resource 做監控
+        - *Parent Health Check* 在設定針對 *Child Health Check* 的監控結果定義如何叫做 health
+    - Health checks that monitor CloudWatch Alarms
+        - 可做 private
+            - 搭配 CloudWatch Metric, 然後安排 CloudWatch Alarms 在它上頭
+        - more control
+
+```mermaid
+flowchart LR;
+
+subgraph private VPC
+    cc["CloudWatch Alarms"] -- monitor --> rr["Resource"]
+end
+hc["Health Checker"] -- monitor --> cc;
+```
 
 
 ## 域名帳戶移轉
