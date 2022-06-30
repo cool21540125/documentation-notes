@@ -15,7 +15,7 @@
 
 ## cross-origin
 
-CORS, Access Control Allow Origin
+Cross-Origin Resource Sharing, CORS - Access Control Allow Origin
 
 ```
 https://www.example.com:443
@@ -23,11 +23,9 @@ https://www.example.com:443
 scheme  hostname        port
 ```
 
-IMPORTANT: same-origin 定義: 有相同的 scheme + hostname
+Same Origin 定義: 有相同的 scheme + hostname
 
-
-
-下列 URL 與上面範例比較:
+下列 URL 與 https://www.example.com 範例比較:
 
 - https://www.evil.com:443      : cross-origin: different domains
 - https://example.com:443       : cross-origin: different subdomains
@@ -87,3 +85,56 @@ IMPORTANT: 底下 2 者的觀念, 是隨著時代演進逐漸轉變:
 
 `strict-origin-when-cross-origin` 可查看 https://site-one-dot-referrer-demo-280711.ey.r.appspot.com/stuff/detail?tag=red&p=p2
 
+
+## Cross Origin Request
+
+### Step1
+
+```mermaid
+flowchart LR;
+
+origin["Origin \n https://www.example.com"];
+cross["Cross Origin \n https://www.other.com"];
+
+Browser --> origin;
+Browser -- Preflight Request --> cross;
+```
+```bash
+### Preflight Request 內容
+OPTIONS /
+Host: www.other.com
+Origin: https://www.example.com
+```
+
+
+### Step2
+
+```mermaid
+flowchart LR;
+
+cross["Cross Origin \n https://www.other.com"];
+
+Browser -- Preflight Request --> cross;
+cross -- Preflight Response --> Browser;
+```
+```bash
+### Preflight Response 內容 
+Access-Control-Allow-Origin: https://www.example.com
+Access-Control-Allow-Methods: GET, PUT, DELETE
+```
+
+
+### Step3
+
+```mermaid
+flowchart LR;
+
+cross["Cross Origin \n https://www.other.com"];
+Browser -- Request --> cross;
+```
+```bash
+### Request 內容 
+GET /
+Host: www.other.com
+Origin: https://www.example.com
+```

@@ -1,16 +1,36 @@
-# R53 - aws cli
+
+
+## Basic
+
+- DNS Records : DNS 解析紀錄
+- Zone File   : 包含所有的 DNS Records
+- Cost: 12/year && 0.5/month
+- Routing Policy
+    - Simple
+    - Weighted
+    - Failure
+    - Latency based
+        - 會依照 user 所在位置, 去訪問他能訪問到最小 TTL 的位置
+    - Geolocation
+    - Multi-Value Answer
+    - Geoproximity (using Route53 Traffic Flow feature)
+
+
+
+
+
+## 域名帳戶移轉
 
 - [AwsCli_Configure](https://docs.aws.amazon.com/zh_tw/cli/latest/userguide/cli-configure-files.html)
 - [Route53移轉](https://awscli.amazonaws.com/v2/documentation/api/latest/reference/route53domains/transfer-domain-to-another-aws-account.html)
 - [Migrating a hosted zone to a different AWS account](https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/hosted-zones-migrating.html#hosted-zones-migrating-install-cli)
 - 2020/10/09
 
-
 把 domain 由 aws 帳戶 移轉到另一個帳戶
 
 ```bash
-profile=r53
-aws route53 list-hosted-zones --profile ${profile}
+$# PROFILE=r53
+$# aws route53 list-hosted-zones --profile ${PROFILE}
 {
     "HostedZones": [
         {
@@ -27,13 +47,16 @@ aws route53 list-hosted-zones --profile ${profile}
 }
 # profile 為 ~/.aws/credentials 裡面的其中一個帳戶 [profile] <- 這個
 
-
-$# aws route53 list-resource-record-sets --hosted-zone-id ${HOSTED_ZONE_ID} --profile ${profile}
-# 列出所有托轉的子域名
+### 列出所有托轉的子域名
+$# aws route53 list-resource-record-sets \
+    --hosted-zone-id ${HOSTED_ZONE_ID} \
+    --profile ${PROFILE}
 
 ### Route53 移轉到其他帳戶
-aws route53domains transfer-domain-to-another-aws-account --domain-name ${HOSTED_DOMAIN_NAME} --account-id ${OLD_AWS_ACCOUNT_ID} --profile ${profile}
-# 幹@@ 上個禮拜已經重新續約一年了, 所以現在移轉需要再次付費, 不爽轉了.
+$# aws route53domains transfer-domain-to-another-aws-account \
+    --domain-name ${HOSTED_DOMAIN_NAME} \
+    --account-id ${OLD_AWS_ACCOUNT_ID} \
+    --profile ${PROFILE}
 ```
 
 
