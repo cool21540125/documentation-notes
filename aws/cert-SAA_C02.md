@@ -493,8 +493,12 @@ ALB --> Task3;
 - Operations
     - Serverless, no operations needed
 - Security
-    - IAM
-    - Bucket Policy
+    - User based
+        - IAM policies
+    - Resource Based
+        - Bucket Policies
+        - Object Access Control List
+        - Bucket Access Control List
     - ACL
     - Encryption
         - SSE-S3
