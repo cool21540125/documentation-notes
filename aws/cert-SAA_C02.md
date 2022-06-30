@@ -510,7 +510,7 @@ ALB --> Task3;
         - Glacier
         - 等等
 - Performance
-    - 最大物件 5TB
+    - single object size limit 5TB
 - Cost
     - Pay for storage usage
     - infinite storage
