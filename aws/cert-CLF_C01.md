@@ -723,6 +723,102 @@ tmpl --> CloudFormation;
 
 
 
+# Machine Learning
+
+## Amazon Rekognition
+
+- 用來辨識 images && videos
+- Use Case
+    - Labeling
+    - Content Moderation
+    - Text Detection
+    - Face Detection and Analysis 
+    - Face Search and Verification
+    - Celebrity Recognition
+    - Pathing
+- [AWS Rekognition](https://aws.amazon.com/rekognition/?nc1=h_ls)
 
 
-## 
+## Amazon Transcribe
+
+- Speech -> Text
+
+
+
+## Amazon Policy
+
+- Text -> Speech
+- 與 Amazon Transcribe 相反
+
+
+## Amazon Translate
+
+- Website 之類的大量文章翻譯
+
+
+## Amazon Lex + Connect
+
+- Amazon Lex
+    - chatbot 或 call center bot
+    - Automatic Speech Recognition(ASR) Speech to Text
+    - 懂語意
+- Amazon Connect
+    - Cloud-based virtual contact center
+    - 接收 calls && create contact flow
+    - 可整合 CRM
+    - No upfront payment
+        - 比起 traditional contact center solution 節省 80%
+
+```mermaid
+flowchart LR;
+
+phone["Phone Call"]
+connect["Amazon Connect"]
+
+phone -- "call" --> connect;
+connect -- stream --> Lex;
+Lex -- invoke --> Lambda;
+Lambda -- schedule --> CRM;
+```
+
+
+## Amazon Comprehend
+
+- Natural Language Processing, NLP
+- by ML, 文字中找到 insight && relations
+- Serverless
+
+
+## Amazon SageMaker
+
+- 相較於其他的 ML, 這服務比較不那麼聚焦於特定用途, 而是可以 create 自己的 ML model
+    - Building Machine Learning models
+
+
+## Amazon Forecast
+
+- 用來做預測
+- data -> S3 -> Amazon Forecast
+
+
+## Amazon Kendra
+
+- document search service
+    - 針對許多文件檔案做 文件分析 的 ML
+    - 據此來建立 knowledge index
+
+
+## Amazon Personalize
+
+- build apps with real-time personalized recommendations
+- 針對個人化的行銷建議, 推薦系統
+- S3 或 real-time data -> Amazon Personalize
+
+
+## Amazon Textract
+
+- 針對文件掃描後 extract text
+    - ex: 駕照掃描後建立相關資料
+
+
+#
