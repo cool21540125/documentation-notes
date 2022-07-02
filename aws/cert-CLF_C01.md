@@ -259,6 +259,25 @@ Networking    | -    | -    | -
 - 可配置 Multi-Region Read
     - 不過 Cross-Region Replication 的流量費用要留意
     - App 就近讀取
+- Encryption
+    - rest encryption
+        - for Oracle / SSMS, 可使用 Transparent Data Encryption, TDE
+        - 需要在 launch time 決定啟用
+        - Master 沒加密的話, Replica 也無法加密
+    - in-flight encryption
+        - SSL Certificate 來做上傳期間加密
+        - provide SSL options with a trust certificates when ocnnecting to DB and will establish an SSL connection
+        - 若要 force SSL
+            - for PostgreSQL : 需要對 console Parameter Group 設定 `rds.force_ssl=1`
+            - for MySQL : 需做 `GRANT USAGE ON *.* TO 'USER'@'%' REQUIRE SSL;`
+- Security
+    - Network Security : 使用 SG
+    - Access Management : 
+        - 使用 IAM 做規範
+        - 若為 MySQL/PostgreSQL RDS, 也可使用 IAM-based authentication, 否則使用帳密認證
+            - *authentication token*(15 mins) via IAM & RDS API call
+            - EC2 也可藉由 **IAM Role** 來取得 RDS *authentication token*
+                - 好處是, 流量都做 SSL 加密 && IAM(而非 DB) 管理 users
 
 
 ### Aurora

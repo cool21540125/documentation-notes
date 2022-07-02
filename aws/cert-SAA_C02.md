@@ -430,20 +430,73 @@ ALB --> Task3;
 - RDS 旗下的其中一款 Engine Type, 地位等同於 RDS MySQL, RDS PostgreSQL, ...
     - AWS 魔改 MySQL/PostgreSQL 以後的 RDBMS
         - CloudNative
+    - 可選擇自行 Provision Server 或是 Serverless
     - Operations
+        - 可自行選擇是否使用 *Single-master* 或 *Multi-master*
         - 相較於其他 Type, less operations
         - auto scaling storage
         - Auto Scaling
             - 一次 10GB, 最多可擴充達 128 TB
     - Security
         - 同 RDS
+        - Encryption at rest by KMS
+        - Encryption in-flight uging SSL
+        - 可用 IAM token 認證
+        - auto backups, snapshots and replicas (皆 encrypted)
     - Reliability
-        - AWS 自行幫忙處理好 6 replicas, across 3 AZ - HA
+        - AWS 自行幫忙處理好 6 replicas
+            - 這 6 個 replication 橫跨了 3 AZ - HA
+                - 而他們的背後也是寫入到不同的 Volume(免 user 自管)
+            - 具備 Self healing(peer-to-peer replication)
+        - auto failover < 30 secs
+            - 最多可設定 15 Read Replicas (可放在 Auto Scaling)
+            - 若超過, 其餘 read replicas 會產生新的 master 來做 write
+        - 本身支援 cross replication
         - Global for Disaster Recovery / latency purpose
+        - Backtrack: restore data at any point of time without using backups
     - Performance
         - MySQL && Postgresql 效能的 5x && 3x (宣稱)
+            - 但是貴了 20%
     - Cost 
         - Pay for use
+- Aurora DB Cluster
+    - ![Aurora DB Cluster](./img/aurora%20cluster.png)
+    - Load Balancing 發生在 connection level (而非 statement level)
+    - *Writer Endpoint* && *Reader Endpoint*
+- Deletion
+    - 先刪除 Reader Instance
+    - 再刪除 Writer Instance
+        - 最後刪除 Regional Cluster (又或者, 此會隨著 *Writer Instance* 一同刪除, 不是很確定)
+- Auto Scaling for Aurora Replicas
+    - 可針對 by CPU 用量 OR by conneciton 數量, 來增加 Read Replicas
+    - 增加的 Replicas, 也可產生不同規格的大小
+        - 針對 *Aurora DB Cluster* 那張圖, 產生 *Custom Endpoint*(取代掉 *Reader Endpoint*)
+- Serverless Aurora
+    - Client 連線到 *Proxy Fleet*(而非上述的 *Writer Endpoint* && *Reader Point*)
+        - 背後怎麼做 scaling 由 AWS 控制
+- Global Aurora
+    - 可設定 *Aurora Cross Region Read Replicas*, 但是使用 *Aurora Global Database* 較優
+        - 擁有一個 Primary Region(rw)
+        - 也可額外設定 5 個 Secondary Region(rr)
+            - latency < 1 sec
+            - 每個 Secondary Region 有高達 16 Read Replicas
+        - 如果原本的 Primary Region 掛了, Promotion 到其他的 Secondary Region < 1 sec
+- 整合了 ML
+
+```mermaid
+flowchart BT;
+aurora["Amazon Aurora"];
+
+subgraph ml
+    sm["Amazon SegaMaker"];
+    ac["Amazon Comprehend"];
+end
+
+app -- query --> aurora;
+aurora -- data --> ml;
+ml -- preditions --> aurora;
+aurora -- result --> app;
+```
 
 
 ## ElastiCache
