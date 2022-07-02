@@ -1,10 +1,55 @@
 
-
-- io: 優化磁碟 IO 操作, 可達 64000 iOPS, 收費方式 分成 by 容量  && IO數
-    - io1, io2
-    - 可同時給多主機掛載
-    - io 系列 是比較舊款的 EBS Volume
-- gp: IOPS 隨著 容量 增加(無法彈性選擇), 且 IOPS 最高也只有到 16000
-    -gp1 這種的好像已經沒了(2020/12)
-    -gp2
-    -gp3
+- Provisioned IOPS, PIOPS
+- 無法跨 AZ, 若要 Cross AZ, 則需要搭配 snapshot(再由 snapshot 到其他 AZ restore)
+- 各種 Volume Types 比較
+    - [EBS Volumes 規格比較表](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ebs-volume-types.html)
+    - io1/io2 SSD
+        - Highest-performance SSD volume for mission-critical low-latency or high-throughput workloads
+        - 優化磁碟 IO 操作
+            - for Nitro EC2 instances, 最大可達 64000 IOPS
+            - 若非 Nitro EC2, 則為 32000 IOPS
+        - Charge: by 容量 && I/O 數
+        - 4 GiB ~ 16 TiB
+        - (僅此 io 系列)支援 Multi-Attach (同 AZ, 多 EC2 同時掛載)
+            - 需使用較特殊的 filesystem (cluster-aware)
+        - ex: 要使用在非常講究 IOPS 的 DB, 可使用 io1/io2
+        - IOPS 與 Size 並沒掛鉤(可獨立調整)
+        - io1
+            - Max IOPS 64,000
+        - io2 Block Express, 4GiB ~ 64 TiB
+            - Max PIOPS 為 256,000 with an IOPS:GiB ratio of 1000:1 (不知道這在講啥...)
+    - gp2/gp3 SSD
+        - IOPS 隨著 容量 增加(無法彈性選擇), 且 IOPS 最高也只有到 16000
+        - General purpose, 平衡了 price && performance
+        - 1GiB ~ 16 TiB
+        -gp1 這種的好像已經沒了(2020/12)
+        -gp2
+            - Volume Size && IOPS 兩者呈現正相關
+                - 小容量 Volume IOPS 為 3000, 最大可提升至 16000
+            - 3 IOPS per GB, 也就是說, 增加 30 GiB 空間的話, IOPS 也會提升 10
+        -gp3
+            - 基本 IOPS 為 3000 && throughput 為 125 MiB/sec
+            - 可提升 IOPS -> 16000 或 throughput -> 1000 MiB/sec (兩者獨立)
+    - st1 HDD
+        - Low cost HDD, frequently accessed, throughput-intensive workloads
+        - 125 MiB ~ 16 TiB
+        - Use Case: Big Data, Data Warehouses, Log Processing
+        - 效能: Max throughput 500 MiB/sec && max IOPS 500
+    - sc1 HDD
+        - Lowest cost, less frequently accessed workloads
+        - Use Case: archived datra
+        - 效能: max throughput 250 MiB/sec && max IOPS 250
+- EBS Volumes 基本上都有底下的規格
+    - Size
+    - Throughput
+    - IOPS, (I/o Operations Per Second)
+- EBS 零散摘要
+    - 只有 gp2/gp3 && io1/io2 可用來作為 boot volume
+- EBS Encryption
+    - AES-
+    - 如果 EBS Volume 沒有做 encrypt, 打算把它弄成 encrypt volume
+        - Snapshot > Copy Snapshot > Encrypt this snapshot
+            - 再由上面的 encrypted snapshot 來做 create volume from snapshot > 得到一個 encryption volume
+        - 或是, 也可由原 volume, create snapshot(不做 encrypt)
+            - 接著 create volume from snapshot > 勾選 encrypt this volume > 得到一個 encryption volume
+    

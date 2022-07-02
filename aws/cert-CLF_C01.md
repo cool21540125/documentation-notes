@@ -166,10 +166,34 @@ Networking    | -    | -    | -
 ## EFS, Elastic File System
 
 - 可 attach 到 EC2 Instance 的 NFS
-    - 可跨 az
-- 若有成本考量, 可使用 **EFS-IA Lifecycle Policy**
-    - EFS-IA, EFS Infrequent Access
-    - 可省達 92%
+    - 可跨 az (Cross AZ)
+    - Linux based, 無法用於 Windows (NFS protocol)
+    - Expensive (相較 gp2 貴 3 倍). Pay per use
+        - 但可搭配 *EFS Lifecycle Policy* 來切換至 EFS-IA 來省錢
+            - X days non-access files, 移動到 EFS-IA
+            - EFS-IA, EFS Infrequent Access
+            - 可省達 92%
+    - HA, scalable
+    - 不需事先 provision, 空間幾乎是無限模式
+- EFS 放置於特定 VPC 裡頭, 需要設定他的 SG
+- Performance
+    - 可有 10 GB+ throughput
+    - 可增長到 PB 量級, automatically
+    - Create EFS 時, 可設定他的 Performance mode
+        - *General Purpose* (default)
+        - *Max I/O*
+- Throughput mode (可用來設定 throughput limits 的決定方式)
+    - Bursting    : Throughput 會隨著 system size 變動
+    - Provisioned : Throughput 固定
+        - 這裡還有些聽不是很懂的細節...
+            - *Provisioned Throughput (MiB/s)* && *Maximum Read Throughput (MiB/s)*
+- Storage Class
+    - Standard
+    - Infrequent Access(EFS-IA)
+- Availability and durability
+    - Regional: (for prod env) Multi-AZ
+    - One Zone: (for dev env) Single-AZ.
+        - ex: 使用 EFS One Zone-IA, 可省下 90%
 
 
 ## Amazon FSx

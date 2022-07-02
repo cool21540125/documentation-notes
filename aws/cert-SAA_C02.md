@@ -399,19 +399,21 @@ ALB --> Task3;
         - 須自行處理 replicas, ec2 scaling, EBS restore, App Change, ...
     - Security
         - 自行處理 Security Group, KMS, SSL for encryption in transits, IAM Authentication
+        - PostgreSQL && MySQL 皆支援 IAM Authentication
     - Reliability
         - 支援 Read-Replica && Multi AZ
     - Performance 依賴於 EC2 && EBS spec
     - Cost
         - based on EC2 && EBS
 - Read Replicas
+    - RDS Database, 至多可有 5 個 Read Replicas
+    - 此為 Async Replication (相較於 Multi-AZ, 使用 Sync Replication)
     - 如果使用的話, Connection String 必須修改
     - Read Replicas 僅需要 Read 權限即可
     - 因 RDS 為 managed service, Same Region && Different AZ, sync Data 不需流量費用
         - 但若跨 Region, 則需要 $$
 - Reliability
     - 如果要設定 Multi-AZ 非常簡單, 僅需 Enable 即可. 而且服務可免中斷
-        - Sync 過程, 有分成 SYNC 及 ASYNC
 
 
 ### RDS Backups
@@ -449,7 +451,7 @@ ALB --> Task3;
                 - 而他們的背後也是寫入到不同的 Volume(免 user 自管)
             - 具備 Self healing(peer-to-peer replication)
         - auto failover < 30 secs
-            - 最多可設定 15 Read Replicas (可放在 Auto Scaling)
+            - 單一 Cluster 最多可設定 15 Read Replicas (可放在 Auto Scaling)
             - 若超過, 其餘 read replicas 會產生新的 master 來做 write
         - 本身支援 cross replication
         - Global for Disaster Recovery / latency purpose
@@ -503,27 +505,51 @@ aurora -- result --> app;
 
 - Managed Redis 或 Memcache
 - 需要提供 EC2 instance type
+- app 在做 DB query 之前, 會先查詢 ElastiCache, 如果有查到資料, 此稱之為 *Cache hit*
+    - 反之沒查到, 則稱為 *Cache miss*. 後續動作為 DB query
+        - 可對 DB query result, 寫入到 ElastiCache
 - Operations
     - 同 RDS
+    - load data -> ElastiCache 有三種 pattern:
+        - Lazy Loading
+            - 所有 read data 皆 cached
+        - Write Through
+            - 從 DB 來做 add/update
+        - Session Store
+            - TTL
 - Security
     - 自行處理 KMS, Security Group, IAM
-    - if redis, 本身無 IAM 驗證, 但可藉由 RedisAuth 做驗證
+    - 關於 IAM authentication
+        - ElastiCache 裡頭, 不支援 *IAM authentication*, 這認證僅支援 API-level Security (delete cache, create cache, ...) 
+        - if redis
+            - 本身無 IAM 驗證, 但可藉由 RedisAuth 做驗證, "password/token"
+            - SSL in-flight
+        - if memcached
+            - SASL-based authentication
 - Reliability
     - Clustering, Multi AZ
 - Performance
     - 毫秒級快取
 - Cost
     - Pay for usage
-- ElastiCache - Redis
-    - 支援 Multi AZ && Read Replicas(sharding)
-    - Security
-- ElastiCache - Memcache
-    - 
+- ElastiCache 重要比較
+    - ElastiCache - Redis
+        - 支援 Multi AZ with Auto-Failover
+        - Read Replicas scale reads && HA
+        - Data Durability using AOF
+        - Backup && restore feature
+    - ElastiCache - Memcache
+        - Multi-node partitioning of data(sharding)
+        - 無 HA && 無 persistent && 無 backup && restore
+        - Multi-thread architecture
+        - pure cache
+- 建立時, 可選擇 Cloud 或 On-premise
+    - On-premise, 需搭配 **AWS Outpost**
 
 
 ## DynamoDB
-
 同 [CLF-C01 - DynamoDB](./cert-CLF_C01.md#dynamodb)
+
 
 - Operations
     - Serverless -> 無需 operations
