@@ -864,4 +864,110 @@ Lambda -- schedule --> CRM;
     - ex: 駕照掃描後建立相關資料
 
 
-#
+# Other AWS Services
+
+## Amazon WorkSpaces
+
+- Managed Desktop as a Service, DaaS
+- 提供 VDI, 供 user 連入
+
+
+## Amazon AppStream 2.0
+
+- Desktop Application Streaming Service
+- Stream a Desktop 或 Web Browser (不需連 VDI)
+
+
+## Amazon Sumerian
+
+- VR, AR, 3D
+
+
+## AWS IoT Core
+
+- IoT
+
+
+## Amazon Elastic Transcoder
+
+- 雲轉碼 - media transcoding in the cloud
+
+```mermaid
+flowchart LR;
+
+s30["S3 \n Media"];
+trans["Transcoding \n Pipeline"];
+
+s30 --> trans;
+trans --> S3;
+S3 --> Phone;
+S3 --> Web;
+```
+
+
+## AWS Device Farm
+
+- 用來模擬各種 Devices
+    - Phone
+    - GPS
+    - wifi
+    - bluetooth
+- 用作 Dev && Test
+
+
+## AWS Backup
+
+```mermaid
+flowchart LR;
+
+bb["AWS \n Backup"];
+rr["AWS Region"];
+
+bb -- "Backup Plan" --> rr;
+rr -- restore --> S3;
+```
+
+
+## Disaster Recovery Strategy
+
+- 費用由上到下越來越貴
+    - Backup & Restore - 存 S3
+    - Pilot Light - 開 EC2 (low spec), 用來存放 Core Function
+    - Warm Standby - 開 EC2 (low spec), 存放 full version of APP
+    - Multi-Site/Hot-Site - 開 EC2 (完整 SPEC), full version, 因應 Disaster
+
+
+## AWS Elastic Disaster Recovery, DRS
+
+- 過去命名為 *CloudEndure Disaster Recovery*
+- 可快速 Recover 本地 Service -> AWS
+
+
+## AWS DataSync
+
+- 地端需安裝 `AWS DataSync Agent`
+- **AWS DataSync Service** 選擇 Store 位置
+    - S3 standard
+    - S3 IA
+    - Glacier
+    - EFS
+    - Amazon FSx for windows FileServer
+    - ...
+
+
+## AWS Fault Injection Simulator, FIS
+
+- 進階的測試工具, 用來測 Infra 之中的某個 Service Failure 的後果 及 Simulation
+
+```mermaid
+flowchart LR;
+
+ff["AWS Fault Injection Simulator"];
+ee["Experiment Template"];
+rr["EC2 \n RDS \n EKS"];
+mm["CloudWatch \n EventBridge"];
+
+ff -- create --> ee;
+ee -- start --> rr;
+rr --> mm;
+```
