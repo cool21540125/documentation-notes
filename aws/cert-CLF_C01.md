@@ -2,7 +2,6 @@ AWS Certificated Cloud Practitioner Course
 
 CLF-C01
 
----------
 
 # Type of Cloud Computing
 
@@ -310,7 +309,7 @@ Networking    | -    | -    | -
 - 此為 AWS Cloud Native Servie
 
 
-### ElasticCache
+## ElasticCache
 
 - 有兩種
     - Redis
@@ -318,12 +317,11 @@ Networking    | -    | -    | -
 - 需 run on EC2 (非 Serverless)
 
 
-### DynamoDB
+## DynamoDB
 
 - HA + Cross 3 AZ replication 的 NoSQL
     - Key-Value
-- Serverless DB
-- Auto-Scaling 成本低
+- Serverless, Auto-Scaling 成本低
 - 可依照訪問頻率選擇底下的儲存模式的 Table Class
     - Standard
     - Infrequent Access, IA
@@ -334,7 +332,7 @@ Networking    | -    | -    | -
   
       Primary Key
           Partition Key (needed)
-          SortKey (optional)
+          SortKey       (optional)
   
       Attributes
           name
@@ -344,16 +342,17 @@ Networking    | -    | -    | -
       ```
 - DynamoDB - Global Table
     - 可作 active-active r/w replication
+- [saa-dynamodb](./cert-SAA_C02.md#dynamodb)
 
 
-#### DynamoDB Accelerator, DAX
+### DynamoDB Accelerator, DAX
 
 - DynamoDB fully managed in-memory cache
     - DynamoDB 專用的快取
     - 10x performance improvement
 
 
-### RedShift
+## RedShift
 
 - RedShift 為 *Columnar Storage* (非 row based)
 - Data WareHoust
@@ -362,13 +361,13 @@ Networking    | -    | -    | -
 - 基於 PostgreSQL 的 DB, 但非 OLTP(Online Transaction Processing)
     - Note: OLAP(Online Analytical Processing)
 - 用來做 analyze 及 data warehouse
-    - 10x performance
+    - 宣稱 10x performance than 其他 Warehouse
 - Massively Parallel Query Execution, MBP Engine
 - 可下 SQL, 並整合 BI
     - ex: QuickSight, Tableau, ...
 
 
-### Amazon EMR, Elastic MapReduce
+## Amazon EMR, Elastic MapReduce
 
 - 用來建 Hadoop Cluster
     - Hadoop ecosystem: Apache Spark, HBase, Presto, Flink, ...
@@ -379,7 +378,7 @@ Networking    | -    | -    | -
     - ML, Data Processing, Web Indexing, Big Data, ...
 
 
-### Amazon Athena
+## Amazon Athena
 
 - Serverless query service to perform analytics against s3 objects
     - 可下 SQL 對 S3 查詢做分析
@@ -396,7 +395,7 @@ Networking    | -    | -    | -
     - BI / analytics / reporting, analyze & query VPC Flow Logs, ELB Logs / CloudTrail trails, serverless SQL analyze S3, ...
 
 
-### AWS QuickSight
+## AWS QuickSight
 
 - Serverless ML powered BI service to create interactive dashboard.
 - 可 Auto-Scaling, auto embeddable
@@ -405,15 +404,14 @@ Networking    | -    | -    | -
     - Business analytics, Create Visualization, Perform ad-hoc analysis, Get Business insights using data, ...
 
 
-### Document DB
+## DocumentDB
 
-- Aurora 為 AWS 基於 PostgreSQL/MySQL 的實作
-- Document (同上)    MongoDB 的實作
+- MongoDB
 - Replication 為 Cross 3 AZ
     - HA
 
 
-### Amazon Neptune
+## Amazon Neptune
 
 - Graph DB
 - Use Case: social network relation, ...
@@ -421,7 +419,7 @@ Networking    | -    | -    | -
     - 可高達 15 個 Read Replicas
 
 
-### Amazon QLDB, Quantum Ledger Database
+## Amazon QLDB, Quantum Ledger Database
 
 - 可下 SQL
 - 量子記帳本 DB
@@ -435,7 +433,7 @@ Networking    | -    | -    | -
 - 相較於 Common Ledger Blockchain framework, 快上 2~3 倍
 
 
-### Amazon Managed Blockchain
+## Amazon Managed Blockchain
 
 - de-centralization, 去中心化唷
 - 可執行 Transaction without the need of trust
@@ -764,6 +762,225 @@ tmpl --> CloudFormation;
 
 ## S3 Transfer Acceleration
 
+- 用來加速 file 上傳到 S3
+
+
+## AWS Global Accelerator
+
+- 利用 Edge Location 優化 AWS Global Network 來改善 *availability* && *performance*
+    - 用戶訪問 AWS Edge, 再由 Edge 走 private network 到 後端服務(ex: ALB)
+        - 藉由 static IP(Anycast IP)
+- *AWS Global Accelerator* && *CloudFront* 皆使用 AWS private network 來優化效能
+    - 兩者多多少少皆能抵擋 DDoS
+
+
+## AWS Outposts
+
+- *Outposts Rack*(此為 server rack), AWS 租/賣 硬體給公司, 用來供應 AWS Cloud Service
+    - 而這個硬體, 基本上等同於公司內部使用的 private AWS 服務
+    - 簡單的說, 把 AWS 私有化放自家
+- 目的是, deploy AWS to Local
+
+
+## AWS WaveLength
+
+- *AWS WaveLength Zones* 為 infra deployments embedded within the telecommunications providers' datacenter at the edge of the 5G network.
+- Charge: 沒有額外費用. 針對 Service agreements for using WaveLength 收費
+
+```mermaid
+flowchart LR
+
+5g["Communication Service Provider(CSP) \n 5G 電信商"];
+ww["AWS \n WaveLength Zone"];
+region["AWS Region"];
+
+subgraph aws
+    ww;
+    region;
+end
+
+client --> 5g;
+5g -- "5g 線路" --> aws;
+aws --> ww;
+ww --> region;
+```
+
+
+## AWS Local Zones
+
+- 此為把 EC2, RDS, ECS, EBS, ... 放到離 user 很近的地方(AZ)
+- 可擴展 VPC 來跨 Region, 來讓 Service 靠近 Users
+    - 讓 Region 裡頭的 AZ, 與 Region 外部的 *Local Zone*, 納入到同一個 VPC
+- 並非所有的 Region 都支援此功能
+
+
+# Cloud Monitoring
+
+- CloudWatch 為所有的 AWS Services 提供 metrics
+    - metric is a variable to monitor
+    - 可到 **CloudWatch Dashboard** 查看監控結果
+- Metrics example:
+    - EC2: CPU Utilization, Status, Network'
+    - EBS Volume: Disk R/W
+    - S3 Buckets : BucketSizeBytes, NumberOfObjects, AllRequests
+    - Billing : Total Estimated Charge (僅 us-east-1 有這功能)
+- 預設來說, metric 為 5 mins 一筆
+    - 可調整, 但越細越貴
+
+
+## CloudWatch Alarms
+
+- 對 metrics 設 threshold, 來 trigger notification
+
+
+## Amazon CloudWatch Logs
+
+- 用來蒐集 log files
+    - 須在監控端安裝 `cloudwatch log agent`
+    - 用來做即時監控, 並可做永久保存
+- 可將主機的 log file, 配置適當的 *IAM Permission*, 即可由此服務來監控
+- 此為 Hybrid Service
+
+
+## CloudWatch Events
+
+- 用來對應 AWS Events 的其中一種方式
+    - Use Cases:
+        - scheduled scripts -- trigger(by CloudWatch Event) --> Lambda Function
+        - 用 CloudWatch Event 來監控 root account 是否被登入
+
+
+## Amazon EventBridge
+
+- 基本上可以把它視為 **CloudWatch Event** 的新一代產品
+- 有個 Default Event Bus
+    - AWS Services && CloudWatch Events 產生的 events
+- 可建立 *Parent Event Bus*, 也可為 APP 建立 *Custom Event Bus*
+    - Parent Event Bus, 從 SaaS Service 或 Application 收到 Events
+- EventBridge 附帶(come with) *Schema Registry*, 此為 *user model event schema*
+- 可用來做 Event-Driven App at scale
+    - 由 Developer 開發的 APP 丟出 Event
+- Note: AWS Serverless Application Model, SAM
+    - 不知道筆記中寫這個在幹嘛...
+
+```mermaid
+flowchart LR
+
+subgraph se["Event Source"]
+direction LR;
+    srv["AWS Services"];
+    ce["Custom Events"];
+    saas["SaaS Apps"];
+end
+
+subgraph tt["Trigger Targets"]
+direction LR;
+    lambda["AWS Lambda"];
+    Kinesis;
+    asf["AWS Step Functions"];
+    apigw["API Gateway"];
+    bus["Buses in other accounts"];
+end
+
+se -- Default EventBus \n Custom EventBus \n SaaS EventBus --> tt;
+```
+
+
+## AWS CloudTrail
+
+- CloudTrail is a way to get governance, compliance and audit for your AWS Account.
+- 可取得 AWS Events & API call 的 history & log
+    - 因此可將 log -> CloudWatch Logs 或 S3
+- Use Case:
+    - 可查看誰把 EC2 關了
+
+```mermaid
+flowchart LR
+
+subgraph aws
+direction LR;
+    SDK
+    CLI
+    Console
+    user["IAM Users"]
+    role["IAM Roles"]
+end
+
+aws -- "call" --> CloudTrail;
+```
+
+- CloudTrail Events
+    - 預設保留 90 days
+    - 分成 3 種
+        - Management Events (Free)
+            - 對 AWS Resources 的操作
+            - 分成 Read, Write
+        - Data Events
+            - ex: lambda funcation call, access S3, ...
+            - 分成 Read, Write
+        - CloudTrail Insights Events
+
+```mermaid
+flowchart LR
+
+ce["CloudTrail Events"] -- "保留 90 days"--> CloudTrail
+CloudTrail -- 長久保存 --> S3
+Athena -- analyze --> S3
+```
+
+- 上圖流程, 事件發生, 直到 CloudWatch Web Console 看得到資料, 可能 > 10 mins
+
+
+### CloudTrail Insights
+
+- 用來在大量 log 中找出 unusual activities
+    - ex: 達到某種 limit, Resource 配置不正確, 違反 AWS IAM action, ...
+- 可對日常維運建立 baseline.
+    - *Management Events* 會被 CloudTrail Insights 分析
+
+```mermaid
+flowchart LR
+
+me["Management Event"]
+ci["CloudTrail Insights"]
+ie["Insights Events"]
+
+me -- continous analysis --> ci;
+ci -- generate --> ie;
+ie --> cc["CloudTrail Console"];
+ie --> S3;
+ie --> ee["EventBridge Event"];
+```
+
+
+## AWS X-Ray
+
+- Old way for debugging in production
+- 可直接在 local test, 並 log -> anywhere
+- 可對 分散式系統的 log 彙整, 並提供 UI, 可在 **X-Ray** Console 看到 Service Performance Status
+- Use Cases:
+    - 用來對 Performance 做 troubleshooting(bottlenecks)
+    - pinpoint service issue
+    - review request behavior
+
+
+## Amazon CodeGuru
+
+- 藉由 ML 來自動化 Code Review (by *CodeGuru Reviewer*) && 對 App performance 做建議 (by CodeGuru Profiler)
+    - 混合雲服務
+- 已整合了 GitHub, CodeCommit, BitBucket
+
+
+## AWS Status - Service Health Dashboard
+
+- all regions && all services, 可看目前狀態
+- 支援 RSS
+
+
+## Personal Health Dashboard, PHD
+
+- alert, remediation, proactive, scheduled activities
+- 由 AWS 主動告知(Web Console 右上角小鈴鐺) Service 狀態
 
 
 # Machine Learning
@@ -862,6 +1079,74 @@ Lambda -- schedule --> CRM;
 
 - 針對文件掃描後 extract text
     - ex: 駕照掃描後建立相關資料
+
+
+# Account Management, Billing & Support
+
+## Organizations
+
+```mermaid
+flowchart TB;
+
+subgraph hr["HR OU"]
+    bb["Account B"];
+end
+subgraph fin["Finance OU"]
+    cc["Account C"];
+end
+subgraph prod["Product OU"]
+    aa["Prod Account"];
+    fin;
+    hr;
+end
+
+subgraph root["Root OU"]
+    prod;
+    master["Master Account"];
+end
+```
+
+- Service Control Policy, SCP
+    - 用來管控 IAM actions 對於 Organization 底下的 *群組劃分* 的權限控管
+        - 群組劃分, ex: by 服務, Business Unit, 環境, ... 
+- Organization 的 logging 管控
+    - all accounts 都使用 CloudTrail 來將 logs 發送到 *central S3 account*
+    - all CloudWatch Logs 都集中到 Logging Account
+
+
+## AWS Control Tower
+
+- 依照 Best Practice, 來設定 multiple accounts 的相關權限架構
+
+
+## Pricing Model && Savings Plan
+
+## Costing Tools && Estimate & Tracking & Monitoring Cost
+
+- 關於 AWS 的 Billing 以及 Cost, 有下列的對應服務可以使用
+    - 預估使用成本, 可使用 **Pricing Calculator** 
+    - 追蹤服務成本, 可使用 **Billing Dashboard** && **Cost Allocation Tags** && **Cost and Usage Reports** && **Cost Explorer**
+    - 監控成本計畫, 可使用 **Billing Ararms** && **Budgets**
+
+
+## AWS Trusted Advisor
+
+- 依照底下的 5 個分類, 以 high level AWS Account assessment 來做建議
+    - Cost optimization
+    - Performance
+    - Security
+    - Fault tolerance
+    - Service limits
+
+
+## AWS Support Plans
+
+- Pricing
+    - Basic              : 免錢啦
+    - Developer          : > $29    or (略)...
+    - Business           : > $100   or (略)...
+    - Enterprice On-Ramp : > $5,500 or (略)...
+    - Enterprice         : > $15000 or (略)...
 
 
 # Other AWS Services

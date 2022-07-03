@@ -1,4 +1,6 @@
+AWS Certificated Solutions Architect Associate
 
+SAA-C02
 
 
 # EC2
@@ -11,6 +13,42 @@
 - cross OS
 - hibernation period < 60 days (無法長久 hybernate)
 
+
+# HA && Scalability: ELB && ASG
+
+- Sticky Session 相關問題
+- ELB - Cross Zone
+
+
+## Elastic Load Balalnce, ELB
+
+- 目前有 4 種 Load Balance
+    - Classic Load Balancer, CLB
+        - L4 && L7 : HTTP, HTTPS, TCP, SSL(secure TCP)
+        - Since 2009, 第一代老東西了
+    - Application Load Balancer, ALB
+        - L7 : HTTP, HTTPS, WebSocket, HTTP/2
+        - Since 2016
+        - 後面接的東西為 *Target Group*
+            - Health Check 是在 *Target Group* 階段處理的
+            - *Target Group* 裡頭可以是:
+                - EC2 instances
+                - ECS tasks
+                - Lambda functions
+                - private IP (可以是 On-premise Data Center Servers)
+        - 可依照不同的 Routing tables, 將請求送往後端不同的 Target Groups 
+    - Network Load Balancer, NLB
+        - L4 : TCP, UDP, TLS(secure TCP)
+        - Since 2017
+    - Gateway Load Balancer, GWLB
+        - Since 2020
+        - L3 : IP
+- AWS Load Balancer 整合了一堆 AWS Services:
+    - EC2, EC2 ASG, ECS, ACM, CloudWatch, Route53, AWS WAF, AWS Global Accelerator, ...
+- 兼具 Health Check 功能
+
+
+## Auto Scaling Group, ASG
 
 
 # SQS, SNS, Kinesis, ActiveMQ
@@ -390,6 +428,7 @@ ALB --> Task3;
 - RDBMS/OLTP
 - 自行準備 EC2 instance && EBS Volume type & size
     - 但無須自行維護機器, OS
+    - 因為是需要 Provision EC2, 因此只能做 垂直擴展, 無法水平擴增
     - Storage
         - RDS 具有 storage auto-scaling
             - 可自動偵測 Disk 用量, 並視情況 Scaling EBS
@@ -548,9 +587,12 @@ aurora -- result --> app;
 
 
 ## DynamoDB
+
 同 [CLF-C01 - DynamoDB](./cert-CLF_C01.md#dynamodb)
 
-
+- store documents, key-value
+    - 一筆 400 KB
+    - 可配置 RCU && WCU
 - Operations
     - Serverless -> 無需 operations
     - Auto Scaling
@@ -707,9 +749,6 @@ c1 -- Auto/Manual Copy --> c2;
 
 - ETL, Serverless
 - Glue Data Catalog - catalog of datasets
-    - 
-    
-
 
 ```mermaid
 flowchart LR;
@@ -756,6 +795,12 @@ gdc -- Data Discovery --> EMR;
     - HA, multi-az, up to 15 read replicas
 - Performance
 - Cost: Pay per node provisioned (類似 RDS)
+
+
+## AWS DMS, Data Migration Service
+
+- Data Migration Service
+- 地端 DB 上雲端
 
 
 ## OpenSearch
