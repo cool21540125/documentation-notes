@@ -36,6 +36,8 @@ SAA-C02
                 - ECS tasks
                 - Lambda functions
                 - private IP (可以是 On-premise Data Center Servers)
+            - 後端接收到 Request 後, 可由 Header 中的 `X-Forwarded-For` && `X-Forwarded-Port` && `X-Forwarded-Proto` 看到用戶真實 IP && Port && Protocol
+        - 可依照不同的 routing tables 或 query string, 將請求送往後端不同的 Target Groups 
         - 可依照不同的 Routing tables, 將請求送往後端不同的 Target Groups 
     - Network Load Balancer, NLB
         - L4 : TCP, UDP, TLS(secure TCP)
