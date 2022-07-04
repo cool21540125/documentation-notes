@@ -3,6 +3,19 @@
 ## VPC
 
 
+- [IPv4 CIDR 切分子網路](https://www.ipaddressguide.com/cidr)
+
+
+## Subnet
+
+- AWS 為每個 Subnet 裏頭, 保留了 5 個 IPv4 address, ex: 10.0.0.0/24
+    - 10.0.0.0   : Network Address
+    - 10.0.0.1   : for VPC router
+    - 10.0.0.2   : for mapping to Amazon-provided DNS
+    - 10.0.0.3   : for future use
+    - 10.0.0.255 : Network Broadcast Address
+
+
 ## Retion/AZ vs VPC/Subnet
 
 - 建立 VPC, 聲明 IP Range. ex: *10.1.0.0/16*
