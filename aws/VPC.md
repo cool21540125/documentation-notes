@@ -2,6 +2,10 @@
 
 ## VPC
 
+- 一個 VPC link to 一個 Region
+    - VPC 內有 Subnets
+    - AZ 內有 Subnets
+
 
 - [IPv4 CIDR 切分子網路](https://www.ipaddressguide.com/cidr)
 
@@ -32,7 +36,7 @@
     - Region 內部有多個 AZ
 
 ```mermaid
-flowchart TD;
+flowchart TB;
 
 dc1[DC]; dc2[DC]; dc3[DC];
 dc4[DC]; dc5[DC]; dc6[DC];

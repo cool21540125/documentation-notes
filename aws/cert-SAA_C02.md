@@ -1,4 +1,6 @@
+AWS Certificated Solutions Architect Associate
 
+SAA-C02
 
 
 # EC2
@@ -11,6 +13,42 @@
 - cross OS
 - hibernation period < 60 days (無法長久 hybernate)
 
+
+# HA && Scalability: ELB && ASG
+
+- Sticky Session 相關問題
+- ELB - Cross Zone
+
+
+## Elastic Load Balalnce, ELB
+
+- 目前有 4 種 Load Balance
+    - Classic Load Balancer, CLB
+        - L4 && L7 : HTTP, HTTPS, TCP, SSL(secure TCP)
+        - Since 2009, 第一代老東西了
+    - Application Load Balancer, ALB
+        - L7 : HTTP, HTTPS, WebSocket, HTTP/2
+        - Since 2016
+        - 後面接的東西為 *Target Group*
+            - Health Check 是在 *Target Group* 階段處理的
+            - *Target Group* 裡頭可以是:
+                - EC2 instances
+                - ECS tasks
+                - Lambda functions
+                - private IP (可以是 On-premise Data Center Servers)
+        - 可依照不同的 Routing tables, 將請求送往後端不同的 Target Groups 
+    - Network Load Balancer, NLB
+        - L4 : TCP, UDP, TLS(secure TCP)
+        - Since 2017
+    - Gateway Load Balancer, GWLB
+        - Since 2020
+        - L3 : IP
+- AWS Load Balancer 整合了一堆 AWS Services:
+    - EC2, EC2 ASG, ECS, ACM, CloudWatch, Route53, AWS WAF, AWS Global Accelerator, ...
+- 兼具 Health Check 功能
+
+
+## Auto Scaling Group, ASG
 
 
 # SQS, SNS, Kinesis, ActiveMQ
@@ -390,6 +428,7 @@ ALB --> Task3;
 - RDBMS/OLTP
 - 自行準備 EC2 instance && EBS Volume type & size
     - 但無須自行維護機器, OS
+    - 因為是需要 Provision EC2, 因此只能做 垂直擴展, 無法水平擴增
     - Storage
         - RDS 具有 storage auto-scaling
             - 可自動偵測 Disk 用量, 並視情況 Scaling EBS
@@ -399,19 +438,21 @@ ALB --> Task3;
         - 須自行處理 replicas, ec2 scaling, EBS restore, App Change, ...
     - Security
         - 自行處理 Security Group, KMS, SSL for encryption in transits, IAM Authentication
+        - PostgreSQL && MySQL 皆支援 IAM Authentication
     - Reliability
         - 支援 Read-Replica && Multi AZ
     - Performance 依賴於 EC2 && EBS spec
     - Cost
         - based on EC2 && EBS
 - Read Replicas
+    - RDS Database, 至多可有 5 個 Read Replicas
+    - 此為 Async Replication (相較於 Multi-AZ, 使用 Sync Replication)
     - 如果使用的話, Connection String 必須修改
     - Read Replicas 僅需要 Read 權限即可
     - 因 RDS 為 managed service, Same Region && Different AZ, sync Data 不需流量費用
         - 但若跨 Region, 則需要 $$
 - Reliability
     - 如果要設定 Multi-AZ 非常簡單, 僅需 Enable 即可. 而且服務可免中斷
-        - Sync 過程, 有分成 SYNC 及 ASYNC
 
 
 ### RDS Backups
@@ -430,48 +471,128 @@ ALB --> Task3;
 - RDS 旗下的其中一款 Engine Type, 地位等同於 RDS MySQL, RDS PostgreSQL, ...
     - AWS 魔改 MySQL/PostgreSQL 以後的 RDBMS
         - CloudNative
+    - 可選擇自行 Provision Server 或是 Serverless
     - Operations
+        - 可自行選擇是否使用 *Single-master* 或 *Multi-master*
         - 相較於其他 Type, less operations
         - auto scaling storage
         - Auto Scaling
             - 一次 10GB, 最多可擴充達 128 TB
     - Security
         - 同 RDS
+        - Encryption at rest by KMS
+        - Encryption in-flight uging SSL
+        - 可用 IAM token 認證
+        - auto backups, snapshots and replicas (皆 encrypted)
     - Reliability
-        - AWS 自行幫忙處理好 6 replicas, across 3 AZ - HA
+        - AWS 自行幫忙處理好 6 replicas
+            - 這 6 個 replication 橫跨了 3 AZ - HA
+                - 而他們的背後也是寫入到不同的 Volume(免 user 自管)
+            - 具備 Self healing(peer-to-peer replication)
+        - auto failover < 30 secs
+            - 單一 Cluster 最多可設定 15 Read Replicas (可放在 Auto Scaling)
+            - 若超過, 其餘 read replicas 會產生新的 master 來做 write
+        - 本身支援 cross replication
         - Global for Disaster Recovery / latency purpose
+        - Backtrack: restore data at any point of time without using backups
     - Performance
         - MySQL && Postgresql 效能的 5x && 3x (宣稱)
+            - 但是貴了 20%
     - Cost 
         - Pay for use
+- Aurora DB Cluster
+    - ![Aurora DB Cluster](./img/aurora%20cluster.png)
+    - Load Balancing 發生在 connection level (而非 statement level)
+    - *Writer Endpoint* && *Reader Endpoint*
+- Deletion
+    - 先刪除 Reader Instance
+    - 再刪除 Writer Instance
+        - 最後刪除 Regional Cluster (又或者, 此會隨著 *Writer Instance* 一同刪除, 不是很確定)
+- Auto Scaling for Aurora Replicas
+    - 可針對 by CPU 用量 OR by conneciton 數量, 來增加 Read Replicas
+    - 增加的 Replicas, 也可產生不同規格的大小
+        - 針對 *Aurora DB Cluster* 那張圖, 產生 *Custom Endpoint*(取代掉 *Reader Endpoint*)
+- Serverless Aurora
+    - Client 連線到 *Proxy Fleet*(而非上述的 *Writer Endpoint* && *Reader Point*)
+        - 背後怎麼做 scaling 由 AWS 控制
+- Global Aurora
+    - 可設定 *Aurora Cross Region Read Replicas*, 但是使用 *Aurora Global Database* 較優
+        - 擁有一個 Primary Region(rw)
+        - 也可額外設定 5 個 Secondary Region(rr)
+            - latency < 1 sec
+            - 每個 Secondary Region 有高達 16 Read Replicas
+        - 如果原本的 Primary Region 掛了, Promotion 到其他的 Secondary Region < 1 sec
+- 整合了 ML
+
+```mermaid
+flowchart BT;
+aurora["Amazon Aurora"];
+
+subgraph ml
+    sm["Amazon SegaMaker"];
+    ac["Amazon Comprehend"];
+end
+
+app -- query --> aurora;
+aurora -- data --> ml;
+ml -- preditions --> aurora;
+aurora -- result --> app;
+```
 
 
 ## ElastiCache
 
 - Managed Redis 或 Memcache
 - 需要提供 EC2 instance type
+- app 在做 DB query 之前, 會先查詢 ElastiCache, 如果有查到資料, 此稱之為 *Cache hit*
+    - 反之沒查到, 則稱為 *Cache miss*. 後續動作為 DB query
+        - 可對 DB query result, 寫入到 ElastiCache
 - Operations
     - 同 RDS
+    - load data -> ElastiCache 有三種 pattern:
+        - Lazy Loading
+            - 所有 read data 皆 cached
+        - Write Through
+            - 從 DB 來做 add/update
+        - Session Store
+            - TTL
 - Security
     - 自行處理 KMS, Security Group, IAM
-    - if redis, 本身無 IAM 驗證, 但可藉由 RedisAuth 做驗證
+    - 關於 IAM authentication
+        - ElastiCache 裡頭, 不支援 *IAM authentication*, 這認證僅支援 API-level Security (delete cache, create cache, ...) 
+        - if redis
+            - 本身無 IAM 驗證, 但可藉由 RedisAuth 做驗證, "password/token"
+            - SSL in-flight
+        - if memcached
+            - SASL-based authentication
 - Reliability
     - Clustering, Multi AZ
 - Performance
     - 毫秒級快取
 - Cost
     - Pay for usage
-- ElastiCache - Redis
-    - 支援 Multi AZ && Read Replicas(sharding)
-    - Security
-- ElastiCache - Memcache
-    - 
+- ElastiCache 重要比較
+    - ElastiCache - Redis
+        - 支援 Multi AZ with Auto-Failover
+        - Read Replicas scale reads && HA
+        - Data Durability using AOF
+        - Backup && restore feature
+    - ElastiCache - Memcache
+        - Multi-node partitioning of data(sharding)
+        - 無 HA && 無 persistent && 無 backup && restore
+        - Multi-thread architecture
+        - pure cache
+- 建立時, 可選擇 Cloud 或 On-premise
+    - On-premise, 需搭配 **AWS Outpost**
 
 
 ## DynamoDB
 
 同 [CLF-C01 - DynamoDB](./cert-CLF_C01.md#dynamodb)
 
+- store documents, key-value
+    - 一筆 400 KB
+    - 可配置 RCU && WCU
 - Operations
     - Serverless -> 無需 operations
     - Auto Scaling
@@ -628,9 +749,6 @@ c1 -- Auto/Manual Copy --> c2;
 
 - ETL, Serverless
 - Glue Data Catalog - catalog of datasets
-    - 
-    
-
 
 ```mermaid
 flowchart LR;
@@ -677,6 +795,12 @@ gdc -- Data Discovery --> EMR;
     - HA, multi-az, up to 15 read replicas
 - Performance
 - Cost: Pay per node provisioned (類似 RDS)
+
+
+## AWS DMS, Data Migration Service
+
+- Data Migration Service
+- 地端 DB 上雲端
 
 
 ## OpenSearch
