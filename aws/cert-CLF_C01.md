@@ -109,7 +109,9 @@ Networking    | -    | -    | -
 - Instance 重點在於:
     - *on-demand*, *spot*, *reserved* 這 3 種, 搭配 *Standard*, *Convertable*, *Scheduled*
     - *Dedicated Host* vs *Dedicated Instance*
-
+- EC2 Instance Connect
+    - EC2 Web Console > 選取主機 > Connect > Instance Connect
+        - 目前如果是 Amazon Linux 2 或 Ubuntu, 預設安裝
 
 ## EC2 Image Builder
 
@@ -828,7 +830,7 @@ ww --> region;
     - 可調整, 但越細越貴
 
 
-## CloudWatch Alarms
+## CloudWatch Alarms 適合
 
 - 對 metrics 設 threshold, 來 trigger notification
 
@@ -1230,14 +1232,19 @@ rr -- restore --> S3;
 
 ## AWS DataSync
 
-- 地端需安裝 `AWS DataSync Agent`
-- **AWS DataSync Service** 選擇 Store 位置
-    - S3 standard
-    - S3 IA
-    - Glacier
+- Online data transfer service
+    - simplify && auto && accelerate moving data between storage systems and services
+    - 地端需安裝 `AWS DataSync Agent`
+- 可在底下的各種 服務/儲存系統 之間作移動
+    - NFS
+    - SMB
+    - HDFS
+    - Object storage systems
+    - S3
     - EFS
-    - Amazon FSx for windows FileServer
-    - ...
+    - Glacier
+    - Snowcone
+    - AWS FSx
 
 
 ## AWS Fault Injection Simulator, FIS

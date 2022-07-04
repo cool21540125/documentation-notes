@@ -30,13 +30,15 @@ SAA-C02
         - L7 : HTTP, HTTPS, WebSocket, HTTP/2
         - Since 2016
         - 後面接的東西為 *Target Group*
-            - Health Check 是在 *Target Group* 階段處理的
-            - *Target Group* 裡頭可以是:
+            - ELB 的 Health Check 是在 *Target Group* 階段處理的
+            - *Target Group* 可以是:
                 - EC2 instances
                 - ECS tasks
                 - Lambda functions
                 - private IP (可以是 On-premise Data Center Servers)
-        - 可依照不同的 Routing tables, 將請求送往後端不同的 Target Groups 
+            - 後端接收到 Request 後, 可由 Header 中的 `X-Forwarded-For` && `X-Forwarded-Port` && `X-Forwarded-Proto` 看到用戶真實 IP && Port && Protocol
+        - 相較於 CLB, 可依照不同的 *routing tables* 或 *query string*, 將請求送往後端不同的 Target Groups ; CLB 則無此功能(需要設很多 CLB, 才能做對應流量轉發)
+            - 此外對於 ECS, 也能做 dynamic port mapping
     - Network Load Balancer, NLB
         - L4 : TCP, UDP, TLS(secure TCP)
         - Since 2017
