@@ -5,6 +5,9 @@ CLF-C01
 
 # Type of Cloud Computing
 
+- Cloudshell 為 aws cli 的 Web Console 替代品
+    - 但並非每個 Region 都有支援
+
 On Premise    | IaaS | Paas | SaaS
 ------------- | ---- | ---- | -----
 Application   | V    | V    | -
@@ -74,6 +77,7 @@ Networking    | -    | -    | -
     - connection refused, app error 或 not launched
 - EC2 Instance Connect, 目前未必每個 Region 都有此功能
     - 可直接使用 Web Console 做 login
+        - 似乎 SG 需要開 allow 22 from 0.0.0.0 (只單純允許 MyIP 登不進去)
 - IAM Roles
     - 不要把 AWS EC2 credentials 放到 EC2, 要用 **IAM Roles**
     - 把特定 Roles assign 給 EC2 來提供 Credentials

@@ -249,18 +249,4 @@ ln -s /Users/tony/aws-cli/aws_completer ~/bin/aws_completer
 
 aws --version
 # aws-cli/2.7.9 Python/3.9.11 Darwin/21.5.0 exe/x86_64 prompt/off
-
-
-### -------------- Configure --------------
-### 法1. 僅配置預設
-aws configure
-
-### 法2. 配置多個命名環境
-PROFILE_NAME=
-aws configure --profile $PROFILE_NAME
-
-# 將來就可透過底下這樣子, 來切換 cli 環境
-export AWS_PROFILE=$PROFILE_NAME
-
 ```
-
