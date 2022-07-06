@@ -265,6 +265,37 @@ Networking    | -    | -    | -
     - 若要訪問, 上述兩著需要其一 Vaild && 不存在 Deny
 
 
+## AWS Snow Family
+
+- highly secure && portable devices
+    - 跨平台, collect/process data, 並做 edge computing && migrate into/out of AWS
+- Data migration 家族成員
+    - Snowcone      : 小型裝置, 8TB
+    - Snowball Edge : 有點大台的裝置, *42 or 80 TB*, 適合 TBs && PBs 量級的資料 
+    - Snowmobile    : 實體卡車這麼大, 一台 100PB, 適合 EB 量級
+- Edge Computing
+    - 若因特定因素, ex: 沒網路/在海上漂泊/在地底/荒郊野外..., 若要蒐集資料, 可用此家族裝置來做 edge computing
+    - 家族成員
+        - Snowcone
+        - Snowball Edge
+    - ex: 
+        - preprocess data, ML at edge, Transcode media. 最後再送回 AWS, 上 S3
+    - Device 裡頭, 可運行:
+        - EC2 instance
+        - Lambda Function (using AWS IoT Greengrass)
+    - 可租賃設備 1 or 3 年
+    - PC/client side 需安裝 `OpsHub`, 可用 GUI 連入此 Device, 可做簡易 config/send file/launch instances, monitor, ...
+
+
+## Storage Gateway
+
+- 若要使用 Hybrid Cloud, 本地要 access cloud data, 需使用此服務
+- 可針對 Block Storage && File && Object, 藉由 **AWS Storage Gateway** 做 bridge, 讓 On-premise client 使用
+    - Block Storage : EBS, EC2 storage
+    - File          : EFS
+    - Object        : S3, Glacier
+
+
 # Database & Analytics
 
 ## RDS, Relational DataBase
@@ -817,7 +848,22 @@ ww --> region;
 - 此為把 EC2, RDS, ECS, EBS, ... 放到離 user 很近的地方(AZ)
 - 可擴展 VPC 來跨 Region, 來讓 Service 靠近 Users
     - 讓 Region 裡頭的 AZ, 與 Region 外部的 *Local Zone*, 納入到同一個 VPC
+    - ```
+        ------------ Region ------------
+        |                              |   
+        |  ---------- VPC ----------   |
+        |  |                       |   |
+        |  |    az1          az2   |   |
+        |  |                       |   |
+        ---|                       |----
+           |                       |
+           |      Local Zone       |
+           |                       |
+           -------------------------
+        ```
 - 並非所有的 Region 都支援此功能
+
+
 
 
 # Cloud Monitoring
