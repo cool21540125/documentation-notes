@@ -39,3 +39,18 @@ $# aws iam list-users
 ```
 
 
+## Tools
+
+### Install stress
+
+壓測工具
+
+```bash
+### Install
+$# sudo amazon-linux-extras install epel -y
+$# sudo yum install stress -y
+
+### Usage
+$# stress -c 4
+# 讓 4 個 CPU 飆到 100%
+```
