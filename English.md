@@ -22,8 +22,11 @@
 - fabric : 結構, 構造
 - failure-prone : 容易失敗
 - governance : 
+- hops : 跳(指流量在網路不同節點之間跳的 路由/跳轉/轉發)
 - immutable : 不可變的
+- ingress : 入口
 - IP Masquerade: IP掩蔽
+- jurisdiction : 管轄權
 - linter : code 語法 check
 - malformed : 異常
 - marshal : 整頓
