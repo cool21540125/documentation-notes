@@ -270,21 +270,31 @@ Networking    | -    | -    | -
 - highly secure && portable devices
     - 跨平台, collect/process data, 並做 edge computing && migrate into/out of AWS
 - Data migration 家族成員
-    - Snowcone      : 小型裝置, 8TB
-    - Snowball Edge : 有點大台的裝置, *42 or 80 TB*, 適合 TBs && PBs 量級的資料 
-    - Snowmobile    : 實體卡車這麼大, 一台 100PB, 適合 EB 量級
+    - Snowcone      : 小型裝置(2.1 KG), 8TB
+        - 資料塞進去後, 可寄回 AWS 或使用 **AWS DataSync**(裡頭已經安裝好 `DataSync agent` 了)
+    - Snowball Edge : 有點大台的裝置, 適合 TBs && PBs 量級的資料 
+        - pay per data transfer job
+        - Object Storage (compatible with S3)
+        - Spec:
+            - Snowball Edge Stroage Optimized : 80 TB
+            - Snowball Edge Compute Optimized : 42 TB
+        - 可組成 Cluster (15 nodes)
+    - Snowmobile    : 實體卡車這麼大, 一台 ~100PB, 適合 EB 量級
 - Edge Computing
     - 若因特定因素, ex: 沒網路/在海上漂泊/在地底/荒郊野外..., 若要蒐集資料, 可用此家族裝置來做 edge computing
     - 家族成員
-        - Snowcone
+        - Snowcone      : 2 CPUs && 4GB && && 8TB && USB-C
         - Snowball Edge
-    - ex: 
-        - preprocess data, ML at edge, Transcode media. 最後再送回 AWS, 上 S3
+            - Compute Optimized : 52 vCPUs && 208 GB RAM && 42 TB
+            - Storage Optimized : 40 vCPUs && 80  GB RAM && 80 TB
+    - Use Case: preprocess data, ML at edge, Transcode media. 最後再送回 AWS, 上 S3
     - Device 裡頭, 可運行:
         - EC2 instance
         - Lambda Function (using AWS IoT Greengrass)
-    - 可租賃設備 1 or 3 年
-    - PC/client side 需安裝 `OpsHub`, 可用 GUI 連入此 Device, 可做簡易 config/send file/launch instances, monitor, ...
+    - 可租賃設備 1 or 3 年 有優惠
+    - PC/client side 安裝 `OpsHub` 後可用 GUI 連入 Device
+        - 可做簡易 config/send file/launch instances, monitor, ...
+        - 早期只有 CLI
 
 
 ## Storage Gateway
