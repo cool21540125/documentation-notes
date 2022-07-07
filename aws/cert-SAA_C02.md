@@ -1315,21 +1315,29 @@ ff -- IAM Role --> EFS;
 
 # AWS Monitoring & Audit: CloudWatch, CloudTrail & Config
 
-## AWS CloudWatch
+## CloudWatch
 
-- CloudWatch Metrics
-- CloudWatch Custom Metrics
-- CloudWatch Dashboards
-- CloudWatch Logs
-- CloudWatch Agent && CloudWatch Logs Agent
-- CloudWatch Alarms
-- CloudWatch Events
-- CloudWatch EventBridge
+- [CloudWatch](./CloudWatch.md)
 
 
-## AWS CloudTrail
+## CloudTrail
 
 - Enable governance, compliance, operational auditing, and risk auditing of AWS account.
+- governance && compliance && audit for AWS Account
+- CloudTrail 資料只保留 90 天. 需自行 backup 到 S3
+- 3 種:
+    - Management Events
+        - 免費, 預設啟用
+    - Data Events
+        - 資料龐大, 預設不收
+    - CloudTrail Insights Events
+        - 需要課金
+- Event History 可能要花上 15 分鐘才會有資料
 
 
 ## AWS Config
+
+- 
+
+
+# ...

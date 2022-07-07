@@ -1,4 +1,5 @@
 
+- [What is AWS Cloudformation? Pros and Cons?](https://www.youtube.com/watch?v=0Sh9OySCyb4)
 - User 定義 Template, 並藉由 Tempalte 建立 Stack
     - AWS 則在背後 提供 Resources
     - template ext: `.json`, `.yaml`, `.template`, `.txt`

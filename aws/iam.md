@@ -6,6 +6,7 @@
     - Identity-based Policy
     - Resource-based Policy
     - 可參考 [Identity-based policies and resource-based policies](https://docs.aws.amazon.com/IAM/latest/UserGuide/access_policies_identity-vs-resource.html), 來看更多實際範例
+        - 這篇必讀啊!! (2022/06 已讀)
 
 
 # Policy Reference
