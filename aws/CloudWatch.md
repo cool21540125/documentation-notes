@@ -15,7 +15,7 @@
     - Resolution
         - Metric 的蒐集頻率(StorageResolution API parameter)
             - Standard resolution : 60 secs
-            - High resoultion     : 1/5/10/30 secs (貴)
+            - High resoultion     : 10 or 30 secs (貴)
     - Statistics (不解釋)
     - Percentiles (不解釋)
     - Alarms
@@ -148,6 +148,29 @@ aws cloudwatch set-alarm-state \
 
 
 # EventBridge (前身為 CloudWatch Events)
+
+```mermaid
+flowchart LR
+
+subgraph eb["Event Bus"]
+    deb["Default Event Bus"] --> Rules;
+    ceb["Custom Event Bus"] --> Rules;
+    seb["SaaS Event Bus"] --> Rules;
+    es["Event Source"]
+end
+
+es --> seb;
+as["AWS Services"] --> deb;
+cs["Custom Services"] --> ceb;
+saas["SaaS APPs"] --> es;
+
+subgraph Target
+    direction LR;
+    Lambda; Kinesis; ad["Additional Services"];
+end
+Rules --> Target;
+```
+
 
 - [clf-cloudwatch events](./cert-CLF_C01.md#cloudwatch-events)
 - EventBridge 核心名詞:

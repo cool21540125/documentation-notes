@@ -922,8 +922,9 @@ ww --> region;
 - EventBridge 附帶(come with) *Schema Registry*, 此為 *user model event schema*
 - 可用來做 Event-Driven App at scale
     - 由 Developer 開發的 APP 丟出 Event
-- Note: AWS Serverless Application Model, SAM
-    - 不知道筆記中寫這個在幹嘛...
+- Serverless, *Serverless Application Model, SAM* (不知為何講師突然冒出這句話)
+    - 也就是背後的東西, 基本上都是 Serverless 搞出來的架構
+    - 似乎在說背後是 API Gateway, Lambda, DynamoDB
 
 ```mermaid
 flowchart LR

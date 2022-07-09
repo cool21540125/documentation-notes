@@ -2,7 +2,7 @@
 
 ## Vocabulary
 
-- ad-hoc(ad hoc) : 特設, 專案的, 臨時的, 特定目的的
+- ad-hoc(adhoc, ad hoc) : 特設, 專案的, 臨時的, 特定目的的
 - attributes (headers)
 - authentication : 認證
 - authorization : 授權

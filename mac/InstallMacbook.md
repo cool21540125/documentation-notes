@@ -250,3 +250,17 @@ ln -s /Users/tony/aws-cli/aws_completer ~/bin/aws_completer
 aws --version
 # aws-cli/2.7.9 Python/3.9.11 Darwin/21.5.0 exe/x86_64 prompt/off
 ```
+
+
+# Install SAM CLI (aws-sam)
+
+- 2022/07/08
+- [Install SAM CLI](https://aws.amazon.com/tw/serverless/sam/)
+
+```bash
+$# brew tap aws/tap
+$# brew install aws-sam-cli
+
+$# sam --version
+SAM CLI, version 1.53.0
+```

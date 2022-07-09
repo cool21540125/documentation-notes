@@ -1,4 +1,9 @@
 
+- IAM
+    - AWS 的核心服務, 用來控制 存取 Resources
+    - Resources 則是使用者建立的 entities
+    - Users 針對 resources 來 perform actions
+    - actions 需要依賴於 Policy 上頭授予 Authorization
 - 如何允許 IAM 用戶看帳單 (預設只有 root Account 可看)
     - Billing > Bills > IAM User and Role Access to Bill Information > Edit > Activate IAM Access
         - ![Billing](../img/iam_billing.png)

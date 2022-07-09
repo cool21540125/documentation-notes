@@ -351,8 +351,8 @@ ww -- "監控 metric \n && \n trigger scaling" --> ASG;
             s["Shipping Service"];
 
             buy -- pub --> SNS;
-            SNS -- sub --> SQS1;
-            SNS -- sub --> SQS2;
+            SNS <-- sub --> SQS1;
+            SNS <-- sub --> SQS2;
             SQS1 -- Receive --> f;
             SQS2 -- Receive --> s;
           ```
@@ -491,7 +491,19 @@ workers(consumer) 未限制      | 1250w subscribers & 10w topics |
 
 ## ECS, Elastic Container Service
 
-- Task Definition: Defines how to create ECS task
+- 名詞定義:
+    - Task:
+        - The lowest level building block of ECS - Runtimes instances
+    - Task Definition: 
+        - Defines how to create ECS task
+        - Templates for your *Tasks*, 定義 image 來源, Memory, CPU, 等
+            - 像是 版本升級, 則須改這個, 來拉新版本 image
+    - Container(EC2 Only)
+        - Virtualized instance that run Tasks.
+        - 如果運行 Farget Mode 的話, 我們在意的只有 Task (沒有 Container 的概念)
+    - Cluster
+        - EC2 - A group of Containers which run Tasks
+        - Farget - A group of Tasks
 - 有 2 種的 Launch Types, 但都可用 EFS 作為儲存:
     - EC2 Launch Type
         - 需自行維護 EC2, 裡頭需要有 `ECS Agent`
@@ -501,6 +513,8 @@ workers(consumer) 未限制      | 1250w subscribers & 10w topics |
         - Serverless
         - Launch 時, 可決定 CPU && RAM
         - Scaling 時, 決定 tasks number 即可
+    - Service
+        - Task management system, 用來確保有多少個 tasks are up and running
 - 權限
     - 若 Task 需要 access AWS Resources, 則需給 **Task Role**
 - Run **ECS Task** on **ECS Cluster**
@@ -583,6 +597,8 @@ ALB --> Task3;
 
 ## Cognito
 
+- 即時 && 跨裝置, Store && Sync data (同 [APPSync](#aws-appsync))
+
 > Provides authentication && authorization && user management for your web and mobile apps. Your users can sign in directly with a user name and password, or through a third party such as Facebook, Amazon, Google or Apple.
 > 
 > Offers user pools and identity pools. User pools are user directories that provide sign-up and sign-in options for your app users. Identity cagnito pools provide AWS credentials to grant your users access to other AWS services.
@@ -598,7 +614,6 @@ ALB --> Task3;
         - ElastiCache (key-value pairs)
         - Neptune (graphs)
     - Object Store
-        - S3
         - Glacier
     - Data Warehouse (=SQL Analytics/BI)
         - Redshift (OLAP)
@@ -1323,21 +1338,142 @@ ff -- IAM Role --> EFS;
 ## CloudTrail
 
 - Enable governance, compliance, operational auditing, and risk auditing of AWS account.
-- governance && compliance && audit for AWS Account
-- CloudTrail 資料只保留 90 天. 需自行 backup 到 S3
-- 3 種:
+    - 資料保存 90 天
+        - 可把資料 log 到 S3
+        - 紀錄關於 SDK && CLI && Console && IAM Users && IAM Roles 的操作
+- 3 種 CloudTrail Events:
     - Management Events
         - 免費, 預設啟用
+        - 針對 AWS Account 資源的增刪改, 都會被記錄
+            - ex: EC2 的 Start, Stop ; Create IAM Role, ...
+        - Events 區分為 *Read Events* && *Write Events*
     - Data Events
-        - 資料龐大, 預設不收
+        - 資料龐大, 預設不紀錄(因為資料量很龐大)
+        - 針對 AWS Account 裡頭資源的調用
+            - ex: call Lambda, 上傳到 S3, 讀取 S3 Object, ...
+        - Events 區分為 *Read Events* && *Write Events*
     - CloudTrail Insights Events
         - 需要課金
+        - 紀錄 AWS Account 裡頭 非常規的活動
+            - ex: 資源配置不正確, 資源使用達到 limits, user behavior, ...
+        - Events 僅針對 *Write Events* 做紀錄
+        - ```mermaid
+            flowchart LR;
+
+            me["Management Events"]
+            cti["CloudTrail Insights"]
+            ie["Insights Events"]
+
+            me -- Continous analysis --> cti;
+            cti -- generate --> ie;
+            ie --> cc["CloudTrail Console"]
+            ie --> S3
+            ie --> ebe["EventBridge Event"]
+          ```
 - Event History 可能要花上 15 分鐘才會有資料
 
 
 ## AWS Config
 
+- 用途
+    - 衡量 AWS Resources 之間的關係
+    - 確保 AWS Resources 符合公司的 compliances
+        - 後續可由 **SSM Documentation** 來對這些資源做 Remediation(整治/補救)
+            - ex: `AWSConfigRemediationRevokeUnusedIAMUserCredentials`, 用來 deactivate 已過 compliance duration 的 IAM Access Key
+    - 追蹤 AWS Resources configurations 的變更 (背後可藉由其他服務做相對因應 or 有問題時 Rollback)
+        - 可設定為 定期檢查 or 變更事件
+    - ![AWS Config Overview](./img/AWS%20Config%20Overview.png)
+- Charge: 
+    - no free tier. 需要課金
+- 若有多個 Region, 則需逐一啟用並配置
+- User 啟用 AWS Config 以後, 可設定 **rules** 來針對特定 AWS Resources 做 auditing && compliance && tracking
+    - by using `DescribeResource` && `ListResource` API
+        - 將之結果彙整於 *Configuration Item*, 裡頭包含了:
+            - metadata, attribute, relationship, related event, ..., 將結果保存到 S3
+    - Config Rules 可有底下幾種方式
+        - AWS managed config rules (> 75)
+        - custom config rules (必須在 *AWS Lambda* 裡頭定義)
+            - config rules 可以定義像是:
+                - S3 bucket 需要是 encrypted, versioned, not public access, ...
+
+
+# Other AWS Services
+
+## Cloudformation
+
+- 對於 SAA 來說似乎不是重點..
+- [saa-CloudFormation](./CloudFormation.md)
+- IaaS, declarative
+
+
+## AWS Step Functions (易與 SWF 搞混)
+
+- 用來一口氣管理一堆 **Lambda Function**
+    - 具備了一堆特色: sequence, parallel, conditions, timeouts, error handling, ...
+    - 除了 Lambda 以外, 也可與像是 EC2, ECS, API Gateway 等服務整合(但較少)
+- *JSON state machine*
 - 
 
 
-# ...
+## Simple Workflow Service, SWF (老東西, 已經不支援了)
+
+- 與 **Step Function** 有點像, 但運行在 EC2
+- Runtime 最長為 1 年
+- *activity step* && *decision step* && *built-in intervention step*
+- 除非有底下需求, 不然建議改用 Step Function
+    - 需要 external signals 來干預目前 processes
+    - 需要 child process 回傳結果給 parent process
+
+
+## Amazon Elastic MapReduce, EMR
+
+- Auto-scaling && integrated with **Spot Instances**
+- 相關關鍵字: Hadoop, Big Data, ML, Web indexing, data processing, ...
+    - Support: Apache Spark, HBase, Presto, Flink, ...
+
+
+## AWS Opsworks
+
+- [clf-opsworks](./cert-CLF_C01.md#aws-opsworks)
+- AWS 的世界中, `AWS Opsworks == Managed Chef & Puppet`
+- Chef & Puppet - 協助 perform server configuration automatically 或 repetitive actions
+    - Chef   : Recipes
+    - Pupuet : Manifest
+- 功能有點類似 **AWS SSM**, **Beanstalk**, **CloudFormation**
+- CaaS
+- Linux & Windows
+
+
+## AWS WorkSpaces
+
+- managed, Secure Cloud Desktop
+- 減少本地 VID(Virtual Desktop Infrastrucure) 的管理
+- Charge: 用多久, 收多少
+- 整合 Windows AD
+
+
+## AWS AppSync
+
+- 即時 && 跨裝置, Store && Sync data
+    - 支援了 Offline data sync (類似產品 [Cognito](#cognito))
+- 使用 GraphQL (mobile tech from FB)
+- 整合了 DynamoDB/Lambda
+
+
+## Cost Explorer
+
+- Billing Service 底下其中一個小服務
+- 支援 **Savings Plan** 的選擇
+- monthly/yearly cost 組成 && 視覺話
+
+
+## ElasticTranscoder
+
+- Saas
+- Media(video, music) converter service into various optimized formats (雲轉碼)
+
+
+## SSO, Single Sign On
+
+- 統一登入
+- SAML 2.0 compatible APP (ex: office 365 等)
