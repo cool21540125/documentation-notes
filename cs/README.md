@@ -13,4 +13,17 @@ dotnet new console -o myApp
 
 ### 執行
 dotnet run
+
+### version
+dotnet --version
+
+### 系統資訊
+dotnet --info
+
+
+### list all SDK
+dotnet --list-sdks
+
+### list all runtime
+dotnet --list-runtimes
 ```
