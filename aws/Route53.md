@@ -74,6 +74,7 @@ hc["Health Checker"] -- monitor --> cc;
 把 domain 由 aws 帳戶 移轉到另一個帳戶
 
 ```bash
+### 想要轉出的帳號執行
 $# PROFILE_NAME=r53
 $# aws route53 list-hosted-zones --profile ${PROFILE_NAME}
 {
@@ -92,7 +93,7 @@ $# aws route53 list-hosted-zones --profile ${PROFILE_NAME}
 }
 # profile 為 ~/.aws/credentials 裡面的其中一個帳戶 [profile] <- 這個
 
-### 列出所有托轉的子域名
+### 列出所有託管的子域名
 $# aws route53 list-resource-record-sets \
     --hosted-zone-id ${HOSTED_ZONE_ID} \
     --profile ${PROFILE_NAME}
@@ -100,7 +101,7 @@ $# aws route53 list-resource-record-sets \
 ### Route53 移轉到其他帳戶
 $# aws route53domains transfer-domain-to-another-aws-account \
     --domain-name ${HOSTED_DOMAIN_NAME} \
-    --account-id ${OLD_AWS_ACCOUNT_ID} \
+    --account-id ${TARGET_AWS_ACCOUNT_ID} \
     --profile ${PROFILE_NAME}
 ```
 
