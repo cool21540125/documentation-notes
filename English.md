@@ -41,6 +41,7 @@
 - permission : 許可
 - poller : 輪循器
 - portal : 門戶
+- rederation : 重新修訂
 - replica : 即時備援 (即時複製一份到其他節點的概念, HA), 資料備份的另一種可行性作法
 - retention : 保留
 - routing mesh : 路由網路

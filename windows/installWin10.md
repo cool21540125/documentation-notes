@@ -86,3 +86,13 @@ warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 > hugo version
 ```
+
+
+# Install dig command
+
+```powershell
+### 使用 dig 指令 (使用 choco)
+> choco install bind-toolsonly
+# dig command not found
+
+```

@@ -1,4 +1,4 @@
-# Win10 的 WSL2 安裝清單
+WSL2 安裝清單
 
 # Change default editor
 
@@ -153,4 +153,8 @@ $# sudo make install PREFIX=/usr
 ```
 
 
-#
+# Install dig
+
+```bash
+
+```
