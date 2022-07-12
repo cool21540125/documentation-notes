@@ -17,6 +17,7 @@
 - cryptographically : 加密
 - elevate : 提升(通常指使用 具有權限 的 使用者)
 - eligible : 有資格的
+- endorse : 背書
 - enumerable : 可列舉的
 - expression : 運算式
 - fabric : 結構, 構造

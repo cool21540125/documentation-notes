@@ -783,5 +783,25 @@ ALB --> Task3;
 
 ## SSO, Single Sign On
 
-- 統一登入
-- SAML 2.0 compatible APP (ex: office 365 等)
+- 會有個集中化的 Portal
+    - 集中化管理 permission
+    - 可得知 user login (via CloudTrail)
+- support *SAML 2.0 markup*, 整合了 SAML && on-premise *Active Directory*
+
+```mermaid
+flowchart LR
+
+subgraph on-premise
+    ad["Windows AD"]
+end
+
+subgraph AWS
+    ss["AWS SSO"]
+    rr["AWS Other Resources"]
+end
+
+ad -- AD Connector / AD trust --> ss;
+ss -- SSO access --> rr;
+ss -- SSO access --> 3rd["3rd APPs"]
+ss -- SSO access --> saml["SAML APPs"]
+```
