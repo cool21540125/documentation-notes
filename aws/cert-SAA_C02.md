@@ -809,36 +809,14 @@ ss -- SSO access --> saml["SAML APPs"]
 
 # Security & Encryption
 
-- KMS, Key Management Service
-    - 可藉由 CloudTrail 來查看 Key Usage. 與 IAM 有高度的整合
-    - Charge: $0.03/10000 call KMS API
-    - API call > 4KB data 須借助 *envelop encryption*
-    - *KMS Key* 無法 cross region 傳送
-    - 2 types of KMS:
-        - Symmetric Keys
-            - AES-256
-            - CMK, Customer Master Key
-                - 又有分成 3 種:
-                    - AWS Managed Service Default CMK
-                        - Free
-                    - User Keys created in KMS
-                        - 一把 Key $1/month
-                    - User Keys imported
-                        - 一把 Key $1/month
-                        - 必須為 256 bit symmetric key
-            - envelop encryption
-            - user call API to use Key
-        - Asymmetric Keys
-            - RSA & ECC key pairs
-            - user CAN NOT call API to see private key
-- SSM Parameter Store
-- Secret Manager
-- CloudHSM
-- Shield
-- WAF
-- GuardDuty
-- Inspector
-- Macie
+- [KMS, Key Management Service](#aws-kms-key-management-service)
+- [SSM Parameter Store](#ssm-parameter-store)
+- [Secret Manager](#secret-manager)
+- [CloudHSM](#cloudhsm-hardware-security-module)
+- [WAF & Shield](#waf--shield)
+- [GuardDuty](#guardduty)
+- [Inspector](#inspector)
+- [Macie](#macie)
 
 
 ## Encryption
@@ -852,6 +830,33 @@ ss -- SSO access --> saml["SAML APPs"]
     - Client 自行加密後再傳送, Server 永遠不知道自己收到的是殺小
     - Could leverage *Envelop Encryption*
 
+
+## AWS KMS, Key Management Service
+
+- 常被拿來與 [CloudHSM](#cloudhsm-hardware-security-module) 做比較
+- 可藉由 CloudTrail 來查看 Key Usage. 與 IAM 有高度的整合
+- Charge: $0.03/10000 call KMS API
+- API call > 4KB data 須借助 *envelop encryption*
+- *KMS Key* 無法 cross region 傳送
+- Key policies are the primary way to control access to KMS keys. Every KMS key must have exactly one key policy.
+    - 其次也可使用 IAM
+- 2 types of KMS:
+    - Symmetric Keys
+        - AES-256
+        - CMK, Customer Master Key
+            - 又有分成 3 種:
+                - AWS Managed Service Default CMK (AWS owned CMK)
+                    - Free
+                - User Keys created in KMS (AWS managed CMK)
+                    - 一把 Key $1/month
+                - User Keys imported (Customer managed CMK)
+                    - 一把 Key $1/month
+                    - 必須為 256 bit symmetric key
+        - envelop encryption
+        - user call API to use Key
+    - Asymmetric Keys
+        - RSA & ECC key pairs
+        - user CAN NOT call API to see private key
 
 ## SSM Parameter Store
 
@@ -890,21 +895,190 @@ ssmps <-- Eecryption API --> kms;
 - 與 RDS, Aurora 有相當高度的整合
 - Charge: 依照 secret 數量 && API call 數量 來計費
 
-## CloudHSM
 
-- 
+## CloudHSM, Hardware Security Module
+
+- 常被拿來與 [AWS KMS](#aws-kms-key-management-service) 做比較
+- 不便宜..
+- CloudHSM 與 Secret Manager 相比較的話:
+    - Secret Manager : AWS manage  software for encryption
+    - CloudHSM       : AWS provide hardware for encryption
+        - user 自行管理 keys
+        - 需額外安裝 `CloudHSM client`
+            - 使用上, 須留意 IAM permission 要開給 Client CRUD && 軟體面, 要維護 Keys & Users
+            - 相較 KMS, 則全由 IAM 管理
+- SaaS, HA
+- 與 Redshift 有高度整合
+- Good option for SSE-C Encryption
+- 安全防護規格 `FIPS 140-2 Level 3 compliance` (看看就好...)
+- *Master Key* 方面, 僅支援 [Customer Managed CMK](#aws-kms-key-management-service)
+- CloudHSM deployed in VPC, 不過可 cross Region (by VPC sharing)
 
 
-## Shield && WAF
+## WAF & Shield
+
+- AWS Shield Standard, Free, 預設啟用
+    - SYN/UDP Floods, Reflection attacks, L3/L4 attacks, DDoS
+- AWS Shield Advanced, Charge $3000/month
+    - DDoS mitigation service
+    - Protect: EC2, ELB, CloudFront, Global Accelerator, Route53
+    - 24*7 access to AWS DDoS response team(DRP)
+    - 防止 DDoS 期間 ELB 爆量的費用
+- WAF, Web Application Firewall
+    - L7, Deploy on(only): 
+        - ALB & API Gateway (Regional)
+        - CloudFront (Global)
+    - 需要自行配置 Web ACl, Web Access Control List
+    - Protect:
+        - XSS, Cross-Site Scripting
+        - SQL injection
+        - 設定訪問流量限制(size constraint)
+        - 藉由 Geometric 屏蔽特定國家 IP
+        - DDoS (by rate-based rule)
+- AWS Firewall Manager
+    - 用來管理 AWS Organization 所有 accounts 的 access rules
+
+    > AWS Firewall Manager is a security management service that allows you to centrally configure and manage firewall rules across your accounts and applications in AWS Organizations. 
+    > It is integrated with AWS Organizations so you can enable AWS WAF rules, AWS Shield Advanced protection, security groups, AWS Network Firewall rules, and Amazon Route 53 Resolver DNS Firewall rules.
+
+```mermaid
+flowchart LR
+
+subgraph Shield1
+    Route53
+end
+subgraph Shield2
+    CloudFront
+end
+CloudFront <-- 過濾 --> waf["AWS WAF"];
+
+subgraph AWS
+    subgraph pu["Public Subnet"]
+        subgraph Shield3
+            ELB
+        end
+    end
+    subgraph pi["Public Subnet"]
+        subgraph Shield4
+            ALB
+        end
+    end
+end
+
+user --> Shield1;
+Shield1 --> Shield2;
+Shield2 --> Shield3;
+Shield3 --> Shield4;
+```
 
 
 ## GuardDuty
 
+> perform intelligent threat discovery in order to protect your AWS account
+
+- 用 ML && 3rd data, 來看 user account 是否 under attack
+- Charge: 30 天免費..
+- 後續動作像是, 偵測異常後, 藉由 *CloudWatch Events Rules* -> Lambda/SNS
+- Protect *CryptoCurrency attacks*(WTF?)
+- Input data 包含了:
+    - CloudTrail Events Logs
+        - CloudTrail Management Events
+            - 從 *CloudTrail Event logs* 取 data, 來判斷是否有 unusual API call
+        - CloudTrail S3 Data Events
+    - VPC Flow Logs
+    - DNS Logs
+    - EKS Audit Logs
+
+```mermaid
+flowchart LR
+data["Input data"]
+gd["GuardDuty"]
+ce["CloudWatch Event"]
+
+data --> gd;
+gd --> ce;
+ce --> SNS;
+ce --> Lambda;
+```
+
 
 ## Inspector
 
+- 讓 user automated security assessment for your AWS infra
+    - 幫你的 AWS 做健診
+- Inspector 只能 inspect:
+    - EC2 - leverage *AWS System Manager (SSM) agent*, 分析異常流量 && OS 漏洞
+        - database of vulnerabilities (CVE)
+    - ECR - 當有人 docker push 就去評估 image/Container
+- reporting & integrating with *AWS Security Hub*, 若發現問題會送到 *Amazon EventBridge*
+
+```mermaid
+flowchart LR
+
+ssm["SSM agent"]
+subgraph EC2
+    ssm;
+end
+
+is["Inspector Service"]
+is -- inspect --> ssm;
+is -- if problem, report --> sh["Security Hub"]
+is -- if proble, report --> eb["EventBridge"]
+```
+
 
 ## Macie
+
+> Amazon Macie is a fully managed data security service that uses Machine Learning to discover and protect your sensitive data stored in S3 buckets. 
+> 
+> It automatically provides an inventory of S3 buckets including a list of unencrypted buckets, publicly accessible buckets, and buckets shared with other AWS accounts. 
+> 
+> It allows you to identify and alert you to sensitive data, such as Personally Identifiable Information (PII).
+
+- Fully managed data security && data privacy service, by using:
+    - ML && Pattern matching to discover && protect sensitive data
+    - 也用來協助 identify && alert sensitive data, ex: personally identifiable information, PII
+- SaaS
+
+```mermaid
+flowchart LR
+ce["CloudWatch Event \n EventBridge"]
+macie["Macie"]
+
+macie <-- "analyze \n (Discover Sensitive Data(PII))" --> S3;
+macie -- notify --> ce;
+ce -- integration --> pipeline["SNS, Lambda, ..."];
+```
+
+
+## AWS Security Hub
+
+- Central Security tool, 用來管理 security, cross AWS accounts & automate security checks
+- Charge: 燒錢~~
+- 可將底下的服務集中到 Security Hub (但需要先 enable *AWS Config Service*)
+    - GuardDuty
+    - Inspector
+    - Macie
+    - IAM Access Analyzer
+    - AWS System Manager
+    - AWS Partner Network Manager
+
+
+## Amazon Detective
+
+- 因應 Security, 可用 GuardDuty, Macie, SecurityHub, ...
+- 但如果要找出因果關係, 可使用 *Amazon Detective*
+- 啟用後, 會自動蒐集底下這些, 來建立 view (用來呈現)
+    - VPC Flows Logs
+    - CloudTrail
+    - GuardDuty
+
+
+## AWS Abuse
+
+> Report suspected AWS Resources used for abusive or illegal purposes
+
+- 用來跟 AWS 反映違規使用的 Service
 
 
 ## 

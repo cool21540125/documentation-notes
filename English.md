@@ -30,6 +30,7 @@
 - jurisdiction : 管轄權
 - linter : code 語法 check
 - malformed : 異常
+- mandate : 授權
 - marshal : 整頓
 - masquerade : 偽裝
 - one-off : 一次性

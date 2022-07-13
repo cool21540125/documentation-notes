@@ -40,6 +40,8 @@ r2 -.- srv2["AWS Services \n (ex: S3)"];
     - Policy 區分為 2 個類別:
         - Identity-based policy - 以 People 的角度出發,   宣告某個 People 可以/不能 幹嘛
         - Resource-based policy - 以 Resource 的角度出發, 宣告某個 Resource 可以/不能 被誰怎樣
+            - S3 policy
+            - key policy
     - 每個 Policy 裏頭, 會有很 1~N 個 Statements
     - 最終會套用給 User / Group / Role (想像成某個擬人的 Service)
 - Statement
