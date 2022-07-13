@@ -85,7 +85,7 @@
         - 可蒐集額外的 system-level metrics
             - 可蒐集更多細粒度的數據
         - 能把 log && metric -> *CloudWatch Logs*
-        - 可使用 **SSM Parameter Store** 來中央化託管參數
+        - 可使用 **SSM Parameter Store** 來中央化管理參數
     - Elastic Beanstalk
     - ECS
     - Lambda

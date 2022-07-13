@@ -88,7 +88,6 @@ r2 -.- srv2["AWS Services \n (ex: S3)"];
         - 可被指派給 *Users*, *Groups*, *Roles*
     - Resource-based Policy
     - 可參考 [Identity-based policies and resource-based policies](https://docs.aws.amazon.com/IAM/latest/UserGuide/access_policies_identity-vs-resource.html), 來看更多實際範例
-        - 這篇必讀啊!! (2022/06 已讀)
 
 
 ## IAM Permission Boundaries
@@ -141,8 +140,9 @@ r2 -.- srv2["AWS Services \n (ex: S3)"];
     - NotPrinciple
     - Action
     - [NotAction](https://docs.aws.amazon.com/IAM/latest/UserGuide/reference_policies_elements_notaction.html)
-        - NotAction with Deny  : 除了 NotAction 被 Allow, 其餘 Resource 都被 Deny
-        - NotAction with Allow : 除了 NotAction 被 Deny, 其餘 Resource 都被 Allow
+        - NotAction with Deny  : 除了 NotAction 所列的動作, 其餘皆 Deny
+            - 但是此動作並沒有 Allow anything, 因此仍須自行給額外 Allow
+        - NotAction with Allow : 除了 NotAction 所列的動作, 其餘皆 Allow
     - Resource
     - NotResource
     - Condition
@@ -158,10 +158,10 @@ r2 -.- srv2["AWS Services \n (ex: S3)"];
     - 並不是非常懂. 不過有點像是, AWS Web Console 登入後, 會取得 token, 再拿去與 AWS Web Console 互動
         - Token 可能藏在 Request Header 的 cookie 或 URL 裏頭吧
 - STS 支援了底下這些 actions (還有其他):
-    - AssumeRole
+    - 1.AssumeRole
         - ex: 若要 Cross Account access, 則需再 Target Account `assume a role` 來 allow action
         - ex: 為了增加多一層的安全性, user 要 delete EC2, 則需 `assume a role` 才可動作, 避免誤砍
-    - AssumeRoleWithSAML
+    - 2.AssumeRoleWithSAML
         - return creds for users logged in with SAML
         - will be helpful if users are federated through SAML
         - 參考
@@ -238,14 +238,14 @@ Browser -- access --> aws["AWS Resources"]
     - 不需要自己 create IAM users
     - 上述的 user, assume identity provided access role
 - 可以有各種不同的 Federation 方式:
-    - [I. SAML 2.0](#i-saml-20-federation)
-    - [II. Custom Identity Broker](#ii-custom-identity-broker)
+    - [1. SAML 2.0](#1-saml-20-federation)
+    - [2. Custom Identity Broker](#2-custom-identity-broker)
     - Web Identity Federation without Web Identity
         - 如果要用這方法... 算了吧@@, 務必使用 Cognito
         - 需要自行處理一堆外部的 IAM user
-    - [III.Web Identity Federation with Web Identity](#iii-web-identity-federation-with-web-identity)
+    - [3. Web Identity Federation with Web Identity](#3-web-identity-federation-with-web-identity)
         - 建議使用 Cognito
-    - [Iv. AWS Cognito](#iv-aws-cognito)
+    - [4. AWS Cognito](#4-aws-cognito)
     - Single Sign On, SSO
     - Non-SAML with AWS Microsoft AD
 
@@ -261,7 +261,7 @@ user -- 4.access --> aws;
 ```
 
 
-### I. SAML 2.0 Federation
+### 1. SAML 2.0 Federation
 
 - *SAML 2.0* 與 *Active Directory FS, ADFS* 有著非常高度的整合
     - 除了 AD 以外, 依舊有其他 directory services 可作選擇
@@ -276,7 +276,7 @@ user -- 4.access --> aws;
 ---
 
 
-#### I-1. by SDK && API
+#### 1-1. by SDK && API
 
 - [SAML-based federation for API access to AWS](https://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles_providers_saml.html)
 
@@ -304,7 +304,7 @@ app -- 6.access --> rr;
 ---
 
 
-#### I2. by Web Console
+#### 1-2. by Web Console
 
 - [SAML-enabled single sign-on](https://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles_providers_enable-console-saml.html)
 
@@ -334,7 +334,7 @@ bb -- 7.redirect --> ww;
 ---
 
 
-#### I3. by Active Directory FS, ADFS
+#### 1-3. by Active Directory FS, ADFS
 
 - [AWS Federated Authentication with Active Directory Federation Services (AD FS)](https://aws.amazon.com/tw/blogs/security/aws-federated-authentication-with-active-directory-federation-services-ad-fs/)
 - 與 SAML 2.0 compatable IdP 流程一樣
@@ -364,7 +364,7 @@ bb -- 6.redirect --> ww;
 
 
 
-### II. Custom Identity Broker
+### 2. Custom Identity Broker
 
 - 假如 *Identity Provider(on-premise store)* 無法與 SAML 2.0 兼容, 看這看這~~
     - 此時, *Identity Broker* 必須決定適當的 `IAM Policy`
@@ -394,7 +394,7 @@ uu -- 4b.access API --> rr;
 ```
 
 
-### III. Web Identity Federation with Web Identity
+### 3. Web Identity Federation with Web Identity
 
 - [Using web identity federation](https://docs.amazonaws.cn/en_us/amazondynamodb/latest/developerguide/WIF.html)
 - 但是建議使用 Cognito
@@ -418,7 +418,7 @@ APP -- 5.access --> rr;
 ```
 
 
-### IV. AWS Cognito
+### 4. AWS Cognito
 
 - Goal: 讓 client 直接訪問 AWS Resources (免 create IAM users)
     - ex: 要讓 FB user, 直接使用 S3
@@ -454,44 +454,57 @@ APP -- 7.access --> aws["AWS Resources"]
 - Windows Server with AD Domain Services. 集中化管理 帳號 && 權限
 - database of Objects : User Accounts, Computers, Printers, File Shares, Security Groups
     - Objects 以 trees 的形式來組織
-    - Group of trees is a forest
-    
+    - Group of trees is a forest   
 - AWS 提供了 **AWS Directory Services** 用來在 AWS 建立 AD, 分為底下幾種建立方式:
-    - AWS Managed Microsoft AD
-        - AWS 建立 AD && 本地管理 users, 支援 MFA
-        - 建立 trust connections with *on-premise AD*
-        - ```mermaid
-            flowchart LR
+    - [1.AWS Managed Microsoft AD](#1aws-managed-microsoft-ad)
+    - [2.AD Connector](#2ad-connector)
+    - [3.Simple AD](#3simple-ad)
 
-            local["On-premise AD"]
-            aws["AWS Managed AD"]
-            u1["local users"]
-            u2["aws users"]
 
-            u1 <-- auth --> local <-- trust --> aws <-- auth --> u2;
-          ```
-    - AD Connector
-        - Directory Gateway(proxy) to redirect to *on-premise AD*, 支援 MFA
-        - *on-premise AD* 管理 users
-        - ```mermaid
-            flowchart RL
+### 1.AWS Managed Microsoft AD
 
-            local["On-premise AD"]
-            aws["AD Connector"]
-            u2["aws users"]
+- AWS 建立 AD && 本地管理 users
+- 支援 MFA
+- 建立 trust connections with *on-premise AD*
 
-            u2 -- auth --> aws;
-            aws -- proxy --> local;
+```mermaid
+flowchart LR
 
-          ```
-    - Simple AD
-        - 沒有本地 AD, 直接在 AWS 上頭架一個 AD
-            - AD-compatible 在 AWS 上管理 directory
-        - ```mermaid
-            flowchart RL
+local["On-premise AD"]
+aws["AWS Managed AD"]
+u1["local users"]
+u2["aws users"]
+u1 <-- auth --> local <-- trust --> aws <-- auth --> u2;
+```
 
-            users -- auth --> aws["AWS Simple AD"];
-          ```
+
+### 2.AD Connector
+
+- Directory Gateway(proxy) to redirect to *on-premise AD*
+- 支援 MFA
+- *on-premise AD* 管理 users
+
+```mermaid
+flowchart RL
+
+local["On-premise AD"]
+aws["AD Connector"]
+u2["aws users"]
+u2 -- auth --> aws;
+aws -- proxy --> local;
+```
+
+
+### 3.Simple AD
+
+- 沒有本地 AD, 直接在 AWS 上頭架一個 AD
+- AD-compatible 在 AWS 上管理 directory
+
+```mermaid
+flowchart RL
+
+users -- auth --> aws["AWS Simple AD"];
+```
 
 
 ## AWS Organization
@@ -532,8 +545,3 @@ APP -- 7.access --> aws["AWS Resources"]
     - AWS Transit Gateway
     - Route53 Resolver Rules
     - License Manager Configurations
-
-
-
-# 未知
-

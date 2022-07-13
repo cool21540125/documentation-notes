@@ -805,3 +805,106 @@ ss -- SSO access --> rr;
 ss -- SSO access --> 3rd["3rd APPs"]
 ss -- SSO access --> saml["SAML APPs"]
 ```
+
+
+# Security & Encryption
+
+- KMS, Key Management Service
+    - 可藉由 CloudTrail 來查看 Key Usage. 與 IAM 有高度的整合
+    - Charge: $0.03/10000 call KMS API
+    - API call > 4KB data 須借助 *envelop encryption*
+    - *KMS Key* 無法 cross region 傳送
+    - 2 types of KMS:
+        - Symmetric Keys
+            - AES-256
+            - CMK, Customer Master Key
+                - 又有分成 3 種:
+                    - AWS Managed Service Default CMK
+                        - Free
+                    - User Keys created in KMS
+                        - 一把 Key $1/month
+                    - User Keys imported
+                        - 一把 Key $1/month
+                        - 必須為 256 bit symmetric key
+            - envelop encryption
+            - user call API to use Key
+        - Asymmetric Keys
+            - RSA & ECC key pairs
+            - user CAN NOT call API to see private key
+- SSM Parameter Store
+- Secret Manager
+- CloudHSM
+- Shield
+- WAF
+- GuardDuty
+- Inspector
+- Macie
+
+
+## Encryption
+
+- encryption in-flight
+    - 資料傳送過程中加密, HTTPS
+    - ensure no MITM(man in the middle attack)
+- encryption at rest
+    - Server 接收到以前皆已完成加密
+- client side encryption
+    - Client 自行加密後再傳送, Server 永遠不知道自己收到的是殺小
+    - Could leverage *Envelop Encryption*
+
+
+## SSM Parameter Store
+
+- [clf-SSM](./cert-CLF_C01.md#aws-ssm-systmes-manager)
+- Securely store your configuration && secrets
+    - 有 Versioning
+    - 可使用 KMS 來將參數加密
+- 相較於 [Secret Manager](#secret-manager), 此服務比較舊, 且以 儲存參數 的功能為導向
+- Name 得以 Path 的形式來做命名, ex: "/my-app/dev/db-url"
+- 與 *CloudFormation*, *CloudWatch Events* 整合
+- 其他 AWS Services 在使用此服務時, 需要經常留意 IAM 的權限
+    - 若有加密, Lambda 需要解密後取用時, 也需要留意 KMS 權限
+- Parameter Store 區分為
+    - Standard Tier(Free)
+    - Advanced Tier(Charge)
+        - 可制定 Parameter Policy
+
+```mermaid
+flowchart TB
+ssmps["SSM Parameter Store"]
+kms["AWS KMS"]
+
+APP -- PlainText / Encryption --> ssmps;
+ssmps <-- check permisson --> IAM;
+ssmps <-- Eecryption API --> kms;
+```
+
+
+## Secret Manager
+
+- 要用來取代 [SSM Parameter Store](#ssm-parameter-store)
+- 相較於上者, *Secret Manager* 較以 secret 為導向
+    - 使用 Lambda 來實踐, 加密則使用 KMS
+    - 可制定每隔 X days 來對 secret 做 rotation (force rotation)
+    - ex: 可由此服務, 來同步 RDS 的 secrets
+- 與 RDS, Aurora 有相當高度的整合
+- Charge: 依照 secret 數量 && API call 數量 來計費
+
+## CloudHSM
+
+- 
+
+
+## Shield && WAF
+
+
+## GuardDuty
+
+
+## Inspector
+
+
+## Macie
+
+
+## 
