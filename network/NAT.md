@@ -55,9 +55,14 @@ NAT 會修改 `封包 IP header` 上的 `source` && `destination`
 ```
 
 
-# CIDR
+# CIDR, Classless Inter-Domain Routing
 
 > 用來規範分配 IP 位址的網路機構(IANA, 相關代理機構, ISP) 的辦法
+
+- 協助定義 IP address
+- CIDR 由 2 個部分組成: Base IP + Subnet Mask
+   - Subnet Mask
+      - `/0` : all IPs ; all octets can change
 
 
 # Private Addressing

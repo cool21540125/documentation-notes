@@ -1046,6 +1046,112 @@ ie --> ee["EventBridge Event"];
 - 由 AWS 主動告知(Web Console 右上角小鈴鐺) Service 狀態
 
 
+# VPC(Virtual Private Network) && Networking
+
+![VPC Basic](./img/vpc_basic.png)
+
+- 有非常多名詞必須記得
+    - VPC && Subnet
+        - 一個 VPC 只能有一個 IGW (反之亦然)
+    - IGW(Internet Gateway) && NAT Gateway
+        - IGW 要透過 *Route Table* 來連結到 Subnet
+    - SG(Security Group) && NACL(Network ACL)
+        - SG 與 NACL 都是 firewall
+        - SG 只能做 ALLOW ; NACL 可 ALLOW/DENY
+        - NACL 為控制流量往返 ENI/EC2 的重要機制
+        - SG, stateful; response 自動 Allow
+        - NACL, stateless; response 必須 explicity 設為 Allow
+        - NACL 需要 attach 到 subnet
+            - 流量從外面進來(to EC2) 的第一道防線為 NACL, 之後才是 SG
+            - SG 為 EC2 Level ; NACL 為 Subnet Level
+            - 控制 subnet 的 traffic rules
+        - ```mermaid
+            flowchart TB
+            subgraph VPC
+                subgraph Public Subnet
+                    subgraph SG
+                        EC2
+                    end
+                    EC2 <--> NACL
+                end
+            end
+          ```
+    - VPC Flow Logs
+        - Capture info about IP traffic going into your interfaces
+        - 關於 Flow Logs, 還有:
+            - VPC flow logs
+            - subnet flow logs
+            - ENI flow logs
+            - ELB
+            - ElastiCache
+            - RDA
+            - Aurora
+    - VPC Peering
+        - 利用 AWS network privately connect 2 VPC (連結不同 VPC 啦)
+        - 可讓不同的 VPC, 搞得就像是個 LAN
+        - 建立 peering 的 2 個 VPC 之間, IP 不能 overlap
+        - 重要範例:
+            - 若 A 及 B 做好了 peering && B 及 C 做好了 peering
+                - A 與 C 依然無法 connect (朋友的朋友, 未必是我朋友)
+    - VPC EndPoints
+        - 可讓 private subnet 內的 Resources, 藉由 *VPC Endpoint Gateway* 來連接外部 Resources
+            - ex: S3, DynamoDB
+        - VPC EndPoint Gateway   : 只能連 DynamoDB && S3
+        - VPC EndPoint Interface : 能連 any AWS Resources
+        - ```mermaid
+            flowchart TB
+            subgraph VPC
+                subgraph Private Subnet
+                    ec2["EC2"]
+                    vei["VPC EndPoint Interface"]
+                end
+                veg["VPC EndPoint Gateway"]
+            end
+
+            ec2 <--> vei;
+            ec2 <--> veg;
+
+            veg <-- only --> limited["S3, DynamoDB"]
+            vei <-- all --> aws["AWS Resources"]
+          ```
+    - Direct Connect && Site to Site VPN
+        - Hybrid Cloud
+        - 需要留意的是, 即使連線過程皆為 encrypted, 但仍會有 Security Issue!!
+        - ```mermaid
+            flowchart LR
+
+            dc["On-Premise DC"]
+            vpn["Site-to-Site VPN \n (encrypted)"]
+            dc <-- "public www" --> vpn;
+            vpn <-- "public www" --> VPC;
+          ```
+        - ```mermaid
+            flowchart LR
+            cg["Customer Gateway"]
+            vpg["Virtual Private Gateway"]
+
+            subgraph IDC
+                machine <--> cg
+            end
+            subgraph VPC
+                vpg <--> ps["Private Subnet"]
+            end
+            cg <--> vpg
+          ```
+    - DX(Direct Connect)
+        - 實體線路連線 (貴)
+    - Transit Gateway
+        - 可同時連上成百上千個 VPC (只需要一個 Transit Gateway)
+        - ```mermaid
+            flowchart TB
+            tg["Transit Gateway"]
+            tg <--> v1["VPC"]
+            tg <--> v2["VPC"]
+
+            tg <-- VPN connection --> cg["Customer Gateway"]
+          ```
+
+
 # Machine Learning
 
 ## Amazon Rekognition
