@@ -544,6 +544,6 @@ users -- auth --> aws["AWS Simple AD"];
         - 無法分享 *default VPC* && *Security Group*
         - 可讓 EC2 放在 Organization 內 Other Account 建立的 Subnet
         - 借住在他人 Subnets 底下的 EC2, 可自行操作自己的 Resource, 但無法對不是自己的資源做其他操作
-    - AWS Transit Gateway
+    - [AWS Transit Gateway](./vpc#transit-gateway)
     - Route53 Resolver Rules
     - License Manager Configurations

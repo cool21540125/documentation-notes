@@ -89,7 +89,7 @@
     - Elastic Beanstalk
     - ECS
     - Lambda
-    - VPC Flow Logs, 送出特定 VPC metadata network traffic
+    - [VPC Flow Logs](./VPC.md#vpc-flow-logs), 送出特定 VPC metadata network traffic
     - API Gateway, 送出打到 API GW 的所有 requests
     - CloudTrail, 可設定 filter 來傳送 log
     - Route53, all DNS query
@@ -147,12 +147,12 @@ aws cloudwatch set-alarm-state \
 - 可用來 query logs && 把 query 加到 *CloudWatch Dashboard*
 
 
-# EventBridge (前身為 CloudWatch Events)
+# AWS EventBridge (前身為 *CloudWatch Events*)
 
 ```mermaid
 flowchart LR
 
-subgraph eb["Event Bus"]
+subgraph eb["EventBridge"]
     deb["Default Event Bus"] --> Rules;
     ceb["Custom Event Bus"] --> Rules;
     seb["SaaS Event Bus"] --> Rules;
@@ -160,17 +160,17 @@ subgraph eb["Event Bus"]
 end
 
 es --> seb;
-as["AWS Services"] --> deb;
-cs["Custom Services"] --> ceb;
-saas["SaaS APPs"] --> es;
+as["AWS Services"] -- event --> deb;
+cs["Custom Services"] -- event --> ceb;
+saas["SaaS APPs"] -- event --> es;
 
 subgraph Target
     direction LR;
     Lambda; Kinesis; ad["Additional Services"];
+    api["API Endpoints"]
 end
 Rules --> Target;
 ```
-
 
 - [clf-cloudwatch events](./cert-CLF_C01.md#cloudwatch-events)
 - EventBridge 核心名詞:
@@ -178,6 +178,7 @@ Rules --> Target;
     - Event : (等同於 SNS 的 Message) 除了可以被 APP 觸發, 也可能是 AWS Resource 來觸發特定 event
     - Rule : 將 incoming events 做規則配對, 並送到對應的 Targets 做後續處理
         - 特定一個 Rule, 可以有 5 個 Targets (致命缺陷)
+        - Rules 會依照 event 的 *Event Pattern* 來配發到不同的 Target
     - Target : (等同於 SNS 的 subscriber) 針對 Events 做對應處理
 - EventBridge(EB) vs CloudWatch Events(CWE)
     - 基本上 EB 是架構在 CWE 上頭, 使用相同的底層 API
@@ -201,3 +202,6 @@ Rules --> Target;
 - *Schema Registry* 會在 APP 裡頭 generate code, 
     - 來讓 APP 可事先得知 how data is structured in the event bus
     - 而這些 Schema 可版控
+- 假設 AccountA 想把 event 發送到 AccountB, 則:
+    - AccountA 需設定 [partner event source](https://docs.aws.amazon.com/eventbridge/latest/userguide/eb-saas.html)
+    - AccountB 需把 event 關聯到上述的 *partner event source*

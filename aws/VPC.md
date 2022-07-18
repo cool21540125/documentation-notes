@@ -7,14 +7,10 @@
     - AZ 內有 Subnets
 - VPC
     - 裏頭可有最多 5 組 CIDR
-- Default VPC CIDR : `172.31.0.0/16`
-    - VPC 及 Subnet, CIDR 範圍為 `/16 ~ /28`
 - Private IPv4
     - 10.0.0.0 - 10.255.255.255 (10.0.0.0/8)
     - 172.16.0.0 - 172.31.255.255 (172.16.0.0/12)
     - 192.168.0.0 - 192.168.255.255 (192.168.0.0/16)
-- [IPv4 CIDR 切分子網路](https://www.ipaddressguide.com/cidr)
-    - CIDR, Classless Inter-Domain Routing
 - VPC 裏頭有 2 個便利的東西 (最好都把它啟用, 除非有特殊原因)
     - DNS enableDnsSupport (default True)
         - 用來決定是否讓 DNS resolution from Route53 resolver is supported from the VPC
@@ -29,7 +25,11 @@
             - 建立新的 VPC 以後, 把這個也手動啟用吧~~
     - 很有趣的是, 可在 *Route53*, create private zone (也要花摳摳)
         - 綁定 hosted zone && VPC, 將來 VPC 裏頭就有自己私有的 DNS 了~
-
+- CIDR, Classless Inter-Domain Routing
+    - [IPv4 CIDR 切分子網路](https://www.ipaddressguide.com/cidr)
+    - IPv4 的 VPC && Subnet, CIDR range : `/16 ~ /28` (AWS CIDR 範圍)
+        - [How Amazon VPC works](https://docs.aws.amazon.com/vpc/latest/userguide/how-it-works.html#VPC_Sizing)
+        - Default VPC CIDR : `172.31.0.0/16`
 
 
 ## Subnet
@@ -188,16 +188,24 @@ end
 
 ## SG && ENI && EC2 && NACL
 
-- Security Group, SG
-    - 本身為 Stateful, 因此出得去的話, 預設會回的來
-- Network ACL, NACL
-    - 本身為 Stateless
+- [clf-NACL](./cert-CLF_C01.md#vpcvirtual-private-network--networking)
+    - NOTE: *VPC Peering* 的位置大概與 *IGW* 相同
+- ![NACL](./img/NACL.drawio.png)
+- 每個 Subnet 都會有個 *Default NACL*, 不過他預設 `Rule 100, ALLOW 0.0.0.0/0 all IPv4 in & out`
 - Elastic Network Interface, ENI
 - SG 並非直接對 EC2 作用, 它其實是 attach 到 ENI
     - ENI 再 attach 到 EC2
     - 一個 ENI, 可有多個 SG
     - 一個 EC2, 可有多個 ENI
     - 因此, 也就是說, 一個 EC2, 可有多個 SG
+- Ephemeral Ports
+    - NACL 往返流量時, 會與 client 建立 connection
+    - port range:
+        - IANA && Win10, client port: `49152 - 65535`
+        - Linux: `32768 - 60999`
+- 關於 NACL && Security Group && ENI && Route Table 的 network access, 可使用 **VPC Reachability Analyzer Tools**
+    - 針對 配置 來評估, 網路是否可通 (並非真正 send packets)
+    - Charge: 每跑一次要價 $0.1 美元
 
 ```mermaid
 graph TD;
@@ -216,10 +224,303 @@ SG1 -- attach --> ENI;
 ENI -- attach --> EC2;
 ```
 
+Security Group     | NACL
+------------------ | --------------------------
+instance level     | subnet level
+apply to an EC2    | allpy to all EC2
+ALLOW only         | ALLOW/DENY
+Stateful           | Stateless
+
 
 ## Bastion Host
 
 - 放在 Public Subnet 的 堡壘機/跳板機
+
+
+## VPC Peering
+
+- Privately connect two VPCs using AWS' network
+    - 利用 AWS network privately connect 2 VPC (連結不同 VPC 啦)
+    - 讓 VPCs 之間就像是在同樣的 network 裡頭包含了
+        - cross region, cross account
+        - 不能有 operlapping CIDRs
+    - 配置完以後, 還需要自行配置 Route Table (兩邊都需要配置)
+- 可讓不同的 VPC, 搞得就像是個 LAN
+- 如果要 expose service 給其他 VPC, 這是個比開 public 還要好的做法
+    - 不過更好的做法, 可使用 [PrivateLink](#vpc-endpoint-services-aws-privatelink)
+- 重要範例:
+    - 若 A 及 B 做好了 peering && B 及 C 做好了 peering
+        - A 與 C 依然無法 connect (朋友的朋友, 未必是我朋友)
+        - VPC Peering connection is NOT transitive
+
+
+## VPC Endpoint Services (AWS PrivateLink)
+
+- 可用來 expose service 給成百上千個 VPC (Secure && Scalable)
+    - 此做法可完全取代 [VPC Peering](#vpc-peering)
+    - 無需 *VPC Peering*, 無需 IGW, 無需 NATGW, 無需 Route Table
+- 可讓 private subnet 內的 Resources, 藉由 *VPC Endpoint Gateway* 來連接外部 Resources
+    - ex: S3, DynamoDB
+- VPC EndPoint Gateway   Endpoint : 只能連 DynamoDB && S3
+- VPC EndPoint Interface Endpoint : 能連 any AWS Resources
+    - provision an ENI(private IP) as an entry point (也須 attach SG)
+- ![AWS PrivateLink](./img/AWS_PrivateLink.drawio.png)
+    - 要分享服務的位置, 必須配置 NLB 或 GLB
+    - 要使用服務的 AWS Service, 需配置 ENI
+    - 要使用服務的 On-Premise, 需藉由 VGW
+- ![AWS PrivateLink](./img/PrivateLink.png)
+
+```mermaid
+flowchart TB
+subgraph VPC
+    subgraph Private Subnet
+        ec2["EC2"]
+        vei["VPC EndPoint Interface"]
+    end
+    veg["VPC EndPoint Gateway"]
+end
+
+ec2 <--> vei;
+ec2 <--> veg;
+
+veg <-- only --> limited["S3, DynamoDB"]
+vei <-- all --> aws["AWS Resources"]
+```
+
+
+## EC2-Classic && AWS ClassicLink
+
+- 2022/08/15 廢除服務
+
+
+## VPC Flow Logs
+
+- Capture info about IP traffic going into your interfaces, 有底下 3 kinds:
+    - VPC Flow Logs
+    - Subnet Flow Logs
+    - Elastic Network Interface(ENI) Flow Logs
+- 能有效的協助 mmonitor && troubleshoot Connectivity Issue
+- 會從各個 AWS 管理的 interfaces 蒐集 network information:
+    - ELB
+    - RDS
+    - ElastiCache
+    - Redshift
+    - WorkSpaces
+    - NAT Gateway
+    - Transit Gateway
+    - etc
+- *Flow logs* 可被保存到 S3 / CloudWatch Logs
+- VPC Flow Logs 裡頭大概有這些欄位(有大概印象就好):
+    - version
+    - account-id
+    - interface-id
+    - srcaddr
+    - dstaddr
+    - srcport
+    - dstport
+    - protocol
+    - packets
+    - bytes
+    - start
+    - end
+    - action : Security Group 或 NACL 訪問的 http method
+    - log-status
+- 想要分析這些 Flow Logs 的話, 可藉由 Athena(on s3) 或 *CloudWatch Logs Insights*(on stream)
+
+
+## AWS Site-to-Site VPN
+
+- [What is AWS Site-to-Site VPN?](https://docs.aws.amazon.com/vpn/latest/s2svpn/VPC_VPN.html)
+    - 此處的 VPN 指的是 On-Premise network 與 VPC 之間的 network connection
+- *Site-to-Site VPN* 支援了 *Internet Protocol security (IPsec) VPN connections*
+    - 需要留意的是, 即使連線過程皆為 encrypted, 但仍會有 Security Issue!!
+- Virtual Private Gateway, VPG 或 VGW
+    - AWS 對於 VPN connection 需要有個 VPN concentrator
+    - 在想建立 Site-to-Site VPN 的 VPC 上頭 create && attach VPG
+    - UNKNOWN 弄個 ASN(Autonomous System Number)
+- Customer Gateway, CGW
+    - Data Center 上頭, 弄個 (軟體 or 硬體) customer gateway (用來做 VPN connection)
+- 實作上需注意, AWS 那邊需要 enable *Route Propagation* for VPG
+    - 如此一來, Virtual Private Gateway 與 subnet 之間才會有 route table
+- 目前不支援 IPv6 && 不支援 *Path MTU Discovery*
+- Charge: 依照 VPN connection per hour 以及 EC2 network traffic out 來收費
+- AWS VPN CloudHub
+    - 概念上是指, 如果咱們企業有很多個 customer network, 則彼此之間連線到 VGW 以後
+    - 則企業端點之間可藉助 Site-to-Site VPN, 來當作 *VPN CloudHub* 使用
+        - 白話文就是, 企業端點之間也能使用 VPN connection 了
+    - 設定 CGW 與 VGW 時, 需要 enable *Dynamic Routing* && 配置 *Route Table* 就可以了~
+- 實際配置
+    - Create/Config 企業端的 *Customer Gateways*
+    - Create/Config AWS 上頭的 *Virtual Private Gateways*
+    - 使用 *Site-to-Site VPN Connections*, 並將上面兩者 connect
+        - 可選擇 *Virtual Private Gateway* 或 *Transit Gateway*
+        - 配置 Routing && IPv4(CIDR)
+        - 最後再 Create VPN connection
+
+```mermaid
+flowchart LR
+cg["Customer Gateway"]
+vpg["Virtual Private Gateway"]
+
+subgraph IDC
+    machine <--> cg
+end
+subgraph VPC
+    vpg <--> ps["Private Subnet"]
+end
+cg <--> vpg
+```
+
+
+## Direct Connect, DX
+
+- [What is AWS Direct Connect?](https://docs.aws.amazon.com/directconnect/latest/UserGuide/Welcome.html)
+- AWS 混合雲連線
+    - Provides a dedicated private connection from a remote network to your VPC
+- AWS Direct Connect 的 Connection Types 可選擇下列:
+    - Dedicated Connections:
+        - 可選擇 1 Gbps 或 10 Gbps
+        - 可有實體的專用裝置
+    - Hosted Connections:
+        - 可選擇 50 Mbps, 500 Mbps, 最高可達 10 Gpbs
+        - 可按需求來增減
+- Charge: Direct Connect 租約最低為 1 個月
+    - 若有需求, send request to *AWS Direct Connect Partners*
+    - 若需要使用的預估期限遠小於 1 個月... 可考慮其他方式了, 因為這個很貴~
+- DX 因為是 private, 傳輸過程預設 「沒有 encrypt」, 但可自行搭配 VPN 來實踐 IPSec
+    - 不過這過程會比較複雜...
+- 底下的流程圖, 全部都是走 Private Virtual Interface, PVI
+
+```mermaid
+flowchart RL
+
+vgw["Virtual Private Gateway"]
+cgw["Customer Gateway"]
+adce["AWS Direct Connect Endpoint \n (AWS Cage)"]
+
+subgraph VPC
+    vgw
+    s3["S3, Glacier"]
+end
+
+subgraph adc["AWS Direct Connect Location"]
+    adce
+    cc["Customer \n or \n partner router \n (Customer or partner cage)"]
+end
+
+subgraph on-premise DC
+    cgw
+end
+
+cgw <--> cc
+cc <-- "VLAN" --> adce
+adce <--> vgw
+adce <--> s3
+```
+
+- 除了上圖, 也可直接在 *AWS Direct Connect Endpoint* 上頭, 直接連到 VPC 裡頭的 S3/Glacier
+    - 此為 Public Virtual Interface
+- 如果想一口氣設定可連入到 multiple VPC(same account), 則需使用 *Direct Connect Gateway*
+    - 一樣本地端連入到 *AWS Direct Connect*, 之後藉由 *Direct Connect Gateway* 的 *Private Virtual Interface* 來連線到 VPG
+
+```mermaid
+flowchart LR
+
+subgraph r1["Region"]
+    subgraph vpc1["VPC"]
+        vpg1["Virtual Private Gateway, VPG"]
+    end
+end
+subgraph r2["Region"]
+    subgraph vpc2["VPC"]
+        vpg2["Virtual Private Gateway, VPG"]
+    end
+end
+
+dcg["Direct Connect Gateway \n Private Virtual Interface(PVI)"]
+adc["AWS Direct Connect"]
+
+On-Premise <--> adc;
+adc <--> dcg;
+dcg <--> vpg1;
+dcg <--> vpg2;
+```
+
+
+## Transit Gateway
+
+- 可將複雜的 cross VPC 的網路問題, 簡化成一個 *hub-and-spoke(star)* connection
+    - 將 Transit Gateway 置於中心, 連結各種的 networking
+    - 可再藉由 [Resource Access Manager, RAM](./iam.md#aws-resource-access-manager-ram) 來做 cross account sharing
+    - 藉由 *Route Table* 來做訪問的存取控制
+- 可同時連上成百上千個 VPC (只需要一個 Transit Gateway)
+- UNKNOWN 少數支援 *IP Multicast* 的 AWS Service
+```mermaid
+flowchart TB
+tg["Transit Gateway"]
+tg <--> v1["VPC"]
+tg <--> v2["VPC"]
+
+tg <-- VPN connection --> cg["Customer Gateway"]
+```
+
+- 使用 transit gateway 的另一種情境是, by using ECMP to increase the bandwidth of your site-to-site VPN connection
+    - ECMP, equal-cost multi-path. 此為 允許 forward packet over multiple best path 的一種 Routing Strategy
+- 比較:
+    - VPN to virtual private gateway, VPG(VGW)
+        - 與 VPC 連線後, 建立一條 connection, 1.25 Gbps
+            - 而此 connection 使用了 2 tunnels (upload / download)
+    - VPN to transit gateway
+        - 與 transit gateway 連線後, 會與後面的 VPC, 各自建立自己的 *site-to-site VPN*
+            - 而每個 *site-to-site VPN* connection 2.5 Gbps (by ECMP)
+        - 如果想要更高流量, 可增加更多的 *site-to-site VPN connections*
+            - 每個 *site-to-site VPN connection* 一樣有 2 tunnels
+
+
+## VPC - Traffic Mirroring
+
+- used to capture && inspect network traffic in VPC (non-intrusive manner)
+- Use Case: 想蒐集某個 ENI 的流量, 但又不想直接干擾到機器的運作
+    - 使用此方式, 會將此流量做一個 copy/mirroring 到一個 「NLB 或 GLB (with UDP listener)」 為入口的 networking
+- 可將 packet 做 filter/truncate, 用以專注在想分析的流量上頭
+
+
+## VPC - IPv6
+
+- Allows instances in 
+- Egress-only Internet Gateway
+    - Used for IPv6 only
+    - 地位等同於 IPv4 的 [NAT Gateway](#nat-gateway-network-address-translation-gateway)
+- 用途是, 讓 VPC outbound connection 使用 IPv6, 但是禁止網路與此 IP 建立連線
+    - 達成此需求, 需要修改 Route Table
+- 好文閱讀
+    - [IPv6 Networking with AWS VPC](https://crishantha.medium.com/ipv6-networking-with-aws-vpc-b7ef3642a399)
+
+```mermaid
+flowchart TB
+
+ii["Internet"]
+
+subgraph VPC
+    direction LR
+    nat["NAT Gateway"]
+    subgraph Public Subnet
+        srv1["Server"]
+    end
+    subgraph Private Subnet
+        srv2["Server"]
+    end
+    igw["Internet Gateway"]
+    egw["Egress-only Internet Gateway"]
+end
+
+srv1 <--> igw;
+nat <--> igw;
+srv2 <-- IPv4 --> nat;
+srv2 -- IPv6 --> egw;
+egw --> ii;
+igw <--> ii;
+```
 
 
 ## NAT Gateway, Network Address Translation Gateway
@@ -227,16 +528,16 @@ ENI -- attach --> EC2;
 - *NAT Instance* (Outdated, NAT Gateway 的前身)
     - NAT Instance 初始設定繁雜, 且無 HA
     - 必須 launch 在 *Public Subnet*
-    - 必須 disable EC2 的 source/destination IP check
+    - 必須 DISABLE EC2 的 source/destination IP check, 才能正常使用 (它是老東西了)
     - 必須為 private subnet 配置適當的 *Route table* 以使用 NAT Gateway
 - NAT Gateway 建立以後, 就會被配置一個 EIP(Elastic IP) 在上頭
+    - Only for IPv4 (IPv6, 需使用 *Egress*)
     - 流量為 5 Gbps, auto-scaling -> 45 Gbps
     - 無須管理 NAT Gateway 的 SG
 - 無法在相同的 subnet 裏頭使用
     - EC2 與 NAT Gateway 必須在不同 subnet
 - 同一個 AZ 裏頭具備 HA (無法 cross AZ)
     - 若要 cross AZ, 來做 HA, 需自行逐筆 create
-
 
 ```mermaid
 flowchart LR

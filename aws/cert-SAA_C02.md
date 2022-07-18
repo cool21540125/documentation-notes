@@ -985,7 +985,7 @@ Shield3 --> Shield4;
         - CloudTrail Management Events
             - 從 *CloudTrail Event logs* 取 data, 來判斷是否有 unusual API call
         - CloudTrail S3 Data Events
-    - VPC Flow Logs
+    - [VPC Flow Logs](./VPC.md#vpc-flow-logs)
     - DNS Logs
     - EKS Audit Logs
 
@@ -1069,7 +1069,7 @@ ce -- integration --> pipeline["SNS, Lambda, ..."];
 - 因應 Security, 可用 GuardDuty, Macie, SecurityHub, ...
 - 但如果要找出因果關係, 可使用 *Amazon Detective*
 - 啟用後, 會自動蒐集底下這些, 來建立 view (用來呈現)
-    - VPC Flows Logs
+    - [VPC Flows Logs](./VPC.md#vpc-flow-logs)
     - CloudTrail
     - GuardDuty
 
