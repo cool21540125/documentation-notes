@@ -1081,4 +1081,198 @@ ce -- integration --> pipeline["SNS, Lambda, ..."];
 - 用來跟 AWS 反映違規使用的 Service
 
 
-## 
+# Disaster Recovery & Migrations
+
+- [clf-dr](./cert-CLF_C01.md#disaster-recovery-strategy)
+- [Disaster recovery options in the cloud](https://docs.aws.amazon.com/whitepapers/latest/disaster-recovery-workloads-on-aws/disaster-recovery-options-in-the-cloud.html)
+
+
+## Disaster Recovery in AWS
+
+- DR, Disaster recovery
+- 備份還原策略, 關鍵決策的核心要考慮 2 個重點, 後續的備份還原策略, 都基於這兩者:
+    - RPO, Recovery Point Objective
+        - Disaster 與 RPO 之間, 為 data loss 可接受的範圍
+    - RTO, Recovery Time Objective
+        - RTO 與 Disaster 之間, 為 downtime 可接受的期間
+
+```
+   RPO        Disaster             RTO
+    | Data Loss |  Service Downtime |
+    v           v                   v
+------------------------------------------> time
+```
+
+- 常見的 Disaster Recovery Strategies 如下:
+    - Backup and Resotre
+        - 遇到問題時, restore/recreate from backup
+        - high RPO && high RTO
+    - Pilot Light
+        - 僅將核心資源做線上備份 (critical systems are already up)
+        - ex: RDS 隨時與 local DB 做 replication
+            - EC2 上頭安裝了與 running APP 一樣的環境 (但關機)
+            - 遇到問題時, 改變 Route53 解析, 開 EC2
+        - 相較上者, 有較低的 RPO && RTO
+    - Warm Standby
+        - 隨時都有另一套規格較小的在運行, 作為備源
+    - Hot Site / Multi Site Approach
+        - 最貴方案, 不過 RPO & RTO 能盡可能降到最低
+        - full production scale
+
+
+## Database Migration Service, DMS
+
+- 如果 backup source 與 restore target 的 DB engine 不一樣, 參考 *AWS SCT*
+    - AWS Schema Conversion Tool, SCT
+    - 反過來說, 如果 source 與 target 相同 Engine, 則不需要 SCT
+- Continuous Data Replication, CDC
+
+```mermaid
+flowchart TB
+
+subgraph dc["Corporate Data Center"]
+    db["Oracle DB \n (source)"]
+    srv["Server with AWS SCT Installed"]
+end
+
+subgraph Region
+    subgraph VPC
+        subgraph Public Subnet
+            dms["AWS DMS Replication Instance \n (Full load + CDC)"]
+        end
+        subgraph Private Subnet
+            rds["RDS mysql \n (target)"]
+        end
+    end
+end
+
+db -- Data migration --> dms;
+db -- "backup 到不同 Engine DB" --> srv;
+srv -- Schema conversion --> rds;
+dms -- insert/update/delete --> rds;
+```
+
+## On-Premises Strategies with AWS
+
+- AWS Application Discovery Service
+    - 用來蒐集 On-Premise Servers 資訊, 來做 migration plan
+    - Server utilization & dependency mappings
+    - Track with AWS Migration Hub
+- 除了上述 DMS, Database Migration Service, 可以處理 AWS 與 On-Premise 的 migration 以外, 地端可使用 *AWS Server Migration Service, SMS*
+    - 可將 On-Premise DB 做 incremental backup -> AWS
+
+
+## DataSync
+
+- [What is AWS DataSync?](https://docs.aws.amazon.com/datasync/latest/userguide/what-is-datasync.html)
+    - online data transfer service
+    - 大量 data 想從 On-Premise Data -> AWS, 可參考此服務
+    - 可設定 rate limit
+    - online data transfer service
+- [clf-DataSync](./cert-CLF_C01.md#aws-datasync)
+- Use Case:
+
+```mermaid
+flowchart LR
+
+subgraph dc["On-Premise"]
+    srv["Server"]
+    dsa["AWS DataSync Agent"]
+
+    srv <-- NFS/SMB protocal --> dsa
+end
+
+subgraph Region
+    ds["AWS DataSync"]
+    subgraph rr["AWS Storage Resources"]
+        direction LR
+        S3; S3-IA;
+        glacier["S3 Glacier"]
+        efs["AWS EFS"]
+        fsx["Amazon FSx"]
+    end
+    ds <--> rr
+end
+
+dsa <-- TLS --> ds;
+```
+
+- Use Case:
+
+```mermaid
+flowchart BT
+
+subgraph r0["Region A \n (source)"]
+    subgraph VPC
+        efs0["Amazon EFS"]
+        ec2["EC2 with DataSync Agent"]
+        ec2 --- efs0
+    end
+end
+
+subgraph r1["Region B \n (Destination)"]
+    ds["AWS DataSync Service endpoint"]
+    efs1["Amazon EFS"]
+    ds --- efs1
+end
+
+ec2 -- sync --> ds;
+```
+
+
+## Transferring Large Datasets
+
+- local 與 AWS 巨量資料的傳遞
+    - 一次性
+        - ~~Site-to-Site VPN~~
+        - ~~Direct Connect~~
+        - [Snowball](./cert-CLF_C01.md#aws-snow-family)
+    - on-going
+        - [Site-to-Site VPN](./VPC.md#aws-site-to-site-vpn)
+        - [Direct Connect](./VPC.md#direct-connect-dx)
+        - [DMS](./cert-CLF_C01.md#dms-database-migration-services)
+        - [DataSync](#datasync)
+
+
+## AWS Backup
+
+- [clf-backup](./cert-CLF_C01.md#aws-backup)
+- SaaS, 統一管理 && auto backup across AWS Services
+- 無需 custom Scripts, 無需 manual processes
+- 支援一堆 AWS Services:
+    - EC2 / EBS
+    - S3
+    - RDS / Aurora / DynamoDB
+    - DocumentDB / Neptune
+    - EFS / FSx
+    - Storage Gateway (Volume Gateway)
+- 支援 cross-region && cross-account
+- 支援 point-in-time recovery, PITR
+- 支援 on-demand && scheduled backups
+- 支援 tag-based backup policy
+- backup plans:
+    - frequency
+    - Backup window
+    - Transition -> Code Storage
+    - Retention period
+- 支援 [Backup Vault Lock](./S3.md#s3-lock-policies--glacier-vault-lock)
+
+```mermaid
+flowchart LR
+
+backup["AWS Backup"]
+plan["AWS Backup Plan"]
+subgraph rr["AWS Resources"]
+    direction LR
+    EC2; EBS; s3["S3"]; 
+    RDS; DynamoDB; DocumentDB; 
+    EFS; Aurora; Neptune; FSx;
+    sg["Storage Gateway"]
+end
+
+backup --> plan;
+plan --> rr;
+rr -- "Auto backup" --> S3;
+```
+
+# 

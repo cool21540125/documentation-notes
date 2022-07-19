@@ -1,12 +1,16 @@
 
 # AWS CloudWatch
 
+- [What is Amazon CloudWatch?](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/WhatIsCloudWatch.html)
+- 用來 `collect / monitor / analyze` AWS Services
+    - collect 到的這些數據, 稱之為 metrics
+    - 其實也可以把 *CloudWatch* 當作是個 *metrics repository*
 - 重要名詞定義
     - Metrics
         - 每隔一段時間發佈到 CloudWatch 的一組 data point
         - metric 只保存在他們所在的 Region, 無法自行刪除 (15 個月後會消失)
     - Namespaces
-        - Metrics 的 Container && 隔離不同的 Metrics
+        - Metrics 的 Container, 用來隔離不同的 Metrics
         - ex: EC2 使用 `AWS/EC2` 這個 namespace
     - Dimensions
         - Metric 裡頭的一組 name/value pair ; 每個 Metric 最多能有 10 個 Dimensions
@@ -21,6 +25,7 @@
     - Alarms
         - 針對一段時間特定 Metric 達到某個 threshold 的狀態, 再對此來做因應
 
+
 ## CloudWatch Metrics
 
 - 預設 EC2 每 5 分鐘 會有對應 metrics
@@ -29,6 +34,7 @@
 - UNKNOWN Accepts metric data points two weeks in the past and two hours in the future
     - (make sure to configure your EC2 instance time correctly)
 - 可使用 [put-metric-data](https://awscli.amazonaws.com/v2/documentation/api/latest/reference/cloudwatch/put-metric-data.html) API 來增加 custom metric
+- 可以針對 metric 超過門檻, 配置對應的 [alarm actions](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/cloudwatch_concepts.html#CloudWatchAlarms)
 
 
 ## CloudWatch Dashboards
@@ -118,7 +124,7 @@
 
 ## CloudWatch Alarms
 
-- 用來針對 *CloudWatch Metric* 做 trigger notification
+- 用來針對 *Metrics* 做 trigger notification
 - Alarm State (Alarm Status)
     - OK
     - INSUFFICIENT_DATA : 資料量不足以判斷目前 State
@@ -149,28 +155,38 @@ aws cloudwatch set-alarm-state \
 
 # AWS EventBridge (前身為 *CloudWatch Events*)
 
-```mermaid
-flowchart LR
+- [What Is Amazon EventBridge?](https://docs.aws.amazon.com/eventbridge/latest/userguide/eb-what-is.html)
+    - 下圖的 *event*, 其實就是 *stream of real-time data*
 
-subgraph eb["EventBridge"]
-    deb["Default Event Bus"] --> Rules;
-    ceb["Custom Event Bus"] --> Rules;
-    seb["SaaS Event Bus"] --> Rules;
-    es["Event Source"]
-end
+    ```mermaid
+    flowchart LR
 
-es --> seb;
-as["AWS Services"] -- event --> deb;
-cs["Custom Services"] -- event --> ceb;
-saas["SaaS APPs"] -- event --> es;
+    subgraph Sources
+        as["AWS Services"]
+        cs["Custom Services"]
+        saas["SaaS APPs"]
+    end
 
-subgraph Target
-    direction LR;
-    Lambda; Kinesis; ad["Additional Services"];
-    api["API Endpoints"]
-end
-Rules --> Target;
-```
+    subgraph eb["EventBridge"]
+        deb["Default Event Bus"] --> Rules;
+        ceb["Custom Event Bus"] --> Rules;
+        seb["SaaS Event Bus"] --> Rules;
+        es["Event Source"]
+    end
+
+    es --> seb;
+    as -- event --> deb;
+    cs -- event --> ceb;
+    saas -- event --> es;
+
+    subgraph Targets
+        direction LR;
+        Lambda; Kinesis; ad["Additional Services"];
+        api["API Endpoints"]
+        other["其他 AWS Account 的 event bus"]
+    end
+    Rules --> Targets;
+    ```
 
 - [clf-cloudwatch events](./cert-CLF_C01.md#cloudwatch-events)
 - EventBridge 核心名詞:

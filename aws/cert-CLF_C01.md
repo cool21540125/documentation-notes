@@ -299,6 +299,7 @@ Networking    | -    | -    | -
 
 ## Storage Gateway
 
+- [saa-StorageGateway](./StorageGateway.md)
 - 若要使用 Hybrid Cloud, 本地要 access cloud data, 需使用此服務
 - 可針對 Block Storage && File && Object, 藉由 **AWS Storage Gateway** 做 bridge, 讓 On-premise client 使用
     - Block Storage : EBS, EC2 storage
@@ -764,6 +765,21 @@ tmpl --> CloudFormation;
 - Cloudfront (CDN), Edge Locations, 也稱為 Points of Presence
 - S3 Transfer Acceleration, 加速 upload/download
 - AWS Global Accelerator, 加速 App availability & performance
+- AWS 的網路流量, 僅對 outbound 收費, 如下
+
+```mermaid
+flowchart LR
+
+cf["CloudFront \n (Edge Location)"]
+edge["Transfer acceleration \n (Edge Location)"]
+
+S3 -- $0.09 / GB--> internet
+S3 -- Free --> cf
+cf -- 0.085 / GB --> internet
+S3 -- Free --> edge
+edge -- "原傳輸費 +0.04 / GB 加速費" --> internet
+S3 -- $0.04 / GB --> repl["cross-region Replication"]
+```
 
 
 ## Route53
@@ -807,9 +823,12 @@ tmpl --> CloudFormation;
       ```
 
 
-## S3 Transfer Acceleration
+## S3TA, S3 Transfer Acceleration
 
 - 用來加速 file 上傳到 S3
+- Charge: +0.04 ~ 0.08 / GB
+- 速度可能 + 50 ~ 500%
+- S3 -> CloudFront, 傳輸免費. 不過再由 CloudFront -> Internet, 則為 0.085 / GB
 
 
 ## AWS Global Accelerator
@@ -1297,6 +1316,8 @@ S3 --> Web;
 
 ## AWS Backup
 
+- [saa-backup](./cert-SAA_C02.md#aws-backup)
+
 ```mermaid
 flowchart LR;
 
@@ -1310,6 +1331,7 @@ rr -- restore --> S3;
 
 ## Disaster Recovery Strategy
 
+- [saa-dr](./cert-SAA_C02.md#disaster-recovery--migrations)
 - 費用由上到下越來越貴
     - Backup & Restore - 存 S3
     - Pilot Light - 開 EC2 (low spec), 用來存放 Core Function
