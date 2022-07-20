@@ -563,6 +563,7 @@ glue -- load --> RedShift;
 - Serverless & Scalable
     - RESTful API
     - WebSocket API
+- Regional Service
 
 
 ```mermaid
