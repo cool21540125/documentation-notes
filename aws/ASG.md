@@ -46,6 +46,7 @@
         - scale out : Pending --> (Pending:Wait --> Pending:Proceed) --> InService
         - scale in  : Terminating --> (Terminating:Wait --> Terminating:Proceed) --> Terminated
     - ex: 機器關機之前, 要把裡頭的配置取出來 OR 機器建置時, 要再額外安裝東西...
+- ![Lifecycle Hook](./img/ASG-LifecycleHook.png)
 
 ```mermaid
 flowchart TB

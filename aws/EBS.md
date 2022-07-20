@@ -1,4 +1,17 @@
 
+# EBS, Elastic Block Storage
+
+- 為 Network Device
+    - 只能同時掛載到一台 Instance
+        - 早期的 io1, io2 可同時掛載到多個 EC2
+    - 只能存在於 az, 無法跨 az
+        - 若要跨 az/region, 可藉由 snapshot
+            - 做 EBS snapshot, 不需要 detatch, 但建議
+- EBS snapshot
+    - 可將 EBS 做這個, 然後搬到其他 az 去做 attach/restore, 即可變相的 cross az
+    - EBS snapshot archive 以後, 又可省下 75% 的費用
+        - 但是還原非常費時, 24~27 hrs
+    - 可以 Enable *Recycle Bin for EBS Snapshow* (資源回收桶, 預設沒啟用) 防止誤砍
 - Provisioned IOPS, PIOPS
 - 無法跨 AZ, 若要 Cross AZ, 則需要搭配 snapshot(再由 snapshot 到其他 AZ restore)
 - 各種 Volume Types 比較
@@ -15,9 +28,9 @@
         - ex: 要使用在非常講究 IOPS 的 DB, 可使用 io1/io2
         - IOPS 與 Size 並沒掛鉤(可獨立調整)
         - io1
-            - Max IOPS 64,000
+            - Max IOPS 64000
         - io2 Block Express, 4GiB ~ 64 TiB
-            - Max PIOPS 為 256,000 with an IOPS:GiB ratio of 1000:1 (不知道這在講啥...)
+            - Max PIOPS 為 256000 with an IOPS:GiB ratio of 1000:1 (不知道這在講啥...)
     - gp2/gp3 SSD
         - IOPS 隨著 容量 增加(無法彈性選擇), 且 IOPS 最高也只有到 16000
         - General purpose, 平衡了 price && performance

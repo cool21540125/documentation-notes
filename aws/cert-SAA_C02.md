@@ -634,6 +634,11 @@ ce -- integration --> pipeline["SNS, Lambda, ..."];
 - 用來跟 AWS 反映違規使用的 Service
 
 
+# VPC
+
+- [VPC](./VPC.md)
+
+
 # Disaster Recovery & Migrations
 
 - [clf-dr](./cert-CLF_C01.md#disaster-recovery-strategy)
@@ -832,4 +837,37 @@ plan --> rr;
 rr -- "Auto backup" --> S3;
 ```
 
-# 
+
+# ML, Machine Learning
+
+- [Machine Learning](./cert-CLF_C01.md#machine-learning)
+
+
+# WhitePaper Section Introduction
+
+- [AWS Well-Architected Framework](https://docs.aws.amazon.com/wellarchitected/latest/framework/welcome.html)
+    - 不要去猜測需求規模, 取而代之善用 ASG
+    - 使用 Prod 規格來做測試 (因機器可隨時關閉, 別省這點錢, 別偷懶 )
+    - 善用 CloudFormation 來重建架構, 方便實驗
+    - Drive architecture using data
+    - Well Architecture 有幾個重要構面:
+        - Operational Excellence
+        - Security
+        - Reliability
+        - Performance Efficiency
+        - Cost Optimization
+        - Sustainability
+- [What is AWS Well-Architected Tool?](https://docs.aws.amazon.com/wellarchitected/latest/userguide/intro.html)
+    - Free tool to review architecture
+    - 建立一份 Workload 以後, 開始回答一堆問題... AWS 會提出相關的 risk 以及 improvment plan
+- [AWS Trusted Advisor](https://docs.aws.amazon.com/awssupport/latest/user/trusted-advisor.html)
+    - [clf-TrustedAdvisor](./cert-CLF_C01.md#aws-trusted-advisor)
+    - 除非有啟用 Enterprise 或 business plan, 否則只有底下部分的 core checks:
+        - Cost Optimization
+        - Performance
+        - Security
+        - Fault Tolerance
+        - Service Limits
+    - [AWS-Github-Samples](https://github.com/aws-samples)
+- [Disaster Recovery of Workloads on AWS: Recovery in the Cloud](https://docs.aws.amazon.com/whitepapers/latest/disaster-recovery-workloads-on-aws/disaster-recovery-workloads-on-aws.html)
+- [AWS Well-Architected Framework – Updated White Papers, Tools, and Best Practices](https://aws.amazon.com/blogs/aws/aws-well-architected-framework-updated-white-papers-tools-and-best-practices/)

@@ -5,9 +5,11 @@
 
 ## 名詞
 
-> Recursive (遞迴式) : DNS用戶端向DNS Server的查詢模式，這種方式是將要查詢的封包送出去問，就等待正確名稱的正確回應，這種方式只處理回應回來的封包是否是正確回應或是說是找不到該名稱的錯誤訊息。問的方式是用Iterative的方式。
-
-> Iterative（交談式）: DNS Server間的查詢模式，由Client端或是DNS Server上所發出去問，這種方式送封包出去問，所回應回來的資料不一定是最後正確的名稱位置，但也不是如上所說的回應回來是錯誤訊息，也許是另外一台DNS的位址(當該台DNS沒有答案時，會傳回一台 "權威授權者"DNS的位址)。再由Client或DNS自己向" 權威授權者"DNS詢問。 一般說來，name resolver對local DNS server都是recursive query，而DNS server之間的 query多是iterative。大部份的DNS server都可以接受recursive和iterative兩種query方式，但是考量負載問題，root name server只接受iterative query。
+- domain apex : 就是我們買到的 domain 啦, ex: google.com, tonychoucc.com, yahoo.com
+- DNS Query, 分成:
+    - Resursive Query : DNS Client 向 DNS Server 的查詢
+    - Iterative Query : DNS Servers 之間的查詢
+      - root name server 只接受這種 query
 
 > DNS NameSpace:
 將 IP 服務等命名, 並使用階層結構將這些名字組織起來的結果

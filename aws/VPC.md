@@ -121,6 +121,12 @@ subnet2 --> az2;
 subnet3 --> az1;
 ```
 
+- 如上圖
+    - Region, ex: Tokyo
+    - Tokyo 有多個 邏輯資料中心, az1, az2, az3
+    - 每個 AZ 裡頭有多個對應到的 實體資料中心 (裡頭的 DC)
+    - Subnet, 可暫時把它想像成 VPC 裡頭的 子網段
+
 
 # Routes & Security
 
@@ -276,7 +282,7 @@ Stateful           | Stateless
 
 - 可用來 expose service 給成百上千個 VPC (Secure && Scalable)
     - 此做法可完全取代 [VPC Peering](#vpc-peering)
-    - 無需 *VPC Peering*, 無需 IGW, 無需 NATGW, 無需 Route Table
+    - 無需依賴於 *VPC Peering*, IGW, NATGW, Route Table
 - 可讓 private subnet 內的 Resources, 藉由 *VPC Endpoint Gateway* 來連接外部 Resources
     - ex: S3, DynamoDB
 - VPC EndPoint Gateway (或 Gateway Endpoint) 有 2 種 Endpoint type:
@@ -305,6 +311,8 @@ ec2 <--> veg;
 veg <-- only --> limited["S3, DynamoDB"]
 vei <-- all --> aws["AWS Resources"]
 ```
+
+- VPC EndPoint Interface, 它其實是個 ENI
 
 
 # EC2-Classic && AWS ClassicLink

@@ -963,6 +963,7 @@ ie --> ee["EventBridge Event"];
 
 ## Amazon Rekognition
 
+- [Amazon Rekognition Documentation](https://docs.aws.amazon.com/rekognition/?id=docs_gateway)
 - 用來辨識 images && videos
 - Use Case
     - Labeling
@@ -972,35 +973,38 @@ ie --> ee["EventBridge Event"];
     - Face Search and Verification
     - Celebrity Recognition
     - Pathing
-- [AWS Rekognition](https://aws.amazon.com/rekognition/?nc1=h_ls)
 
 
 ## Amazon Transcribe
 
+- [What is Amazon Transcribe?](https://docs.aws.amazon.com/transcribe/latest/dg/what-is.html)
 - Speech -> Text
+    - 與 Amazon Polly 相反
 
 
+## Amazon Polly
 
-## Amazon Policy
-
+- [What Is Amazon Polly?](https://docs.aws.amazon.com/polly/latest/dg/what-is.html)
 - Text -> Speech
-- 與 Amazon Transcribe 相反
+    - 與 Amazon Transcribe 相反
 
 
 ## Amazon Translate
 
+- [What is Amazon Translate?](https://docs.aws.amazon.com/translate/latest/dg/what-is.html)
 - Website 之類的大量文章翻譯
 
 
 ## Amazon Lex + Connect
 
-- Amazon Lex
+- [Amazon Lex](https://docs.aws.amazon.com/lex/?id=docs_gateway)
     - chatbot 或 call center bot
     - Automatic Speech Recognition(ASR) Speech to Text
     - 懂語意
-- Amazon Connect
+- [Amazon Connect](https://docs.aws.amazon.com/connect/?id=docs_gateway)
     - Cloud-based virtual contact center
     - 接收 calls && create contact flow
+    - CCaS, contact center as a service
     - 可整合 CRM
     - No upfront payment
         - 比起 traditional contact center solution 節省 80%
@@ -1020,6 +1024,7 @@ Lambda -- schedule --> CRM;
 
 ## Amazon Comprehend
 
+ - [What is Amazon Comprehend?](https://docs.aws.amazon.com/comprehend/latest/dg/what-is.html)
 - Natural Language Processing, NLP
 - by ML, 文字中找到 insight && relations
 - Serverless
@@ -1027,18 +1032,21 @@ Lambda -- schedule --> CRM;
 
 ## Amazon SageMaker
 
+- [What Is Amazon SageMaker?](https://docs.aws.amazon.com/sagemaker/latest/dg/whatis.html)
 - 相較於其他的 ML, 這服務比較不那麼聚焦於特定用途, 而是可以 create 自己的 ML model
     - Building Machine Learning models
 
 
 ## Amazon Forecast
 
+- [What Is Amazon Forecast?](https://docs.aws.amazon.com/forecast/latest/dg/what-is-forecast.html)
 - 用來做預測
 - data -> S3 -> Amazon Forecast
 
 
 ## Amazon Kendra
 
+- [What is Amazon Kendra?](https://docs.aws.amazon.com/kendra/latest/dg/what-is-kendra.html)
 - document search service
     - 針對許多文件檔案做 文件分析 的 ML
     - 據此來建立 knowledge index
@@ -1046,6 +1054,7 @@ Lambda -- schedule --> CRM;
 
 ## Amazon Personalize
 
+- [What is Amazon Personalize?](https://docs.aws.amazon.com/personalize/latest/dg/what-is-personalize.html)
 - build apps with real-time personalized recommendations
 - 針對個人化的行銷建議, 推薦系統
 - S3 或 real-time data -> Amazon Personalize
@@ -1053,6 +1062,7 @@ Lambda -- schedule --> CRM;
 
 ## Amazon Textract
 
+- [What is Amazon Textract?](https://docs.aws.amazon.com/textract/latest/dg/what-is.html)
 - 針對文件掃描後 extract text
     - ex: 駕照掃描後建立相關資料
 
@@ -1107,6 +1117,7 @@ end
 
 ## AWS Trusted Advisor
 
+- [saa-TrustedAdvisor](./cert-SAA_C02.md#whitepaper-section-introduction)
 - 依照底下的 5 個分類, 以 high level AWS Account assessment 來做建議
     - Cost optimization
     - Performance

@@ -84,23 +84,14 @@
 ## EC2 Instance Store
 
 - 相較於 EBS 快很多, 因為直接使用硬體
+    - millions IOPS
 - 為 ephemeral storage, instance terminate 資料會消失
 - 長久保存的話, 建議使用 EBS
 
 
 ## EBS, Elastic Block Storage
 
-- 為 Network Device
-    - 只能同時掛載到一台 Instance
-        - 早期的 io1, io2 可同時掛載到多個 EC2
-    - 只能存在於 az, 無法跨 az
-        - 若要跨 az/region, 可藉由 snapshot
-            - 做 EBS snapshot, 不需要 detatch, 但建議
-- EBS snapshot
-    - 可將 EBS 做這個, 然後搬到其他 az 去做 attach/restore, 即可變相的 cross az
-    - EBS snapshot archive 以後, 又可省下 75% 的費用
-        - 但是還原非常費時, 24~27 hrs
-    - 可以 Enable *Recycle Bin for EBS Snapshow* (資源回收桶, 預設沒啟用) 防止誤砍
+- [EBS](./EBS.md)
 
 
 ## EFS, Elastic File System
@@ -181,6 +172,28 @@
 - 新一代的 EC2 visualization 技術
     - OLD(current) : EC2 EBS 32000 IOPS
     - Nitro        : EC2 EBS 64000 IOPS
+
+
+## EC2 - Enhance Networking
+
+- EC2 Enhanced Networking (SR-IOV)
+- higher bandwidth && higher PPS(packet per second), lower latency
+- 可使用底下的方法
+    - Elastic Network Adapter, ENA - up to 100 Gbps
+    - Inter 82599 VF (legacy, OLD ENA) - up to 10 Gbps
+    - Elastic Fabric Adapter, EFA - Improved ENA for HPC, Linux ONLY
+        - 很適合 distributed computation
+        - 因藉助 Message Passing Interface(MPI) standard, 可 bypass underlying Linux OS 來 lower latency
+
+
+## AWS ParallelCluster
+
+- open sources cluster management tool to deploy HPC on AWS
+- text file
+- 自動建立 VPC, subnet, cluster type, instance type
+- 可在 cluster 裡頭 enable [EFA](#ec2---enhance-networking) (加強 Network)
+
+
 
 
 # 額外補充
