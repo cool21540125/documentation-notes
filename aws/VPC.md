@@ -237,6 +237,19 @@ ALLOW only         | ALLOW/DENY
 Stateful           | Stateless
 
 
+## ELastic Network Interface, ENI
+
+- 一台 EC2 可有多個 ENI
+- 一個 ENI 有一個 *Primary private IPv4*
+- 一個 ENI 可有 0~N 個 *Secondary private IPv4*
+- 每個 *Private IP* 可有多個對應 EIP
+- 一個 ENI 可有一個 *Public IP*
+- 一個 ENI 可有 0~N 個 SG
+- 一個 ENI 有個 *MAC Address*
+- ENI 受限於 AZ 之下, 無法 cross AZ
+- 手動增加 ENI 不收費~
+
+
 # Bastion Host
 
 - 放在 Public Subnet 的 堡壘機/跳板機
