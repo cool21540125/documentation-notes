@@ -244,6 +244,9 @@ aurora -- result --> app;
 ## Athena
 
 - [How do I analyze my Amazon S3 server access logs using Athena?](https://aws.amazon.com/premiumsupport/knowledge-center/analyze-logs-athena/?nc1=h_ls)
+    - 其實最難的就只有 UI 不熟 && Create Database && Create Table 而已...
+    - 查詢起來還蠻直覺的
+    - Case Sensitive!!
 - use SQL query on S3, 用來做分析
     - file 可以是 CSV, JSON, ORC, Avro, Parquet(built on Presto)
     - 後面可以接 **Amazon QuickSight** 來做報表
