@@ -23,6 +23,41 @@
         - 使用 Service Quotas API
 
 
+# AWS CICD
+
+
+## CodeCommit
+
+- private git repo, 支援 3 種協定
+    - HTTPS
+    - SSH        - 如果使用 root account 登入到 Console, 看不到這個(講師說的)
+    - HTTPS(GRC) - 似乎是 AWS 自行實作的協定
+- 權限
+    - AWS Console > IAM > Users > USER > SSH Keys for CodeCommit
+        - 把 Public Key 丟到這~~
+    - AWS Console > IAM > Users > USER > HTTPS Git credentials for AWS CodeCommit
+        - 要從這邊申請一組 credentials (git repo 使用的帳號密碼)
+- 可針對 repo 設定各種 events notification(比較像是一些 description 的變更之類的), 發送到:
+    - SNS
+    - AWS Chatbot (Slack)
+- 針對 git event, 可設定對應的 trigger, 目前支援:
+    - Lambda
+    - SNS
+
+
+## CodePipeline
+
+
+
+## CodeBuild
+
+
+
+## CodeDeploy
+
+
+
+
 # AWS Other Services
 
 ## AWS SES, Simple Email Service
