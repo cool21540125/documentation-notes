@@ -24,15 +24,18 @@ sudo ./aws/install
 $# aws configure
 
 ### 法2. 配置多個命名環境
-$# PROFILE_NAME=
-$# aws configure --profile ${PROFILE_NAME}
+$# export AWS_PROFILE=
+$# aws configure --profile ${AWS_PROFILE}
+# 切換 cli 環境 (~/.aws/config 裡頭定義好的那些)
 
-# 將來就可透過底下這樣子, 來切換 cli 環境
-$# export AWS_PROFILE=${PROFILE_NAME}
 
-### 也可動態切換 Region
-$# export AWS_REGION=ap-northeast-3
+### 如果有多 IAM User, 可用這樣來動態切換 IAM Users (~/.aws/config && ~/.aws/credential 底下以配置的用戶)
+$# export AWS_PROFILE=XXX
 
+### 動態切換 Region/AZ
+$# export AWS_REGION=ap-northeast-1
+# ap-northeast-1 : Tokyo
+# ap-northeast-3 : Osaka
 
 ### Simple Usage
 $# aws iam list-users

@@ -60,9 +60,11 @@ Networking    | -    | -    | -
         - ex: *EC2 Instance Roles*, *Lambda Function Roles*, *Roles for CloudFormation*
 - IAM Security Tools
     - IAM Credential Report (account level)
-        - 帳號下所有用戶
+        - Web Console > IAM > Access Reports > Credential Report
+        - 帳號底下的所有 users
     - IAM Access Advisor (user level)
-        - IAM user 被授予了哪些 permissions &  哪個 permission 最近用過的時間                
+        - Web Console > IAM > Users > (選 user) > Access Advisor
+        - 特定 User 有權限 access 的 AWS Resources && 最近訪問的時間, 方便日後追蹤 && 修訂 權限
 
 
 # EC2, Elastic Compute Cloud
@@ -172,6 +174,7 @@ Networking    | -    | -    | -
 
 ## RDS, Relational DataBase
 
+- [RDS 機器規格比較表](https://instances.vantage.sh/rds/)
 - 需 run on EC2 (非 Serverless)
 - AWS RDS, SaaS, Serverless. 有幾個常見的 DB:
     - MS SQL

@@ -1,14 +1,23 @@
 
 # Elastic Compute Cloud
 
-- 系列主機
-    - t, General Purpose
-    - c, Compute Optimized : ML, ...
-    - r, Memory Optimized : RDB
-    - m, Storage Optimized : OLTP, NoSQL, ...
-- 常見訪問問題
-    - timeout, 必然是 SG Issue
-    - connection refused, app error 或 not launched
+- IaaS
+- [EC2 機器規格比較表](https://instances.vantage.sh/)
+- [Amazon EC2 Instance Types](https://aws.amazon.com/ec2/instance-types/?nc1=h_ls), 分成底下的 Types:
+    - General Purpose
+    - Compute Optimized : ML, ...
+    - Memory Optimized : RDB
+    - Accelerated Computing : 
+        - 不曉得這個和 Compute Optimized 差在哪邊
+    - Storage Optimized : OLTP, NoSQL, ...
+    - Instance Features : 
+    - Measuring Instance Performance : 
+    - 而上述的這些 Types, 有它旗下的 Series:
+        - T2, M4, M5, C4, R5, I3 等等, 有著各種方面的優化
+    - 範例 :`m5.2xlarge`
+        - m       : instance class
+        - 5       : generation (硬體規格編號)
+        - 2xlarge : size within the instance class
 - EC2 Instance Connect, 目前未必每個 Region 都有此功能
     - 可直接使用 Web Console 做 login
         - 似乎 SG 需要開 allow 22 from 0.0.0.0 (只單純允許 MyIP 登不進去)
@@ -30,16 +39,21 @@
     - Savings Plans
         - 1 or 3 年, 預付省更多
         - 可省錢達 72%
-        - 告知定期花費一定金額, 目的是為了長期使用 & 彈性省錢
+        - (保證消費/承諾消費) 一定期間花費一定金額, 目的是為了長期使用 & 彈性省錢
             - ex: 承諾將來每月花 $300
     - Spot Instances
         - 短期使用, 超便宜, 但可能隨時 loss instance
             - 若自己的 max price < current stop price, 則失去 instance
         - 較適用於 batch job, data analysis, image processing, cc attack, ...
     - Dedicated Host
-        - 直接訂閱實體機
+        - 直接訂閱實體機, 對於整台機器(硬體)有完整的使用權限
+        - 像是有些 license, 是針對 per-core, per-socket 來收費的話, 用這個會是個不錯的選擇
+            - BYOL, Bring Your Own License
     - Dedicated Instances
-        - 非共用硬體
+        - 組織內 or 同帳號底下, 可與其他 *non dedicated instance* 共用硬體
+        - 除上述以外, 基本上與 *dedicated host* 相差無幾
+            - [查看兩者比較](#dedicated-host-vs-dedicated-instancehttpsdocsawsamazoncomawsec2latestuserguidededicated-instancehtmldh-di-diffs)
+        - no control over instance placement
     - Capacity Reservations
         - 對特定 az 保留 capacity
         - 不做使用承諾, 但可保有 reserved capacity
@@ -85,7 +99,12 @@
 
 - 相較於 EBS 快很多, 因為直接使用硬體
     - millions IOPS
-- 為 ephemeral storage, instance terminate 資料會消失
+- 為 ephemeral storage, 如果機器發生底下事件, 則 data loss:
+    - terminate
+    - stop
+    - hibernate
+    - 硬體損毀
+- NVME, Non-Volatile Memory Express, 似乎就是 Instance Store 的一種
 - 長久保存的話, 建議使用 EBS
 
 
@@ -209,3 +228,37 @@ $# curl http://169.254.169.254/latest/meta-data
 ### CLI 找機器的 meta-data
 $# aws ec2 describe-instances
 ```
+
+
+# CLI
+
+```bash
+$# AWS_REGION=ap-northeast-1
+# IMAGE 會綁定 Region
+
+$# IMAGE_ID=ami-0b7546e839d7ace12
+# ap-northeast-1 的 Amazon Linux 2 AMI x86-64
+
+$# aws ec2 run-instances \
+    --image-id ${IMAGE_ID} \
+    --instance-type t2.micro \
+    --dry-run
+
+An error occurred (DryRunOperation) when calling the RunInstances operation: Request would have succeeded, but DryRun flag is set.
+# 如果看到這樣, 表示指令可成功下達. 但因家了 --dry-run, 所以沒實際跑下去
+
+$# 
+```
+
+
+# Compare
+
+### [Dedicated Host v.s. Dedicated Instance](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/dedicated-instance.html#dh-di-diffs)
+
+
+# TIPs
+
+- access EC2 常見問題
+    - timeout, 必然是 SG Issue
+    - connection refused, app error 或 not launched
+- 不要在 EC2 上面做 `aws configure`, 善用 IAM Role

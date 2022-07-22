@@ -648,3 +648,9 @@ ec2pu <-- Route Table --> Router;
 Router <--> igw;
 igw <--> Internet;
 ```
+
+
+# TIPs
+
+- 如果 access 機器, 發生 timeout,            必定是 Security Group Issue!!
+- 如果 access 機器, 發生 connection refused, 可能是 APP Error 或 機器沒開

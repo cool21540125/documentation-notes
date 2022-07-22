@@ -65,4 +65,13 @@
             - 再由上面的 encrypted snapshot 來做 create volume from snapshot > 得到一個 encryption volume
         - 或是, 也可由原 volume, create snapshot(不做 encrypt)
             - 接著 create volume from snapshot > 勾選 encrypt this volume > 得到一個 encryption volume
-    
+
+
+# TIPs
+
+- 啟用 *Recycle Bin for EBS Snapshots*, 防止誤砍
+    - 不知道要不要課金 (不過 Snapshot 本身要收錢, 丟到回收桶不曉得會不會停止收費)!!!!
+    - 可自行設定保留在回收桶的天數 (1~365 days)
+- 為了省點摳摳, 建議針對 "不會有立即使用需求的 EBS Snapshot* 做 archive
+    - 可以省 75% 的摳摳
+    - 不過還原的話, 需要花上 24~72 hrs

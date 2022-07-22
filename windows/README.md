@@ -115,3 +115,7 @@ services.msc > Windows Update , 把這服務給關了 (我還沒實測過就是�
 - C/C++
 - C/C++ Clang Command Adapter
 
+
+# Other
+
+3389 port, RDP (Remote Desktop Protocol)

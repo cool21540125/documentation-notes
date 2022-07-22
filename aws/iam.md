@@ -1,6 +1,5 @@
 
-
-# IAM 核心名詞定義
+# IAM 核心
 
 ```mermaid
 flowchart LR
@@ -24,7 +23,7 @@ subgraph IAM
         ef2["Effect(AllowDeny)"]
         ac2["Action"]
         r2["Resource(Self) \n (服務本身設定給自己)"]
-        principal["Principal \n (套用到 User/Group/Role 上頭) \n (也就是誰要套用這個規則)"]
+        principal["Principal \n (套用到 account/user/role 上頭) \n (也就是誰要套用這個規則)"]
     end
 
     iip["★ Identity-based Policy ★ \n (以人的角度出發)"] -- has many --> st1
@@ -67,10 +66,20 @@ r2 -.- srv2["AWS Services \n (ex: S3)"];
         - 兼容 SAML 2.0 的外部 IdP 所認證過的 external user
         - OpenID Connect
         - custom-built identity broker
+- Principal
+    - 權限適用的 使用者(account / user / role)
+    - 如果 policy 裡頭出現 principal, 則此 policy 為 resource-based policy
 - AWS service role for an EC2 instance
     - A special type of service role that an application running on an Amazon EC2 instance can assume to perform actions in your account.
     - EC2 被授予 AssumeARole 的權限, 因此得到相關權限後, 可去訪問對應的 AWS Resources
 - AWS service-linked role
+- MFA
+    - Google Authenticator
+    - Authy
+    - Universal 2nd Factor (U2F) Security Key
+        - ex: Yubikey
+    - Hardward Key Fob MFA Device
+    - Hardward Key Fob MFA Device for AWS GovCloud
 
 
 # IAM
@@ -82,6 +91,18 @@ r2 -.- srv2["AWS Services \n (ex: S3)"];
     - actions 需要依賴於 Policy 上頭授予 Authorization
 - `IAM Role` 是個具備特定 permission 的 `IAM Identity`
     - Roles 本身授予自 users/applications/services
+    - 常見的 IAM Roles 有:
+        - EC2 Instance Roles
+        - Lambda Function Roles
+        - Roles for CloudFormation
+    - 建立 IAM Role 的時候, 會需要先決定 *Trusted entity type*, 似乎是指, 這個 Role 打算與的對象(的一個最上層的限制), 有底下這些:
+        - AWS Service
+            - 最常見的是 EC2, Lambda, S3, ...
+        - AWS Account
+        - Web identity
+            - FB, Google, Amazon Cognito, AWS
+        - SAML 2.0 Federation
+        - Custom trust policy
 - 如何允許 IAM 用戶看帳單 (預設只有 root Account 可看)
     - Billing > Bills > IAM User and Role Access to Bill Information > Edit > Activate IAM Access
         - ![Billing](../img/iam_billing.png)
@@ -547,3 +568,25 @@ users -- auth --> aws["AWS Simple AD"];
     - [AWS Transit Gateway](./vpc#transit-gateway)
     - Route53 Resolver Rules
     - License Manager Configurations
+
+
+# Useful Example
+
+## 1. 僅針對特定 Bucket 開放 access 的權限
+
+- 2022/07
+- [Amazon S3: Allows read and write access to objects in an S3 Bucket, programmatically and in the console](https://docs.aws.amazon.com/IAM/latest/UserGuide/reference_policies_examples_s3_rw-bucket-console.html)
+- [Writing IAM Policies: How to Grant Access to an Amazon S3 Bucket](https://aws.amazon.com/tw/blogs/security/writing-iam-policies-how-to-grant-access-to-an-amazon-s3-bucket/)
+
+上面 2 篇講的是一樣的東西
+
+如果想要開個特定 IAM (identity-based) Policy, 讓有權限的 Role 可針對特定 Bucket 做 list/get/upload/delete, 可參考這篇
+
+需要留意的是, 權限賦予的過程, 需考慮到 Role 僅需要 CLI/API access? 還是也需要 console access?
+
+如果是後者, 則需要額外給權限
+
+
+# TIPs
+
+- 定期到 IAM 底下去檢查 *Credential Report* && *Access Advisor* 來整理權限, 避免開了一堆不明權限

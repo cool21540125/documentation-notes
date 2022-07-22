@@ -141,6 +141,7 @@ aurora -- result --> app;
 
 ## ElastiCache
 
+- [ElastiCache 機器規格比較表](https://instances.vantage.sh/cache/)
 - Managed Redis 或 Memcache
 - 需要提供 EC2 instance type
 - app 在做 DB query 之前, 會先查詢 ElastiCache, 如果有查到資料, 此稱之為 *Cache hit*
