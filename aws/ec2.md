@@ -233,12 +233,10 @@ $# aws ec2 describe-instances
 # CLI
 
 ```bash
-$# AWS_REGION=ap-northeast-1
-# IMAGE 會綁定 Region
 
-$# IMAGE_ID=ami-0b7546e839d7ace12
-# ap-northeast-1 的 Amazon Linux 2 AMI x86-64
-
+### start EC2
+$# AWS_REGION=ap-northeast-1         # IMAGE 會綁定 Region, 可用這個來做切換
+$# IMAGE_ID=ami-0b7546e839d7ace12    # ap-northeast-1 的 Amazon Linux 2 AMI x86-64
 $# aws ec2 run-instances \
     --image-id ${IMAGE_ID} \
     --instance-type t2.micro \
@@ -262,3 +260,8 @@ $#
     - timeout, 必然是 SG Issue
     - connection refused, app error 或 not launched
 - 不要在 EC2 上面做 `aws configure`, 善用 IAM Role
+
+```bash
+### EC2 裡頭, 可看到自己的 metadata
+$# curl http://169.254.169.254/latest/meta-data/
+```

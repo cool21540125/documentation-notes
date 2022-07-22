@@ -243,13 +243,10 @@ aurora -- result --> app;
 
 ## Athena
 
-- 實作
-    - [How do I analyze my Amazon S3 server access logs using Athena?](https://aws.amazon.com/premiumsupport/knowledge-center/analyze-logs-athena/?nc1=h_ls)
-- Query Engine on S3
-    - Serverless
-    - use SQL query on S3, 用來做分析
-        - file 可以是 CSV, JSON, ORC, Avro, Parquet(built on Presto)
-        - 後面可以接 **Amazon QuickSight** 來做報表
+- [How do I analyze my Amazon S3 server access logs using Athena?](https://aws.amazon.com/premiumsupport/knowledge-center/analyze-logs-athena/?nc1=h_ls)
+- use SQL query on S3, 用來做分析
+    - file 可以是 CSV, JSON, ORC, Avro, Parquet(built on Presto)
+    - 後面可以接 **Amazon QuickSight** 來做報表
 - Use Case: log analytics
 - Operations
     - Serverless, no operations needed

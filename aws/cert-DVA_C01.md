@@ -1,5 +1,27 @@
 
 
+# AWS CLI, SDK, IAM Roles & Policies
+
+## API Rate Limits
+
+- AWS 對於 API call 有軟性限制, ex:
+    - EC2 DescribeInstances API, 100次/sec
+    - S3 GetObject API, 5500次/sec
+- 如果收到 5XX && `ThrottlingException`, 就表示遇到 API Rate Limit 了
+    - 如果 code 裡頭有 retry 機制, 會被帶入 *Exponential Backoff*
+        - 因此 retry 需要使用 *Exponential Backoff Strategy*
+        - 遇到此情況, 1 sec 內無法重複請求, 若再次遇到, 則需等 2 sec, 若再次則 4 sec, 再來 8 sec, 16 sec, ...
+    - 如果遇到 4XX 就不要再為難 Server 了, 好好檢討自己吧XD
+- 解法: request an API throttling limit increase
+
+
+## Service Limits
+
+- AWS 對於服務有些軟性限制, ex: EC2 的 On-Demand 規格, 只能開到 1152 vCPU
+    - 如果要增加使用需求:
+        - 開 Issue
+        - 使用 Service Quotas API
+
 
 # AWS Other Services
 

@@ -93,6 +93,7 @@ r2 -.- srv2["AWS Services \n (ex: S3)"];
     - Roles 本身授予自 users/applications/services
     - 常見的 IAM Roles 有:
         - EC2 Instance Roles
+        - ECS Roles
         - Lambda Function Roles
         - Roles for CloudFormation
     - 建立 IAM Role 的時候, 會需要先決定 *Trusted entity type*, 似乎是指, 這個 Role 打算與的對象(的一個最上層的限制), 有底下這些:
