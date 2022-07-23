@@ -24,7 +24,8 @@
     - EC2, EC2 ASG, ECS, ACM, CloudWatch, Route53, AWS WAF, AWS Global Accelerator, ...
 - 兼具 Health Check 功能
 
-# - ELB 的 Sticky Session(Session Affinity)
+
+# ELB 的 Sticky Session(Session Affinity)
 
 - Target Group 裡頭處理 sticky 問題
 - 用戶黏著性相關問題   

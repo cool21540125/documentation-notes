@@ -506,62 +506,35 @@ tmpl --> CloudFormation;
 
 ## AWS Beanstalk
 
-- 給純 Dev 用的
+- 給純 Developer 用的
     - PaaS
-    - 只能用來管 Code
     - 如果 Dev 懶得 config Server, 懶得 config DB, ...
-- Charge: Beanstalk is free. 但對於背後的 Resources 收費
+        - 但仍可控制架構
+- Charge: Beanstalk is free, charge for AWS Resources
 - Monitoring
     - 有 BeansTalk 自己的 Monitoring, 叫做 **Health Agent**, 他用來 push metrics 到 **CloudWatch** && publish **Health Events**
 - Beanstalk 背後會去使用 CloudFormation
 - Example, 有個 3-tier APP
-    - ```mermaid
-      flowchart LR;
+    ```mermaid
+    flowchart LR;
 
-      subgraph asg
-        az1["EC2"];
-        az2["EC2"];
-      end
+    subgraph asg
+    az1["EC2"];
+    az2["EC2"];
+    end
 
-      User --> elb["Multi-AZ ELB"];
-      elb --> asg;
-      asg --> ElasticCache;
-      asg --> RDS;
-      ```
+    User --> elb["ELB \n (Multi-AZ)"];
+    elb --> asg;
+    asg --> ElasticCache;
+    asg --> RDS;
+    ```
 
 
 ## AWS CodeDeploy
 
-- Hybrid Cloud
-    - 可用 EC2 或 On-Premise Server
-    - 但是機器上面必須安裝 *CodeDeploy Agent*
-- 不同於 Beanstalk, 比較放任一些 (不知道這在講啥)
-    - 不依賴於 CloudFormation && Beanstalk
-
-
-## AWS CodeCommit
-
-- 地位等同於 Git Repo
-
-
 ## AWS CodeBuild
 
-- Serverless, Scalable, HA
-- 可在 Cloud 做 Build Code
-    - compile, test, 產生 package
-- 可到 **CodeCommit** pull, build 出 Artifacts
-- Charge: 只對 Build Time 收 $$
-
-
-## AWS CodePipeline
-
-- 用來組織 CodeCommit, CodeBuild (做 CI/CD 啦)
-    - AWS CI/CD 的核心服務
-    - Code -> Build -> Test -> Profision -> Deploy
-- CodePipeline Orchestration
-    - CodeCommit -> CodeBuild -> CodeDeploy -> ... (ex: Elastic Beanstalk, ...)
-- 可 fast delivery, rapid update
-
+## AWS Pipeline
 
 ## AWS CodeArtifact
 
@@ -838,6 +811,7 @@ se -- Default EventBus \n Custom EventBus \n SaaS EventBus --> tt;
 - CloudTrail is a way to get governance, compliance and audit for your AWS Account.
 - 可取得 AWS Events & API call 的 history & log
     - 因此可將 log -> CloudWatch Logs 或 S3
+    - AWS CloudTrail can be used to audit AWS API calls
 - Use Case:
     - 可查看誰把 EC2 關了
 
@@ -866,6 +840,7 @@ aws -- "call" --> CloudTrail;
             - ex: lambda funcation call, access S3, ...
             - 分成 Read, Write
         - CloudTrail Insights Events
+            - WTF?
 
 ```mermaid
 flowchart LR

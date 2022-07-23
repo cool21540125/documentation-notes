@@ -198,9 +198,10 @@ ALB --> Task3;
 ## CloudTrail
 
 - Enable governance, compliance, operational auditing, and risk auditing of AWS account.
-    - 資料保存 90 天
-        - 可把資料 log 到 S3
-        - 紀錄關於 SDK && CLI && Console && IAM Users && IAM Roles 的操作
+- 資料保存 90 天
+    - 可把資料 log 到 S3
+    - 紀錄關於 SDK && CLI && Console && IAM Users && IAM Roles 的操作
+        - AWS CloudTrail can be used to audit AWS API calls
 - 3 種 CloudTrail Events:
     - Management Events
         - 免費, 預設啟用
@@ -213,18 +214,18 @@ ALB --> Task3;
             - ex: call Lambda, 上傳到 S3, 讀取 S3 Object, ...
         - Events 區分為 *Read Events* && *Write Events*
     - CloudTrail Insights Events
-        - 需要課金
+        - Charged $$
         - 紀錄 AWS Account 裡頭 非常規的活動
             - ex: 資源配置不正確, 資源使用達到 limits, user behavior, ...
         - Events 僅針對 *Write Events* 做紀錄
         - ```mermaid
-            flowchart LR;
+            flowchart TB;
 
             me["Management Events"]
             cti["CloudTrail Insights"]
             ie["Insights Events"]
 
-            me -- Continous analysis --> cti;
+            me <-- Continous analysis --> cti;
             cti -- generate --> ie;
             ie --> cc["CloudTrail Console"]
             ie --> S3
@@ -623,7 +624,7 @@ ce -- integration --> pipeline["SNS, Lambda, ..."];
 - 但如果要找出因果關係, 可使用 *Amazon Detective*
 - 啟用後, 會自動蒐集底下這些, 來建立 view (用來呈現)
     - [VPC Flows Logs](./VPC.md#vpc-flow-logs)
-    - CloudTrail
+    - [CloudTrail](#cloudtrail)
     - GuardDuty
 
 
