@@ -876,8 +876,17 @@ ie --> ee["EventBridge Event"];
 
 ## Amazon CodeGuru
 
-- 藉由 ML 來自動化 Code Review (by *CodeGuru Reviewer*) && 對 App performance 做建議 (by CodeGuru Profiler)
-    - 混合雲服務
+- 藉由 ML
+- CodeGuru Reviewer
+    - Code Review
+    - Static Code Analysis
+- CodeGuru Profiler
+    - performance Analysis (效能)
+    - runtime behavior
+    - consuming excessive CPU
+    - heap summary
+    - Anomaly Detection
+- 混合雲服務
 - 已整合了 GitHub, CodeCommit, BitBucket
 
 

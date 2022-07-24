@@ -191,7 +191,7 @@ $#
 - 可在 Cloud 做 Build Code
     - compile, test, 產生 package
 - Charge: 只對 Build Time 收 $$
-- 需要建立 root file : `buildspec.yml` (等同於 `.drone.yml`)
+- 需要建立 root file : `buildspec.yml` (等同於 `Dockerfile`)
 - local dev 測試使用, 需安裝 *CodeBuild Agent*
     - [Run builds locally with the AWS CodeBuild agent](https://docs.aws.amazon.com/codebuild/latest/userguide/use-codebuild-agent.html)
 - CodeBuild Container
@@ -204,24 +204,75 @@ $#
 
 ## AWS CodeDeploy
 
-- Hybrid Cloud
-    - 可用 EC2 或 On-Premise Server
-    - 但是機器上面必須安裝 *CodeDeploy Agent*
-- 不同於 Beanstalk, 比較放任一些 (不知道這在講啥)
-    - 不依賴於 CloudFormation && Beanstalk
+- 部署目標, 可用 EC2 或 On-Premise Server, Lambda, ECS
+    - 機器上面必須安裝 *CodeDeploy Agent*
+- 不依賴於 CloudFormation && Beanstalk
+- Deploy 會需要 `appspec.yml` (等同於 `.drone.yml`)
+    - 避免與 `buildspec.yml` 搞混
+- CodeDeploy Service 會到 *S3* 或 *GitHub* 拿取要 deploy 的 artifacts 來做 deploy
+- 權限需求, 需要事先 create 2 個 Roles:
+    - Service Role for CodeDeploy
+        - CodeDeploy Agent 去操作其他相關的 AWS Resources 的權限
+    - EC2 Instance Profile(Role)
+        - 如果使用 EC2 來 deploy, 要讓 EC2 能夠 read S3 (ReadOnly 即可)
+- 原始碼
+    - 來源目前只能可以是 *S3* 或 *GitHub*
+- CodeDeploy 主要元件:
+    - Application
+        - a unique name functions as a container (不知道這在說啥, 可能只是在講部署的服務名稱吧)
+    - Compute Platform (要部署到哪邊啦~)
+        - EC2 / On-Premise Server
+        - Lambda
+        - ECS
+    - Deployment Configuration - a set of deployment rules for success/failure (應該是在說, 如何做好 deploy 的流程吧)
+        - if EC2/On-Premise, 此 Deployment 裡頭, 最起碼應該有多少個 healthy instances
+        - if Lambda/ECS, 此 Deployment 裡頭, traffic 如何 route to NEW Version
+    - Deployment Group - group of tagged EC2 instances (不是很懂)
+        - ex: dev, test, prod
+    - Deployment Type - 指如何 deploy to *Deployment Group* 的方法 (應該是講如何做 rolling update 吧?)
+        - In-place Deployment   : 支援 EC2 / On-Premise
+        - Blue/Green Deployment : (借助 Load Balancer) EC2 / Lambda, ECS (無 On-Premise)
+    - [IAM instance Profile](./IAM.md#tips)
+    - [Service Role](./IAM.md#tips), 等同於 *IAM Role*
+        - Deployed APP access 相關 AWS Resources 的相關必要權限
+    - Application Revision
+        - APP Code + `appspec.yml` = APP Revision
+    - Target Revision
+        - 要 deploy 到 *Deployment Group* 的 Revision
+- [AppSpec File structure](https://docs.aws.amazon.com/codedeploy/latest/userguide/reference-appspec-file-structure.html)
+    - 其中幾個重要階段
+        - ValidateService : deploy 以後的 verify 流程
+- CodeDeploy Rollback (回滾)
+    - 可使用 Auto(借助 *CloudWatch Alarm*) 或 Manual
+    - rollback 本身是 re-deploy 最近一個正常版本, 而非 restore OLD Version
+        - 有點 `git revert` 的感覺~
 
 
 ## AWS CodeArtifact
 
+- [clf-CodeArtifact](./cert-CLF_C01.md#aws-codeartifact)
+- 各種套件管理員的套件管理倉庫 - artifact management
+- 其實做了幾件事情
+    - 幫 Code 代理抓 dependencies (增強安全性)
+    - 快取 dependencies (不知道是不是存到 S3)
+    - 可讓 CodeBuild 拉 dependencies 的時間大大加速
 
 
 ## AWS CodeStar
 
+- [clf-CodeStar](./cert-CLF_C01.md#aws-codestar)
+- Charge: Service Free. 針對 Resources 收費
+- 專案管理整合 - Jira / GitHub Issues
 
 
 ## AWS Cloud9
 
+- [clf-Cloud9](./cert-CLF_C01.md#aws-cloud9)
 
+
+## AWS CodeGuru
+
+- [clf-CodeGuru](./cert-CLF_C01.md#amazon-codeguru)
 
 
 # AWS Other Services
@@ -253,7 +304,7 @@ ALB --> ASG;
 ```
 
 
-## AWS Cloud Map
+## AWS Cloud Map, CloudMap
 
 - Serverless, Resource Discovery or Service Discovery
 - 用來建立 需要依賴於 後端 services/resources 的一層類似轉接器/窗口 的服務
