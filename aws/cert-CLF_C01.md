@@ -364,26 +364,14 @@ src["Source DB"] -- DMS --> db["AWS Target DB"];
 
 ## AWS Glue
 
-```mermaid
-flowchart LR;
-s3 -- extract --> glue["Glue ETL"];
-RDS -- extract --> glue;
-glue -- load --> RedShift;
-```
-
-- AWS managed extract, transform and load service(ETL)
-    - Data Catalog Service
-- Serverless
-- 家族服務:
-    - Glue Data Catalog
-        - catalog of databases
-        - 可整合 Athena, RedShift, EMR
+- [saa-Glue](./DatabaseAndStorage.md#aws-glue)
 
 
 # Other Compute Services: ECS, Lambda, Batch, Lightsail
 
 ## ECS, Elastic Container Service
 
+- [ECS](./ECS.MD)
 - 用來 Launch Container
     - 需自行維護 EC2, ECS 則用來 start/stop Container
 - 可整合至 ALB(Application Load Balancer)

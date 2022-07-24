@@ -23,6 +23,45 @@
         - 使用 Service Quotas API
 
 
+# Container - Docker, ECS, EKS, ECR, Farget
+
+## ECS, Elastic Container Services
+
+- [ECS](./ECS.MD)
+
+
+## EKS, Elastic Kubernetes Services
+
+- EKS 支援
+    - EC2 - to deploy worker nodes
+    - Farget - to deploy serverless containers
+
+
+## ECR, Elastic Container Registry
+
+- [clf-ECR](./cert-CLF_C01.md#ecr-elastic-container-registry)
+- [saa-ECR](./cert-SAA_C02.md#ecr-elastic-container-registry)
+- Amazon ECR 也有 Public Repository - [Amazon ECR Public Gallery](https://gallery.ecr.aws)
+- ECR 皆由 IAM 做存取訪問管控
+- ECR 背後是 S3
+
+```bash
+### login to ECR
+$# REGION=ap-northeast-1
+$# ACCOUNT_ID=
+$# aws ecr get-login-password \
+    --region ${REGION} | docker login \
+    --username AWS \
+    --password-stdin \
+    ${ACCOUNT_ID}.dkr.ecr.${REGION}.amazonaws.com
+Login Succeeded
+
+Logging in with your password grants your terminal complete access to your account. 
+For better security, log in with a limited-privilege personal access token. Learn more at https://docs.docker.com/go/access-tokens/
+$# 
+```
+
+
 # Elastic Beanstalk
 
 - [clf-Beanstalk](./cert-CLF_C01.md#aws-beanstalk)

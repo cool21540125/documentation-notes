@@ -80,6 +80,12 @@ r2 -.- srv2["AWS Services \n (ex: S3)"];
         - ex: Yubikey
     - Hardward Key Fob MFA Device
     - Hardward Key Fob MFA Device for AWS GovCloud
+- [The difference between an AWS role and an instance profile](https://medium.com/devops-dudes/the-difference-between-an-aws-role-and-an-instance-profile-ae81abd700d)
+    - Instance Profile : 定義 EC2 可以 assume a role (扮演成為哪個角色). 僅止於取得某個 Role 的地位
+    - IAM Role         : 定義 取得這個 Role 的人(不管是不是真的人啦), 能具備這個 Role 裡頭所 Allow 的 credentials
+    - Web Console 操作上, 我們會去 create EC2 Instance Profile, 其實是 2 個動作:
+        - 建立 Instance Profile, 用途僅僅是, 讓 EC2 可以扮演某個角色 (assume a role)
+        - 建立一個 Role (裡面有必要的 permissions), 然後讓 EC2 可以扮演這個 Role
 
 
 # IAM

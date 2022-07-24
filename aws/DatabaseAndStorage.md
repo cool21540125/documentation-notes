@@ -347,8 +347,14 @@ c1 -- Auto/Manual Copy --> c2;
 
 ## AWS Glue
 
-- ETL, Serverless
-- Glue Data Catalog - catalog of datasets
+- AWS managed extract, transform and load service(ETL)
+    - Data Catalog Service
+    - ETL, Serverless
+- Serverless
+- 家族服務:
+    - Glue Data Catalog
+        - catalog of databases
+        - 可整合 Athena, RedShift, EMR
 
 ```mermaid
 flowchart LR;

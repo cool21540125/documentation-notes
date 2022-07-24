@@ -42,90 +42,7 @@ workers(consumer) 未限制      | 1250w subscribers & 10w topics |
 
 ## ECS, Elastic Container Service
 
-- 名詞定義:
-    - Task:
-        - The lowest level building block of ECS - Runtimes instances
-    - Task Definition: 
-        - Defines how to create ECS task
-        - Templates for your *Tasks*, 定義 image 來源, Memory, CPU, 等
-            - 像是 版本升級, 則須改這個, 來拉新版本 image
-    - Container(EC2 Only)
-        - Virtualized instance that run Tasks.
-        - 如果運行 Farget Mode 的話, 我們在意的只有 Task (沒有 Container 的概念)
-    - Cluster
-        - EC2 - A group of Containers which run Tasks
-        - Farget - A group of Tasks
-- 有 2 種的 Launch Types, 但都可用 EFS 作為儲存:
-    - EC2 Launch Type
-        - 需自行維護 EC2, 裡頭需要有 `ECS Agent`
-        - 此模式運行在 EC2 內的多個 **Task**, 他們可能被賦予了不同的 **EC2 Instance Profile Role**
-        - 需要在 **ECS Service** 裡頭, 定義 **Task Role**
-    - Farget Launch Type
-        - Serverless
-        - Launch 時, 可決定 CPU && RAM
-        - Scaling 時, 決定 tasks number 即可
-    - Service
-        - Task management system, 用來確保有多少個 tasks are up and running
-- 權限
-    - 若 Task 需要 access AWS Resources, 則需給 **Task Role**
-- Run **ECS Task** on **ECS Cluster**
-- Use Case:
-    - Hybrid Environment
-    - Batch Processing
-    - Scale Web Applications
-- Auto Scaling
-    - 用來 scale *Number of ECS Tasks*
-    - 有 3 個 metric 可作為依據 (QQQ)
-        - CPU Utilization
-        - Memory Utilization
-        - ALB Request Count Per Target
-            - 由 ALB 來的 Metric
-    - 有不同種類的 Auto Scaling
-        - Target Tracking - 依照 CloudWatch 特定 Metric
-        - Step Scaling - 依照 CloudWatch Alarm
-        - Scheduled Scaling
-    - Scaling *Task Level of ECS* != Scaling number of instances(EC2 launch type)
-    - 如果是 EC2 Launch Type 的話, Auto Scaling 有 2 種做法:
-        - Auto Scaling Group Scaling
-            - 依照 (QQQ) 來 +- EC2 instances
-        - ECS Cluster Capacity Provider
-            - 比較聰明, 但須與 ASG 共同運作
-- ECS Rolling Update
-    - 滾動式更新(服務不中斷), 需要設定兩個參數
-        - Minimun Healthy Percent
-            - 最少需存活多少 Nodes
-        - Maximum Percent
-            - 最多開到多少 Nodes
-
-
-### ECS - Load Balancer
-
-- Application Load Balancer
-    - 適用多數情況
-- Network Load Balancer
-    - high throughput 情境使用
-    - 可搭配 **AWS Private Link**
-- Classic Load Balancer
-    - 別用就是了
-
-```mermaid
-flowchart LR;
-
-subgraph cluster["ECS Cluster"]
-    subgraph EC21["EC2"]
-        Task1["Task"];
-        Task2["Task"];
-    end
-    subgraph EC22["EC2"]
-        Task3["Task"];
-    end
-end
-
-User --> ALB;
-ALB --> Task1;
-ALB --> Task2;
-ALB --> Task3;
-```
+- [ECS](./ECS.MD)
 
 
 ## ECR, Elastic Container Registry
@@ -583,12 +500,7 @@ is -- if proble, report --> eb["EventBridge"]
 
 ## Macie
 
-> Amazon Macie is a fully managed data security service that uses Machine Learning to discover and protect your sensitive data stored in S3 buckets. 
-> 
-> It automatically provides an inventory of S3 buckets including a list of unencrypted buckets, publicly accessible buckets, and buckets shared with other AWS accounts. 
-> 
-> It allows you to identify and alert you to sensitive data, such as Personally Identifiable Information (PII).
-
+- [What is Amazon Macie?](https://docs.aws.amazon.com/macie/latest/user/what-is-macie.html)
 - Fully managed data security && data privacy service, by using:
     - ML && Pattern matching to discover && protect sensitive data
     - 也用來協助 identify && alert sensitive data, ex: personally identifiable information, PII
