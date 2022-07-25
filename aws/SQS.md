@@ -101,7 +101,6 @@
     - in-flight Encryption   : HTTPS
     - Server Side Encryption
         - KMS 的 CMK (對稱式金鑰)
-        - 目前尚未支援 Client-side encryption itself
 
 
 # SQS Extended Client
