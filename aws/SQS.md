@@ -1,71 +1,117 @@
 
-# Simple Queue Service, SQS
+# SQS, Simple Queue Service
 
+- [Amazon SQS features](https://aws.amazon.com/sqs/features/?nc1=h_ls)
+- 支援 2 種 Queue Types:
+    1. Standard Queues
+        - Unlimited Throughput && Unlimited Messages in Queue
+        - At-Least-Once Delivery
+        - Best-Effort Ordering
+            - 盡力而為的維持 Message 順序, 但不保證
+        - message 可能會被 read > 1 次
+        - Latency < 10 ms
+        - Retention period
+            - 可自行設定 Message 存活期間 Between : 1 min ~ 14 days
+            - Default 4 days
+        - Maximum message size, 1 ~ 256 KB
+    2. FIFO Queues
+        - Throughput
+            - Default : 300 Messagess/sec
+            - High Throughput (SQS Console 去做 Enable)
+                - 3000 Messages/sec (with batching)
+        - Exactly-once send capability (一次性發送, 可去除重複)
+        - First-In-First-Out Delivery
+        - Naming 需要 ".fifo" 結尾
+        - 可設定 2 個參數來處理 Deduplication (刪除重複數據 重複數據刪除)
+            - 預設的 De-duplcation interval 為 5 mins
+                - 也就是說, 5 mins 內, 如果重複發了訊息, 後面那則 Message 會被移除
+            - Message Group ID
+                - 發送 Message 時(也需要給 Group ID), 會依照這個 Message Group 來判斷是否有重複
+                - 1 個 Group ID 只能統一由 1 個 Consumer 處理 (反過來說就是, 1 個 Consumer 只能處理一個 Message Group)
+                - Group(Consumer) 之中的 Messages 保證 ordering, 但是他們之間不保證 ordering
+            - Message in Queue (Content-based deduplcation)
+                - 會依照 `sha-256(Message Body)` 來做唯一性判斷, 去重
 - Queue Model. Producer Send && Consumer poll
-- 無 messages 的數量限制
-- Latency < 10 ms
-- message 可能會被 read > 1 次
-- 可重複 Deliver Message (因此, coding 時應考慮這個)
-- 盡力而為的維持 Message 順序, 但不保證, 除非使用 FIFO SQS
 - Consumer 一次可拉 10 個 messages
-- message 可存活 1 min ~ 14 days
-- 每個 message 最大 256 KB
-- SQS 可搭配 ASG (讓 EC2(Consumer) in it), 來達到 Auto Scaling
-    - **CloudWatch Metric** 監控 **SQS Queue**
-        - Queue Length (`ApproximateNumberOfMessages`)
+- SQS + ASG
+    - ASG 準則可參考:
+        - Queue Length - `ApproximateNumberOfMessages`
         - Queue Length / Number of Instances
-    - **CloudWatch Metric** Alarm for breach **CloudWatch Alarm**, 來對 ASG 做 Auto Scaling
-    - 需設定兩條規則, 分別做 Scaling up && Scaling down
-- SQS - Queeu Access Policy
-    - 類似 S3 的 Resource Policy
+    - Scaling 需設定 2 條規則, *Scale Up* && *Scale Down*
+        ```mermaid
+        flowchart BT
+        
+        sqs["SQS Queue"]
+        subgraph asg["ASG"]
+            ec2["EC2 Instances"]
+        end
+        cwm["CloudWatch Metric \n Queue Length"]
+        cwa["CloudWatch Alarm"]
+
+        cwm -- monitoring --> sqs;
+        cwm -- Alarm for breach --> cwa;
+        cwa -- scaling --> asg;
+        sqs -- Poll for messages --> asg;
+        ```
 - SQS - Message Visibility Timeout (預設 30s)
     - 如果 Consumer 無法在既定時間內完成的話, 可考慮調大它
-    - Consumer 在此時間內處理不完的話, 會再次放回 SQS, 因此 Message 可能被多次 Read
-        - 若 Read 次數過多, 應考慮使用 SQS - Dead Letter Queue, DLQ
-    - 使用 `ChangeMessageVisibility API` 調整 timeout
-- SQS - Dead Letter Queue, DLQ
-    - 藉由調整 Source SQS Queeu 的 `MaximumReceives`, 超過此 Read time, 則放入此
-    - 後續 Developer 在針對此裡頭的 Message debugging
-    - 需要給 SQS Queue permission 來 write
+        - 可調整範圍: 0 sec ~ 12 hrs
+        - 可使用 `ChangeMessageVisibility API` 調整 timeout
+    - Consumer1 如果已經 Poll this message
+    - 此 Visibility Timeout 裡頭, 其他 Consumer 無法 poll 到此 message
+    - Timeout 期間內處理不完的話, 會再次放回 SQS Queue
+        - 其他 Consumer poll 會 "再次" Receive/Read this Message
+        - 因此一個 Message 可能會被多次 Receive/Read
+        - 若 Read 次數過多, 應考慮使用 [DLQ](#dlq-dead-letter-queue)
 - SQS - DelayQueue
     - default: 0 (max 15 mins)
     - 過多久後再傳送到 Queue
 - SQS - Long Polling
+    - SQS 的 API call 是要錢的 (但有一定的免費額度)
     - default: 0 (range 0 ~ 20 s)
     - Consumer 可設定此參數, 減少 API call 的次數
-    - 可在兩個地方設定　
+    - 可在兩個地方設定
         - Queue Level
         - API Level (設定 `WaitTimeSeconds`)
 - SQS - Request-Response System
     - Producer 送 Message 可告知 Reply 位置, 將來 Consumer 處理完後, 會放到 Reply 指定的 SQS Queue
-- SQS - FIFO Queue
-    - 保證 FIFO, 但有限制:
-        - 300 Messagess/sec (without Batching)
-        - 3000 Messages/sec
-    - 具備 *Exactly-once send capability* (一次性發送, 可去除重複)
-    - Naming 需要 ".fifo" 結尾
-    - 可設定兩個參數來去除重複
-        - Message Group
-        - Message Deduplication
 
 
-# Encryption
+# DLQ, Dead Letter Queue
 
-- in-flight Encryption: 傳輸 message 的過程, 預設已有加密(HTTPS API). 
-- Server Side Encryption: 也可額外設定這個, 來再次加密
-    - by "KMS key"
+- 藉由調整 Source SQS Queeu 的 `MaximumReceives`, 超過此 Read time, 則放入此
+- 後續 Developer 在針對此裡頭的 Message debugging (建議這個 DLQ 的保存時間可以調長一點(14 days))
+    - 如此一來, 在此期間針對這個 Message Debug 完以後, 還可將此 Message "Redrive to Source"
+    - 也就是再次放回原本的 Queue 去做處理
+- 需要給 SQS Queue permission 來 write
 
-# Access Control
 
-- by IAM Policies
-- by SQS Access Policies
-    - 等同於 S3 Bucket Policy
-    - 可 Cross Account
-        - SQS Policy 需 allow action: `["SQS:ReceiveMessage"]`
-    - 可 Cross AWS Services
-        - ex: SNS, S3 events, 來寫入 Message -> SQS
-            - 檔案上傳到 S3 以後, 自動 trigger, SendMessage -> SQS
-                - SQS Policy 需 allow action: `["SendMessage"]`
+# Security
+
+- [Basic examples of Amazon SQS policies](https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/sqs-basic-examples-of-sqs-policies.html)
+- Access Control
+    - IAM Policy (identity-based policy)
+        - 起碼要有個 能夠 access SQS API 的 IAM Policy
+    - Queue Acess Policies (resource-based policy)
+        - Cross Account
+            - SQS Policy 需 allow action: `["SQS:ReceiveMessage"]`
+        - Cross AWS Services, ex: S3 events Message -> SQS
+            - SQS Policy 需 allow action: `["SendMessage"]`
+- Encryption
+    - in-flight Encryption   : HTTPS
+    - Server Side Encryption
+        - KMS 的 CMK (對稱式金鑰)
+        - 目前尚未支援 Client-side encryption itself
+
+
+# SQS Extended Client
+
+- 如果要把大包的 (> 256 KB) Message(Object) 丟入 SQS...
+- 可藉由 Programming Language 的 SQS Extended Client 來協助處理
+- 此 Library 會協助將 Object 丟入 S3
+- Metadata -> SQS Queue
+- 再由 Consumer 處理後續動作
+
 
 # API
 
@@ -73,7 +119,23 @@
     - SendMessage API 發送 Message
 - Consumer 藉由 
     - ReceiveMessage API 拉 Message
+        - 有個參數 `MaxNumberOfMessages` (範圍 1~10), default: 1
+            - 也就是說一次只能拉 1 條 Message
     - DeleteMessage API 將已處理好的 Message 移除
+- CreateQueue, DeleteQueue
+- PurgeQueue
+- SendMessage(DelaySeconds), ReceiveMessage, DeleteMessage
+- ReceiveMessageWaitTimeSeconds (long polling)
+- ChangeMessageVisibility, API 階段設定 message timeout
+- 若使用 Batch APIs:
+    - SendMessage, DeleteMessage, ChangeMessageVisibility
+    - 可有效減少 API call, 減少 cost
+
+
+# 操作
+
+- 必會操作
+    - 設定 SQS Queue, 當 S3 Bucket 發生上傳事件, 能有訊息寫入 SQS Queue
 
 
 # Example

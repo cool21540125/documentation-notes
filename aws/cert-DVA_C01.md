@@ -275,6 +275,13 @@ $#
 - [clf-CodeGuru](./cert-CLF_C01.md#amazon-codeguru)
 
 
+# AWS Intergration & Messaging - SQS, SNS, Kinesis
+
+- [SQS](./SQS.md)
+- [SNS](./SNS.md)
+- [Kinesis](./Kinesis.md)
+
+
 # AWS Other Services
 
 ## AWS SES, Simple Email Service
