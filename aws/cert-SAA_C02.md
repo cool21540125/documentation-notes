@@ -114,41 +114,7 @@ workers(consumer) 未限制      | 1250w subscribers & 10w topics |
 
 ## CloudTrail
 
-- Enable governance, compliance, operational auditing, and risk auditing of AWS account.
-- 資料保存 90 天
-    - 可把資料 log 到 S3
-    - 紀錄關於 SDK && CLI && Console && IAM Users && IAM Roles 的操作
-        - AWS CloudTrail can be used to audit AWS API calls
-- 3 種 CloudTrail Events:
-    - Management Events
-        - 免費, 預設啟用
-        - 針對 AWS Account 資源的增刪改, 都會被記錄
-            - ex: EC2 的 Start, Stop ; Create IAM Role, ...
-        - Events 區分為 *Read Events* && *Write Events*
-    - Data Events
-        - 資料龐大, 預設不紀錄(因為資料量很龐大)
-        - 針對 AWS Account 裡頭資源的調用
-            - ex: call Lambda, 上傳到 S3, 讀取 S3 Object, ...
-        - Events 區分為 *Read Events* && *Write Events*
-    - CloudTrail Insights Events
-        - Charged $$
-        - 紀錄 AWS Account 裡頭 非常規的活動
-            - ex: 資源配置不正確, 資源使用達到 limits, user behavior, ...
-        - Events 僅針對 *Write Events* 做紀錄
-        - ```mermaid
-            flowchart TB;
-
-            me["Management Events"]
-            cti["CloudTrail Insights"]
-            ie["Insights Events"]
-
-            me <-- Continous analysis --> cti;
-            cti -- generate --> ie;
-            ie --> cc["CloudTrail Console"]
-            ie --> S3
-            ie --> ebe["EventBridge Event"]
-          ```
-- Event History 可能要花上 15 分鐘才會有資料
+- [CloudTrail](./CloudWatch.md#aws-cloudtrail)
 
 
 ## AWS Config

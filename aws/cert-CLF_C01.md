@@ -723,6 +723,7 @@ ww --> region;
 
 # Cloud Monitoring
 
+- [CloudWatch](./CloudWatch.md#aws-cloudwatch)
 - CloudWatch 為所有的 AWS Services 提供 metrics
     - metric is a variable to monitor
     - 可到 **CloudWatch Dashboard** 查看監控結果
@@ -796,6 +797,7 @@ se -- Default EventBus \n Custom EventBus \n SaaS EventBus --> tt;
 
 ## AWS CloudTrail
 
+- [CloudTrail](./CloudWatch.md#aws-cloudtrail)
 - CloudTrail is a way to get governance, compliance and audit for your AWS Account.
 - 可取得 AWS Events & API call 的 history & log
     - 因此可將 log -> CloudWatch Logs 或 S3
@@ -865,6 +867,8 @@ ie --> ee["EventBridge Event"];
 
 ## AWS X-Ray
 
+- [What is AWS X-Ray?](https://docs.aws.amazon.com/xray/latest/devguide/aws-xray.html)
+- [X-Ray](./CloudWatch.md#aws-x-ray)
 - Old way for debugging in production
 - 可直接在 local test, 並 log -> anywhere
 - 可對 分散式系統的 log 彙整, 並提供 UI, 可在 **X-Ray** Console 看到 Service Performance Status

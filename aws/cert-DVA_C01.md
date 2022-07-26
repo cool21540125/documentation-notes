@@ -1,5 +1,4 @@
 
-
 # AWS CLI, SDK, IAM Roles & Policies
 
 ## API Rate Limits
@@ -273,6 +272,13 @@ $#
 ## AWS CodeGuru
 
 - [clf-CodeGuru](./cert-CLF_C01.md#amazon-codeguru)
+
+
+# Monitoring & Audit : CloudWatch, X-Ray, CloudTrail
+
+- [CloudWatch](./CloudWatch.md#aws-cloudwatch)
+- [X-Ray](./CloudWatch.md#aws-x-ray)
+- [CloudTrail](./CloudWatch.md#aws-cloudtrail)
 
 
 # AWS Intergration & Messaging - SQS, SNS, Kinesis

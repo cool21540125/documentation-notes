@@ -13,7 +13,8 @@
         - Metrics 的 Container, 用來隔離不同的 Metrics
         - ex: EC2 使用 `AWS/EC2` 這個 namespace
     - Dimensions
-        - Metric 裡頭的一組 name/value pair ; 每個 Metric 最多能有 10 個 Dimensions
+        - Metric 裡頭的一組 name/value pair
+        - 每個 Metric 最多能有 10 個 Dimensions
         - 好像可以理解成 OOP 裡頭的 class, attribute name, attribute value 的概念
             - ex: Instance.id, Environment.name, ...
     - Resolution
@@ -24,6 +25,14 @@
     - Percentiles (不解釋)
     - Alarms
         - 針對一段時間特定 Metric 達到某個 threshold 的狀態, 再對此來做因應
+
+
+## CloudWatch Dashboards
+
+- 可用來快速彙整 key metrics && alarms
+- 可 cross AWS accounts && cross Region (global)
+- Charge: 3 dashboards(up to 50 metrics) for FREE
+    - 超過部分, $3/dashboard/month
 
 
 ## CloudWatch Metrics
@@ -37,14 +46,6 @@
 - 可以針對 metric 超過門檻, 配置對應的 [alarm actions](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/cloudwatch_concepts.html#CloudWatchAlarms)
 
 
-## CloudWatch Dashboards
-
-- 可用來快速彙整 key metrics && alarms
-- 可 cross AWS accounts && cross Region (global)
-- Charge: 3 dashboards(up to 50 metrics) for FREE
-    - 超過部分, $3/dashboard/month
-
-
 ## CloudWatch Logs
 
 - 儲存 AWS Logs 的地方, 可把 log 彙整到 *Log groups*(通常代表一個 Application)
@@ -53,28 +54,27 @@
 - *CloudWatch Logs* 可彙整至:
     - S3
         - 即時: 可使用 *Logs Subscriptions*
-            - ```mermaid
-                flowchart LR
+            ```mermaid
+            flowchart LR
 
-                cl["CloudWatch Logs"]
-                sf["Subscription Filter"]
-                kdf["Kinesis Data Firehose"]
-                awslf["Lambda \n (managed by AWS)"]
-                lf["Lambda (custom)"]
-                es["Amazon OpenSearch"]
-                kds["Kinesis Data Streams"]
+            cl["CloudWatch Logs"]
+            sf["Subscription Filter"]
+            kdf["Kinesis Data Firehose"]
+            awslf["Lambda \n (managed by AWS)"]
+            lf["Lambda (custom)"]
+            es["Amazon OpenSearch"]
+            kds["Kinesis Data Streams"]
 
-                cl --> sf;
-                sf --> awslf;
-                awslf -- Real Time --> es;
-                kdf --> es;
-                sf --> kdf;
-                kdf -- Near Real Time --> S3;
-                sf --> kds;
-                kds --> other["KDF, KDA, EC2, Lambda, ..."]
-                sf --> lf;
-
-              ```
+            cl --> sf;
+            sf --> awslf;
+            awslf -- Real Time --> es;
+            kdf --> es;
+            sf --> kdf;
+            kdf -- Near Real Time --> S3;
+            sf --> kds;
+            kds --> other["KDF, KDA, EC2, Lambda, ..."]
+            sf --> lf;
+            ```
         - 非即時
             - CloudWatch Logs -> S3, 使用 `CreateExportTask` API call, 時間可能花上 12 hrs
     - Kinesis Data Stream
@@ -122,26 +122,50 @@
       ```
 
 
+## CloudWatch Events
+
+- 老東西, 現在已改為 [EventBridge](#aws-eventbridge-前身為-cloudwatch-events)
+
+
 ## CloudWatch Alarms
 
-- 用來針對 *Metrics* 做 trigger notification
+- 用來 trigger notification
+    - 標的為 CloudWatch Metrics, CloudWatch Logs
 - Alarm State (Alarm Status)
     - OK
-    - INSUFFICIENT_DATA : 資料量不足以判斷目前 State
+    - INSUFFICIENT_DATA
     - ALARM
-- Alarms 有幾個主要的 Targets
+- 可對於 Alarms 設定 Period, 用來作為 Length of time in seconds to evaluate the metric
+    - 白話文就是, 持續觀察 Metric 多久, 然後才觸發 Alarm, 而發 Metric 一達標就觸發
+    - ex: 10 secs, 30 secs, 60 secs
+- Alarms 有幾個主要的 Targets:
     - EC2     : stop, terminate, reboot, recover
         - Status Check
             - Instance status : check EC2 VM
             - System status   : check 底層硬體
     - EC2 ASG : trigger auto scaling action
     - SNS     : send notification to SNS
-- 
+- 也可對 CloudWatch Logs 設定 **Metric Filters**
+
+```mermaid
+flowchart LR
+
+subgraph cw["CloudWatch"]
+    cwl["CloudWatch Logs"]
+    cwa["CloudWatch Alarm"]
+
+    cwl -- Metric Filter --> cwa;
+end
+
+cwa -- Alert --> sns["SNS"]
+```
 
 ```bash
-### 使用 CLI 方式來 trigger ALARM
+### 使用 CLI 方式來 trigger ALARM (測試用, 可用來觀察後續動作是否正常運作)
 ### https://awscli.amazonaws.com/v2/documentation/api/latest/reference/cloudwatch/set-alarm-state.html
-aws cloudwatch set-alarm-state \
+$# ALARM_REASON=testing
+$# ALARM_NAME=XXX
+$# aws cloudwatch set-alarm-state \
     --alarm-name ${ALARM_NAME} \
     --state-value ALARM \
     --state-reason ${ALARM_REASON}
@@ -153,41 +177,39 @@ aws cloudwatch set-alarm-state \
 - 可用來 query logs && 把 query 加到 *CloudWatch Dashboard*
 
 
-# AWS EventBridge (前身為 *CloudWatch Events*)
+## AWS EventBridge (前身為 *CloudWatch Events*)
 
 - [What Is Amazon EventBridge?](https://docs.aws.amazon.com/eventbridge/latest/userguide/eb-what-is.html)
     - 下圖的 *event*, 其實就是 *stream of real-time data*
+        ```mermaid
+        flowchart LR
 
-    ```mermaid
-    flowchart LR
+        subgraph Sources
+            as["AWS Services"]
+            cs["Custom Services"]
+            saas["SaaS APPs"]
+        end
 
-    subgraph Sources
-        as["AWS Services"]
-        cs["Custom Services"]
-        saas["SaaS APPs"]
-    end
+        subgraph eb["EventBridge"]
+            deb["Default Event Bus"] --> Rules;
+            ceb["Custom Event Bus"] --> Rules;
+            seb["SaaS Event Bus"] --> Rules;
+            es["Event Source"]
+        end
 
-    subgraph eb["EventBridge"]
-        deb["Default Event Bus"] --> Rules;
-        ceb["Custom Event Bus"] --> Rules;
-        seb["SaaS Event Bus"] --> Rules;
-        es["Event Source"]
-    end
+        es --> seb;
+        as -- event --> deb;
+        cs -- event --> ceb;
+        saas -- event --> es;
 
-    es --> seb;
-    as -- event --> deb;
-    cs -- event --> ceb;
-    saas -- event --> es;
-
-    subgraph Targets
-        direction LR;
-        Lambda; Kinesis; ad["Additional Services"];
-        api["API Endpoints"]
-        other["其他 AWS Account 的 event bus"]
-    end
-    Rules --> Targets;
-    ```
-
+        subgraph Targets
+            direction LR;
+            Lambda; Kinesis; ad["Additional Services"];
+            api["API Endpoints"]
+            other["其他 AWS Account 的 event bus"]
+        end
+        Rules --> Targets;
+        ```
 - [clf-cloudwatch events](./cert-CLF_C01.md#cloudwatch-events)
 - EventBridge 核心名詞:
     - Message Bus : (等同於 SNS 的 Topic) Container of event
@@ -221,3 +243,50 @@ aws cloudwatch set-alarm-state \
 - 假設 AccountA 想把 event 發送到 AccountB, 則:
     - AccountA 需設定 [partner event source](https://docs.aws.amazon.com/eventbridge/latest/userguide/eb-saas.html)
     - AccountB 需把 event 關聯到上述的 *partner event source*
+
+
+# AWS X-Ray
+
+
+
+# AWS CloudTrail
+
+- governance / compliance / operational auditing / risk auditing of AWS account
+- [clf-CloudTrail](./cert-CLF_C01.md#aws-cloudtrail)
+- Internal monitoring of API calls
+- Audit changes to AWS Resources by users
+- 資料保存 90 天
+    - 可把資料 log 到 S3
+    - 紀錄關於 SDK && CLI && Console && IAM Users && IAM Roles 的操作
+        - AWS CloudTrail can be used to audit AWS API calls
+- 3 種 CloudTrail Events:
+    - Management Events
+        - 免費, 預設啟用
+        - 針對 AWS Account 資源的增刪改, 都會被記錄
+            - ex: EC2 的 Start, Stop ; Create IAM Role, ...
+        - Events 區分為 *Read Events* && *Write Events*
+    - Data Events
+        - 資料龐大, 預設不紀錄(因為資料量很龐大)
+        - 針對 AWS Account 裡頭資源的調用
+            - ex: call Lambda, 上傳到 S3, 讀取 S3 Object, ...
+        - Events 區分為 *Read Events* && *Write Events*
+    - CloudTrail Insights Events
+        - Charged $$
+        - 紀錄 AWS Account 裡頭 非常規的活動
+            - ex: 資源配置不正確, 資源使用達到 limits, user behavior, ...
+        - Events 僅針對 *Write Events* 做紀錄
+        - ```mermaid
+            flowchart TB;
+
+            me["Management Events"]
+            cti["CloudTrail Insights"]
+            ie["Insights Events"]
+
+            me <-- Continous analysis --> cti;
+            cti -- generate --> ie;
+            ie --> cc["CloudTrail Console"]
+            ie --> S3
+            ie --> ebe["EventBridge Event"]
+          ```
+- Event History 可能要花上 15 分鐘才會有資料
+
