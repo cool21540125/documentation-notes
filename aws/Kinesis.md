@@ -29,6 +29,13 @@
             - throughput
                 - 1 MB/sec in  或 1000 records/sec
                 - 2 MB/sec out (classic) 或 enhanced fan-out consumer
+            ```mermaid
+            flowchart LR
+
+            kds["KDS, Kinesis Data Stream"]
+            Producers -- "1 MB/sec" --> kds;
+            kds -- "2 MB/sec" --> Consumers;
+            ```
         - II. On-demand Mode   (neuro mode, 若無法事先 規劃 or 預估 用量)
             - Charge: per Stream / hr + data transfer in/out per GB 計費
             -  Default capacity 4 MB/sec 或 4000 records/sec
@@ -300,8 +307,37 @@ data store 1 ~ 365 days(可 replay)   | no data store (無法 replay)
 
 # Kinesis Data Analytics, KDA
 
+```mermaid
+flowchart LR
+
+kda["KDA, Kinesis Data Analytics"]
+subgraph src["Sources"]
+    direction LR
+    kds0["KDS, Kinesis Data Streams"]
+    kdf0["KDF, Kinesis Data Firehose"]
+end
+
+subgraph sinks["Data Sinks"]
+    direction LR
+    kds1["KDS, Kinesis Data Streams"]
+    kdf1["KDF, Kinesis Data Firehose"]
+
+    kds1 --> Lambda --> anywhere;
+    kds1 --> APPs --> anywhere;
+    kdf1 --> S3;
+    kdf1 --> Redshift;
+    kdf1 --> other["Other Firehose destinations"]
+end
+
+src -- Charge: 流量 --> kda;
+SQL -- realtime --> kda;
+kda --> kdf1;
+kda --> kds1;
+```
+
 - KDS, KDF 資料進入到 KDA 做分析
-- KDA 支援 SQL
+- KDA 支援 realtime SQL
+    - 可用此 Query 創造出 streams
 - 之後資料又可輸出到
     - KDS
         - 接 lambda 處理 or 客制 program
