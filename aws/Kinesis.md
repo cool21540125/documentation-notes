@@ -235,34 +235,67 @@ s13 --> s23
 
 # Kinesis Data Firehose, KDF
 
-- 此為 Serverless
+```mermaid
+flowchart LR
+
+kdf["KDF, Kinesis Data Firehose"]
+
+subgraph pp["Kinesis Data"]
+    direction LR
+    kds["KDS, Kinesis Data Streams"]
+    cw["CloudWatch Logs \n CloudWatch Events"]
+    iot["AWS IOT"]
+    ka["Kinesis Agent"]
+    sdk["SDK, KPL"]
+    client["Browser, APPs"]
+end
+
+subgraph dd["Destionations"]
+    direction LR
+    3rd["3rd-party Destinations"]
+    subgraph aws["AWS Destinations"]
+        direction LR
+        s3["S3"]
+        Redshift
+        OpenSearch
+    end
+    custom["Custom Destinations"]
+end
+
+pp --> kdf
+lambda <-. data transform .-> kdf
+kdf -. All or Failed data .-> S3
+kdf -- "批次寫入 \n (Batch writes) \n (Charge 流量收費)" --> dd
+```
+
+- SaaS, Serverless, Auto-Scaling
 - Store data into Destination
 - 可送入 KDF 的 data stream 有
     - data stream producers
     - kinesis data streams
     - CloudWatch Logs & CloudWatch Events
     - AWS IOT
-- kDF 本身支援 AWS Lambda
-- KDF 可 batch write to...
-    - 3rd
-        - Data Dog, Splunk, MongoDB, ...
-    - AWS Services
-        - s3, RedShift, OpenSearch, ...
-    - Custom
-        - HTTP Endpoint (API)
-- Charge: Pay for data going through Firehose
-- 此為半即時, 最起碼 delay 60s
-    - 因 batch write
-    - 最小 32MB 傳輸(可再調整)
+    - ...
+- kDF 本身支援 AWS Lambda, 自行決定是否用來做資料轉換(data transform)
+- KDF 使用 batch write 來寫入到 Destination
+    - Near Real Time, 60 secs latency 或 一次最少寫入 32 MB
+    - Destination 如下:
+        - 3rd
+            - Data Dog, Splunk, MongoDB, ...
+        - AWS Services
+            - S3, RedShift, OpenSearch, ...
+        - Custom
+            - HTTP Endpoint (API)
+- Charge: Pay for data going through KDF
+
 
 Kinesis Data Streams                | Kinesis Data Firehose
 ----------------------------------- | -------------------------------
 需要自幹 consumer & producer         | Fully managed
 delay 200 ms                        | 有 buffer, 最小 delay 60s
 自行 Scale(shard splitting/merging)  | Auto-Scaling
-data store 1 ~ 365 days             | no data store
-用於取 巨量資料                       | load streaming data to store
-可 replay                           | 無法 replay
+data store 1 ~ 365 days(可 replay)   | no data store (無法 replay)
+從資料來源端取資料                     | load streaming data to store
 
 
 # Kinesis Data Analytics, KDA
