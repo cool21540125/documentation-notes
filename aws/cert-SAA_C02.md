@@ -38,7 +38,7 @@ workers(consumer) 未限制      | 1250w subscribers & 10w topics |
 - 不同 Region 的 ActiveMQ Broker, 可掛載相同的 EFS 來達到 HA
 
 
-# Containers: ECS, Farget, ECR, EKS
+# Containers: ECS, Fargate, ECR, EKS
 
 ## ECS, Elastic Container Service
 
@@ -57,7 +57,7 @@ workers(consumer) 未限制      | 1250w subscribers & 10w topics |
 - 與 ECS 一樣, 也支援 2 種 launch mode:
     - EC2 mode
         - deploy on EC2
-    - Farget mode
+    - Fargate mode
         - Serverless
 - EKS Pods, 有點類似於 ECS Tasks
 - 如果要 Expose EKS Service, 則需要設定 **Load Balancer**
@@ -119,16 +119,13 @@ workers(consumer) 未限制      | 1250w subscribers & 10w topics |
 
 ## AWS Config
 
-- 用途
-    - 衡量 AWS Resources 之間的關係
-    - 確保 AWS Resources 符合公司的 compliances
-        - 後續可由 **SSM Documentation** 來對這些資源做 Remediation(整治/補救)
-            - ex: `AWSConfigRemediationRevokeUnusedIAMUserCredentials`, 用來 deactivate 已過 compliance duration 的 IAM Access Key
-    - 追蹤 AWS Resources configurations 的變更 (背後可藉由其他服務做相對因應 or 有問題時 Rollback)
-        - 可設定為 定期檢查 or 變更事件
-    - ![AWS Config Overview](./img/AWS%20Config%20Overview.png)
-- Charge: 
-    - no free tier. 需要課金
+- ![AWS Config Overview](./img/AWS%20Config%20Overview.png)
+- 衡量 AWS Resources 之間的關係, 確保它們符合公司的 compliances
+    - 後續可由 [SSM Documentation](https://docs.aws.amazon.com/systems-manager/latest/userguide/sysman-ssm-docs.html) 來對這些資源做 Remediation(整治/補救)
+        - ex: [AWSConfigRemediation-RevokeUnusedIAMUserCredentials](https://docs.aws.amazon.com/systems-manager-automation-runbooks/latest/userguide/automation-aws-revoke-iam-user.html), 用來 deactivate 已過 compliance duration 的 IAM Access Key
+- 追蹤 AWS Resources configurations 的變更 (背後可藉由其他服務做相對因應 or 有問題時 Rollback)
+    - 可設定為 定期檢查 or 變更事件
+- Charge: no free tier. 需要課金
 - 若有多個 Region, 則需逐一啟用並配置
 - User 啟用 AWS Config 以後, 可設定 **rules** 來針對特定 AWS Resources 做 auditing && compliance && tracking
     - by using `DescribeResource` && `ListResource` API

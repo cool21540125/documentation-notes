@@ -10,7 +10,7 @@
 - CloudFormation - StackSets
     - Trusted Account 可 cross Account && cross Region 同時做 增刪改 Resources
 - [CloudFormation 格式大綱](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/template-anatomy.html), 如下:
-    - ```yaml
+      ```yaml
       ---
       AWSTemplateFormatVersion: "version date"
       

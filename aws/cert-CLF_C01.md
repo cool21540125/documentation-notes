@@ -41,20 +41,20 @@ Networking    | -    | -    | -
         - ex: "arn:aws:s3:::mybucket"
 - 又例如 Policy example: AdministratorAccess
     - Policy ARN: "am:aws:iam::aws:policy/AdministratorAccess"
-    - ```jsonc
-      {
-          "Version": "2012-10-17",
-          "Statement": [
-              {
-                  "Effect": "Allow",  // "Allow" 或 "Deny"
-                  "Principle": {},  // 此 Policy 附加的對象, ex: 「{"AWS": ["arn:aws:iam:...:root"]}」
-                  "Action": "*",  // 或為 []
-                  "Resource": "*",  // 或為 []
-                  "Condition": []  // (optional)
-              }
-          ]
-      }
-      ```
+        ```jsonc
+        {
+            "Version": "2012-10-17",
+            "Statement": [
+                {
+                    "Effect": "Allow",  // "Allow" 或 "Deny"
+                    "Principle": {},  // 此 Policy 附加的對象, ex: 「{"AWS": ["arn:aws:iam:...:root"]}」
+                    "Action": "*",  // 或為 []
+                    "Resource": "*",  // 或為 []
+                    "Condition": []  // (optional)
+                }
+            ]
+        }
+        ```
 - IAM Roles 重點:
     - users, services 存取 Resources, 都需要有對應的 Permission(Policy)
         - ex: *EC2 Instance Roles*, *Lambda Function Roles*, *Roles for CloudFormation*
@@ -239,19 +239,19 @@ Networking    | -    | -    | -
     - Infrequent Access, IA
 - 本身並無 Create Database 的概念
     - 動作為 Create Table, 如下範例
-    - ```
-      TableName: Products
-  
-      Primary Key
-          Partition Key (needed)
-          SortKey       (optional)
-  
-      Attributes
-          name
-          age
-          ...
-          (每筆資料的欄位都可不同)
-      ```
+        ```
+        TableName: Products
+
+        Primary Key
+            Partition Key (needed)
+            SortKey       (optional)
+
+        Attributes
+            name
+            age
+            ...
+            (每筆資料的欄位都可不同)
+        ```
 - DynamoDB - Global Table
     - 可作 active-active r/w replication
 - [saa-dynamodb](./cert-SAA_C02.md#dynamodb)
@@ -298,13 +298,13 @@ Networking    | -    | -    | -
 - Charge: USD $5/TB second
     - 因為 by scan 量收費, 若 data 有做 Compress 或 columnar 方式儲存, 可省下 $$
 - Use Case:
-    - ```mermaid
+    - BI / analytics / reporting, analyze & query VPC Flow Logs, ELB Logs / CloudTrail trails, serverless SQL analyze S3, ...
+        ```mermaid
         flowchart LR;
         User -- load data --> s3;
         s3 -- Query & Analyze --> Athena;
         Athena -- Report & Dashboard --> QuickSight;
-      ```
-    - BI / analytics / reporting, analyze & query VPC Flow Logs, ELB Logs / CloudTrail trails, serverless SQL analyze S3, ...
+        ```
 
 
 ## AWS QuickSight
@@ -377,7 +377,7 @@ src["Source DB"] -- DMS --> db["AWS Target DB"];
 - 可整合至 ALB(Application Load Balancer)
 
 
-## Farget
+## Fargate
 
 - Serverless
 - 同 ECS 用來 Launch Container, 但不需要自行維護 Infra
@@ -386,7 +386,7 @@ src["Source DB"] -- DMS --> db["AWS Target DB"];
 ## ECR, Elastic Container Registry
 
 - Private Registry
-- 用來存 ECS/Farget 所運行的 image
+- 用來存 ECS/Fargate 所運行的 image
 
 
 ## Lambda
@@ -628,25 +628,25 @@ S3 -- $0.04 / GB --> repl["cross-region Replication"]
 - 其中一個功能可做 DDoS Protection
 - 整合 Shield, AWS Web Application Firewall (WAF)
 - by using CloudFront's *Origin Access Identity(OAI)* to enhance security
-    - ```mermaid
-        flowchart LR;
+    ```mermaid
+    flowchart LR;
 
-        User --> Edge;
-        Edge -- private --> S3;
-        S3 -- OAI --> oia["Origin Access Identity + S3 Bucket Policy"]
-      ```
+    User --> Edge;
+    Edge -- private --> S3;
+    S3 -- OAI --> oia["Origin Access Identity + S3 Bucket Policy"]
+    ```
 - Cloudfront 可作為 ingress(入口), 來上傳 file -> S3
-    - ```mermaid
-      flowchart LR;
-      
-      subgraph origin
-        S3;
-        http["HTTP Server"];
-      end
-      
-      client --> cloudfront["Cloudfron(Local Cache)"];
-      cloudfront --> origin;
-      ```
+    ```mermaid
+    flowchart LR;
+
+    subgraph origin
+    S3;
+    http["HTTP Server"];
+    end
+
+    client --> cloudfront["Cloudfron(Local Cache)"];
+    cloudfront --> origin;
+    ```
 
 
 ## S3TA, S3 Transfer Acceleration
@@ -703,7 +703,7 @@ ww --> region;
 - 此為把 EC2, RDS, ECS, EBS, ... 放到離 user 很近的地方(AZ)
 - 可擴展 VPC 來跨 Region, 來讓 Service 靠近 Users
     - 讓 Region 裡頭的 AZ, 與 Region 外部的 *Local Zone*, 納入到同一個 VPC
-    - ```
+        ```
         ------------ Region ------------
         |                              |   
         |  ---------- VPC ----------   |
@@ -711,10 +711,10 @@ ww --> region;
         |  |    az1          az2   |   |
         |  |                       |   |
         ---|                       |----
-           |                       |
-           |      Local Zone       |
-           |                       |
-           -------------------------
+            |                       |
+            |      Local Zone       |
+            |                       |
+            -------------------------
         ```
 - 並非所有的 Region 都支援此功能
 
@@ -925,7 +925,7 @@ ie --> ee["EventBridge Event"];
             - 流量從外面進來(to EC2) 的第一道防線為 NACL, 之後才是 SG
             - SG 為 EC2 Level ; NACL 為 Subnet Level
             - 控制 subnet 的 traffic rules
-        - ```mermaid
+            ```mermaid
             flowchart TB
             subgraph VPC
                 subgraph Public Subnet
@@ -935,7 +935,7 @@ ie --> ee["EventBridge Event"];
                     EC2 <--> NACL
                 end
             end
-          ```
+            ```
 
 
 # Machine Learning

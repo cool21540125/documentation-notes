@@ -22,7 +22,7 @@
         - 使用 Service Quotas API
 
 
-# Container - Docker, ECS, EKS, ECR, Farget
+# Container - Docker, ECS, EKS, ECR, Fargate
 
 ## ECS, Elastic Container Services
 
@@ -33,7 +33,7 @@
 
 - EKS 支援
     - EC2 - to deploy worker nodes
-    - Farget - to deploy serverless containers
+    - Fargate - to deploy serverless containers
 
 
 ## ECR, Elastic Container Registry

@@ -316,11 +316,11 @@ Athena -- Report/Dashboard --> QuickSight;
     - 使用 Kinesis Data Firehose, KDF
         - KDF 由不同 source 蒐集資料, 倒入 Redshift Cluster
         - 藉由 COPY COMMAND, S3 -> Redshift
-            - ```
-              copy customer
-              from 's3://my_bucket/my_data'
-              iam_role 'arn:aws:iam::123456887123:role/MyRedshiftRole'
-              ```
+            ```
+            copy customer
+            from 's3://my_bucket/my_data'
+            iam_role 'arn:aws:iam::123456887123:role/MyRedshiftRole'
+            ```
         - EC2 Instance, JDBC driver
             - EC2 data -> Redshift Cluster
     - By using COPY COMMAND, 可從 S3, DynamoDB, DMS, other DB 來 load data

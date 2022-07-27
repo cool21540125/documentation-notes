@@ -20,7 +20,8 @@
     - Resolution
         - Metric 的蒐集頻率(StorageResolution API parameter)
             - Standard resolution : 60 secs
-            - High resoultion     : 10 or 30 secs (貴)
+            - High resoultion     : 1 / 10 / 30 secs (貴)
+                - 很容易與 EC2 detailed monitoring && CloudWatch Alarm high resolution 搞混!!
     - Statistics (不解釋)
     - Percentiles (不解釋)
     - Alarms
@@ -44,10 +45,14 @@
     - (make sure to configure your EC2 instance time correctly)
 - 可使用 [put-metric-data](https://awscli.amazonaws.com/v2/documentation/api/latest/reference/cloudwatch/put-metric-data.html) API 來增加 custom metric
 - 可以針對 metric 超過門檻, 配置對應的 [alarm actions](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/cloudwatch_concepts.html#CloudWatchAlarms)
+- EC2 預設每 5 mins 會有一筆 metric -> CloudWatch Metric, 如果需要更頻繁的資料, 可啟用 *EC2 Detailed monitoring*(每 1 min 一筆)
+    - 很容易與 CloudWatch Metric high resolution && CloudWatch Alarm high resolution 搞混!!
 
 
 ## CloudWatch Logs
 
+- [What is Amazon CloudWatch Logs?](https://docs.aws.amazon.com/AmazonCloudWatch/latest/logs/WhatIsCloudWatchLogs.html)
+    - Log retention : By default, logs are kept indefinitely and never expire. 但可調整 *Log Group* 的 *retention policy*
 - 儲存 AWS Logs 的地方, 可把 log 彙整到 *Log groups*(通常代表一個 Application)
     - Log group 裡頭會有 *Log streams*(instance/log file/container)
     - Logs Insights, 可下查詢語法(有點類似 SQL, 但完全不同), 針對 Log group 做查詢
@@ -103,23 +108,23 @@
     - ex: 設定 filter expression, 計算 log file 裡頭 'error' 出現次數 or 取出 log 裡頭特定 IP
     - filter 可用來 trigger **CloudWatch alarms**
 - CloudWatch Logs 支援 cross region && cross accounts
-    - ```mermaid
-        flowchart LR;
-        sf1["Subscription Filter"]
-        sf2["Subscription Filter"]
-        sf3["Subscription Filter"]
-        ac1["Account A Region 1"] --> sf1;
-        ac2["Account B Region 2"] --> sf2;
-        ac3["Account C Region 3"] --> sf3;
-        
-        kds["Kinesis Data Streams"]
-        kdf["Kinesis Data Firehose"]
-        sf1 --> kds;
-        sf2 --> kds;
-        sf3 --> kds;
-        kds --> kdf;
-        kdf -- Near Real Time --> S3;
-      ```
+    ```mermaid
+    flowchart LR;
+    sf1["Subscription Filter"]
+    sf2["Subscription Filter"]
+    sf3["Subscription Filter"]
+    ac1["Account A Region 1"] --> sf1;
+    ac2["Account B Region 2"] --> sf2;
+    ac3["Account C Region 3"] --> sf3;
+
+    kds["Kinesis Data Streams"]
+    kdf["Kinesis Data Firehose"]
+    sf1 --> kds;
+    sf2 --> kds;
+    sf3 --> kds;
+    kds --> kdf;
+    kdf -- Near Real Time --> S3;
+    ```
 
 
 ## CloudWatch Events
@@ -137,7 +142,8 @@
     - ALARM
 - 可對於 Alarms 設定 Period, 用來作為 Length of time in seconds to evaluate the metric
     - 白話文就是, 持續觀察 Metric 多久, 然後才觸發 Alarm, 而發 Metric 一達標就觸發
-    - ex: 10 secs, 30 secs, 60 secs
+    - ex: 10 / 30 / 60 secs
+        - 很容易與 EC2 detailed monitoring && CloudWatch Metric high resolution 搞混!!
 - Alarms 有幾個主要的 Targets:
     - EC2     : stop, terminate, reboot, recover
         - Status Check
@@ -247,35 +253,115 @@ $# aws cloudwatch set-alarm-state \
 
 # AWS X-Ray
 
+- Tracing && Visual analysis for APP
+    - 對於 Distributed System 排查很有幫助
+    - 它會在我們的 Request 塞 "trace" 這神奇的東西
+        - Trace: segments collected together to form an end-to-end trace
+        - trace 裡頭由一系列的 `segments` 所構成
+        - segment 又由一系列的 `subsegments` 所構成
+        - 知道上面這細節概念的話, 對於 x-Ray 在 Coding 有幫助...
+    - 而這 Request 發送到 AWS Resources 上頭, Resources 可針對 trace 做一些識別, 最終得出一個 Service Map
+        - 參考 [What is AWS X-Ray?](https://docs.aws.amazon.com/xray/latest/devguide/aws-xray.html) 最下面那張圖
+- 使用方式
+    1. YOUR Code 需要 `import AWS X-Ray SDK`
+        - 動作上只需要加入少數的 Codes
+            - ex: Django   : 需在 settings.py 增加 X-Ray 配置, 參考 [Configuring the X-Ray SDK for Python](https://docs.aws.amazon.com/xray/latest/devguide/xray-sdk-python-configuration.html)
+            - ex: Beanstlk : 配置 `/.ebextensions/xray-daemon.config` or 在 X-Ray Console enable X-Ray
+                ```yaml
+                option_settings:
+                    aws:elasticbeanstalk:xray:XRayEnabled: true
+                ```
+            - ex: ECS      : 有 3 種模式可使用 (純理論, 不細說)
+                - ECS Cluster EC2 Type, 分別在 EC2 上頭運行一個 *X-Ray Daemon Container*
+                - ECS Cluster EC2 Type, 裡頭運行的 Container, 都要有 *X-Ray Sidecar* (很笨重的感覺啊...)
+                - Fargate Cluster, ECS Cluster 裡頭, 每個 *Fargate Task* 裡頭的 *APP Container* 都需要再掛一個 *X-Ray Sidecar*
+                - 上述的這些 sidecar, 都使用 Container 裡頭的 2000 port UDP 來做通訊
+        - (進階)或是如果要更加 客製化 的話, 則會有底下的議題:
+            - annotations : Key Value pairs used to index traces and use with filters
+            - interceptors
+            - filters
+            - handlers
+            - middleware
+            - subsegments (如果想要 segments 裡頭有更多細節的話)
+    2. EC2 需要 `install && run X-Ray Daemon` 或 Serverless 的服務需要 `enable X-Ray AWS Integration`
+        - 必需要配置適當的 IAM Role `AWSX-RayWriteOnlyAccess`
+    ```mermaid
+    flowchart TB
+
+    subgraph ec2["EC2 Instance"]
+        direction TB
+        app["Your Code 需要 import X-Ray SDK"]
+        daemon["Machine run X-Ray Daemon"]
+        app -- send traces --> daemon;
+    end
+    daemon -- "每秒 批次 傳送 \n Traces(Segments)" --> X-Ray;
+    ```
+    - 支援底下的 Programming Language:
+        - Java
+        - Python
+        - Go
+        - Node.js
+        - .Net
+- Charge: 針對送到 X-Ray 的資料計費
+    - X-Ray Sampling Rules - 協助節省傳送到 X-Ray 的流量
+        - 預設 X-Ray SDK 會紀錄:
+            - 每秒鐘第一筆 Request
+            - 該秒內其餘 5% 的 Request
+        - Custom Sampling Rules
+            - 可自行配置 (in Web Console, 改後無需重啟服務, 無需動 Code)
+                - reservoir(池, 水庫) : ex: 10, 則表示每秒鐘蒐集前十筆
+                - rate               : ex: 50%, 表示蒐集該秒內 幫我蒐集一半的請求
+                    - 會花很多錢... 不過對於排查很有幫助
+                - (還有其他...)
+- [AWS X-Ray API](https://docs.aws.amazon.com/xray/latest/devguide/xray-api.html)
+
 
 
 # AWS CloudTrail
 
+```mermaid
+flowchart LR
+
+ct["CloudTrail Console \n (追蹤 AWS Resources 操作紀錄)"]
+SDK --> ct
+CLI --> ct
+Console --> ct
+iam["IAM Users \n IAM Roles"] --> ct
+
+ct --> cwl["CloudWatch Logs"]
+ct --> S3
+```
 - governance / compliance / operational auditing / risk auditing of AWS account
 - [clf-CloudTrail](./cert-CLF_C01.md#aws-cloudtrail)
-- Internal monitoring of API calls
-- Audit changes to AWS Resources by users
-- 資料保存 90 天
-    - 可把資料 log 到 S3
-    - 紀錄關於 SDK && CLI && Console && IAM Users && IAM Roles 的操作
-        - AWS CloudTrail can be used to audit AWS API calls
+- 常用來排查:
+    - trace API call
+        - 紀錄 SDK/CLI/Console/Users/Roles 的操作
+    - Audit changes to AWS Resources by users
+        - 哪個小白把 AWS Resources 砍了
 - 3 種 CloudTrail Events:
-    - Management Events
-        - 免費, 預設啟用
-        - 針對 AWS Account 資源的增刪改, 都會被記錄
+    1. Management Events
+        - 預設啟用
+        - 針對 AWS Resources 的增刪改, 都會被記錄
             - ex: EC2 的 Start, Stop ; Create IAM Role, ...
-        - Events 區分為 *Read Events* && *Write Events*
-    - Data Events
-        - 資料龐大, 預設不紀錄(因為資料量很龐大)
+        - Events 區分為:
+            - Read Events
+            - Write Events (需要留意這個是否也被搞破壞, 就無法追查了)
+    2. Data Events
+        - 預設不啟用 (因為資料量龐大)
         - 針對 AWS Account 裡頭資源的調用
-            - ex: call Lambda, 上傳到 S3, 讀取 S3 Object, ...
-        - Events 區分為 *Read Events* && *Write Events*
-    - CloudTrail Insights Events
-        - Charged $$
-        - 紀錄 AWS Account 裡頭 非常規的活動
+            - Event Source 目前僅能為:
+                - S3
+                - Lambda
+            - ex: call Lambda, put S3 Object, read S3 Object, ...
+        - Events 一樣區分為:
+            - Read Events
+            - Write Events
+    3. CloudTrail Insights Events
+        - Charge: 要課金 (預設不啟用)
+        - 紀錄 AWS Account 裡頭 「非常規活動」
             - ex: 資源配置不正確, 資源使用達到 limits, user behavior, ...
         - Events 僅針對 *Write Events* 做紀錄
-        - ```mermaid
+            ```mermaid
             flowchart TB;
 
             me["Management Events"]
@@ -284,9 +370,9 @@ $# aws cloudwatch set-alarm-state \
 
             me <-- Continous analysis --> cti;
             cti -- generate --> ie;
-            ie --> cc["CloudTrail Console"]
+            ie -- 預設保留 90 days --> cc["CloudTrail"]
             ie --> S3
             ie --> ebe["EventBridge Event"]
-          ```
+            ```
 - Event History 可能要花上 15 分鐘才會有資料
 
