@@ -15,7 +15,7 @@
 
 # 架構
 
-![Learn Kubernetes Basics](../../img/k8s_arch-1024x437.png)
+![Learn Kubernetes Basics](./img/k8s_arch-1024x437.png)
 
 ## 1. k8s master 元件
 
