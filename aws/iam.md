@@ -174,71 +174,188 @@ r2 -.- srv2["AWS Services \n (ex: S3)"];
 
 # AWS STS, Security Token Service
 
-> AWS provides AWS Security Token Service (AWS STS) as a web service that enables you to request temporary, limited-privilege credentials for AWS Identity and Access Management (IAM) users or for users you authenticate (federated users).
-
-- all AWS Resources 背後的骨幹= =
-- STS 為 用來申請 短暫的 credentials 給 *IAM users* or *federated users*
-    - by token. 基本上 15~60 mins 到期
-    - 並不是非常懂. 不過有點像是, AWS Web Console 登入後, 會取得 token, 再拿去與 AWS Web Console 互動
-        - Token 可能藏在 Request Header 的 cookie 或 URL 裏頭吧
-- STS 支援了底下這些 actions (還有其他):
-    - 1.AssumeRole
-        - ex: 若要 Cross Account access, 則需再 Target Account `assume a role` 來 allow action
-        - ex: 為了增加多一層的安全性, user 要 delete EC2, 則需 `assume a role` 才可動作, 避免誤砍
-    - 2.AssumeRoleWithSAML
-        - return creds for users logged in with SAML
-        - will be helpful if users are federated through SAML
-        - 參考
-            - [iam-AssumeRoleWithSAML](./IAM.md#assumerolewithsaml)
-            - [AssumeRoleWithSAML](#AssumeRoleWithSAML)
+- [Welcome to the AWS Security Token Service API Reference](https://docs.aws.amazon.com/STS/latest/APIReference/welcome.html)
+    - AWS Resources 的骨幹
+- STS 為 用來申請 *temp creds* 給 *IAM users* or *federated users*
+    - temp creds : Temperory Credentials
+        - token, 有效期限落在 15~60 mins
+    - token 可能藏在 Request Header 的 cookie 或 URL 裏頭
+    - IdP, Identity Provider (本文同下)
+    - FIP, Federation Identity Provider (本文同上)
+- STS 簽發 *temp creds* 的方式, 有支援底下的這些 API:
+    - AssumeRole
+        - 帳號內, 定義一個 *IAM Role*, 來給 *AWS Users* && *Other AWS Users*
+        - 此 *IAM Role* 會限定 principals (也就是誰才可以用啦)
+        - 要 AssumeRole 的一方, 藉由 `AssumeRole API` 來取得 *temp creds*
+    - AssumeRoleWithSAML
+        - 用來給 *non AWS Users* 申請 *temp creds*
+        - user management outside of AWS
+        - 如果 Users 並非 AWS Users, 而是來自 *Identity Federation(身份聯盟)*, ex:
+            - SAML 2.0
+            - Custom Identity Broker
+            - Web Identity Federation with Amazon Cognito
+            - Web Identity Federation without Amazon Cognito
+            - SSO, Single-Sign On
+            - Non-SAML with AWs Microsoft AD
+            - 可參考底下這些範例:
+                - [SAML 2.0 Federation - Client APP](#saml-20-federation---client-app)
+                - [SAML 2.0 Federation - Browser](#saml-20-federation---browser)
+                - [SAML 2.0 Federation - ADFS, Active Directory FS](#saml-20-federation---adfs-active-directory-fs)
+        - 要 AssumeRole 的一方, 藉由 `AssumeRoleWithSAML API` 來取得 *temp creds*
+        - 如果有多個 Account 需要逐一設定
+        - 藉由 SAML 來做 Federation 是老方法, AWS 推出了 [AWS SSO](#aws-sso)
     - AssumeRoleWithWebIdentity
         - return creds for users logged in with an IdP(FB, Google, OIDC compatible...)
         - AWS 建議改為使用 **Cognito**
         - [Identity Federation](#identity-federation)
     - GetSessionToken
         - MFA for users or AWS root Account
-        - 如果有使用 MFA, 則需使用此 API 來取得認證碼
+        - 如果 AWS users who use MFA && root Account, 使用此 API
+- *SAML 2.0* 與 *Active Directory FS, ADFS* 有著非常高度的整合
+    - 除了 AD 以外, 依舊有其他 directory services 可作選擇
+        - 這些 AD 統稱 *SAML 2.0 Federation*
 
 
-### AssumeRole
+### Cross AWS Account
 
-#### Example: using STS to assume a role
-
-```mermaid
-flowchart LR
-
-sts["AWS STS"]
-
-user -- 1.AssumeRole API --> sts;
-sts <-- 2.check permissions --> IAM;
-sts -- 3.temporary security creds --> user;
-user -- 4. access via creds --> Role;
-```
-
-
-### AssumeRoleWithSAML
-
-- Login Portal 需要自行設定
-- 如果有多個 Account 需要逐一設定
-- 不要與 [AWS SSO 搞混](./iam#aws-sso)
+- 相同AWS帳號 or 跨AWS帳號, 都是藉由 `AssumeRole` API 來取得 *temp creds*
 
 ```mermaid
 flowchart TB
 
-is["Identity Store"]
-3rd["3rd IDP \n Login Portal"]
+subgraph iam["AWS IAM"]
+    role["Role \n (principal 規範使用者)"]
+end
 
-is <-- check --> 3rd;
-Browser -- login --> 3rd;
-3rd -- SAML assertion --> Browser;
-Browser -- SAML assertion --> STS;
-STS -- Security Creds --> Browser;
-Browser -- access --> aws["AWS Resources"]
+user["AWS Users"] -. "0. (我想要 XXX 因此需要這個 Role)" .- role
+user -- "1. call AssumeRole()" --> sts["AWS STS"]
+sts <-- "2. permissions check" --> iam
+sts -- "3. temp creds \n (15~60 mins 有效)" --> user
+user -- "4. access" --> rr["AWS Resources"]
 ```
+
+
+### SAML 2.0 Federation - Client APP
+
+- 下圖略為簡化 IdP 與 背後的 Identity Store, 詳圖參考 [Using SAML-based federation for API access to AWS](https://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles_providers_saml.html)
+- IdP 事先與 STS 做好(雙向)信任 && APP 與 IdP 認證後, 藉由 `AssumeRoleWithSAML()` API, 取得 *temp creds*
+
+```mermaid
+flowchart TB
+
+STS <-- "0. trust" --> IdP;
+
+subgraph org["Organization"]
+    user["YOU \n Client APP"]
+    user -- "1. Verify Request" --> IdP["Identity Provider"]
+    IdP -- "2. SAML Assertion" --> user;
+end
+subgraph AWS
+    STS
+    rr["AWS Resources"]
+end
+
+user -- "3. SAML Assertion \n call AssumeRoleWithSAML()" --> STS;
+STS -- "4. temp creds" --> user;
+user -- "5. access" --> rr
+```
+
+---
+
+
+### SAML 2.0 Federation - Browser
+
+- 下圖略為簡化 IdP 與 背後的 Identity Store, 詳圖參考 [Enabling SAML 2.0 federated users to access the AWS Management Console](https://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles_providers_enable-console-saml.html)
+- IdP 事先與 STS 做好(雙向)信任 && Browser 與 IdP 認證後, 藉由 `AssumeRoleWithSAML()` API, 取得 *temp creds*
+
+```mermaid
+flowchart TB
+
+STS <-- "0. trust" --> IdP;
+
+subgraph org["Organization"]
+    user["YOU \n Browser"]
+    user -- "1. Verify Request" --> IdP["Identity Provider"]
+    IdP -- "2. SAML Assertion" --> user;
+end
+subgraph AWS
+    SSO
+    STS
+    web["AWS Web Console"]
+end
+
+user -- "3. SAML Assertion \n call AssumeRoleWithSAML()" --> SSO;
+SSO <-- "4. verify" --> STS
+SSO -- "5. temp creds" --> user;
+user -- "6. redirect to" --> web
+```
+
+---
+
+
+### SAML 2.0 Federation - ADFS, Active Directory FS
+
+- 下圖略為簡化 ADFS 與 背後的 AD, 詳圖參考 [AWS Federated Authentication with Active Directory Federation Services (AD FS)](https://aws.amazon.com/blogs/security/aws-federated-authentication-with-active-directory-federation-services-ad-fs/)
+- (同上面的 SAML...), 對於任何 *SAML 2.0 compatible IdP* 流程都是一樣的
+
+```mermaid
+flowchart TB
+
+subgraph org["Organization"]
+    user["YOU \n Browser Interface"]
+    user -- "1. Verify Request" --> adfs["ADFS 3.0"]
+    adfs -- "2. SAML Assertion" --> user;
+end
+subgraph AWS
+    STS["AWS Sign-In \n (STS)"]
+    IAM
+    web["AWS Web Console"]
+end
+
+user -- "3. POST 'SAML Assertion' \n (Sign In) \n call AssumeRoleWithSAML()" --> STS;
+STS <-- "4. verify" --> IAM
+STS -- "5. temp creds" --> user;
+user -- "6. redirect to" --> web
+```
+
+---
+
+
+### Custom Identity Broker
+
+- 假如 IdP 與 SAML 2.0 不兼容, 看這看這~~
+    - 此時, *Identity Broker* 必須自行決定適當的 `IAM Policy`
+- Using API: `AssumeRole` && `GetFederationToken`
+- 下圖省略 *Identity Broker* 與背後的 *Identity Store*, 詳文參考 [Providing access to externally authenticated users (identity federation)](https://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles_common-scenarios_federated-users.html)
+
+```mermaid
+flowchart LR
+
+subgraph org["Organization"]
+    ib["Identity Broker"]
+    uu["Browser 或 APP \n YOU"]
+    ldap["Identity store"]
+end
+subgraph AWS
+    sts["STS"]
+    ww["AWS Web Console"]
+    rr["AWS Resources"]
+end
+
+uu -- 1. Sign In --> ib;
+ib <-- 2. auth --> ldap;
+ib <-- "3. temp creds \n call AssumeRole() \n 或 \n call GetFederationToken()" --> sts;
+ib -- "4. temp creds" --> uu
+uu -- 5a. redirect to --> ww;
+uu -- 5b. access API --> rr;
+```
+
+---
 
 
 ### AWS SSO
 
+- [Enabling Federation to AWS Using Windows Active Directory, ADFS, and SAML 2.0](https://aws.amazon.com/blogs/security/enabling-federation-to-aws-using-windows-active-directory-adfs-and-saml-2-0/)
 - *AWS SSO* 已與 Identity Store 做好整合了, 因此也無須額外設定
     - 從中取得 credentials
 - 若有多個 Account 無須逐一設定
@@ -255,12 +372,36 @@ sso -- Creds --> Browser;
 Browser -- access --> aws["AWS Resources"]
 ```
 
+---
+
+### Web Identity Federation with Web Identity
+
+- [Using web identity federation](https://docs.amazonaws.cn/en_us/amazondynamodb/latest/developerguide/WIF.html)
+- `AssumeRoleWithWebIdentity` API
+- 建議替換成 Cognito
+
+```mermaid
+flowchart TB;
+
+login["Login with AWS (External Account, \n ex: Google, FB)"]
+
+subgraph aws
+    STS
+    rr["AWS Resources"]
+end
+
+STS <-- 0. trust --> login;
+APP -- 1. login --> login;
+login -- "2. Web Identity Token" --> APP;
+APP -- "3. Web Identity Token \n call AssumeRoleWithWebIdentity()" --> STS;
+STS -- 4. temp creds --> APP;
+APP -- 5. access --> rr;
+```
+
+---
 
 # Identity Federation
 
-- 免在自家管控 users, 可直接讓 *AWS external users*, 直接來 assume temporary Role, 進而存取 AWS Resources
-    - 不需要自己 create IAM users
-    - 上述的 user, assume identity provided access role
 - 可以有各種不同的 Federation 方式:
     - [1. SAML 2.0](#1-saml-20-federation)
     - [2. Custom Identity Broker](#2-custom-identity-broker)
@@ -287,9 +428,7 @@ user -- 4.access --> aws;
 
 ### 1. SAML 2.0 Federation
 
-- *SAML 2.0* 與 *Active Directory FS, ADFS* 有著非常高度的整合
-    - 除了 AD 以外, 依舊有其他 directory services 可作選擇
-        - 這些 AD 統稱 *SAML 2.0 Federation*
+
 - 需要分別於 `AWS IAM` && `SAML` 雙向設定 trust
 - 支援 web-based, cross domain SSO
     - Using STS API: `AssumeRoleWithSAML`
@@ -300,162 +439,23 @@ user -- 4.access --> aws;
 ---
 
 
-#### 1-1. by SDK && API
-
-- [SAML-based federation for API access to AWS](https://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles_providers_saml.html)
-
-```mermaid
-flowchart TB
-
-subgraph org["Organization Provider"]
-    idp["Portal Identity Provider, IdP"]
-    app["Client APP"]
-    ldap["LDAP based identity store"]
-end
-subgraph AWS
-    direction LR
-    sts["AWS STS"]
-    rr["AWS Resources"]
-end
-
-app -- 1.request to IdP --> idp;
-idp <-- 2.auth user --> ldap;
-idp -- "3.SAML assertion \n (temp creds)" --> app;
-app -- "4.call AssumeRoleWithSAML API" --> sts;
-sts -- 5.temp creds --> app;
-app -- 6.access --> rr;
-```
----
-
-
-#### 1-2. by Web Console
-
-- [SAML-enabled single sign-on](https://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles_providers_enable-console-saml.html)
-
-```mermaid
-flowchart TB
-
-subgraph org["Organization Provider"]
-    idp["Portal Identity Provider, IdP"]
-    bb["Browser"]
-    ldap["LDAP based identity store"]
-end
-subgraph AWS
-    direction LR
-    sso["AWS SSO Endpoint \n Sing-in URL"]
-    sts["AWS STS"]
-    ww["AWS Web Console"]
-end
-
-bb -- 1.request to IdP --> idp;
-idp <-- 2.auth user --> ldap;
-idp -- "3.SAML assertion" --> bb;
-bb -- "4.POST SAML assertion" --> sso;
-sso <-- "5.check && temp creds" --> sts;
-sso -- 6.temp creds --> bb;
-bb -- 7.redirect --> ww;
-```
----
-
-
-#### 1-3. by Active Directory FS, ADFS
-
-- [AWS Federated Authentication with Active Directory Federation Services (AD FS)](https://aws.amazon.com/tw/blogs/security/aws-federated-authentication-with-active-directory-federation-services-ad-fs/)
-- 與 SAML 2.0 compatable IdP 流程一樣
-
-```mermaid
-flowchart TB
-
-subgraph org["Enterprise \n Identity Provider"]
-    idp["ADFS 3.0"]
-    bb["Browser"]
-    ldap["LDAP based identity store"]
-end
-subgraph AWS
-    direction LR
-    sts["AWS Sign-In (STS)"]
-    ww["AWS Web Console"]
-end
-
-bb -- 1.login to Portal --> idp;
-idp <-- 2.auth user --> ldap;
-idp -- "3.SAML assertion" --> bb;
-bb -- "4.POST SAML assertion to Sign-In" --> sts;
-sts -- 5.temp creds --> bb;
-bb -- 6.redirect --> ww;
-```
----
-
-
-
-### 2. Custom Identity Broker
-
-- 假如 *Identity Provider(on-premise store)* 無法與 SAML 2.0 兼容, 看這看這~~
-    - 此時, *Identity Broker* 必須決定適當的 `IAM Policy`
-- *Identity Broker* 
-- Using API: `AssumeRole` && `GetFederationToken`
-- [Providing access to externally authenticated users (identity federation)](https://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles_common-scenarios_federated-users.html)
-
-```mermaid
-flowchart LR
-
-subgraph org["Enterprise"]
-    idp["Identity Broker"]
-    uu["Browser 或 APP"]
-    ldap["Identity store"]
-end
-subgraph AWS
-    sts["STS"]
-    ww["AWS Web Console"]
-    rr["AWS Resources"]
-end
-
-uu -- 1.access --> idp;
-idp <-- 2.auth user --> ldap;
-uu <-- "3.auth && temp creds" --> sts;
-uu -- 4a.redirect --> ww;
-uu -- 4b.access API --> rr;
-```
-
-
-### 3. Web Identity Federation with Web Identity
-
-- [Using web identity federation](https://docs.amazonaws.cn/en_us/amazondynamodb/latest/developerguide/WIF.html)
-- 但是建議使用 Cognito
-
-```mermaid
-flowchart TB;
-
-login["Login with AWS (External Account, \n ex: Google, FB)"]
-
-subgraph aws
-    STS
-    rr["AWS Resources"]
-end
-
-STS <-- 0.trust --> login;
-APP -- 1.login --> login;
-login -- 2.token --> APP;
-APP -- "3. call AssumeRoleWithWebIdentity API && token" --> STS;
-STS -- 4.creds --> APP;
-APP -- 5.access --> rr;
-```
-
-
 ### 4. AWS Cognito
 
+- 因為這個年代, 大廠之間都有走某種認證標準(我還不曉得是啥), 總之能與 Cognito 兼容就是了
+    - 因此透過大廠的帳號, 就能四處去游走很多需要開帳號的服務了
+    - 結論: Cognito 好棒棒 (大誤)
 - Goal: 讓 client 直接訪問 AWS Resources (免 create IAM users)
     - ex: 要讓 FB user, 直接使用 S3
 
 > Amazon Cognito provides authentication, authorization, and user management for your web and mobile apps. Your users can sign in directly with a user name and password, or through a third party such as Facebook, Amazon, Google or Apple.
 
 ```mermaid
-flowchart RL
+flowchart TB
 
 co["Cognito Federated Identity"]
 
-subgraph extfip["Federated Identity Provider \n (External)"]
-    direction LR
+subgraph extIdP["External IdP"]
+    direction TB
     Google
     Apple
     FB
@@ -463,17 +463,17 @@ subgraph extfip["Federated Identity Provider \n (External)"]
     OpenID
 end
 
-APP -- 1.login --> extfip
-extfip -- 2.token --> APP
-APP -- 3.authenticate to FIP --> co
-co -- 4.verify token --> extfip
-co <-- "5.verify && temp creds" --> STS
-co -- 6.temp creds --> APP
-APP -- 7.access --> aws["AWS Resources"]
+APP["APP \n YOU"] -- 1. login --> extIdP
+extIdP -- 2. token --> APP
+APP -- 3. token --> co
+co <-- 4. verify token --> extIdP
+co <-- "5. temp creds" --> STS
+co -- 6. temp creds --> APP
+APP -- 7. access --> aws["AWS Resources"]
 ```
 
 
-## Directory Service - Microsoft Active Directory, AD
+# Directory Service - Microsoft Active Directory, AD
 
 - Windows Server with AD Domain Services. 集中化管理 帳號 && 權限
 - database of Objects : User Accounts, Computers, Printers, File Shares, Security Groups
