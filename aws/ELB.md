@@ -82,6 +82,10 @@ subgraph tg1["Target Group"]
     t4["IP Address"]
 end
 
+subgraph SG["SG (不要忘了我)"]
+    ALB
+end
+
 client -- SG1 --> ALB;
 ALB -- SG2 --> tg1;
 ```

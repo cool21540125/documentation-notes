@@ -1,7 +1,7 @@
 
 # SQS, Simple Queue Service
 
-- [Amazon SQS features](https://aws.amazon.com/sqs/features/?nc1=h_ls)
+- [What is Amazon Simple Queue Service?](https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/welcome.html)
 - 支援 2 種 Queue Types:
     1. Standard Queues
         - Unlimited Throughput && Unlimited Messages in Queue
@@ -16,9 +16,8 @@
         - Maximum message size, 1 ~ 256 KB
     2. FIFO Queues
         - Throughput
-            - Default : 300 Messagess/sec
-            - High Throughput (SQS Console 去做 Enable)
-                - 3000 Messages/sec (with batching)
+            - 3000 Messages/sec (with batching)
+            - 300 Messages/sec (without batching)
         - Exactly-once send capability (一次性發送, 可去除重複)
         - First-In-First-Out Delivery
         - Naming 需要 ".fifo" 結尾

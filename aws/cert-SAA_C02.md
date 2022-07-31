@@ -1,5 +1,7 @@
 AWS Certificated Solutions Architect Associate, SAA-C02
 
+- HIPAA : Health Insurance Portability and Accountability Act
+
 
 # EC2
 
@@ -80,29 +82,58 @@ workers(consumer) 未限制      | 1250w subscribers & 10w topics |
 
 # CloudFront && Global Accelerator
 
+- *CloudFront* 與 *Global Accelerator* 比較?
+    - 兩者都使用 AWS Private Network
+    - 兩者都整合 AWS Shield 來因應 DDoS
+    - Performance:
+        - CloudFront         - 由 Edge Location 快取 靜態資源 & 動態資源
+        - Global Accelerator - 將請求 proxied 回源, 不做快取, 背後的 listener 由 TCP/UDP 來加速
+
+
+## CloudFront
+
 - [CloudFront](./CloudFront.md)
 
 
 ## Global Accelerator
 
-- 要來解決 Service 在 Single Region, 但請求來自世界各地的長途路由問題
+- 用來解決 Service 存在於 Single Region, 但 Request 來自世界各地的 長途路由 問題
 - Charge: 需要摳摳
     - 固定設定費用 + 資料傳輸費用
 - 必要網路知識:
-    - Unicast IP : 一台 Server 有一個 IP
-    - Anycast IP : 所有 Servers 有相同 IP && client 就近訪問其中一台
+    1. Unicast IP : 一台 Server 有一個 IP
+        ```mermaid
+        flowchart LR
+
+        client --> srv1["Server A \n 1.2.3.4"]
+        client --> srv2["Server B \n 5.6.7.8"]
+        ```
+    2. Anycast IP : 所有 Servers 有相同 IP && client 就近訪問其中一台
+        ```mermaid
+        flowchart LR
+
+        client --> srv1["Server A \n 1.2.3.4"]
+        client --> srv2["Server B \n 1.2.3.4"]
+        ```
 - **Global Accelerator** 使用了 **Anycast IP**
-    - 不管 client 在哪邊, 都將請求送往鄰近的 Edge, 之後再走 AWS internal network 到後端 Server
+    - 不管 client 在哪邊, 都將請求送往鄰近的 *Edge Location*, 之後再走 AWS internal network 到後端 Server
     - work with *Elastic IP*, *EC2 instance*, *ALB*, *NLB*, ... (private && public)
     - 會拿到 2 組 Anycast IP for APP
     - intelligent routing && fast regional failover
-    - 不存在 client cache 的問題 (因為東西都往後端丟)(proxy)
+    - 不存在 client cache 的問題 (IP doesn't change)
     - health check
     - DDos protection (by Shield)
     - Improve performance
         - 如果 APP != HTTP, 像是 UDP, MQTT, VoIP, ... 表現都不錯
         - 如果 APP == HTTP, 需要一組 static IP 或 一組 failover regional 可快速切換
 - 容易與 [S3 Transfer Acceleration](./S3.md#s3---baseline-performance--kms-limitation) 搞混
+- Global Accelerator 配置:
+    - Listener       - 
+    - Endpoint Group - 後端資源(ALB/NLB/EC2/EIP) 所在的 Region
+    - 配置完成後, 需要等一陣子(不知道多久), Health Status 才會變為 Healthy
+- Charge:
+    - 依照 Global Accelerator 建立後, per hour 或 partial hour 計費 (建立後就要開始燒錢了)
+    - 資料傳輸費用
 
 
 # AWS Monitoring & Audit: CloudWatch, CloudTrail & Config
@@ -187,6 +218,8 @@ workers(consumer) 未限制      | 1250w subscribers & 10w topics |
 
 ## AWS Opsworks
 
+> AWS OpsWorks provides a simple and flexible way to create and manage stacks and applications. With AWS OpsWorks, you can provision AWS resources, manage their configuration, deploy applications to those resources, and monitor their health.
+
 - [clf-opsworks](./cert-CLF_C01.md#aws-opsworks)
 - AWS 的世界中, `AWS Opsworks == Managed Chef & Puppet`
 - Chef & Puppet - 協助 perform server configuration automatically 或 repetitive actions
@@ -199,8 +232,9 @@ workers(consumer) 未限制      | 1250w subscribers & 10w topics |
 
 ## AWS WorkSpaces
 
+- [clf-WorkSpace](./cert-CLF_C01.md#amazon-workspaces)
 - managed, Secure Cloud Desktop
-- 減少本地 VID(Virtual Desktop Infrastrucure) 的管理
+- 減少本地 VDI(Virtual Desktop Infrastrucure) 的管理
 - Charge: 用多久, 收多少
 - 整合 Windows AD
 
@@ -345,8 +379,8 @@ ssmps <-- Eecryption API --> kms;
 ## CloudHSM, Hardware Security Module
 
 - 常被拿來與 [AWS KMS](#aws-kms-key-management-service) 做比較
-- 不便宜..
-- CloudHSM 與 Secret Manager 相比較的話:
+- Charge: 不便宜..
+- CloudHSM 與 [Secret Manager](#secret-manager) 相比較的話:
     - Secret Manager : AWS manage  software for encryption
     - CloudHSM       : AWS provide hardware for encryption
         - user 自行管理 keys
@@ -363,13 +397,16 @@ ssmps <-- Eecryption API --> kms;
 
 ## WAF & Shield
 
-- AWS Shield Standard, Free, 預設啟用
-    - SYN/UDP Floods, Reflection attacks, L3/L4 attacks, DDoS
-- AWS Shield Advanced, Charge $3000/month
-    - DDoS mitigation service
-    - Protect: EC2, ELB, CloudFront, Global Accelerator, Route53
-    - 24*7 access to AWS DDoS response team(DRP)
-    - 防止 DDoS 期間 ELB 爆量的費用
+- AWS Shield 分成 2 種模式:
+    - Standard (預設啟用)
+        - Charge: Free, 
+        - 基礎的 SYN/UDP Floods, Reflection attacks, L3/L4 attacks, DDoS
+    - Advanced
+        - Charge `$3000/month`
+        - DDoS mitigation service
+        - Protect: EC2, ELB, CloudFront, Global Accelerator, Route53
+        - 24*7 access to AWS DDoS response team(DRP)
+        - 可免除 DDoS 期間 ELB 流量暴增所造成的流量費用
 - WAF, Web Application Firewall
     - L7, Deploy on(only): 
         - ALB & API Gateway (Regional)
@@ -420,12 +457,14 @@ Shield3 --> Shield4;
 
 ## GuardDuty
 
-> perform intelligent threat discovery in order to protect your AWS account
-
-- 用 ML && 3rd data, 來看 user account 是否 under attack
-- Charge: 30 天免費..
-- 後續動作像是, 偵測異常後, 藉由 *CloudWatch Events Rules* -> Lambda/SNS
-- Protect *CryptoCurrency attacks*(WTF?)
+- [What is Amazon GuardDuty?](https://docs.aws.amazon.com/guardduty/latest/ug/what-is-guardduty.html)
+    - perform intelligent threat discovery in order to protect your AWS account
+    - 正如其名, 持續監控找出 AWS Account 的髒東西 & 惡意威脅 & 惡意 IP & 由 CloudTrail logs 找出異常活動
+        - by leveraging ML
+    - 用 ML && 3rd data, 來看 user account 是否 under attack
+    - 後續動作像是, 偵測異常後, 藉由 *CloudWatch Events Rules* -> Lambda/SNS
+    - Protect *CryptoCurrency attacks*(WTF?)
+    - 容易與 [Macie](#macie) 搞混
 - Input data 包含了:
     - CloudTrail Events Logs
         - CloudTrail Management Events
@@ -434,6 +473,8 @@ Shield3 --> Shield4;
     - [VPC Flow Logs](./VPC.md#vpc-flow-logs)
     - DNS Logs
     - EKS Audit Logs
+    - EBS Volume data
+- Charge: 30 天免費..
 
 ```mermaid
 flowchart LR
@@ -479,6 +520,8 @@ is -- if proble, report --> eb["EventBridge"]
 - Fully managed data security && data privacy service, by using:
     - ML && Pattern matching to discover && protect sensitive data
     - 也用來協助 identify && alert sensitive data, ex: personally identifiable information, PII
+    - 標的主要是 data security && data privacy service
+    - 容易與 [GuardDuty](#guardduty) 搞混
 - SaaS
 
 ```mermaid
@@ -568,10 +611,16 @@ ce -- integration --> pipeline["SNS, Lambda, ..."];
 
 ## Database Migration Service, DMS
 
+- [What is AWS Database Migration Service?](https://docs.aws.amazon.com/dms/latest/userguide/Welcome.html)
 - 如果 backup source 與 restore target 的 DB engine 不一樣, 參考 *AWS SCT*
     - AWS Schema Conversion Tool, SCT
     - 反過來說, 如果 source 與 target 相同 Engine, 則不需要 SCT
 - Continuous Data Replication, CDC
+- 可做轉換的 Data Sources:
+    - EC2 上頭的 DB
+    - RDS
+    - S3
+    - DocumentDB
 
 ```mermaid
 flowchart TB

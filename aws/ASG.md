@@ -23,6 +23,9 @@
             - 可有不同版本
             - 配置可做 partial configuration(可繼承). 建立 parameter subsets
             - 支援 On-Demand && Spot instance
+    - *Launch Configuration* 是 ASG 用來 launch EC2 的 *instance configuration template*
+        - 相較於 Launch Template, 無法選擇 multiple instance types
+        - 建立後無法修改
 
 ```mermaid
 flowchart TB

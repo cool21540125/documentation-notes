@@ -177,6 +177,7 @@ aurora -- result --> app;
         - Read Replicas scale reads && HA
         - Data Durability using AOF
         - Backup && restore feature
+        - HIPAA Eligible Service
     - ElastiCache - Memcache
         - Multi-node partitioning of data(sharding)
         - 無 HA && 無 persistent && 無 backup && restore
@@ -273,6 +274,7 @@ Athena -- Report/Dashboard --> QuickSight;
 
 ## AWS Redshift
 
+- [clf-Redshift](./cert-CLF_C01.md#redshift)
 - based on PostgreSQL, use SQL query
     - Columnar Storage (非  row based)
     - Analytics / BI / Data Warehouse
@@ -302,7 +304,7 @@ Athena -- Report/Dashboard --> QuickSight;
     - 無 Multi AZ
     - 自行對 Cluster 做 cross-region snapshot(point-in-time backup)
         - 可 manual 或 automatically
-            - 若 auto, AWS 每隔 8 hrs 或 異動打 5 GB, 會做 snapshot
+            - 若 auto, AWS 每隔 8 hrs 或 異動達 5 GB, 會做 snapshot
     - 可藉由配置 auto copy snapshot Cluster 到其他的 Region, 來加強 Disaster Recovery Strategy
 - Performance
     - 因 Massively Parallel Query Execution(MPP) Engine, 因而 high-performance
@@ -315,7 +317,7 @@ Athena -- Report/Dashboard --> QuickSight;
 - 有三種 Load Data -> Redshift 的方式
     - 使用 Kinesis Data Firehose, KDF
         - KDF 由不同 source 蒐集資料, 倒入 Redshift Cluster
-        - 藉由 COPY COMMAND, S3 -> Redshift
+        - 藉由 `COPY COMMAND`, S3 -> Redshift
             ```
             copy customer
             from 's3://my_bucket/my_data'
@@ -323,7 +325,7 @@ Athena -- Report/Dashboard --> QuickSight;
             ```
         - EC2 Instance, JDBC driver
             - EC2 data -> Redshift Cluster
-    - By using COPY COMMAND, 可從 S3, DynamoDB, DMS, other DB 來 load data
+    - By using `COPY COMMAND`, 可從 S3, DynamoDB, DMS, other DB 來 load data
 
 ```mermaid
 flowchart LR;
@@ -389,6 +391,7 @@ gdc -- Data Discovery --> EMR;
 
 ## AWS Neptune
 
+- [clf-Neptune](./cert-CLF_C01.md#amazon-neptune)
 - Graph DB
 - Use Case
     - Social Network
@@ -405,6 +408,7 @@ gdc -- Data Discovery --> EMR;
 
 ## AWS DMS, Data Migration Service
 
+- [saa-DMS](./cert-SAA_C02.md#database-migration-service-dms)
 - Data Migration Service
 - 地端 DB 上雲端
 

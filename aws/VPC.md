@@ -16,7 +16,8 @@
         - 用來決定是否讓 DNS resolution from Route53 resolver is supported from the VPC
             - default True. 也就是說, VPC 內的 EC2, 可藉由以下 任意一個 DNS 來做 DNS query
                 - `169.254.169.253` (Amazon provided DNS Server)
-                - Subnet IP address 的 `.2` 位置
+                - Subnet IP address 的 `.2` 位置 (VPC 保留給 DNS 的 IP)
+                - 藉由 VPC 裏頭自幹的 DNS Server
     - DNS Hostnames (enableDnsHostnames)
         - if Default VPC, default True
             - 因此, EC2 才會有個 Hostname 可做訪問
@@ -29,7 +30,10 @@
     - [IPv4 CIDR 切分子網路](https://www.ipaddressguide.com/cidr)
     - IPv4 的 VPC && Subnet, CIDR range : `/16 ~ /28` (AWS CIDR 範圍)
         - [How Amazon VPC works](https://docs.aws.amazon.com/vpc/latest/userguide/how-it-works.html#VPC_Sizing)
-        - Default VPC CIDR : `172.31.0.0/16`
+        - Default VPC default CIDR : `172.31.0.0/16`
+            - Default Subnet A: `172.31.0.0/20`
+            - Default Subnet B: `172.31.0.16/20`
+            - Default Subnet C: `172.31.0.32/20`
 - VPC 擴展議題
     - 如果事業做大(global), 想要做個全球版圖的網路空間, 可參考 [Extend a VPC to a Local Zone, Wavelength Zone, or Outpost](https://docs.aws.amazon.com/vpc/latest/userguide/Extend_VPCs.html). 如此一來, 會有底下的一堆服務可以納入考量:
         - Availability zones
@@ -326,7 +330,7 @@ vei <-- all --> aws["AWS Resources"]
     - VPC Flow Logs
     - Subnet Flow Logs
     - Elastic Network Interface(ENI) Flow Logs
-- 能有效的協助 mmonitor && troubleshoot Connectivity Issue
+- 能有效的協助 monitor && troubleshoot Connectivity Issue
 - 會從各個 AWS 管理的 interfaces 蒐集 network information:
     - ELB
     - RDS

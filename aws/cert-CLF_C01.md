@@ -136,7 +136,7 @@ Networking    | -    | -    | -
     - Snowcone      : 小型裝置(2.1 KG), 8TB
         - 資料塞進去後, 可寄回 AWS 或使用 **AWS DataSync**(裡頭已經安裝好 `DataSync agent` 了)
     - Snowball Edge : 有點大台的裝置, 適合 TBs && PBs 量級的資料 
-        - pay per data transfer job
+        - Charge: 依照每次 data transfer job 計費
         - Object Storage (compatible with S3)
         - Spec:
             - Snowball Edge Stroage Optimized : 80 TB
@@ -269,14 +269,12 @@ Networking    | -    | -    | -
 - RedShift 為 *Columnar Storage* (非 row based)
 - Data WareHoust
     - OLAP
-- 可下 SQL
 - 基於 PostgreSQL 的 DB, 但非 OLTP(Online Transaction Processing)
     - Note: OLAP(Online Analytical Processing)
 - 用來做 analyze 及 data warehouse
     - 宣稱 10x performance than 其他 Warehouse
 - Massively Parallel Query Execution, MBP Engine
-- 可下 SQL, 並整合 BI
-    - ex: QuickSight, Tableau, ...
+- 可下 SQL, 並整合 BI, ex: QuickSight, Tableau, ...
 
 
 ## Amazon EMR, Elastic MapReduce

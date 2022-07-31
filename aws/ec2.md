@@ -163,9 +163,12 @@
         - same Rack, same Hardware, same AZ
         - 目的是盡可能降低 latency
     - Spread (Critical)
+        - 把 EC2 Instances 設置到不同的 機器實體
+            - 而這些 機器實體 坐落於同一個 rack(機櫃)
+                - 使用相同的 Network, 相同的 Power Supply
+            - 一個 AZ 裏頭最多只能有 7 台 EC2 Instances (using Spread)
+                - 因此如果超過 7 台 EC2, 其實這些機器可能是 cross AZ (不過在 Same Region)
         - 為了極小化 failure risk
-        - diff Hardware, diff AZ
-            - 分散到不同的 logical partition
         - *placement group* 之中, 最多只能 7 個 instances
         - ex: Hadoop, Kafka, Cassandra, ...
     - Partition (Distributed) 
