@@ -10,6 +10,8 @@
 - back slash : 反斜線
 - boilerplate: 樣板
 - bootstrap configuration file : 引導程序配置文件
+- buffer : (OS 觀點)通常指 CPU 與 I/O 之間的快取
+- cache : (OS 觀點)通常指 CPU 與 Memory 之間的快取
 - cascade: 串連
 - compliance : 
 - cow, copy-on-write strategy: 寫時復制策略

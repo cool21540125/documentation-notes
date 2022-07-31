@@ -410,18 +410,10 @@ src["Source DB"] -- DMS --> db["AWS Target DB"];
 
 ## API Gateway
 
+- [API Gateway](./APIGateway.md)
 - Serverless & Scalable
     - RESTful API
     - WebSocket API
-- Regional Service
-
-
-```mermaid
-flowchart LR;
-
-User -- request --> api["API Gateway"];
-api -- trigger --> Lambda;
-```
 
 
 ## API Batch

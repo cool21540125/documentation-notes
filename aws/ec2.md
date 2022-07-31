@@ -149,7 +149,7 @@
 ## Amazon FSx
 
 - 可使用 3rd 的 FileSystem
-    - AWS FSx for Luster (Linux & Cluster)
+    - AWS FSx for Lustre (Linux & Cluster)
     - AWS FSx for Windows File Server
     - AWS FSx for NetApp ONTAP
 

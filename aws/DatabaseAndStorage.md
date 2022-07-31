@@ -24,6 +24,15 @@ AWS Database && Storage related
 ## RDS, Relational Database Service
 
 - 允許在 RDS 裡頭開 RDB
+- 支援底下幾種 Engine Type:
+    - Aurora
+        - PostgreSQL Edition
+        - MySQL Edition
+    - PostgreSQL
+    - MySQL
+    - MariaDB
+    - MsSQL
+    - Oracle
 - RDBMS/OLTP
 - 自行準備 EC2 instance && EBS Volume type & size
     - 但無須自行維護機器, OS
@@ -455,8 +464,8 @@ gdc -- Data Discovery --> EMR;
         - 可以被 mount 到 Linux!!!
         - 支援秒級 scale (10s of GB/s, millions of IOPS), 可打 100s PB of data
         - Multi-AZ, HA
-    - AWS FSx for Luster (Linux & Cluster)
-        - Luster 為 parallel distributed file system, for large-scale computing
+    - AWS FSx for Lustre (Linux & Cluster)
+        - Lustre 為 parallel distributed file system, for large-scale computing
             - 名字結合字 Linux && Cluster
         - Machine Learning, High Performance Computing(HPC)
         - Video Processing, Financial Modeling, Electronic Design Automation
