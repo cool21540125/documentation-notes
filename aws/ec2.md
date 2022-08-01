@@ -165,14 +165,13 @@
     - Spread (Critical)
         - 把 EC2 Instances 設置到不同的 機器實體
             - 而這些 機器實體 坐落於同一個 rack(機櫃)
-                - 使用相同的 Network, 相同的 Power Supply
+                - Same Network, Same Power Supply
             - 一個 AZ 裏頭最多只能有 7 台 EC2 Instances (using Spread)
-                - 因此如果超過 7 台 EC2, 其實這些機器可能是 cross AZ (不過在 Same Region)
+                - 因此如果超過 7 台 EC2, 則會座落於 Same Region but cross AZ
         - 為了極小化 failure risk
-        - *placement group* 之中, 最多只能 7 個 instances
         - ex: Hadoop, Kafka, Cassandra, ...
     - Partition (Distributed) 
-        - cross AZ, cross Partition, cross Rack
+        - 每一台 EC2 都座落於不同的 logical segments(a.k.a. partition), different Rack
             - 每個 AZ 最多有 7 個 Racks
         - 類似 Spread 策略, 同 AZ 裡頭, 但不同機櫃
         - ex: HDFS, HBase, Cassandra, Kfaka, ...

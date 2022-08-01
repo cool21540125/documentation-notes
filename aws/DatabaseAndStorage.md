@@ -19,9 +19,17 @@ AWS Database && Storage related
         - OpenSearch
     - Graphs
         - Neptune
+- 關於 [Multi-AZ v.s. Multi-Region v.s. Read Replicas](https://aws.amazon.com/rds/features/read-replicas/) 的比較, 務必瞭解
+    - 三者目的不同
+    - Replication 方式不同
+    - AA / AS 機制不同
+    - backup 方式不同
+    - span 方式不同
+    - 
 
 
-## RDS, Relational Database Service
+
+# RDS, Relational Database Service
 
 - 允許在 RDS 裡頭開 RDB
 - 支援底下幾種 Engine Type:
@@ -63,7 +71,7 @@ AWS Database && Storage related
     - 如果要設定 Multi-AZ 非常簡單, 僅需 Enable 即可. 而且服務可免中斷
 
 
-### RDS Backups
+## RDS Backups
 
 - Backup (自動)
     - Full      : 每天 
@@ -74,7 +82,7 @@ AWS Database && Storage related
     - 可自行決定保留多久
 
 
-### Aurora
+## Aurora
 
 - RDS 旗下的其中一款 Engine Type, 地位等同於 RDS MySQL, RDS PostgreSQL, ...
     - AWS 魔改 MySQL/PostgreSQL 以後的 RDBMS
@@ -148,7 +156,7 @@ aurora -- result --> app;
 ```
 
 
-## ElastiCache
+# ElastiCache
 
 - [ElastiCache 機器規格比較表](https://instances.vantage.sh/cache/)
 - Managed Redis 或 Memcache
@@ -196,7 +204,7 @@ aurora -- result --> app;
     - On-premise, 需搭配 **AWS Outpost**
 
 
-## DynamoDB
+# DynamoDB
 
 同 [CLF-DynamoDB](./cert-CLF_C01.md#dynamodb)
 
@@ -219,39 +227,12 @@ aurora -- result --> app;
     - Pay for usage
 
 
-## S3
+# S3
 
-- Operations
-    - Serverless, no operations needed
-- Security
-    - User based
-        - IAM policies
-    - Resource Based
-        - Bucket Policies
-        - Object Access Control List
-        - Bucket Access Control List
-    - ACL
-    - Encryption
-        - SSE-S3
-        - SSE-KMS
-        - SSE-C
-        - client side encryption
-        - SSL in transit
-- Reliability
-    - 有多種類型可選擇, 但可用性都很多 9 就對了. 支援 Cross-Region Replication, CRR
-        - S3 Standard
-        - S3 IA
-        - S3 One Zone IA
-        - Glacier
-        - 等等
-- Performance
-    - single object size limit 5TB
-- Cost
-    - Pay for storage usage
-    - infinite storage
+- [S3](./S3.md)
 
 
-## Athena
+# Athena
 
 - [How do I analyze my Amazon S3 server access logs using Athena?](https://aws.amazon.com/premiumsupport/knowledge-center/analyze-logs-athena/?nc1=h_ls)
     - 其實最難的就只有 UI 不熟 && Create Database && Create Table 而已...
@@ -281,7 +262,7 @@ Athena -- Report/Dashboard --> QuickSight;
 ```
 
 
-## AWS Redshift
+# AWS Redshift
 
 - [clf-Redshift](./cert-CLF_C01.md#redshift)
 - based on PostgreSQL, use SQL query
@@ -356,7 +337,7 @@ c1 -- Auto/Manual Copy --> c2;
 ```
 
 
-## AWS Glue
+# AWS Glue
 
 - AWS managed extract, transform and load service(ETL)
     - Data Catalog Service
@@ -398,7 +379,7 @@ gdc -- Data Discovery --> EMR;
 ```
 
 
-## AWS Neptune
+# AWS Neptune
 
 - [clf-Neptune](./cert-CLF_C01.md#amazon-neptune)
 - Graph DB
@@ -415,14 +396,14 @@ gdc -- Data Discovery --> EMR;
 - Cost: Pay per node provisioned (類似 RDS)
 
 
-## AWS DMS, Data Migration Service
+# AWS DMS, Data Migration Service
 
 - [saa-DMS](./cert-SAA_C02.md#database-migration-service-dms)
 - Data Migration Service
 - 地端 DB 上雲端
 
 
-## OpenSearch
+# OpenSearch
 
 - 可適用於 Big Data
     - Search / Indexing
@@ -443,7 +424,7 @@ gdc -- Data Discovery --> EMR;
     - Pay per node provisioned (類似 RDS)
 
 
-## AWS snow Family
+# AWS snow Family
 
 - [clf-SnowFamily](./cert-CLF_C01.md#aws-snow-family)
 - 蒐集/處理 data && 將 data in/out AWS 的離線裝置
@@ -451,7 +432,7 @@ gdc -- Data Discovery --> EMR;
     - 巨量資料要放 Glacier, 可藉由 Snow Family 相關服務 -> S3, 再藉由 `S3 lifecycle policy` -> Glacier
 
 
-## AWS FSx
+# AWS FSx
 
 - 可在 AWS 使用 3rd file system
 - [clf-FSx](./cert-CLF_C01.md#amazon-fsx)
@@ -482,12 +463,12 @@ gdc -- Data Discovery --> EMR;
         - Use Case : long-term processing, sensitive data
 
 
-## Storage Gateway
+# Storage Gateway
 
 - [StorageGateway](./StorageGateway.md)
 
 
-## AWS Transfer Family
+# AWS Transfer Family
 
 - transfer file <--> S3 或 EFS, via FTP
 - Serverless, scalable, reliable, HA

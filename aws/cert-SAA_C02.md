@@ -241,6 +241,7 @@ workers(consumer) 未限制      | 1250w subscribers & 10w topics |
 
 ## AWS AppSync
 
+- [What is AWS AppSync?](https://docs.aws.amazon.com/appsync/latest/devguide/what-is-appsync.html)
 - 即時 && 跨裝置, Store && Sync data
     - 支援了 Offline data sync (類似產品 [Cognito](#cognito))
 - 使用 GraphQL (mobile tech from FB)
@@ -310,11 +311,11 @@ ss -- SSO access --> saml["SAML APPs"]
     - Could leverage *Envelop Encryption*
 
 
-## AWS KMS, Key Management Service
+## KMS, Key Management Service
 
 - 常被拿來與 [CloudHSM](#cloudhsm-hardware-security-module) 做比較
 - 可藉由 CloudTrail 來查看 Key Usage. 與 IAM 有高度的整合
-- Charge: $0.03/10000 call KMS API
+- Charge: `$0.03/10000` call KMS API
 - API call > 4KB data 須借助 *envelop encryption*
 - *KMS Key* 無法 cross region 傳送
 - Key policies are the primary way to control access to KMS keys. Every KMS key must have exactly one key policy.
@@ -336,6 +337,11 @@ ss -- SSO access --> saml["SAML APPs"]
     - Asymmetric Keys
         - RSA & ECC key pairs
         - user CAN NOT call API to see private key
+- [Deleting AWS KMS keys](https://docs.aws.amazon.com/kms/latest/developerguide/deleting-keys.html)
+    - 因為 KMS Key 太過敏感且重要, 為了防止誤砍, 給予了 waiting period 的機制
+    - 點選刪除後, Key 會進入 *Pending deletion* (可自行設定 7~30 days, default 30 days)
+    - 可在此期間內還原, 但如果超過此期間就 GG 了
+        - AWS 會連帶刪除與此相關的 Resources
 
 
 ## SSM Parameter Store
@@ -421,7 +427,8 @@ ssmps <-- Eecryption API --> kms;
 - AWS Firewall Manager
     - 用來管理 AWS Organization 所有 accounts 的 access rules
 
-    > AWS Firewall Manager is a security management service that allows you to centrally configure and manage firewall rules across your accounts and applications in AWS Organizations. 
+    > AWS Firewall Manager is a security management service that allows you to centrally configure and manage firewall rules across your accounts and applications in AWS Organizations.
+    > 
     > It is integrated with AWS Organizations so you can enable AWS WAF rules, AWS Shield Advanced protection, security groups, AWS Network Firewall rules, and Amazon Route 53 Resolver DNS Firewall rules.
 
 ```mermaid
@@ -462,18 +469,18 @@ Shield3 --> Shield4;
     - 正如其名, 持續監控找出 AWS Account 的髒東西 & 惡意威脅 & 惡意 IP & 由 CloudTrail logs 找出異常活動
         - by leveraging ML
     - 用 ML && 3rd data, 來看 user account 是否 under attack
-    - 後續動作像是, 偵測異常後, 藉由 *CloudWatch Events Rules* -> Lambda/SNS
+    - 後續動作像是, 偵測異常後, 藉由 *EventBridge Rules* -> Lambda/SNS
     - Protect *CryptoCurrency attacks*(WTF?)
     - 容易與 [Macie](#macie) 搞混
 - Input data 包含了:
-    - CloudTrail Events Logs
-        - CloudTrail Management Events
-            - 從 *CloudTrail Event logs* 取 data, 來判斷是否有 unusual API call
-        - CloudTrail S3 Data Events
     - [VPC Flow Logs](./VPC.md#vpc-flow-logs)
     - DNS Logs
     - EKS Audit Logs
     - EBS Volume data
+    - CloudTrail Events Logs
+        - CloudTrail Management Events
+            - 從 *CloudTrail Event logs* 取 data, 來判斷是否有 unusual API call
+        - CloudTrail S3 Data Events
 - Charge: 30 天免費..
 
 ```mermaid

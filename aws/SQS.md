@@ -16,8 +16,8 @@
         - Maximum message size, 1 ~ 256 KB
     2. FIFO Queues
         - Throughput
-            - 3000 Messages/sec (with batching)
             - 300 Messages/sec (without batching)
+            - 3000 Messages/sec (with batching, 最多可一次 batch 10 Messages)
         - Exactly-once send capability (一次性發送, 可去除重複)
         - First-In-First-Out Delivery
         - Naming 需要 ".fifo" 結尾

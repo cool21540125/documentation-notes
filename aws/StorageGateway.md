@@ -43,7 +43,7 @@ sg <--> client;
 ```
 
 
-# Amazon S3 File Gateway
+# File Gateway
 
 - via NFS && SMB, access S3 bucket
 - 支援: S3 standard && S3 IA && S3 one-zone IA && S3 Glacier
@@ -76,27 +76,35 @@ fg <-- HTTPS --> Region;
 
 - iSCSI protocol 到 S3
 - 最主要功能之一就是 backup, 背後有 EBS snapshot
+- [How Volume Gateway works (architecture)](https://docs.aws.amazon.com/storagegateway/latest/vgw/StorageGatewayConcepts.html)
 - Volume Gateway 又可區分為 2 種類型:
     - Cached Volumes : cache 最近使用的 data, 降低 latency
     - Stored Volumes : 對整個 dataset, schedule backups 到 S3
 
 ```mermaid
 flowchart LR
-ap["Application Server"]
-vg["Volume Gateway \n (cache 或 stored)"]
-ad["Active Directory"]
 
 subgraph Data Center
-    ap <-- iSCSI --> vg;
-end
-subgraph AWS Cloud
-    subgraph Region
-        s3["S3"]
-        ebs["EBS snapshot"]
+    direction LR
+    ap["Application Server"]
+    subgraph gwvm["Gateway VM"]
+        direction LR
+        cs["Cache Storage"]
+        ub["Upload Buffer"]
     end
+    st["SAN \n Network Attached \n Direct Attached Storage"]
 end
-vg <-- HTTPS --> s3;
-s3 <-- backup --> ebs;
+Client <--> ap
+ap <-- iSCSI --> gwvm;
+gwvm <--> st
+
+subgraph s3["AWS S3"]
+    direction LR
+    vs["Volume Storage"]
+    sp["Snapshots"]
+end
+gwvm <-- HTTPS --> vs;
+vs <--> sp
 ```
 
 

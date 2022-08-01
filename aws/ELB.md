@@ -49,12 +49,12 @@
             - AWSELB (CLB 使用)
 
 
-## 1. Classic Load Balancer, CLB (Since 2009)
+## CLB, Classic Load Balancer (Since 2009)
 
 - L4 && L7 : HTTP, HTTPS, TCP, SSL(secure TCP)
 
 
-## 2. Application Load Balancer, ALB (Since 2016)
+## ALB, Application Load Balancer (Since 2016)
 
 - L7 : HTTP, HTTPS, WebSocket, HTTP/2
 - ALB 後為 *Target Group*(也會處理 *Health Check*), 裡面可以放置:
@@ -70,6 +70,12 @@
     - CLB 則無此功能(需要設很多 CLB, 才能做對應流量轉發)
 - 對於 ECS 支援 dynamic port mapping
     - ECS 為 EC2 launch type 時, 跑在裡頭的 Container, 不需定義 port mapping, ALB 自己能找到
+- [Troubleshoot your Application Load Balancers](https://docs.aws.amazon.com/elasticloadbalancing/latest/application/load-balancer-troubleshooting.html)
+    - 501, Not Implemented
+        - Request Header 的 `Transfer-Encoding` 不合乎要求
+    - 502, Bad Gateway
+    - 503, Service unavailable
+        - Target Groups 裡頭沒有註冊 Targets
 
 ```mermaid
 flowchart LR
@@ -95,7 +101,7 @@ ALB -- SG2 --> tg1;
     - SG2 allow from SG1
 
 
-## 3. Network Load Balancer, NLB (Since 2017)
+## NLB, Network Load Balancer (Since 2017)
 
 - L4 : TCP, UDP, TLS(secure TCP)
 - high performance, latency ~= 100ms (相較於 ALB ~= 400ms)
@@ -127,7 +133,7 @@ NLB -- SG2 --> tg1;
     - 因此這邊的 SG2 需要 allow 0.0.0.0/0
 
 
-## 4. Gateway Load Balancer, GWLB, GLB (Since 2020)
+## GWLB(GLB), Gateway Load Balancer (Since 2020)
        
 - deploy / scale / manage 第三方 network virtual app in AWS
 - L3 : IP

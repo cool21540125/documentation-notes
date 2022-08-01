@@ -1,5 +1,8 @@
 
+# API Gateway
 
+- [What is Amazon API Gateway?](https://docs.aws.amazon.com/apigateway/latest/developerguide/welcome.html)
+    - creating/publishing/maintaining/monitoring/securing REST, HTTP, and WebSocket APIs at any scale.
 - 具備底下功能:
     - authentication
     - authorization
@@ -21,10 +24,28 @@
         - 訪問權限可使用 Resource Policy
 
 ```mermaid
-flowchart LR;
+flowchart TB;
 
-User -- request --> api["API Gateway"];
-api --> lambda["Lambda Function"];
-api --> http["HTTP Endpoint"]
-api --> aws["AWS Resources API"]
+subgraph api["API Gateway"]
+    direction TB
+    cache["API Gateway Cache"]
+    cw["CloudWatch"]
+end
+subgraph AWS["AWS Resources"]
+    direction LR
+    Lambda
+    EC2
+    Kinesis
+    DynamoDB
+    aws["Other AWS Services"]
+end
+subgraph On-Premise
+    direction LR
+    premmiseapi["On-Premise API"]
+    dc["Data Center"]
+end
+
+User <--> api;
+api <--> AWS
+api <--> On-Premise
 ```

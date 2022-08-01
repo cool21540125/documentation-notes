@@ -1,6 +1,7 @@
 
 # CloudFront, CDN
 
+- [What is Amazon CloudFront?](https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/Introduction.html)
 - 有超過 200+ 個 Edge Locations
     - file cached for TTL
 - 結合了 DDoS protection && Shield, Web Application Firewall
