@@ -288,6 +288,11 @@ $#
 - [Kinesis](./Kinesis.md)
 
 
+# Amazon Cognito Section
+
+
+
+
 # AWS Other Services
 
 ## AWS SES, Simple Email Service

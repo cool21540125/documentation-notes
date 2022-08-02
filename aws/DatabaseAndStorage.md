@@ -265,24 +265,51 @@ Athena -- Report/Dashboard --> QuickSight;
 # AWS Redshift
 
 - [clf-Redshift](./cert-CLF_C01.md#redshift)
+- [Getting started with Amazon Redshift](https://docs.aws.amazon.com/redshift/latest/gsg/getting-started.html)
 - based on PostgreSQL, use SQL query
-    - Columnar Storage (非  row based)
-    - Analytics / BI / Data Warehouse
-- 為 OLAP, 可用來做 analyze && data warehouse
-    - 可達 PB 量級
-    - 不適用於 OLTP
-    - 整合了 BI tools, ex: **AWS Quicksight** OR **Tableau**
+    - 不適用於 OLTP, 此為 OLAP
+        - Analytics / BI / Data Warehouse
+        - 可達 PB 量級
+        - 整合了 BI tools, ex: 
+            - AWS Quicksight
+            - Tableau
+    - Columnar Storage (非 row based)
 - Redshift Cluster
-    - 1 ~ 128 nodes, 每個 node 可達 128 TB
+    - 1 ~ 128 nodes (up to 128 TB per Node)
     - Leader Node  : Query planning && aggregating query results
-    - Compute Node : Perform queries && return to Leader
-- Redshift Spectrum
-    - 可直接對 S3 query (免 load)
+    - Compute Node : Perform queries && return Query Result to Leader
+- [RedShift] Data Sources:
+    - S3
+    - DynamoDB
+    - DMS
+    - other DBs
+- 如果 S3 非常龐大, 又需要做 Query, 可使用 **Redshift Spectrum**
+    - 直接對 S3 query (免 load), 資料不會進入我們的 Nodes, 會在 *Redshift Spectrum*(AWS Service) 查詢完後回傳結果
         - Query -> *Redshift Cluter* 內的 *Leader Node*
         - *Leader Node* 分派給 *Compute Nodes*
         - *Compute Nodes* 再分派給 *Redshift Spectrum*
         - *Redshift Spectrum* 會對 S3 做資料查詢
-    - 也就是說, 資料不會進入我們的 Nodes, 會在 *Redshift Spectrum*(AWS Service) 查詢完後回傳結果
+    ```mermaid
+    flowchart TB
+
+    Query -- jdbc/odbc --> rc;
+    subgraph rc["Redshift Cluster"]
+        direction TB
+        n0["Leader Node"]
+        n1["Compute Nodes"]
+        n2["Compute Nodes"]
+        n0 --> n1
+        n0 --> n2
+    end
+    subgraph rs["Redshift Spectrum"]
+        direction TB
+        sn1["Node"]
+        sn2["Node"]
+        sn3["Node"]
+    end
+    rc -- aggregate --> rs;
+    sn1 --> S3; sn2 --> S3; sn3 --> S3;
+    ```
 - Operations
     - like RDS
 - Security
@@ -291,50 +318,69 @@ Athena -- Report/Dashboard --> QuickSight;
     - Backup & Restore
     - monitoring
 - Reliability
-    - 無 Multi AZ
-    - 自行對 Cluster 做 cross-region snapshot(point-in-time backup)
-        - 可 manual 或 automatically
-            - 若 auto, AWS 每隔 8 hrs 或 異動達 5 GB, 會做 snapshot
-    - 可藉由配置 auto copy snapshot Cluster 到其他的 Region, 來加強 Disaster Recovery Strategy
+    - 無 Multi-AZ, all Cluster 都存在於 one AZ
+    - Backup, 可 manual 或 automatically
+        - if auto, AWS 每隔 8 hrs 或 異動達 5 GB, 會做 snapshot
+        - if manual, snapshot 會保存到使用者自行刪除為止
+    - 因應 DR, 可配置 auto copy snapshot Cluster 到其他的 Region, 來加強 Disaster Recovery Strategy
+    - 對 Cluster 做 cross-region snapshot(point-in-time backup) ncrementally 保存到 S3
+        ```mermaid
+        flowchart LR;
+
+        rc1["Redshift Cluster \n (Original)"];
+        rc2["Redshift Cluster \n (New)"];
+        c1["Cluster Snapshot"];
+        c2["Copied Snapshot"];
+
+        subgraph Region0
+            rc1 -- "Snapshot" --> c1;
+        end
+
+        subgraph Region1
+            c2 -- Restore --> rc2;
+        end
+
+        c1 -- Auto/Manual Copy --> c2;
+        ```
 - Performance
-    - 因 Massively Parallel Query Execution(MPP) Engine, 因而 high-performance
-    - 宣稱比其他 10x 於其他 WareHouse
+    - `Massively Parallel Query Execution(MPP) Engine`, 因而 high-performance
+    - 宣稱比其他 Data WareHouse 強 10x
+        - scale to PBs of data
 - Cost
     - pay for node provisioned
     - 宣稱僅其他 WareHouse 1/10 Cost
 - Redshift Enhanced VPC Routing
-    - COPY / UNLOAD COMMAND, 可免藉由 public internet 來 copy data
-- 有三種 Load Data -> Redshift 的方式
-    - 使用 Kinesis Data Firehose, KDF
-        - KDF 由不同 source 蒐集資料, 倒入 Redshift Cluster
-        - 藉由 `COPY COMMAND`, S3 -> Redshift
-            ```
-            copy customer
-            from 's3://my_bucket/my_data'
-            iam_role 'arn:aws:iam::123456887123:role/MyRedshiftRole'
-            ```
-        - EC2 Instance, JDBC driver
-            - EC2 data -> Redshift Cluster
-    - By using `COPY COMMAND`, 可從 S3, DynamoDB, DMS, other DB 來 load data
+    - 藉由 `COPY Command` && `UNLOAD Command`, 可將 *VPC 內的 data (S3)* 直接走 private, Copy 到 RedShift
+- 各種資料來源 **Load Data into Redshift**
+    - KDF -> Redshift
+        ```mermaid
+        flowchart LR
 
-```mermaid
-flowchart LR;
+        src["Data Source \n ex: S3"]
+        kdf["KDF, Kinesis Data Firehose"]
+        redshift["RedShift Cluster \n (執行 S3 COPY Command)"]
+        src --> kdf;
+        kdf -- load data --> redshift
+        ```
+    - [S3, DynamoDB, DMS, other DB] -> Redshift
+        ```mermaid
+        flowchart LR
+        rc["Redshift Cluster"]
+        S3 -- Internet --> rc;
+        S3 -- "through VPC \n Enhanced VPC Routing" --> rc;
+        ```
+        - 由 Redshift 裡頭執行 `COPY Command`
+        ```
+        copy customer
+        from 's3://my_bucket/my_data'
+        iam_role 'arn:aws:iam::123456887123:role/MyRedshiftRole'
+        ```
+    - EC2 Instance, JDBC driver
+        ```mermaid
+        flowchart LR
 
-rc1["Redshift Cluster 0"];
-rc2["Redshift Cluster 0'"];
-c1["Cluster Snapshot"];
-c2["Copied Snapshot"];
-
-subgraph Region1
-    rc1 -- "Take Snapshot" --> c1;
-end
-
-subgraph Region2
-    c2 -- Restore --> rc2;
-end
-
-c1 -- Auto/Manual Copy --> c2;
-```
+        EC2 -- "jdbc \n (建議 batch 寫入)" --> rc["Redshift Cluster"]
+        ```
 
 
 # AWS Glue
@@ -347,36 +393,37 @@ c1 -- Auto/Manual Copy --> c2;
     - Glue Data Catalog
         - catalog of databases
         - 可整合 Athena, RedShift, EMR
+- Glue
+    ```mermaid
+    flowchart LR;
 
-```mermaid
-flowchart LR;
+    S3 -- Extract --> Glue;
+    RDS -- Extract --> Glue;
 
-S3 -- Extract --> Glue;
-RDS -- Extract --> Glue;
+    Glue -- load --> Redshift;
+    ```
+- Glue Data Catalog
+    ```mermaid
+    flowchart LR;
 
-Glue -- load --> Redshift;
-```
+    glue["Glue Data Crawler"];
 
-```mermaid
-flowchart LR;
+    subgraph src["Glue Data Source"]
+        S3 --> glue;
+        RDS --> glue;
+        DynamoDB --> glue;
+        JDBC --> glue;
+    end
 
-glue["Glue Data Crawler"];
-gdc["Glue Data Catalog"];
-gjob["Glue Jobs(ETL)"];
+    glue -- write metadata --> gdc["Glue Data Catalog"];
+    gdc -- ETL --> gjob["Glue Jobs(ETL)"];
 
-S3 --> glue;
-RDS --> glue;
-DynamoDB --> glue;
-JDBC --> glue;
-
-glue -- write metadata --> gdc;
-
-glue -- ETL --> gjob;
-
-gdc -- Data Discovery --> Athena;
-gdc -- Data Discovery --> r["Redshift Spectrum"];
-gdc -- Data Discovery --> EMR;
-```
+    subgraph Data Discovery
+        gdc --> Athena;
+        gdc --> r["Redshift Spectrum"];
+        gdc --> EMR;
+    end
+    ```
 
 
 # AWS Neptune

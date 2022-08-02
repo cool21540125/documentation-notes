@@ -67,12 +67,10 @@ workers(consumer) 未限制      | 1250w subscribers & 10w topics |
 
 ## Cognito
 
-- [What is Amazon Cognito?](https://docs.aws.amazon.com/cognito/latest/developerguide/what-is-amazon-cognito.html)
+- Cognito 用來給 users(outside AWS) identity
 - 即時 && 跨裝置, Store && Sync data (同 [APPSync](#aws-appsync))
-
-> Provides authentication && authorization && user management for your web and mobile apps. Your users can sign in directly with a user name and password, or through a third party such as Facebook, Amazon, Google or Apple.
-> 
-> Offers user pools and identity pools. User pools are user directories that provide sign-up and sign-in options for your app users. Identity cagnito pools provide AWS credentials to grant your users access to other AWS services.
+- [What is Amazon Cognito?](https://docs.aws.amazon.com/cognito/latest/developerguide/what-is-amazon-cognito.html)
+- [Cognito](./IAM.md#cognito)
 
 
 # Databases && AWS Storage Extras
