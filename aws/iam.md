@@ -403,14 +403,14 @@ APP -- 5. access --> rr;
 # Identity Federation
 
 - 可以有各種不同的 Federation 方式:
-    - [1. SAML 2.0](#1-saml-20-federation)
+    - [1. SAML 2.0](#saml-20-federation)
     - [2. Custom Identity Broker](#2-custom-identity-broker)
     - Web Identity Federation without Web Identity
         - 如果要用這方法... 算了吧@@, 務必使用 Cognito
         - 需要自行處理一堆外部的 IAM user
     - [3. Web Identity Federation with Web Identity](#3-web-identity-federation-with-web-identity)
         - 建議使用 Cognito
-    - [4. AWS Cognito](#4-aws-cognito)
+    - [4. AWS Cognito](#cognito)
     - Single Sign On, SSO
     - Non-SAML with AWS Microsoft AD
 
@@ -426,7 +426,7 @@ user -- 4.access --> aws;
 ```
 
 
-### 1. SAML 2.0 Federation
+### SAML 2.0 Federation
 
 
 - 需要分別於 `AWS IAM` && `SAML` 雙向設定 trust
@@ -439,8 +439,9 @@ user -- 4.access --> aws;
 ---
 
 
-### 4. AWS Cognito
+### Cognito
 
+- [saa-Cognito](./cert-SAA_C02.md#cognito)
 - 因為這個年代, 大廠之間都有走某種認證標準(我還不曉得是啥), 總之能與 Cognito 兼容就是了
     - 因此透過大廠的帳號, 就能四處去游走很多需要開帳號的服務了
     - 結論: Cognito 好棒棒 (大誤)

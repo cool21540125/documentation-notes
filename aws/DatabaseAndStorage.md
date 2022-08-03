@@ -19,11 +19,28 @@ AWS Database && Storage related
         - OpenSearch
     - Graphs
         - Neptune
+- 關於 [Multi-AZ v.s. Multi-Region v.s. Read Replicas](https://aws.amazon.com/rds/features/read-replicas/) 的比較, 務必瞭解
+    - 三者目的不同
+    - Replication 方式不同
+    - AA / AS 機制不同
+    - backup 方式不同
+    - span 方式不同
+    - 
 
 
-## RDS, Relational Database Service
+
+# RDS, Relational Database Service
 
 - 允許在 RDS 裡頭開 RDB
+- 支援底下幾種 Engine Type:
+    - Aurora
+        - PostgreSQL Edition
+        - MySQL Edition
+    - PostgreSQL
+    - MySQL
+    - MariaDB
+    - MsSQL
+    - Oracle
 - RDBMS/OLTP
 - 自行準備 EC2 instance && EBS Volume type & size
     - 但無須自行維護機器, OS
@@ -54,7 +71,7 @@ AWS Database && Storage related
     - 如果要設定 Multi-AZ 非常簡單, 僅需 Enable 即可. 而且服務可免中斷
 
 
-### RDS Backups
+## RDS Backups
 
 - Backup (自動)
     - Full      : 每天 
@@ -65,7 +82,7 @@ AWS Database && Storage related
     - 可自行決定保留多久
 
 
-### Aurora
+## Aurora
 
 - RDS 旗下的其中一款 Engine Type, 地位等同於 RDS MySQL, RDS PostgreSQL, ...
     - AWS 魔改 MySQL/PostgreSQL 以後的 RDBMS
@@ -139,7 +156,7 @@ aurora -- result --> app;
 ```
 
 
-## ElastiCache
+# ElastiCache
 
 - [ElastiCache 機器規格比較表](https://instances.vantage.sh/cache/)
 - Managed Redis 或 Memcache
@@ -187,7 +204,7 @@ aurora -- result --> app;
     - On-premise, 需搭配 **AWS Outpost**
 
 
-## DynamoDB
+# DynamoDB
 
 同 [CLF-DynamoDB](./cert-CLF_C01.md#dynamodb)
 
@@ -210,39 +227,12 @@ aurora -- result --> app;
     - Pay for usage
 
 
-## S3
+# S3
 
-- Operations
-    - Serverless, no operations needed
-- Security
-    - User based
-        - IAM policies
-    - Resource Based
-        - Bucket Policies
-        - Object Access Control List
-        - Bucket Access Control List
-    - ACL
-    - Encryption
-        - SSE-S3
-        - SSE-KMS
-        - SSE-C
-        - client side encryption
-        - SSL in transit
-- Reliability
-    - 有多種類型可選擇, 但可用性都很多 9 就對了. 支援 Cross-Region Replication, CRR
-        - S3 Standard
-        - S3 IA
-        - S3 One Zone IA
-        - Glacier
-        - 等等
-- Performance
-    - single object size limit 5TB
-- Cost
-    - Pay for storage usage
-    - infinite storage
+- [S3](./S3.md)
 
 
-## Athena
+# Athena
 
 - [How do I analyze my Amazon S3 server access logs using Athena?](https://aws.amazon.com/premiumsupport/knowledge-center/analyze-logs-athena/?nc1=h_ls)
     - 其實最難的就只有 UI 不熟 && Create Database && Create Table 而已...
@@ -272,27 +262,54 @@ Athena -- Report/Dashboard --> QuickSight;
 ```
 
 
-## AWS Redshift
+# AWS Redshift
 
 - [clf-Redshift](./cert-CLF_C01.md#redshift)
+- [Getting started with Amazon Redshift](https://docs.aws.amazon.com/redshift/latest/gsg/getting-started.html)
 - based on PostgreSQL, use SQL query
-    - Columnar Storage (非  row based)
-    - Analytics / BI / Data Warehouse
-- 為 OLAP, 可用來做 analyze && data warehouse
-    - 可達 PB 量級
-    - 不適用於 OLTP
-    - 整合了 BI tools, ex: **AWS Quicksight** OR **Tableau**
+    - 不適用於 OLTP, 此為 OLAP
+        - Analytics / BI / Data Warehouse
+        - 可達 PB 量級
+        - 整合了 BI tools, ex: 
+            - AWS Quicksight
+            - Tableau
+    - Columnar Storage (非 row based)
 - Redshift Cluster
-    - 1 ~ 128 nodes, 每個 node 可達 128 TB
+    - 1 ~ 128 nodes (up to 128 TB per Node)
     - Leader Node  : Query planning && aggregating query results
-    - Compute Node : Perform queries && return to Leader
-- Redshift Spectrum
-    - 可直接對 S3 query (免 load)
+    - Compute Node : Perform queries && return Query Result to Leader
+- [RedShift] Data Sources:
+    - S3
+    - DynamoDB
+    - DMS
+    - other DBs
+- 如果 S3 非常龐大, 又需要做 Query, 可使用 **Redshift Spectrum**
+    - 直接對 S3 query (免 load), 資料不會進入我們的 Nodes, 會在 *Redshift Spectrum*(AWS Service) 查詢完後回傳結果
         - Query -> *Redshift Cluter* 內的 *Leader Node*
         - *Leader Node* 分派給 *Compute Nodes*
         - *Compute Nodes* 再分派給 *Redshift Spectrum*
         - *Redshift Spectrum* 會對 S3 做資料查詢
-    - 也就是說, 資料不會進入我們的 Nodes, 會在 *Redshift Spectrum*(AWS Service) 查詢完後回傳結果
+    ```mermaid
+    flowchart TB
+
+    Query -- jdbc/odbc --> rc;
+    subgraph rc["Redshift Cluster"]
+        direction TB
+        n0["Leader Node"]
+        n1["Compute Nodes"]
+        n2["Compute Nodes"]
+        n0 --> n1
+        n0 --> n2
+    end
+    subgraph rs["Redshift Spectrum"]
+        direction TB
+        sn1["Node"]
+        sn2["Node"]
+        sn3["Node"]
+    end
+    rc -- aggregate --> rs;
+    sn1 --> S3; sn2 --> S3; sn3 --> S3;
+    ```
 - Operations
     - like RDS
 - Security
@@ -301,53 +318,72 @@ Athena -- Report/Dashboard --> QuickSight;
     - Backup & Restore
     - monitoring
 - Reliability
-    - 無 Multi AZ
-    - 自行對 Cluster 做 cross-region snapshot(point-in-time backup)
-        - 可 manual 或 automatically
-            - 若 auto, AWS 每隔 8 hrs 或 異動達 5 GB, 會做 snapshot
-    - 可藉由配置 auto copy snapshot Cluster 到其他的 Region, 來加強 Disaster Recovery Strategy
+    - 無 Multi-AZ, all Cluster 都存在於 one AZ
+    - Backup, 可 manual 或 automatically
+        - if auto, AWS 每隔 8 hrs 或 異動達 5 GB, 會做 snapshot
+        - if manual, snapshot 會保存到使用者自行刪除為止
+    - 因應 DR, 可配置 auto copy snapshot Cluster 到其他的 Region, 來加強 Disaster Recovery Strategy
+    - 對 Cluster 做 cross-region snapshot(point-in-time backup) ncrementally 保存到 S3
+        ```mermaid
+        flowchart LR;
+
+        rc1["Redshift Cluster \n (Original)"];
+        rc2["Redshift Cluster \n (New)"];
+        c1["Cluster Snapshot"];
+        c2["Copied Snapshot"];
+
+        subgraph Region0
+            rc1 -- "Snapshot" --> c1;
+        end
+
+        subgraph Region1
+            c2 -- Restore --> rc2;
+        end
+
+        c1 -- Auto/Manual Copy --> c2;
+        ```
 - Performance
-    - 因 Massively Parallel Query Execution(MPP) Engine, 因而 high-performance
-    - 宣稱比其他 10x 於其他 WareHouse
+    - `Massively Parallel Query Execution(MPP) Engine`, 因而 high-performance
+    - 宣稱比其他 Data WareHouse 強 10x
+        - scale to PBs of data
 - Cost
     - pay for node provisioned
     - 宣稱僅其他 WareHouse 1/10 Cost
 - Redshift Enhanced VPC Routing
-    - COPY / UNLOAD COMMAND, 可免藉由 public internet 來 copy data
-- 有三種 Load Data -> Redshift 的方式
-    - 使用 Kinesis Data Firehose, KDF
-        - KDF 由不同 source 蒐集資料, 倒入 Redshift Cluster
-        - 藉由 `COPY COMMAND`, S3 -> Redshift
-            ```
-            copy customer
-            from 's3://my_bucket/my_data'
-            iam_role 'arn:aws:iam::123456887123:role/MyRedshiftRole'
-            ```
-        - EC2 Instance, JDBC driver
-            - EC2 data -> Redshift Cluster
-    - By using `COPY COMMAND`, 可從 S3, DynamoDB, DMS, other DB 來 load data
+    - 藉由 `COPY Command` && `UNLOAD Command`, 可將 *VPC 內的 data (S3)* 直接走 private, Copy 到 RedShift
+- 各種資料來源 **Load Data into Redshift**
+    - KDF -> Redshift
+        ```mermaid
+        flowchart LR
 
-```mermaid
-flowchart LR;
+        src["Data Source \n ex: S3"]
+        kdf["KDF, Kinesis Data Firehose"]
+        redshift["RedShift Cluster \n (執行 S3 COPY Command)"]
+        src --> kdf;
+        kdf -- load data --> redshift
+        ```
+    - [S3, DynamoDB, DMS, other DB] -> Redshift
+        ```mermaid
+        flowchart LR
+        rc["Redshift Cluster"]
+        S3 -- Internet --> rc;
+        S3 -- "through VPC \n Enhanced VPC Routing" --> rc;
+        ```
+        - 由 Redshift 裡頭執行 `COPY Command`
+        ```
+        copy customer
+        from 's3://my_bucket/my_data'
+        iam_role 'arn:aws:iam::123456887123:role/MyRedshiftRole'
+        ```
+    - EC2 Instance, JDBC driver
+        ```mermaid
+        flowchart LR
 
-rc1["Redshift Cluster 0"];
-rc2["Redshift Cluster 0'"];
-c1["Cluster Snapshot"];
-c2["Copied Snapshot"];
-
-subgraph Region1
-    rc1 -- "Take Snapshot" --> c1;
-end
-
-subgraph Region2
-    c2 -- Restore --> rc2;
-end
-
-c1 -- Auto/Manual Copy --> c2;
-```
+        EC2 -- "jdbc \n (建議 batch 寫入)" --> rc["Redshift Cluster"]
+        ```
 
 
-## AWS Glue
+# AWS Glue
 
 - AWS managed extract, transform and load service(ETL)
     - Data Catalog Service
@@ -357,39 +393,40 @@ c1 -- Auto/Manual Copy --> c2;
     - Glue Data Catalog
         - catalog of databases
         - 可整合 Athena, RedShift, EMR
+- Glue
+    ```mermaid
+    flowchart LR;
 
-```mermaid
-flowchart LR;
+    S3 -- Extract --> Glue;
+    RDS -- Extract --> Glue;
 
-S3 -- Extract --> Glue;
-RDS -- Extract --> Glue;
+    Glue -- load --> Redshift;
+    ```
+- Glue Data Catalog
+    ```mermaid
+    flowchart LR;
 
-Glue -- load --> Redshift;
-```
+    glue["Glue Data Crawler"];
 
-```mermaid
-flowchart LR;
+    subgraph src["Glue Data Source"]
+        S3 --> glue;
+        RDS --> glue;
+        DynamoDB --> glue;
+        JDBC --> glue;
+    end
 
-glue["Glue Data Crawler"];
-gdc["Glue Data Catalog"];
-gjob["Glue Jobs(ETL)"];
+    glue -- write metadata --> gdc["Glue Data Catalog"];
+    gdc -- ETL --> gjob["Glue Jobs(ETL)"];
 
-S3 --> glue;
-RDS --> glue;
-DynamoDB --> glue;
-JDBC --> glue;
-
-glue -- write metadata --> gdc;
-
-glue -- ETL --> gjob;
-
-gdc -- Data Discovery --> Athena;
-gdc -- Data Discovery --> r["Redshift Spectrum"];
-gdc -- Data Discovery --> EMR;
-```
+    subgraph Data Discovery
+        gdc --> Athena;
+        gdc --> r["Redshift Spectrum"];
+        gdc --> EMR;
+    end
+    ```
 
 
-## AWS Neptune
+# AWS Neptune
 
 - [clf-Neptune](./cert-CLF_C01.md#amazon-neptune)
 - Graph DB
@@ -406,14 +443,14 @@ gdc -- Data Discovery --> EMR;
 - Cost: Pay per node provisioned (類似 RDS)
 
 
-## AWS DMS, Data Migration Service
+# AWS DMS, Data Migration Service
 
 - [saa-DMS](./cert-SAA_C02.md#database-migration-service-dms)
 - Data Migration Service
 - 地端 DB 上雲端
 
 
-## OpenSearch
+# OpenSearch
 
 - 可適用於 Big Data
     - Search / Indexing
@@ -434,7 +471,7 @@ gdc -- Data Discovery --> EMR;
     - Pay per node provisioned (類似 RDS)
 
 
-## AWS snow Family
+# AWS snow Family
 
 - [clf-SnowFamily](./cert-CLF_C01.md#aws-snow-family)
 - 蒐集/處理 data && 將 data in/out AWS 的離線裝置
@@ -442,7 +479,7 @@ gdc -- Data Discovery --> EMR;
     - 巨量資料要放 Glacier, 可藉由 Snow Family 相關服務 -> S3, 再藉由 `S3 lifecycle policy` -> Glacier
 
 
-## AWS FSx
+# AWS FSx
 
 - 可在 AWS 使用 3rd file system
 - [clf-FSx](./cert-CLF_C01.md#amazon-fsx)
@@ -456,7 +493,7 @@ gdc -- Data Discovery --> EMR;
         - 支援秒級 scale (10s of GB/s, millions of IOPS), 可打 100s PB of data
         - Multi-AZ, HA
     - AWS FSx for Lustre (Linux & Cluster)
-        - Luster 為 parallel distributed file system, for large-scale computing
+        - Lustre 為 parallel distributed file system, for large-scale computing
             - 名字結合字 Linux && Cluster
         - Good for HPC
             -Machine Learning, High Performance Computing(HPC)
@@ -475,12 +512,12 @@ gdc -- Data Discovery --> EMR;
         - Use Case : long-term processing, sensitive data
 
 
-## Storage Gateway
+# Storage Gateway
 
 - [StorageGateway](./StorageGateway.md)
 
 
-## AWS Transfer Family
+# AWS Transfer Family
 
 - transfer file <--> S3 或 EFS, via FTP
 - Serverless, scalable, reliable, HA
