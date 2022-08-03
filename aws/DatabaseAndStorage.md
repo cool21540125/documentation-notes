@@ -455,12 +455,14 @@ gdc -- Data Discovery --> EMR;
         - 可以被 mount 到 Linux!!!
         - 支援秒級 scale (10s of GB/s, millions of IOPS), 可打 100s PB of data
         - Multi-AZ, HA
-    - AWS FSx for Luster (Linux & Cluster)
+    - AWS FSx for Lustre (Linux & Cluster)
         - Luster 為 parallel distributed file system, for large-scale computing
             - 名字結合字 Linux && Cluster
-        - Machine Learning, High Performance Computing(HPC)
-        - Video Processing, Financial Modeling, Electronic Design Automation
+        - Good for HPC
+            -Machine Learning, High Performance Computing(HPC)
+            - Video Processing, Financial Modeling, Electronic Design Automation
         - Scale up to 100s GB/s && millions IOPS
+        - Charge: Expensive
 - FSx File System Deployment Options (不知在供三小)
     - Scratch File System
         - Temporary storage

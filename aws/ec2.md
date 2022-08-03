@@ -129,9 +129,9 @@
 - Performance
     - 可有 10 GB+ throughput
     - 可增長到 PB 量級, automatically
-    - Create EFS 時, 可設定他的 Performance mode
-        - *General Purpose* (default)
-        - *Max I/O*
+- Performance mode (Create EFS 時設定)
+    - General Purpose (default)
+    - Max I/O
 - Throughput mode (可用來設定 throughput limits 的決定方式)
     - Bursting    : Throughput 會隨著 system size 變動
     - Provisioned : Throughput 固定
@@ -149,7 +149,7 @@
 ## Amazon FSx
 
 - 可使用 3rd 的 FileSystem
-    - AWS FSx for Luster (Linux & Cluster)
+    - AWS FSx for Lustre (Linux & Cluster)
     - AWS FSx for Windows File Server
     - AWS FSx for NetApp ONTAP
 
@@ -171,7 +171,7 @@
         - 為了極小化 failure risk
         - *placement group* 之中, 最多只能 7 個 instances
         - ex: Hadoop, Kafka, Cassandra, ...
-    - Partition (Distributed) 
+    - Partition (Distributed)
         - cross AZ, cross Partition, cross Rack
             - 每個 AZ 最多有 7 個 Racks
         - 類似 Spread 策略, 同 AZ 裡頭, 但不同機櫃

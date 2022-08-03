@@ -118,7 +118,7 @@ r2 -.- srv2["AWS Services \n (ex: S3)"];
 
 - 此為設計 IAM Permission && IAM Policy 的進階方式
 - 可套用到 *User* && *Role*, 但無法套用到 *Group*
-- 可先設定好 `IAM Permission Boundary`, 之後如果不小心給錯(多給了)了某些過大的權限, 則這些多給的權限都無效
+- 可先設定好 `IAM Permissions Boundary`, 之後如果不小心給錯(多給了)了某些過大的權限, 則這些多給的權限都無效
 - 如果再將此 boundary 與 Organization 的 SCP 一同套用, 則屆時 user 的權限僅有
     - SCP && Boundary && Identity-based policy 共同 allow 的權限能做操作
         - 此權限才是真正的 `Effective Permissions`
