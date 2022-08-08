@@ -1,5 +1,6 @@
 
-[AWS Storage Gateway Documentation](https://docs.aws.amazon.com/en_us/storagegateway/?id=docs_gateway)
+- [AWS Storage Gateway Documentation](https://docs.aws.amazon.com/en_us/storagegateway/?id=docs_gateway)
+- [AWS Storage Gateway FAQs](https://aws.amazon.com/storagegateway/faqs/?nc=sn&loc=6)
 
 > AWS Storage Gateway is a service that connects an on-premises software appliance with cloud-based storage to provide seamless and secure integration between your on-premises IT environment and the AWS storage infrastructure in the AWS Cloud.
 
@@ -50,6 +51,9 @@ sg <--> client;
 - 使用 IAM Role 管控 access
 - 可使用 on-premise AD 來做 user auth
 - 最近使用的檔案會被 cache
+- Charge:
+    - Storege: 儲存費用等同於 S3
+    - Traffic: 由 gateway 寫入的資料, 每 GB 計費
 
 ```mermaid
 flowchart LR
@@ -74,43 +78,41 @@ fg <-- HTTPS --> Region;
 
 # Volume Gateway
 
-- iSCSI protocol 到 S3
-- 最主要功能之一就是 backup, 背後有 EBS snapshot
 - [How Volume Gateway works (architecture)](https://docs.aws.amazon.com/storagegateway/latest/vgw/StorageGatewayConcepts.html)
-- Volume Gateway 又可區分為 2 種類型:
+- [What is Volume Gateway?](https://docs.aws.amazon.com/storagegateway/latest/vgw/WhatIsStorageGateway.html)
+    - A Volume Gateway provides cloud-backed storage volumes that you can mount as Internet Small Computer System Interface (iSCSI) devices from your on-premises application servers.
+    - Volume Gateway 是個 storage volume, 可從本地資料中心 mount, 當作是 iSCSI 來使用 
+    - 只不過這個 Volume Gateway, 需要跑在下列 2 者之一:
+        - on-premises VM as a hardware applianceas
+        - EC2 instance
+    - iSCSI protocol 到 S3
+- Volume Gateway 支援下列的 volume configurations:
     - Cached Volumes : cache 最近使用的 data, 降低 latency
     - Stored Volumes : 對整個 dataset, schedule backups 到 S3
+        - 最主要功能之一就是 backup, 背後有 EBS snapshot
+- Charge:
+    - Storege: 針對 Volume Storage 每 GB 計費
+    - Traffic: 由 gateway 寫入的資料, 每 GB 計費
 
-```mermaid
-flowchart LR
+## I. Volume Gateway - Cached volumes architecture
 
-subgraph Data Center
-    direction LR
-    ap["Application Server"]
-    subgraph gwvm["Gateway VM"]
-        direction LR
-        cs["Cache Storage"]
-        ub["Upload Buffer"]
-    end
-    st["SAN \n Network Attached \n Direct Attached Storage"]
-end
-Client <--> ap
-ap <-- iSCSI --> gwvm;
-gwvm <--> st
+- ![Cached volumes architecture](./img/Cached%20volumes%20architecture.png)
+    - iSCSI 裡頭的 Volume, 最多可擴增之 32 volumes
+    - 每個 volume size, 1 GB ~ 32 TB
+    - 因此最多可擴增之 1 PB 的 cached volume
 
-subgraph s3["AWS S3"]
-    direction LR
-    vs["Volume Storage"]
-    sp["Snapshots"]
-end
-gwvm <-- HTTPS --> vs;
-vs <--> sp
-```
+
+## II. Volume Gateway - Stored volumes architecture
+
+- ![Stored volumes architecture](./img/Stored%20volumes%20architecture.png)
 
 
 # Tape Gateway
 
-- Cloud 使用 Virtual Tape Library(VTL), 背後為 S3 && Glacier
+- [What is Tape Gateway?](https://docs.aws.amazon.com/storagegateway/latest/tgw/WhatIsStorageGateway.html)
+- Cloud 使用 Virtual Tape Library(VTL), 可將資料以下列方式做保存: 
+    - S3 Glacier Flexible Retrieval
+    - S3 Glacier Deep Archive
 
 ```mermaid
 flowchart LR

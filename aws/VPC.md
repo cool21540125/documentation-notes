@@ -11,21 +11,24 @@
     - 10.0.0.0 - 10.255.255.255 (10.0.0.0/8)
     - 172.16.0.0 - 172.31.255.255 (172.16.0.0/12)
     - 192.168.0.0 - 192.168.255.255 (192.168.0.0/16)
-- VPC 裏頭有 2 個便利的東西 (最好都把它啟用, 除非有特殊原因)
-    - DNS enableDnsSupport (default True)
-        - 用來決定是否讓 DNS resolution from Route53 resolver is supported from the VPC
-            - default True. 也就是說, VPC 內的 EC2, 可藉由以下 任意一個 DNS 來做 DNS query
-                - `169.254.169.253` (Amazon provided DNS Server)
-                - Subnet IP address 的 `.2` 位置 (VPC 保留給 DNS 的 IP)
-                - 藉由 VPC 裏頭自幹的 DNS Server
-    - DNS Hostnames (enableDnsHostnames)
-        - if Default VPC, default True
-            - 因此, EC2 才會有個 Hostname 可做訪問
-                - 此外, 也會有個 Public IP
-        - if 自訂 VPC, default False
-            - 建立新的 VPC 以後, 把這個也手動啟用吧~~
-    - 很有趣的是, 可在 *Route53*, create private zone (也要花摳摳)
-        - 綁定 hosted zone && VPC, 將來 VPC 裏頭就有自己私有的 DNS 了~
+- VPC 的 DNS support 以及 hostname
+    - **DNS Resolution** : `enableDnsSupport` 
+        - default True
+        - 讓 VPC 內的 EC2, 可使用下列 2 者之一的 DNS
+            - `169.254.169.253` (Amazon provided DNS Server)
+            - Subnet IP address 的 `.2` 位置 (VPC 保留給 DNS 的 IP)
+        - 如果不啟用, 那麼就得自行定義 DNS 位置 OR 在 VPC 裡面自幹 DNS Server
+    - **DNS Hostnames** ; `enableDnsHostnames`
+        - default True (for Default VPC)
+        - EC2 會有個 Hostname 可做訪問
+        - custom VPC, 建議也 enableDnsHostnames 
+        - 很有趣的是, 可在 *Route53*, create private zone (也要花摳摳)
+            - 綁定 hosted zone && VPC, 將來 VPC 裏頭就有自己私有的 DNS 了~
+    - 如果想要 VPC 內的 EC2 藉由 private hostname 來溝通的話
+        - Route53 建立 private hosted zone (需要課金)
+        - 此 hosted zone 綁定特定 VPC
+        - 需要 enable 上面 2 個設定
+        - 如此一來就可以讓 VPC 內的 EC2 們藉由 private hostname 來溝通了
 - CIDR, Classless Inter-Domain Routing
     - [IPv4 CIDR 切分子網路](https://www.ipaddressguide.com/cidr)
     - IPv4 的 VPC && Subnet, CIDR range : `/16 ~ /28` (AWS CIDR 範圍)
@@ -218,9 +221,14 @@ end
     - port range:
         - IANA && Win10, client port: `49152 - 65535`
         - Linux: `32768 - 60999`
-- 關於 NACL && Security Group && ENI && Route Table 的 network access, 可使用 **VPC Reachability Analyzer Tools**
-    - 針對 配置 來評估, 網路是否可通 (並非真正 send packets)
-    - Charge: 每跑一次要價 $0.1 美元
+- VPC Reachability Analyzer Tools
+    - 診斷 *VPC 內的 endpoints* 之間的網路狀況
+    - 不做侵入式的檢測, 僅從配置來做診斷, 最綜合評估底下的配置
+        - NACL
+        - SG
+        - ENI
+        - Route Table
+    - Charge: 每跑一次要價 `$0.1` USD
 
 ```mermaid
 graph TD;
@@ -377,7 +385,7 @@ vei <-- all --> aws["AWS Resources"]
 - Charge: 依照 VPN connection per hour 以及 EC2 network traffic out 來收費
 - AWS VPN CloudHub
     - 概念上是指, 如果咱們企業有很多個 customer network, 則彼此之間連線到 VGW 以後
-    - 則企業端點之間可藉助 Site-to-Site VPN, 來當作 *VPN CloudHub* 使用
+    - 則企業端點之間可藉助 Site-to-Site VPN, 來當作 **VPN CloudHub** 使用
         - 白話文就是, 企業端點之間也能使用 VPN connection 了
     - 設定 CGW 與 VGW 時, 需要 enable *Dynamic Routing* && 配置 *Route Table* 就可以了~
 - 實際配置
@@ -408,6 +416,8 @@ cg <--> vpg
 - [What is AWS Direct Connect?](https://docs.aws.amazon.com/directconnect/latest/UserGuide/Welcome.html)
     - dd
     - ![AWS Direct Connect](./img/AWSDirectConnect.png)
+- [Direct Connect v.s. Site-to-site VPN](https://www.stormit.cloud/blog/comparison-aws-direct-connect-vs-vpn/)
+    - 這兩者超級容易混淆...
 - (上下圖相同) 
     ```mermaid
     flowchart TB
@@ -541,6 +551,7 @@ dcg <--> vpg2;
     - Associations
     - Route propagation
 - Transit gateway 行為如同 Regional router, 用來轉發 VPCs && on-premise 的流量
+- IP Multicast
 - Charge:
     - 基本上, 每個 attach 到 transit gateway 的元件, 依小時計費. 此外還會依照總流量來收費
 

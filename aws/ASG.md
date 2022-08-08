@@ -63,9 +63,10 @@ ELB -- "traffic" --> ASG;
             - ex: 直接設定 average ASG CPU 都維持在 50%
         - Simple Scaling / Step Scaling
             - 藉由 **CloudWatch Alarm** 來做 trigger
-            - ex: 
+            - 需要分別定義 scale in 以及 scale out 的規則, ex: 
                 - ASG CPU < 40% 執行 scale in
                 - ASG CPU > 70% 執行 scale out
+            - Step Scaling 會依據 Alarm 的大小來做 scaling(感覺比較厲害!?)
         - Scheduled Actions
             - 設定特定時段來做 scaling out && scaling in
     - Predictive Scaling

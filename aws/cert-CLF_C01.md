@@ -352,6 +352,8 @@ Networking    | -    | -    | -
 
 ## DMS, Database Migration Services
 
+- [saa-DMS](./cert-SAA_C02.md#database-migration-service-dms)
+
 ```mermaid
 flowchart LR;
 src["Source DB"] -- DMS --> db["AWS Target DB"];
@@ -1062,7 +1064,7 @@ end
 ```
 
 - Service Control Policy, SCP
-    - 用來管控 IAM actions 對於 Organization 底下的 *群組劃分* 的權限控管
+    - 在 Organization 底下, 用來管控 IAM actions *群組劃分* 的權限控管
         - 群組劃分, ex: by 服務, Business Unit, 環境, ... 
 - Organization 的 logging 管控
     - all accounts 都使用 CloudTrail 來將 logs 發送到 *central S3 account*

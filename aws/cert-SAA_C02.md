@@ -470,6 +470,9 @@ Shield3 --> Shield4;
     - 後續動作像是, 偵測異常後, 藉由 *EventBridge Rules* -> Lambda/SNS
     - Protect *CryptoCurrency attacks*(WTF?)
     - 容易與 [Macie](#macie) 搞混
+    - 容易與 [Inspector](#inspector) 搞混
+        - Inspector 由 settings && configurations 來找 **APP** 的潛在威脅
+        - Guardduty 找出 **AWS Account, Data Store, Workload** 方面的潛在威脅
 - Input data 包含了:
     - [VPC Flow Logs](./VPC.md#vpc-flow-logs)
     - DNS Logs
@@ -502,6 +505,9 @@ ce --> Lambda;
     - EC2 - leverage *AWS System Manager (SSM) agent*, 分析異常流量 && OS 漏洞
         - database of vulnerabilities (CVE)
     - ECR - 當有人 docker push 就去評估 image/Container
+- 容易與 [Guardduty](#guardduty) 搞混
+    - Inspector 比較像是主動去探測潛在威脅
+    - Guardduty 比較偏向事後針對 log 找漏洞
 - reporting & integrating with *AWS Security Hub*, 若發現問題會送到 *Amazon EventBridge*
 
 ```mermaid
@@ -618,6 +624,7 @@ ce -- integration --> pipeline["SNS, Lambda, ..."];
 
 - [What is AWS Database Migration Service?](https://docs.aws.amazon.com/dms/latest/userguide/Welcome.html)
 - 如果 backup source 與 restore target 的 DB engine 不一樣, 參考 *AWS SCT*
+    - [What is the AWS Schema Conversion Tool?](https://docs.aws.amazon.com/SchemaConversionTool/latest/userguide/CHAP_Welcome.html)
     - AWS Schema Conversion Tool, SCT
     - 反過來說, 如果 source 與 target 相同 Engine, 則不需要 SCT
 - Continuous Data Replication, CDC
@@ -628,14 +635,31 @@ ce -- integration --> pipeline["SNS, Lambda, ..."];
     - DocumentDB
 
 ```mermaid
+flowchart LR
+
+src["Source DB"]
+tgt["Target DB"]
+subgraph dms["AWS DMS"]
+    s0["Source Endpoint"]
+    s1["Target Endpoint"]
+    subgraph rr["Replication Instance"]
+        rt(("Replication Task"))
+    end
+    s0 --> rt --> s1;
+end
+src --> s0;
+s1 --> tgt;
+```
+
+```mermaid
 flowchart TB
 
-subgraph dc["Corporate Data Center"]
+subgraph dc["On-Premise DC"]
     db["Oracle DB \n (source)"]
-    srv["Server with AWS SCT Installed"]
+    srv["Server with `AWS SCT` Installed"]
 end
 
-subgraph Region
+subgraph AWS Region
     subgraph VPC
         subgraph Public Subnet
             dms["AWS DMS Replication Instance \n (Full load + CDC)"]
@@ -766,13 +790,7 @@ flowchart LR
 
 backup["AWS Backup"]
 plan["AWS Backup Plan"]
-subgraph rr["AWS Resources"]
-    direction LR
-    EC2; EBS; s3["S3"]; 
-    RDS; DynamoDB; DocumentDB; 
-    EFS; Aurora; Neptune; FSx;
-    sg["Storage Gateway"]
-end
+rr["AWS Resources, ex: \n EC2 / EBS / EFS / \n RDS / Aurora / \n DynamoDB / DocumentDB / \n S3 / FSx / \n Neptune / \n Storage Gateway"]
 
 backup --> plan;
 plan --> rr;

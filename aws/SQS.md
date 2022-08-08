@@ -74,6 +74,7 @@
         - API Level (設定 `WaitTimeSeconds`)
 - SQS - Request-Response System
     - Producer 送 Message 可告知 Reply 位置, 將來 Consumer 處理完後, 會放到 Reply 指定的 SQS Queue
+- Standard SQS Queue 可以設定 `prioritize`, 來讓 Consumer 優先 poll 優先度高的 Message
 
 
 # DLQ, Dead Letter Queue

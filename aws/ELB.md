@@ -68,7 +68,7 @@
 - 可依照不同的 *routing tables(hostname)* && *query string* && *HTTP Header*
     - 將請求送往後端不同的 Target Groups
     - CLB 則無此功能(需要設很多 CLB, 才能做對應流量轉發)
-- 對於 ECS 支援 dynamic port mapping
+- 對於 ECS 支援 dynamic port mapping (dynamic host port mapping)
     - ECS 為 EC2 launch type 時, 跑在裡頭的 Container, 不需定義 port mapping, ALB 自己能找到
 - [Troubleshoot your Application Load Balancers](https://docs.aws.amazon.com/elasticloadbalancing/latest/application/load-balancer-troubleshooting.html)
     - 501, Not Implemented
