@@ -9,7 +9,7 @@
     - S3 
         - Enhanced security with CloudFront Origin Access Identity, OAI
             - 讓 S3 只能由 CloudFront 來訪問
-            - OAI 是用來給 CloudFront 的 IAM Role
+            - OAI 是用來給 CloudFront access S3 的 IAM Role
             - 如果使用 CloudFront 而不使用 OAI 的話, 那 S3 bucket 必須設成 public access 才可以
         - CloudFront 可作為 S3 upload file 的 ingress
     - Custom Origin(HTTP)

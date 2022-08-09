@@ -76,6 +76,7 @@
     - 502, Bad Gateway
     - 503, Service unavailable
         - Target Groups 裡頭沒有註冊 Targets
+- 若與 Lambda 整合為 Serverless, [看這](./Lambda.md#lambda---serverless)
 
 ```mermaid
 flowchart LR

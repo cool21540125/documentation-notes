@@ -253,6 +253,8 @@ $# aws cloudwatch set-alarm-state \
 
 # AWS X-Ray
 
+- [What is AWS X-Ray?](https://docs.aws.amazon.com/xray/latest/devguide/aws-xray.html)
+    - 視覺化 Request 近來到 APP 以後, 整個後端的資料流
 - Tracing && Visual analysis for APP
     - 對於 Distributed System 排查很有幫助
     - 它會在我們的 Request 塞 "trace" 這神奇的東西

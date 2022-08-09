@@ -859,7 +859,6 @@ ie --> ee["EventBridge Event"];
 
 ## AWS X-Ray
 
-- [What is AWS X-Ray?](https://docs.aws.amazon.com/xray/latest/devguide/aws-xray.html)
 - [X-Ray](./CloudWatch.md#aws-x-ray)
 - Old way for debugging in production
 - 可直接在 local test, 並 log -> anywhere
