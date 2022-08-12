@@ -51,15 +51,44 @@ client <--> ALB <--> Lambda
     1. 結合 S3 event, 用戶上傳 img 以後, 藉由 Lambda 將圖片做縮圖, 另存到另一個 S3 Bucket
     2. 結合 EventBridge, 藉由 serverless cron, 定期 trigger Lambda 做事情, 省掉一台 EC2 的費用
     3. 結合 ALB, 作為 Serverless API Server
-    4. 與 CloudFront CDN 整合, 使用 Lambda@Edge 作為 global AWS Lambda
-        - 類似 middleware 或是 request/response hook, 還可使用:
-            - Viewer Request  - After CloudFront receives request from viewer
-            - Origin Request  - Before CloudFront forwards request to origin
-            - Origin Response - After CloudFront receives response from origin
-            - Viewer Response - Before Cloudfront forwards response to viewer
+            
+
+# Lambda@Edge
+
+- [Using AWS Lambda with CloudFront Lambda@Edge](https://docs.aws.amazon.com/lambda/latest/dg/lambda-edge.html)
+- 顧名思義, 由於 Lambda 是個 Regional Service, 可藉由 Edge location, 讓 Lambda 可被就近訪問
+- 可針對 Request 及 Response 做額外加工 (有點類似 request hook, response hook, middleware):
+    - Viewer Request  - After CloudFront receives request from viewer
+    - Origin Request  - Before CloudFront forwards request to origin
+    - Origin Response - After CloudFront receives response from origin
+    - Viewer Response - Before Cloudfront forwards response to viewer
+- 搭配 `Lambda@Edge` 的一種 Serverless 的架構範例:
+
+```mermaid
+flowchart LR
+
+CloudFront <-. OAI .-> S3
+Browser -- access --> CloudFront
+CloudFront <-- 回源 API --> lambda["Lambda@edge"]
+lambda <-- Query --> DynamoDB["DynamoDB Global Table"]
+```
 
 
+# Lambda - Event Source Mapping
 
+- [Lambda event source mappings](https://docs.aws.amazon.com/lambda/latest/dg/invocation-eventsourcemapping.html)
+- 相較於 AWS Services 直接調用 Lambda, 有另一種方式稱之為 *event source mapping*
+    - Lambda Event Source Mapping 會定期去 event sources 拉資料 (而非直接 invoke lambda)
+    - Event Source 可能是:
+        - stream
+        - service queue
+    - Event Source 可能是:
+        - [KDS](./Kinesis.md#kinesis-data-streams-kds)
+        - [SQS](./SQS.md)
+        - [SNS](./SNS.md)
+        - [DynamoDB Streams](./DynamoDB.md#dynamodb-streams)
+        - MQ
+        - Apache Kafka
 
 
 # cli Lambda

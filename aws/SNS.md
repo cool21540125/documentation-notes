@@ -52,6 +52,8 @@
     - 讓 SNS Topic subscription 用來 filter message 的 JSON Policy
         - 只允許取得特定欄位給訂閱者 (而非全部欄位都給)
         - 如上圖, *Shipping Service* 不需要客戶帳單資訊, 因此可藉由 *Message Filtering* 來把不必要的欄位過濾掉
+- 替代品
+    - 相較於 [EventBridge](./CloudWatch.md#aws-eventbridge), SNS 無法整合第三方
 
 
 # Security

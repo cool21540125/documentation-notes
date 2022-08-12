@@ -28,6 +28,7 @@
             - 可設定 [1 to 99] 來增加流量, [-1 to -99] 減少流量
         - 使用了 *Route53 Traffic Flow* feature
         - Traffic Flow Policy
+        - 可依照 geographic 就近訪問
     - Multi-Value Answer
         - 把這個當成是有 Health Check 的 Simple routing policy 就是了~
             - client dig 出來的結果, 看起來與 Simple 長一樣

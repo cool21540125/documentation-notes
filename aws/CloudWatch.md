@@ -183,7 +183,7 @@ $# aws cloudwatch set-alarm-state \
 - 可用來 query logs && 把 query 加到 *CloudWatch Dashboard*
 
 
-## AWS EventBridge (前身為 *CloudWatch Events*)
+## AWS EventBridge
 
 - [What Is Amazon EventBridge?](https://docs.aws.amazon.com/eventbridge/latest/userguide/eb-what-is.html)
     - 下圖的 *event*, 其實就是 *stream of real-time data*
@@ -217,6 +217,7 @@ $# aws cloudwatch set-alarm-state \
         Rules --> Targets;
         ```
 - [clf-cloudwatch events](./cert-CLF_C01.md#cloudwatch-events)
+- (前身為 *CloudWatch Events*)
 - EventBridge 核心名詞:
     - Message Bus : (等同於 SNS 的 Topic) Container of event
     - Event : (等同於 SNS 的 Message) 除了可以被 APP 觸發, 也可能是 AWS Resource 來觸發特定 event

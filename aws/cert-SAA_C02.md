@@ -764,6 +764,7 @@ ec2 -- sync --> ds;
 
 ## AWS Backup
 
+- [What is AWS Backup?](https://docs.aws.amazon.com/aws-backup/latest/devguide/whatisbackup.html)
 - [clf-backup](./cert-CLF_C01.md#aws-backup)
 - SaaS, 統一管理 && auto backup across AWS Services
 - 無需 custom Scripts, 無需 manual processes
@@ -822,6 +823,10 @@ rr -- "Auto backup" --> S3;
     - 建立一份 Workload 以後, 開始回答一堆問題... AWS 會提出相關的 risk 以及 improvment plan
 - [AWS Trusted Advisor](https://docs.aws.amazon.com/awssupport/latest/user/trusted-advisor.html)
     - [clf-TrustedAdvisor](./cert-CLF_C01.md#aws-trusted-advisor)
+    - [AWS Trusted Advisor](https://docs.aws.amazon.com/awssupport/latest/user/trusted-advisor.html)
+        > Trusted Advisor draws upon best practices learned from serving hundreds of thousands of AWS customers.
+        > 
+        > Trusted Advisor inspects your AWS environment, and then makes recommendations when opportunities exist to save money, improve system availability and performance, or help close security gaps.
     - 除非有啟用 Enterprise 或 business plan, 否則只有底下部分的 core checks:
         - Cost Optimization
         - Performance

@@ -72,6 +72,7 @@ r2 -.- srv2["AWS Services \n (ex: S3)"];
 - AWS service role for an EC2 instance
     - A special type of service role that an application running on an Amazon EC2 instance can assume to perform actions in your account.
     - EC2 被授予 AssumeARole 的權限, 因此得到相關權限後, 可去訪問對應的 AWS Resources
+- Trust policies 定義了哪個 principal entities(accounts/users/role/federated user) can assume the role
 - AWS service-linked role
 - MFA
     - Google Authenticator

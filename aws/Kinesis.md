@@ -120,11 +120,11 @@ kds -- "Record \n * Partition Key \n * Sequence No. \n * Data Blob" --> cc;
     - Producer 會依照 `hash(PartitionId)` 得出的結果, 將之發送到 *特定 Shard*
     - 因此 PartitionId 必須要能夠 highly distributed, 避免 "hot partition"
         - 白話文, 有人累死, 有人沒事幹
-    - 如果真發生此狀況, 可能發生 `ProvisionedThroughputExceeded Exception`
-        - Note: 每個 KDS Shard, 只能有 1MB/sec 或 1000 Messages/sec
-        - 還須考量針對此 ProvisionedThroughputExceeded 的情況的 retry 機制
-            - exponential backoff
-        - 此外還得考量 Shard-splitting (也就是 auto scaling 啦, 分割原有 Shard)
+        - 如果真發生此狀況會拋出 `ProvisionedThroughputExceededException`
+            - Note: 每個 KDS Shard, 只能有 1MB/sec 或 1000 Messages/sec
+            - 還須考量針對此 ProvisionedThroughputExceededException 的情況的 retry 機制
+                - exponential backoff
+            - 此外還得考量 Shard-splitting (也就是 auto scaling 啦, 分割原有 Shard)
 
 
 ## KDS - Kinesis Consumers
