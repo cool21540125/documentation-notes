@@ -162,7 +162,7 @@ $#
     - SSH        - 如果使用 root account 登入到 Console, 看不到這個(講師說的)
     - HTTPS(GRC) - 似乎是 AWS 自行實作的協定
 - 權限
-    - AWS Console > IAM > Users > USER > SSH Keys for CodeCommit
+    - AWS Console > IAM > Users > USER > Security Credentials > SSH Keys for AWS CodeCommit
         - 把 Public Key 丟到這~~
     - AWS Console > IAM > Users > USER > HTTPS Git credentials for AWS CodeCommit
         - 要從這邊申請一組 credentials (git repo 使用的帳號密碼)
@@ -172,6 +172,8 @@ $#
 - 針對 git event, 可設定對應的 trigger, 目前支援:
     - Lambda
     - SNS
+- Charge:
+    - 5 active users free/month
 
 
 ## AWS CodePipeline
@@ -193,6 +195,7 @@ $#
 - 需要建立 root file : `buildspec.yml` (等同於 `Dockerfile`)
 - local dev 測試使用, 需安裝 *CodeBuild Agent*
     - [Run builds locally with the AWS CodeBuild agent](https://docs.aws.amazon.com/codebuild/latest/userguide/use-codebuild-agent.html)
+- CodeBuild 的環境變數, [Environment variables in build environments](https://docs.aws.amazon.com/codebuild/latest/userguide/build-env-ref-env-vars.html)
 - CodeBuild Container
     - 因安全性因素(ex: 未必很清楚 Image 究竟幹了些啥), Container 跑在 VPC 外部
     - 但如果要做整合測試 或需要授權訪問 AWS Resources, 則可做底下配置, 便可讓 *CodeBuild Container* 跑在 VPC 裡頭:
@@ -291,6 +294,70 @@ $#
 # Amazon Cognito Section
 
 
+
+# Other Serverless Section
+
+## AWS Step Functions
+
+
+## AWS AppSync
+
+- GraphQL api
+- real-time WebSocket/MQTT for WebSocket
+- 一開始需要先定義 `GraphQL schema`
+- 權限及安全性存取方面, 需要至少有底下之一的權限:
+    - API_KEY
+    - AWS_IAM
+    - OPENID_CONNECT
+    - AMAZON_CONGNITO_USER_POOLS
+
+
+## AWS Amplify
+
+- 可視為用來建 mobile APP && web APP 的 beanstalk
+- serverless
+- 整合了各種 AWS serverless services
+- 專案基本指令:
+    - amplify init
+    - amplify add auth
+    - amplify add api
+    - amplify add hosting
+
+---
+
+```mermaid
+flowchart LR
+
+subgraph Frontend
+    iOS
+    Flutter
+    Angular
+    misc["其他各種前端框架"]
+end
+subgraph Backend
+    DynamoDB
+    AppSync
+    Cognito
+    S3
+end
+Amplify <-- connect with frontend libs --> Frontend
+Amplify <-- build --> Backend
+```
+---
+
+Amplify Hosting
+
+```mermaid
+flowchart LR
+
+subgraph code["Source Code Repo"]
+    Github
+    Gitlab
+    CodeCommit
+end
+code --> Frontend -- deploy --> CloudFront
+code --> Backend -- deploy --> Amplify
+```
 
 
 # AWS Other Services

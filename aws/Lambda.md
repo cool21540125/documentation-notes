@@ -1,7 +1,106 @@
 
-- [Operator - Lambda](https://docs.aws.amazon.com/lambda/latest/operatorguide/intro.html)
-- [Developer - What is AWS Lambda?](https://docs.aws.amazon.com/lambda/latest/dg/welcome.html)
+# Lambda
+
+- [What is AWS Lambda?](https://docs.aws.amazon.com/lambda/latest/dg/welcome.html)
 - [AWS Lambda FAQs](https://aws.amazon.com/lambda/faqs/?nc1=h_ls)
+- [Operator - Lambda](https://docs.aws.amazon.com/lambda/latest/operatorguide/intro.html)
+- execution role
+    - 使用 Lambda 建立 *Lambda Funciton* 時, 會連帶建立授予此 FN 的 *execution role*
+        - 此 Role grants permission to upload logs
+    - 每當調用 FN 時, 會藉此 *execution role* 取得 creds for AWS SDK 並可 read data from source
+- Lambda Destionation
+    - 類似 SQS DLQ (用來存放 SQS 調用 failure 的 Message), 此方式可用來存放 Lambda Execution Result
+        - 包含 success & failure
+        - AWS 官方建議改使用 Lambda Destination 取代 SQS DLQ
+    - 可用來作為 Destination 的 Services:
+        - SQS
+        - SNS
+        - Lambda
+        - EventBridge bus
+- invoke Lambda Function 有底下 3 種 patterns:
+    - [sync invoke](#sync-invoke)
+        - retry 機制: 無
+    - [async invoke](#async-invoke)
+        - retry 機制: Built in, retries twice
+    - [polling invoke](#polling-invoke)
+        - retry 機制: Depends on event source
+- Lambda Execution environment lifecycle (Lambda 運行階段):
+    ```mermaid
+    flowchart LR
+    subgraph init
+        ext0["Extension init"] --> run["Runtime init"] --> fn["Function init"]
+    end
+    subgraph invoke
+        invk1["invoke FN1"] --> invk2["invoke FN2"]
+    end
+    subgraph shutdown
+        rt["Runtime shutdown"] --> ext1["Extension shutdown"]
+    end
+    init --> invoke --> shutdown
+    ```
+    - init 階段, 包含了 Lambda Function 運行前的 main function 以外的 Codes
+
+
+### [sync invoke](https://docs.aws.amazon.com/lambda/latest/dg/invocation-sync.html)
+
+```mermaid
+flowchart LR
+
+Client <--> lambda[Lambda Function]
+```
+
+- 適用的 AWS Services:
+    - API Gateway
+    - CloudFormation
+    - CloudFront
+    - Alexa
+    - Lex
+
+
+### [async invoke](https://docs.aws.amazon.com/lambda/latest/dg/invocation-async.html)
+
+```mermaid
+flowchart LR
+
+Client <--> sqs[SQS]
+sqs -- async --> lambda[Lambda Function]
+lambda --> Destination
+```
+
+- 適用的 AWS Services:
+    - SNS
+    - S3
+    - EventBridge
+
+
+### [polling invoke](https://docs.aws.amazon.com/lambda/latest/dg/invocation-eventsourcemapping.html)
+
+```mermaid
+flowchart LR
+
+client["Event Source \n (Stream 或 Queue)"] -- event source mapping --> lambda[Lambda Function]
+lambda -- result --> Destination
+```
+
+- The configuration of services as event triggers is known as event source mapping.
+- 需要使用 Lambda Function 的 execution role, 授予權限可至 Event Source 取得資料
+- polling invoke pattern 比較適用於 streaming 或 queuing based services
+- 特殊情況: 由於 *distributed nature of its pollers*, Lambda 極少數情況下會收到重複事件
+- Event Source Services:
+    - Kinesis
+    - SQS
+    - Amazon MQ
+    - Kafka
+    - DynamoDB
+        ```bash
+        ### Example
+        aws lambda create-event-source-mapping \
+            --function-name my-function \
+            --batch-size 500 \
+            --maximum-batching-window-in-seconds 5 \
+            --starting-position LATEST \
+            --event-source-arn ${DynamoDB_Stream_ARN}
+        ```
 
 
 # Lambda - Serverless
@@ -93,6 +192,8 @@ lambda <-- Query --> DynamoDB["DynamoDB Global Table"]
 
 # cli Lambda
 
+### AWS-CLI 調用 Lambda FN
+
 ```bash
 $# aws --version
 aws-cli/2.7.20 Python/3.9.11 Linux/4.14.281-212.502.amzn2.x86_64 exec-env/CloudShell exe/x86_64.amzn.2 prompt/off
@@ -103,12 +204,13 @@ $# REGION=ap-northeast-1
 $# aws lambda list-functions
 $# aws lambda list-functions --region ${REGION}
 
+### 調用 Lambda FN (必要參數及選項為 --function-name 及 Out file)
 $# aws lambda invoke --function-name lambda-apigw-proxy-root-get-0627 \
     --cli-binary-format raw-in-base64-out \
     --payload '{"key1": "value1", "key2": "value2", "key3": "value3" }' \
     --region ${REGION} \
     response.json
-# (Terminal Print)
+# (下面為 Terminal Print)
 {
     "StatusCode": 200,
     "ExecutedVersion": "$LATEST"
@@ -116,7 +218,26 @@ $# aws lambda invoke --function-name lambda-apigw-proxy-root-get-0627 \
 # Out file "response.json" (local dir 會出現這個檔案)
 $# cat response.json
 {"statusCode": 200, "body": "Server 回覆的 Response Body", "headers": {"Content-Type": "application/json"}}
+```
 
 
-$# 
+### 上傳 Lambda FN via CloudShell
+
+```bash
+$# aws --version
+aws-cli/2.7.21 Python/3.9.11 Linux/4.14.281-212.502.amzn2.x86_64 exec-env/CloudShell exe/x86_64.amzn.2 prompt/off
+
+### 
+$# zip -r function.zip .
+# function.zip 裡頭, 包含了 execution code && dependencies
+# ex 所需的 npm modules, python modules 都需要先壓縮進去
+
+$# aws lambda create-function \
+    --zip-file fileb://function.zip \
+    --function-name demo_lambda_yoyoyo \
+    --runtime nodejs16.x \
+    --handler index.handler \
+    --role arn:aws:iam::${ACCOUNT_ID}:role/${ROLE_NAME}
+# 建立一個 Lambda FN, 指派對應的 Role (事先建立好, 具備 AWSLambdaBasicExecutionRole)
+# handler 的 index.handler 意思是, Lambda FN 的 entrypoint 是從 index.js 這檔案的 handler 這個 Function 去做調用
 ```

@@ -539,6 +539,11 @@ tmpl --> CloudFormation;
     - EC2
     - Cloud9
 - 若要刪除 Project 的話, 先刪除 **Cloud9**, 再來刪除 **CodeStar** Project
+- Charge:
+    - 無需針對 CodeStar 計費
+    - 不過 CodeStar Project 會開一台 EC2...
+    - 此外, 會針對額外使用的資源計費, Lambda, EBS, S3
+    - 按量計費
 
 
 ## AWS Cloud9

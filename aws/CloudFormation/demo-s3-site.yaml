@@ -1,0 +1,24 @@
+AWSTemplateFormatVersion: 2010-09-09
+
+Description: >
+  aws cloudformation deploy \
+    --template-file demo-s3-site.yaml \
+    --stack-name demo-s3-site \
+  \
+  aws cloudformation delete-stack \
+    --stack-name demo0824
+
+Resources:
+  DemoBucket:
+    Type: 'AWS::S3::Bucket'
+    Properties:
+      BucketName: demo-from-cloudformation123
+      AccessControl: PublicRead
+      WebsiteConfiguration:
+        IndexDocument: index.html
+        ErrorDocument: error.html
+
+Outputs:
+  siteURL:
+    Description: URL for website hosted on S3
+    Value: !GetAtt [DemoBucket, WebsiteURL]

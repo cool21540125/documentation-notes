@@ -1,4 +1,6 @@
 
+# CloudFormation
+
 - [What is AWS Cloudformation? Pros and Cons?](https://www.youtube.com/watch?v=0Sh9OySCyb4)
 - IaC
 - User 定義 Template, 並藉由 Tempalte 建立 Stack
@@ -41,3 +43,8 @@
       Outputs:
       set of outputs
       ```
+- 上述的 Resource property types 格式長這樣: `service-provider::service-name::data-type-name`
+    - [AWS resource and property types reference](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-template-resource-type-ref.html)
+
+
+# 

@@ -138,3 +138,10 @@ GET /
 Host: www.other.com
 Origin: https://www.example.com
 ```
+
+
+# Study
+
+- [What is mixed content?](https://web.dev/what-is-mixed-content/)
+    - ![Mixed Content](../img/MixedContent.png)
+    - 
