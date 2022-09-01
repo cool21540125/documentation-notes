@@ -12,9 +12,18 @@
 
 # 3個很容易搞混的名詞比較 (大小寫)
 
-- uWSGI: `純 Python` 的 `App Server/HTTP Server`. 本身很大一包, **無法** 在 Windows 上運行.
-- WSGI : `python web 框架` 遵照的協議 (除非要自行開發 Python Web Framework, 不然不用理這個...)
-- uwsgi: `python base App Server` 與 `Web Server` 溝通的協定
+- uWSGI: 
+    - 純 Python 的 App/HTTP Server
+    - 無法在 Windows 上運行(或許安裝一堆有的沒的以後就可以跑了?)
+- WSGI, Web Server Gateway Interface
+    - 規範了 Web Server 與 Web APP 溝通的介面
+    - 像是 Flask, Django, ... 都自帶 WSGI Server, 但是效能都不好
+        - 因此 prod env, 都不建議使用
+        - 可使用像是 wsgi, nginx, ...
+    - 使用 python 開發 web 框架 所需要遵照的協議
+    - 除非要自行開發 Python Web Framework, 不然不需要太鑽研這個
+- uwsgi
+    - python base App Server 與 Web Server 溝通的協定
 
 ![比較表](../../img/wsgi.jpg)
 [圖片來源在這 - 我覺得他寫的很棒~](https://www.rapospectre.com/blog/31)
