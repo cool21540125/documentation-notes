@@ -299,6 +299,10 @@ $#
 
 ## AWS Step Functions
 
+- [What is AWS Step Functions?](https://docs.aws.amazon.com/step-functions/latest/dg/welcome.html)
+    - 用來整合 Lambda 及 一系列 AWS Services
+    - 可使用流程圖的方式, 並基於 state machines && tasks 來做展示
+
 
 ## AWS AppSync
 

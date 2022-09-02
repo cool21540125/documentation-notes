@@ -1,0 +1,29 @@
+{
+    "failures": [],
+    "tasks": [
+        {
+            "taskArn": "arn:aws:ecs:us-east-1:aws_account_id:task/task_ID",
+            "overrides": {
+                "containerOverrides": [
+                    {
+                        "name": "sleep"
+                    }
+                ]
+            },
+            "lastStatus": "RUNNING",
+            "containerInstanceArn": "arn:aws:ecs:us-east-1:aws_account_id:container-instance/container_instance_ID",
+            "clusterArn": "arn:aws:ecs:us-east-1:aws_account_id:cluster/default",
+            "desiredStatus": "RUNNING",
+            "taskDefinitionArn": "arn:aws:ecs:us-east-1:aws_account_id:task-definition/sleep360:1",
+            "containers": [
+                {
+                    "containerArn": "arn:aws:ecs:us-east-1:aws_account_id:container/container_ID",
+                    "taskArn": "arn:aws:ecs:us-east-1:aws_account_id:task/task_ID",
+                    "lastStatus": "RUNNING",
+                    "name": "sleep",
+                    "networkBindings": []
+                }
+            ]
+        }
+    ]
+}

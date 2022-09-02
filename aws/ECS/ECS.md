@@ -173,3 +173,21 @@ ALB --> Task3;
                 - 白話文就是, 黑社會老大 派你去暗殺第二把交椅, 而授予你必要權限
                     - 老大(Agent)具備 授權的 Role
                     - 你(Task) 具備 Task Role
+
+
+# ECS CLI
+
+```bash
+$# aws ecs list-task-definitions
+
+
+### List Tasks
+$# Cluster_Name=
+$# aws ecs list-tasks --cluster ${Cluster_Name}
+
+### Describe the Running Task
+$# task_ID=
+$# aws ecs describe-tasks \
+    --cluster ${Cluster_Name} \
+    --task ${task_ID}
+```
