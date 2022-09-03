@@ -102,7 +102,7 @@ $# stress -c 4
 
 > When you send API requests to AWS, you sign the requests so that AWS can identify who sent them. You sign requests with your AWS access key, which consists of an access key ID and secret access key.
 
-- 目前為 SigV4 (2022/07)
+- 目前為 SigV4(簽章版本4) (2022/07)
 - Signing AWS API requests
 - 此為 AWS 專屬的 protocol
 - SigV4 是指, 用自己的 credentials 來 sign request to AWS

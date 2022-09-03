@@ -4,8 +4,30 @@
 
 ```bash
 ### 查看版本
-$# cat /etc/centos-release
-CentOS Linux release 7.6.1810 (Core)
+$# cat /etc/*-release
+PRETTY_NAME="Debian GNU/Linux 11 (bullseye)"
+NAME="Debian GNU/Linux"
+VERSION_ID="11"
+VERSION="11 (bullseye)"
+VERSION_CODENAME=bullseye
+ID=debian
+HOME_URL="https://www.debian.org/"
+SUPPORT_URL="https://www.debian.org/support"
+BUG_REPORT_URL="https://bugs.debian.org/"
+
+### 查看版本
+$# cat /proc/version
+Linux version 5.10.104-linuxkit (root@buildkitsandbox) (gcc (Alpine 10.2.1_pre1) 10.2.1 20201203, GNU ld (GNU Binutils) 2.35.2) #1 SMP Thu Mar 17 17:08:06 UTC 2022
+
+### 不一定會有此 CLI
+$# lsb_release -a
+
+### 不一定會有此 CLI
+$# hostnamectl
+
+### 查看 Kernel
+$# uname -a
+Linux 4450648556ba 5.10.104-linuxkit #1 SMP Thu Mar 17 17:08:06 UTC 2022 x86_64 GNU/Linux
 ```
 
 ## 個別套件
