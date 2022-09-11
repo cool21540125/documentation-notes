@@ -31,3 +31,25 @@ $# sudo systemctl enable --now ecs
 ### 檢查 ECS agent 是否 running
 $# curl -s http://localhost:51678/v1/metadata | python -mjson.tool
 ```
+
+
+# Install ansible
+
+- 2022/09/06
+
+```bash
+$# sudo amazon-linux-extras install ansible2 -y
+
+$# ansible --version
+ansible 2.9.23
+  config file = /etc/ansible/ansible.cfg
+  configured module search path = [u'/home/ec2-user/.ansible/plugins/modules', u'/usr/share/ansible/plugins/modules']
+  ansible python module location = /usr/lib/python2.7/site-packages/ansible
+  executable location = /usr/bin/ansible
+  python version = 2.7.18 (default, May 25 2022, 14:30:51) [GCC 7.3.1 20180712 (Red Hat 7.3.1-15)]
+
+$# 
+```
+
+
+# 

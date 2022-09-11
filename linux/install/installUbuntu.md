@@ -97,3 +97,35 @@ $ sudo apt-get install libmysql-java
 # 如此一來, /usr/share/java/mysql.jar
 # 就會出現了!
 ```
+
+
+# Install docker
+
+```bash
+### Set up repository
+# $# apt-get remove docker docker-engine docker.io containerd runc
+$# apt-get update
+$# apt-get install \
+    ca-certificates \
+    curl \
+    gnupg \
+    lsb-release
+
+### official GPG key
+$# mkdir -p /etc/apt/keyrings
+$# curl -fsSL https://download.docker.com/linux/ubuntu/gpg | gpg --dearmor -o /etc/apt/keyrings/docker.gpg
+
+### Set up repository
+$# echo \
+  "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu \
+  $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+
+### install docker latest
+$# sudo apt-get install docker-ce docker-ce-cli containerd.io docker-compose-plugin
+
+# 如果要安裝特定版本, 參考:
+#    https://docs.docker.com/engine/install/ubuntu/
+
+$# systemctl start docker
+$# systemctl enable docker
+```

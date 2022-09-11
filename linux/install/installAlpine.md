@@ -80,3 +80,37 @@ exporting 192.168.152.0/24:/opt/nfs
 ### Example Client
 $# sudo mount -t nfs 192.168.152.4:/opt/nfs /mnt
 ```
+
+
+# Install sshd
+
+- 2022/09/06
+
+```sh
+$# apk add openssh
+$# rc-update add sshd
+
+$# rc-update delete sshd
+```
+
+# Install openrc
+
+- 2022/09/06
+- 解決 `sh: rc-update: not found` 的情況
+
+```sh
+$# apk add openrc
+```
+
+
+# Install dropbear
+
+- 2022/09/06
+- lightweight sshd service
+- https://wiki.alpinelinux.org/wiki/Setting_up_a_SSH_server
+
+```sh
+$# apk add dropbear
+$# rc-service dropbear start  # start
+$# rc-update add dropbear     # enable
+```
