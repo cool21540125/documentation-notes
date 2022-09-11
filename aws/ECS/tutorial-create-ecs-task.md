@@ -4,6 +4,8 @@
 
 
 ```bash
+$# aws ecs list-clusters
+
 ### Step 1: Create a Cluster
 $# CLUSTER_NAME=MyCluster0903
 $# aws ecs create-cluster \
