@@ -1,0 +1,50 @@
+- name: demo handler using nginx
+  hosts: all
+  become: true
+  vars:
+    username: "tony"
+    mail: cool21540125@gmail.com
+    blog: "https://blog.tonychoucc.com"
+    hostname: "{{ inventory_hostname }}"
+    dt: "{{ lookup('pipe', 'date +%Y-%m-%d') }}"
+
+  tasks:
+    - name: update apt repo cache
+      apt: update_cache=yes
+    
+    - name: install nginx with apt
+      apt: name=nginx state=present
+
+    - name: modify index.html
+      template: >
+        src=templates/index.html.j2
+        dest=/var/www/html/index.html
+        owner=www-data
+        group=www-data
+        mode="0644"
+        backup=yes
+      notify: restart nginx
+
+    - name: turn server_tokens off
+      lineinfile: >
+        dest=/etc/nginx/nginx.conf
+        regexp="server_tokens off;"
+        insertafter="# server_tokens off;"
+        line="server_tokens off;"
+        state=present
+      notify: restart nginx
+
+  handlers:
+    - name: restart nginx
+      service:
+        name: nginx
+        enabled: yes
+        state: restarted
+    
+  post_tasks:
+    - name: review http state
+      command: "curl -s http://localhost"
+      register: web_content
+
+    - name: print
+      debug: msg={{ web_content.stdout_lines }}

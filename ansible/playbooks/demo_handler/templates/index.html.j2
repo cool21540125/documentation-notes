@@ -1,0 +1,32 @@
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>Day15 demo | {{ hostname }}</title>
+  </head>
+  <style type="text/css" media="all">
+    body {
+      font-size: x-large;
+    }
+  </style>
+  <body>
+<p>
+<pre>[ {{ username }}@{{ hostname }} ~ ]$ hostname
+{{ hostname }}
+[ {{ username }}@{{ hostname }} ~ ]$ cowsay "This is a ansible-playbook demo for {{ hostname }} at {{ dt }}"
+ _____________________________________
+/ This is a ansible-playbook demo for \
+\ {{ hostname }} at {{ dt }}.               /
+ -------------------------------------
+        \   ^__^
+         \  (oo)\_______
+            (__)\       )\/\
+                ||----w |
+                ||     ||
+[ {{ username }}@{{ hostname }} ~ ]$
+[ {{ username }}@{{ hostname }} ~ ]$
+[ {{ username }}@{{ hostname }} ~ ]$ cat .profile
+- {{ mail }}
+- {{ blog }}</pre>
+    </p>
+  </body>
+</html>
