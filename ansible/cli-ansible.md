@@ -121,3 +121,63 @@ $ ansible all -m lineinfile -a 'dest=/etc/zabbix/zabbix_agentd.conf line="Server
 # -f 50, 使用高併發來做處理
 ```
 
+
+# other
+
+```bash
+### 指定 intenvory file
+$# ansible -i ${Inventory.yml} ...
+# ex:
+#    ansible ${Host_In_Inventory} -i ${Inventory.yml} -m ping
+
+### 
+```
+
+
+# Study
+
+## [How to install docker on RHEL using Ansible role](https://medium.com/@knoldus/how-to-install-docker-on-rhel-using-ansible-role-62728c098351)
+
+- 2022/09/08
+- 摘要記錄
+    - 這篇使用 ansible role 來安裝 docker
+    - role 是用來簡化 playbook, 將之拆分成 files, tasks, templates, variables, ... 以達模組化, 重複利用
+    - 
+
+```bash
+$# ansible --version
+ansible 2.9.23
+  config file = /etc/ansible/ansible.cfg
+  configured module search path = [u'/root/.ansible/plugins/modules', u'/usr/share/ansible/plugins/modules']
+  ansible python module location = /usr/lib/python2.7/site-packages/ansible
+  executable location = /bin/ansible
+  python version = 2.7.18 (default, May 25 2022, 14:30:51) [GCC 7.3.1 20180712 (Red Hat 7.3.1-15)]
+
+
+### 建立 ansible role
+$# ansible-galaxy init install_docker
+$# tree install_docker
+install_docker
+├── defaults
+│   └── main.yml
+├── files
+├── handlers
+│   └── main.yml
+├── meta
+│   └── main.yml
+├── README.md
+├── tasks
+│   └── main.yml
+├── templates
+├── tests
+│   ├── inventory
+│   └── test.yml
+└── vars
+    └── main.yml
+
+8 directories, 8 files
+
+
+### 
+$# 
+```

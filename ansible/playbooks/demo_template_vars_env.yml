@@ -1,0 +1,25 @@
+- name: demo template
+  # Usage:
+  #   ansible-playbook demo_template_vars_env.yml
+  #   ansible-playbook demo_template_vars_env.yml -e "env=dev"
+  #   ansible-playbook demo_template_vars_env.yml -e "env=prod"
+  hosts: localhost
+  vars:
+    env: dev
+    # env: prod
+  vars_files:
+    - vars/{{ env }}_env.yml
+  
+  tasks:
+    - name: generation the demo.txt file
+      template:
+        src: demo_template.j2
+        dest: /tmp/demo.txt
+    
+    - name: show
+      command: cat /tmp/demo.txt
+      register: result
+
+    - name: print
+      debug:
+        msg: "{{ result.stdout_lines }}"

@@ -1,0 +1,21 @@
+- name: demo template
+  # Usage:
+  #   ansible-playbook demo_template.yml
+  #   ansible-playbook demo_template.yml -e "demo_name=Tony2"
+  hosts: localhost
+  vars:
+    demo_name: "Tony"
+  
+  tasks:
+    - name: generation the demo.txt file
+      template:
+        src: demo_template.j2
+        dest: /tmp/demo.txt
+    
+    - name: show
+      command: cat /tmp/demo.txt
+      register: result
+
+    - name: print
+      debug:
+        msg: "{{ result.stdout_lines }}"
