@@ -1,6 +1,6 @@
 
 - [Container Runtimes Part 1: An Introduction to Container Runtimes](https://www.ianlewis.org/en/container-runtimes-part-1-introduction-container-r)
-- [](https://www.ianlewis.org/en/container-runtimes-part-2-anatomy-low-level-contai)
+- [Container Runtimes Part 2: Anatomy of a Low-Level Container Runtime](https://www.ianlewis.org/en/container-runtimes-part-2-anatomy-low-level-contai)
 
 此一系列文件要探討 `Container Runtime`
 
@@ -8,6 +8,7 @@
 - Part 2: Deep Dive into Low-Level Runtimes
 - Part 3: Deep Dive into High-Level Runtimes
 - Part 4: Kubernetes Runtimes and the CRI
+
 
 ### 造就 Container Runtime 如此令人混淆的主因
 
@@ -24,11 +25,11 @@ Docker 起始於 2013, 主要有底下幾個功能:
 
 而好幾度被世人認為很偉大的 Docker, 在上述的功能之中, 只有明確的實作出 **如何運行 Container**. 而當你使用 `docker run` 的時候, 實際上就是做了底下的動作:
 
-- #1 下載 Image
-- #2 將 Image 解開成為一個 bundle (將 Image 內部多層的結構扁平化為單一檔案系統)
-- #3 從 bundle 來運行 Container
+1. 下載 Image
+2. 將 Image 解開成為一個 bundle (將 Image 內部多層的結構扁平化為單一檔案系統)
+3. 從 bundle 來運行 Container
 
-Docker 只有完成上面的 #3. 並且澄清說, *only the "running the container" part that made up the runtime*. 從此之後, 因認知的不同, 又或者說式定義的不同, 從而導致後面千千萬萬名軟體從業人員對此產生種種的不解與困惑.
+Docker 只有完成上面的 3 並且澄清說, *only the "running the container" part that made up the runtime*. 從此之後, 因認知的不同, 又或者說式定義的不同, 從而導致後面千千萬萬名軟體從業人員對此產生種種的不解與困惑.
 
 
 ### Container Runtime

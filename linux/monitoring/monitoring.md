@@ -13,7 +13,7 @@
 ```bash
 ### 可查看 特定期間(default 今天) 每隔一段時間(default 10分鐘) 的 CPU 利用率, 並全部列出
 $# sar
-Linux 5.7.4-1.el7.elrepo.x86_64 (IE-L-EGI-ops) 	05/19/2021 	_x86_64_	(8 CPU)
+Linux 5.7.4-1.el7.elrepo.x86_64 (hostname-ops) 	05/19/2021 	_x86_64_	(8 CPU)
 
 12:00:01 AM     CPU     %user     %nice   %system   %iowait    %steal     %idle
 12:10:01 AM     all      1.87      0.00      0.38      0.00      0.00     97.74
@@ -59,7 +59,7 @@ $# ps -eo pcpu,pid,user,args | sort -k 1 -r | head -10
 ```bash
 ### 查看 自前次開機到現在, (CPU 統計資訊) && (devices & partitions 的 I/O 統計)
 $# iostat
-Linux 5.4.138-1.el7.elrepo.x86_64 (IEL-RDR-DFhk-nginx01) 	08/06/2021 	_x86_64_	(8 CPU)
+Linux 5.4.138-1.el7.elrepo.x86_64 (hostname-nginx01) 	08/06/2021 	_x86_64_	(8 CPU)
 
 avg-cpu:  %user   %nice %system %iowait  %steal   %idle
            0.11    0.00    0.08    0.03    0.00   99.78
@@ -85,7 +85,7 @@ dm-2              0.74         0.21        22.47      20185    2174792
 # kB_wrtn : 寫入到設備的資料總量
 
 
-### 每隔 5 秒鐘列出 iostat 資訊, 重複 3 次
+### 每隔 3 秒鐘列出 iostat 資訊, 重複 20 次
 $# iostat -xtc 3 20
 # -x : 顯示額外的統計資訊
 # -t : 印出時間

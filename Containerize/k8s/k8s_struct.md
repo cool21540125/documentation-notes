@@ -3,6 +3,34 @@
 ![Learn Kubernetes Basics](./img/k8s_arch-1024x437.png)
 
 ```mermaid
+flowchart LR
+
+subgraph worker1
+    kp["kube-proxy"]
+    kt("kubelet")
+    subgraph docker
+        podA
+        podB
+    end
+
+    kp --> podA; kp --> podB;
+    kt --> podA; kt --> podB;
+end
+
+subgraph ControlPlane
+    apisrv("API Server")
+    apisrv --> etcd;
+    Scheduler --> apisrv;
+    cm["Controller Manager"] --> apisrv;
+end
+
+kl{"kubectl"} --> apisrv;
+ii(("internet")) --> kp;
+apisrv --> kt;
+```
+
+
+```mermaid
 flowchart LR;
 
 subgraph Master;
