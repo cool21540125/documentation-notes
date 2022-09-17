@@ -7,6 +7,7 @@
 - 這個範例其實沒幹嘛...
     - 只是用 GKE 來示範如何用 CLI 做必要的環境配置 && 授權
     - create cluster && create deployment && expose service... 然後把他們砍了
+    - image 來自於 GCP 已有的 Docker Registry example
     - 營養價值及複習價值不高...
 - 進入 CloudShell
 
@@ -76,8 +77,26 @@ $# kubectl get service hello-server
 NAME           TYPE           CLUSTER-IP   EXTERNAL-IP     PORT(S)        AGE
 hello-server   LoadBalancer   10.17.2.36   35.201.180.40   80:30929/TCP   2m11s
 #                                          ^^^^^^^^^^^^^ 廢物 APP 出爐
+```
 
 
+## 此範例 image 的 Dockerfile
+
+```dockerfile
+FROM golang:1.8-alpine
+ADD . /go/src/hello-app
+RUN go install hello-app
+
+FROM alpine:latest
+COPY --from=0 /go/bin/hello-app .
+ENV PORT 8080
+CMD ["./hello-app"]
+```
+
+
+# Clean up resources
+
+```bash
 ### 為了錢包著想, 記得把它毀了
 $# kubectl delete service hello-server
 service "hello-server" deleted
@@ -93,18 +112,4 @@ Do you want to continue (Y/n)?  y   # yyyy
 Deleting cluster hello-cluster...working 
 Deleted [https://container.googleapis.com/v1/projects/lab0917-gke-app/zones/asia-east1/clusters/hello-cluster].
 # 看到這個表示已刪除 cluster
-```
-
-
-# 此範例 image 的 Dockerfile
-
-```dockerfile
-FROM golang:1.8-alpine
-ADD . /go/src/hello-app
-RUN go install hello-app
-
-FROM alpine:latest
-COPY --from=0 /go/bin/hello-app .
-ENV PORT 8080
-CMD ["./hello-app"]
 ```
