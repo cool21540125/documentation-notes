@@ -152,7 +152,7 @@ Goal:
 ```bash
 ### Cloud Shell 開始作業...
 # GCP zones 清單: https://cloud.google.com/compute/docs/regions-zones#available
-$# export MY_ZONE=asia-northeast1-c
+$# export MY_ZONE=asia-east1
 
 ### 啟動一個 由 K8s Engine 管理的 k8s cluster. 名為 tonydemo (名字不能有「_」), 並且配置 2 個 Nodes
 $# gcloud container clusters create tonydemo --zone $MY_ZONE --num-nodes 2

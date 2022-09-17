@@ -1,3 +1,7 @@
+
+![linuxProcess.png](./../img/linuxProcess.png)
+
+
 # 程序管理
 
 任何程式(放在 disk 上), 只要一被執行, 就會變成 程序(process) (放在 RAM 裡面)
