@@ -2,7 +2,13 @@
 # API Gateway
 
 - [What is Amazon API Gateway?](https://docs.aws.amazon.com/apigateway/latest/developerguide/welcome.html)
-    - creating/publishing/maintaining/monitoring/securing REST, HTTP, and WebSocket APIs at any scale.
+    - creating/publishing/maintaining/monitoring/securing REST, HTTP, and WebSocket APIs at any scale
+- 常見問題: HTTP API v.s. REST API
+    - HTTP API, 如果僅需要做 proxy, 使用這個就對了, 成本 ↓ 70% && 效率 ↑ 60%
+    - REST API, 相較於 HTTP API, 多了一些功能~ ex: 
+        - cache
+        - API Keys (認證)
+        - usage plans (不知道這啥)
 - 具備底下功能:
     - authentication
     - authorization
@@ -31,14 +37,9 @@ subgraph api["API Gateway"]
     cache["API Gateway Cache"]
     cw["CloudWatch"]
 end
-subgraph AWS["AWS Resources"]
-    direction LR
-    Lambda
-    EC2
-    Kinesis
-    DynamoDB
-    aws["Other AWS Services"]
-end
+
+AWS["Lambda \nEC2 \nKinesis \nDynamoDB \nOther AWS Services"]
+
 subgraph On-Premise
     direction LR
     premmiseapi["On-Premise API"]
