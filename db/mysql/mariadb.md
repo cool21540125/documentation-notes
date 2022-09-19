@@ -26,6 +26,12 @@ FLUSH PRIVILEGES;
 SHOW GRANTS for zabbix@localhost;
 
 
+--#; dev user
+CREATE USER 'tony'@'%' IDENTIFIED BY '傻瓜才會複製貼上';
+GRANT ALL PRIVILEGES on *.* to tony@'%';
+SHOW GRANTS for tony@'%';
+
+
 --#; 修改密碼
 SET PASSWORD FOR 'zabbix'@'localhost' = PASSWORD('zabbix');
 FLUSH PRIVILEGES;

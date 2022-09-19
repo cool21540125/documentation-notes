@@ -1,5 +1,15 @@
 
 
+# Environment variables
+
+```bash
+### 可取得目前 CloudShell 所在的 project
+$# echo ${DEVSHELL_PROJECT_ID}
+```
+
+
+
+# CMD
 
 ```bash
 ### 設定 project default region
