@@ -1,0 +1,14 @@
+
+- Container Network Interface, CNI
+- 掌管 Kubernetes Cluster 網路的核心元件
+- 常見的 CNI plugins:
+    - bridge : 藉由 Linux Bridge 將 Container 與 Host 建立通訊
+    - host-device
+    - ipvlan
+    - macvlan
+    - ptp : 由 veth 來處理 point-to-point
+    - vlan
+    - loopback
+    - Flannel : 背後是 bridge, 建立 Veth/Bridge, 並且專注 Overlay Network 的管理
+        - Overlay Network, 目標是讓 Pods 之間能 cross Nodes 通訊
+- 

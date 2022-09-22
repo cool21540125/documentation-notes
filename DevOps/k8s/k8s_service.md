@@ -5,12 +5,15 @@ k8s 的 Pods 都有它自己的 IP (ephemeral), Pod 隨時死給你看, IP 隨�
     - User 不用鳥 Pods 死活, Service 會幫忙通訊就對了
     - ReplicaSet 會協助幫掛掉的 Pods 抓交替
 
+
 # k8s service
 
-4 Difference Service Types
+Kubernetes 有底下 4 種常見的 Service Types:
 
-## type: ClusterIP (default)
 
+## type: ClusterIP
+
+- 此為 default service type
 - Exposes the service on a cluster-internal IP. Choosing this value makes the service only reachable from within the cluster.
 - 可指定 1~N 個 Node IP, 用來提供服務 (自動映射到 ClusterIP)
 
