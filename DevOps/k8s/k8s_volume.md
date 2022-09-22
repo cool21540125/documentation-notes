@@ -1,7 +1,14 @@
 
-# Filesystem vs Volume vs Persistent Volume
-
-
+- 種類
+    - Persistent Volume, PV
+        - `kind: PersistentVolume`
+        - 無法被歸類到 namespace
+    - Persistent Volume Claim
+    - Storage Class
+- Storage Requirement
+    - 不依賴於 Pod lifecycle
+    - available on all nodes
+    - survive when cluster crash
 
 
 # k8s volume

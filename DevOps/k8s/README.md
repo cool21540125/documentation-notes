@@ -32,6 +32,9 @@ K8s 平台的選擇:
 
 # 架構
 
+![Learn Kubernetes Basics](./img/k8s_arch-1024x437.png)
+
+
 ## 1. k8s master 元件
 
 - Etcd
@@ -50,12 +53,11 @@ K8s 平台的選擇:
 
 ### Container Runtime Interface(CRI)
 
-↓↓↓↓↓↓↓↓↓↓ 這知識可能過期了
-k8s 需要這環境來運行 Container (與 Container 溝通的介面), 預設會依照底下去尋找:
-- Docker: /var/run/docker.sock  (Docker 內建的 CRI 實作為 `dockershim`, 與 kubelet 於 18.09 整合起來了)
-- containerd: /run/containerd/containerd.sock
-- CRI-O: /var/run/crio/crio.sock
-↑↑↑↑↑↑↑↑↑↑ 這知識可能過期了
+- k8s 用來與 Container 溝通的介面. 預設會依照底下去尋找 (這知識可能過期了):
+  - Docker: /var/run/docker.sock  (Docker 內建的 CRI 實作為 `dockershim`, 與 kubelet 於 18.09 整合起來了)
+  - containerd: /run/containerd/containerd.sock
+  - CRI-O: /var/run/crio/crio.sock
+
 
 So far, 2021/10/30, k8s 以使用 CRI-O 來實作 CRI
 

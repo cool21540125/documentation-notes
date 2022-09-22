@@ -281,7 +281,7 @@ docker run --rm demo_arg whoami
 
 - `RUN` 可以執行 `ARG` 或 `ENV` instruction 聲明過的變數
 - 若 `ARG` 及 `ENV` 同時宣告一樣的變數, 則 `ENV` 會覆寫 `ARG`, 看底下範例:
-    - ![Env_overwrite_ARG](./img/env_overwrite_arg.png)
+    - ![Env_overwrite_ARG](../img/env_overwrite_arg.png)
 
 
 #### [Shell](https://docs.docker.com/engine/reference/builder/#shell)

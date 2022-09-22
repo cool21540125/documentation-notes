@@ -266,7 +266,7 @@ SAM CLI, version 1.53.0
 ```
 
 
-# Install terraform
+# Install terraform (尚未)
 
 ```bash
 ### install the HashiCorp tap, a repository of all our Homebrew packages.
@@ -290,4 +290,17 @@ Alternatively, manually download them from:
 You should download the Command Line Tools for Xcode 13.4.
 # 得知, macbook 又要我去安裝 XCode 這噁心的爛東西了...
 # 放棄使用 brew 來安裝....
+```
+
+
+# Install kubectx
+
+- 2022/09/21
+
+```bash
+### k8s 的額外 CLI
+$# brew install kubectx
+# 對他還很不熟, 不過他其中一個功能可以修改 default namespace
+
+$# 
 ```
