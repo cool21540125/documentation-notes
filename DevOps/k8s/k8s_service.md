@@ -15,6 +15,7 @@ Kubernetes 有底下 4 種常見的 Service Types:
 
 - 此為 default service type
 - Exposes the service on a cluster-internal IP. Choosing this value makes the service only reachable from within the cluster.
+- Cluster 裡頭的任何 Pod 都可以訪問
 - 可指定 1~N 個 Node IP, 用來提供服務 (自動映射到 ClusterIP)
 
 ```mermaid

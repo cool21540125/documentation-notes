@@ -13,6 +13,8 @@
 - conmon
     - Docker 的必要元件之一
     - OCI container runtime monitor
+    - conmon process(PID1) 監控它所在的 container 
+    - 處理 container logging && 對 container process 紀錄 exit code
 - containerd-shim
     - Docker Container 的墊片程序. Docker 藉由這東西來呼叫 runc, 藉以建立 Docker Container
     - 用這東西的好處是, Docker Daemon 升級或是掛掉時, 不會影響到 Docker Container
@@ -62,7 +64,8 @@
     - 每個 Pod 都有個專屬的定義, 也就是 `yml` 檔
     - 一個 Pod 可有 1~N 個 Container, 但有 [文章](https://medium.com/@C.W.Hu/kubernetes-basic-concept-tutorial-e033e3504ec0) 寫說最好只有一個
     - Pod 內的 Containers 共享資源 && 網路, 理解成一個家庭提供單一服務, 但家庭成員之間共享家庭內的一切.
-- kubeadm(非必要) : 建立&管理 k8s cluster.
+- kubeadm : 建立&管理 k8s cluster 的最佳實務; 本地測試可使用 minikube
+    - `kubeadm init` 做初始化; `kubeadm join` 來 Join Cluster
 - kind(非必要, Deprecated) : 用來運行 local computer 的 k8s
 - minikube(用來取代 kind): 用來運行 single-node 的 k8s cluster
 - Pod : k8s 運作的最小單位, 一個 Pod 對應一個服務, ex: API Server

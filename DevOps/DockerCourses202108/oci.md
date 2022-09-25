@@ -1,13 +1,20 @@
 
+# Open Container Initiative, OCI
+
+- [About the Open Container Initiative](https://opencontainers.org/about/overview/)
 - [Container Runtimes Part 1: An Introduction to Container Runtimes](https://www.ianlewis.org/en/container-runtimes-part-1-introduction-container-r)
+    - Part 1: Intro to Container Runtimes: why are they so confusing?
 - [Container Runtimes Part 2: Anatomy of a Low-Level Container Runtime](https://www.ianlewis.org/en/container-runtimes-part-2-anatomy-low-level-contai)
+    - Part 2: Deep Dive into Low-Level Runtimes
+    - 負責處理 Container 運行的機制
+- [Container Runtimes Part 3: High-Level Runtimes](https://www.ianlewis.org/en/container-runtimes-part-3-high-level-runtimes)
+    - Part 3: Deep Dive into High-Level Runtimes
+    - 負責 Container Image 的 transport && management
+    - unpacking the image, and passing off to the low-level runtime to run the container
+- [Container Runtimes Part 4: Kubernetes Container Runtimes & CRI](https://www.ianlewis.org/en/container-runtimes-part-4-kubernetes-container-run)
+    - Part 4: Kubernetes Runtimes and the CRI
 
 此一系列文件要探討 `Container Runtime`
-
-- Part 1: Intro to Container Runtimes: why are they so confusing?
-- Part 2: Deep Dive into Low-Level Runtimes
-- Part 3: Deep Dive into High-Level Runtimes
-- Part 4: Kubernetes Runtimes and the CRI
 
 
 ### 造就 Container Runtime 如此令人混淆的主因
@@ -29,22 +36,23 @@ Docker 起始於 2013, 主要有底下幾個功能:
 2. 將 Image 解開成為一個 bundle (將 Image 內部多層的結構扁平化為單一檔案系統)
 3. 從 bundle 來運行 Container
 
-Docker 只有完成上面的 3 並且澄清說, *only the "running the container" part that made up the runtime*. 從此之後, 因認知的不同, 又或者說式定義的不同, 從而導致後面千千萬萬名軟體從業人員對此產生種種的不解與困惑.
+Docker 只有完成上述第三點, only the "running the container" part that made up the runtime
+
+從此之後, 因認知的不同, 又或者說式定義的不同, 從而導致後面千千萬萬名軟體從業人員對此產生種種的不解與困惑.
 
 
 ### Container Runtime
 
-單單的提到 Container runtime, 或許就有在不少文章中看到 *runc*, *lxc*, *cri-o*, *containerd*, 他們本身都式 Container runtime 的一種實作沒錯, 只是我們從底層至應用面的角度, 大致上可以把他們做底下的概念性劃分:
+單單的提到 Container runtime, 或許就有在不少文章中看到 *runc*, *lxc*, *cri-o*, *containerd*, 他們本身都是 Container runtime 的實作
+
+從底層至應用面的角度, 大致上可以把他們做底下的概念性劃分:
 
 ```
-Low Level <-----------------------> High Level
+Low Level <------------------------> High Level
 
-********* lxc
-********* runc
-         ****************** cri-o
-               **************** containerd
-************************ rkt
+*********                        lxc
+*********                        runc
+         ******************      cri-o
+               ****************  containerd
+************************         rkt
 ```
-
-以實務的觀點來看, 我們專注的 `container runtime` 在於 **讓 Container 運行起來**, 這屬於 "low-level container runtime"
-

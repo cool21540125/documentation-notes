@@ -35,18 +35,23 @@ K8s 平台的選擇:
 ![Learn Kubernetes Basics](./img/k8s_arch-1024x437.png)
 
 
-## 1. k8s master 元件
-
-- Etcd
-- API Server
-- Controller Manager Server
-
-## 2. k8s node 元件
-
-- Kubelet
-- Proxy
-- Pod
-- Container
+- Kubernetes Master
+  - etcd
+  - API Server
+  - Controller Manager Server
+    - 確保 Cluster 之中的 desired state 與 actual state 一致
+    - 協調發布狀態最終一致的元件
+  - Scheduler
+    - 將 pod 安排到適當的 Node(找出誰比較閒, 然後叫他去做事情)
+- Kubernetes Worker
+  - kubelet
+    - 可以視為 kubernetes agent (也就是 worker 的 daemon 啦)
+    - worker 的資源管理者
+    - 等候 API Server 發布施令 && 回報給 API Server 節點資訊
+  - container runtime
+    - 實作 CRI 的服務, ex: cri-o
+  - kube-proxy
+    - 對外提供 service
 
 ---
 
@@ -69,15 +74,23 @@ So far, 2021/10/30, k8s 以使用 CRI-O 來實作 CRI
 # kubernetes CRI 架構演進圖
 
 ```
-kubelet -> Dockershim              -> Docker Engine -> Containerd -> Containerd-shim -> OCI runtime -> container
-kubelet -> CRI-Containerd          ->                  Containerd -> Containerd-shim -> OCI runtime -> container
-kubelet -> Containerd + CRI Plugin ->                                Containerd-shim -> OCI runtime -> container
-kubelet -> CRI-O                                                                     -> OCI runtime -> container
-           ↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑ 
-                          CRI
+kubelet -> Dockershim              -> Docker Engine -> Containerd -> Containerd-shim -> runC/Crun  -> container
+kubelet -> CRI-Containerd          ->                  Containerd -> Containerd-shim -> runC/Crun  -> container
+kubelet -> Containerd + CRI Plugin ->                                Containerd-shim -> runC/Crun  -> container
+kubelet -> CRI-O                                                                     -> runC/Crun  -> container
+           ↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑    ↑↑↑↑↑↑↑↑↑
+                          Container Runtime Interface, CRI                              OCI runtime
 ```
 
+![CRI-O](./img/CRI-O.png)
 
+- Pod 裡頭共享著相同的 PID, NET, IPC namespace. 並且存在於相同的 cgroup
+- CRI-O 專門為 k8s 設計, CRI 隨著演進, 減少了許多 IPC 之間的開銷
+- cri-o
+  - 使用 `containers/image` library 來做 image pull & push
+  - 使用 `containers/storage` library 來將 pull 下來的 image 做 unpack 到 root-filesystem && 儲存到 COW file system
+  - OCI-based implementation of Kubernetes Container Runtime Interface
+- Open Container Initiative, OCI
 
 
 # 安裝

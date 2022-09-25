@@ -163,7 +163,10 @@ $ vim ~/.ssh/config
 # --------- 內容如下 ---------
 #!/bin/bash
 Host vm8                        # Remote Server 名稱
-    StrictHostKeyChecking   no              # 忽略 known_hosts 的檢查 (登入遠端機器, 不做檢查是否是以前登入過的機器)
+    StrictHostKeyChecking   no              
+    # 忽略 known_hosts 的檢查 (登入遠端機器, 不做檢查是否是以前登入過的機器)
+    # 不過似乎好像也是 首次登入時, 不要詢問 Yes/No
+
     HostName    172.20.61.210               # Remote Server IP
     Port    22                              # Remote Server ssh port
     ForwardAgent    yes                     # ??

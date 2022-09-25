@@ -304,3 +304,20 @@ $# brew install kubectx
 
 $# 
 ```
+
+
+# Install ekscli
+
+- 2022/09/24
+
+```bash
+$# aws --version
+aws-cli/2.7.9 Python/3.9.11 Darwin/21.6.0 exe/x86_64 prompt/off
+
+$# curl --silent --location "https://github.com/weaveworks/eksctl/releases/latest/download/eksctl_$(uname -s)_amd64.tar.gz" | tar xz -C /tmp
+
+$# sudo mv /tmp/eksctl ~/bin/
+
+$# eksctl version
+0.112.0
+```

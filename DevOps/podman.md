@@ -15,7 +15,7 @@ Error: error running container create option: cannot set a static IP if joining 
 
 - Podman 將相關檔案存在 `$HOME/.local/share/containers/storage`
 - Podman 對於 unprivileged containers 的 Networking, 使用 `slirp4netns` 程序來作輔助
-- 使用 `conmon`w
+- 使用 `conmon`
 
 
 ## rootless v.s. rootful

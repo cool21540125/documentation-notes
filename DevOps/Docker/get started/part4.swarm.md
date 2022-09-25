@@ -96,12 +96,12 @@ myvm2   -        virtualbox   Running   tcp://192.168.99.101:2376          v17.0
 $ docker-machine ssh myvm1 "docker swarm init --advertise-addr 192.168.99.100"
 Swarm initialized: current node (osegh4bhtk25wbzugieg9qck9) is now a manager.
 To add a worker to this swarm, run the following command:
-    docker swarm join --token SWMTKN-1-3x34nxl3s7ljrq8z30ppgfdf5kzjowuq5u696gsqlb9ya3bce0-3ef8c24650bc863byqj8irwxh 192.168.99.100:2377
+    docker swarm join --token SWMTKN-ThisIsVeryLongLongLongLongLongLongLongLongLongLongLongLongLongToken 192.168.99.100:2377
 To add a manager to this swarm, run 'docker swarm join-token manager' and follow the instructions.
 
 # 增加 Swarm Worker
 $ docker-machine ssh myvm2 "docker swarm join \
---token SWMTKN-1-3x34nxl3s7ljrq8z30ppgfdf5kzjowuq5u696gsqlb9ya3bce0-3ef8c24650bc863byqj8irwxh \
+--token SWMTKN-ThisIsVeryLongLongLongLongLongLongLongLongLongLongLongLongLongToken \
 192.168.99.100:2377"
 This node joined a swarm as a worker.
 ```

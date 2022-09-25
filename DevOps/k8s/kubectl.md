@@ -1,5 +1,5 @@
 
-## kubectl 常用基本命令
+## kubectl CLI
 
 ```bash
 ### Imperative  運行 k8s
@@ -15,11 +15,34 @@ $# kubectl delete -f ${YAML_FILE.yml}  # 依照配置 刪除     資源
 
 
 ### 列出 default NAMESPACE 裏頭的 pods 資訊
-$# kubectl get pods
+$# kubectl get po  # po/pod/pods 都可以...
 
 
 ### 同上, 列出更多資訊
 $# kubectl get pods -o wide
+
+
+### 
+$# kubectl get pod --show-labels
+NAME            READY   STATUS    RESTARTS   AGE   LABELS
+my-helloworld   1/1     Running   0          9s    app=helloworld
+
+
+###
+$# kubectl get pods -n kube-system -o wide
+NAME                        READY  STATUS   RESTARTS  AGE  IP             NODE  NOMINATED NODE  READINESS GATES
+coredns-78fcd69978-lp4ww    1/1    Running  4         20d  10.233.0.11    m1    <none>          <none>  # k8s 內建提供 DNS 服務的 Pods. load-balance
+coredns-78fcd69978-ps277    1/1    Running  4         20d  10.233.0.10    m1    <none>          <none>  # k8s 內建提供 DNS 服務的 Pods. load-balance
+etcd-m1                     1/1    Running  6         20d  192.168.152.4  m1    <none>          <none>
+kube-apiserver-m1           1/1    Running  6         20d  192.168.152.4  m1    <none>          <none>
+kube-controller-manager-m1  1/1    Running  8         20d  192.168.152.4  m1    <none>          <none>
+kube-flannel-ds-7plcb       1/1    Running  4         20d  192.168.152.4  m1    <none>          <none>
+kube-flannel-ds-j9cfb       1/1    Running  3         20d  192.168.152.6  w1    <none>          <none>
+kube-flannel-ds-v92v4       1/1    Running  1         20d  192.168.152.7  w2    <none>          <none>
+kube-proxy-dgcmf            1/1    Running  3         20d  192.168.152.7  w2    <none>          <none>
+kube-proxy-fl75v            1/1    Running  6         20d  192.168.152.4  m1    <none>          <none>
+kube-proxy-m4vz7            1/1    Running  4         20d  192.168.152.6  w1    <none>          <none>
+kube-scheduler-m1           1/1    Running  9         20d  192.168.152.4  m1    <none>          <none>
 
 
 ### (前景方式)啟用 ip-forward
@@ -110,23 +133,30 @@ Session Affinity:  None
 Events:            <none>
 
 
-###
-$# kubectl get pods -n kube-system -o wide
-NAME                        READY  STATUS   RESTARTS  AGE  IP             NODE  NOMINATED NODE  READINESS GATES
-coredns-78fcd69978-lp4ww    1/1    Running  4         20d  10.233.0.11    m1    <none>          <none>  # k8s 內建提供 DNS 服務的 Pods. load-balance
-coredns-78fcd69978-ps277    1/1    Running  4         20d  10.233.0.10    m1    <none>          <none>  # k8s 內建提供 DNS 服務的 Pods. load-balance
-etcd-m1                     1/1    Running  6         20d  192.168.152.4  m1    <none>          <none>
-kube-apiserver-m1           1/1    Running  6         20d  192.168.152.4  m1    <none>          <none>
-kube-controller-manager-m1  1/1    Running  8         20d  192.168.152.4  m1    <none>          <none>
-kube-flannel-ds-7plcb       1/1    Running  4         20d  192.168.152.4  m1    <none>          <none>
-kube-flannel-ds-j9cfb       1/1    Running  3         20d  192.168.152.6  w1    <none>          <none>
-kube-flannel-ds-v92v4       1/1    Running  1         20d  192.168.152.7  w2    <none>          <none>
-kube-proxy-dgcmf            1/1    Running  3         20d  192.168.152.7  w2    <none>          <none>
-kube-proxy-fl75v            1/1    Running  6         20d  192.168.152.4  m1    <none>          <none>
-kube-proxy-m4vz7            1/1    Running  4         20d  192.168.152.6  w1    <none>          <none>
-kube-scheduler-m1           1/1    Running  9         20d  192.168.152.4  m1    <none>          <none>
-
 ### 將目前 NS 的 config 列出為 yaml
 $# kubectl get configmap -o yaml
 # (但我還不知道怎麼解讀)
+
+
+### 
+$# kubectl port-forward ${PodName} ${LocalPort}:${PodPort}
+Forwarding from 127.0.0.1:${LocalPort} -> ${PodPort}
+Forwarding from [::1]:${LocalPort} -> ${PodPort}
+Handling connection for ${LocalPort}
+# 本地可訪問 localhost:${LocalPort}
+
+
+### 
+$# kubectl cluster-info
+Kubernetes control plane is running at https://127.0.0.1:60229
+CoreDNS is running at https://127.0.0.1:60229/api/v1/namespaces/kube-system/services/kube-dns:dns/proxy
+
+To further debug and diagnose cluster problems, use 'kubectl cluster-info dump'.
+
+
+### 
+$# docker ps
+CONTAINER ID   IMAGE                                 STATUS          PORTS                                                                                                                        NAMES
+fc00816ffb34   gcr.io/k8s-minikube/kicbase:v0.0.32   Up 14 minutes   0.0.0.0:60225->22/tcp, 0.0.0.0:60226->2376/tcp, 0.0.0.0:60228->5000/tcp, 0.0.0.0:60229->8443/tcp, 0.0.0.0:60227->32443/tcp   minikube
+#                                                                                                                                                     ^^^^^ 
 ```
