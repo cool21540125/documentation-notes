@@ -33,3 +33,5 @@ apisrv --> kt;
 
 
 # 流程
+
+![workflow](./img/k8s_workflow.drawio.png)

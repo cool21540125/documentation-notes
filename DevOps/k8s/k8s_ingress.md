@@ -12,3 +12,7 @@ Pod <--> Internal Service <--> Ingress <--> Client
 ```
 
 Ingress 僅為 interface, 由 `Ingress Controller` 來 implementation
+
+- 為 Cluster 增加 ingress 最常見的方法為:
+    - add an Ingress controller
+    - add a LoadBalancer

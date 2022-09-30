@@ -1074,9 +1074,11 @@ $ test -s xxx  # 檔名 是否存在 && 為非空白檔案
 ### test -z 變數的字串長度若為0, 返回 true(也就是 0)
 name=Tony; test -z $name; echo $?
 1
+# 可解讀成, 變數 name 有東西, 因此為 1
 
 name=; test -z $name; echo $?
 0
+# 可解讀成, 變數 name 為空字串, 因此為 0
 
 # 上述的 「test -z $name」 也可用 「[[ -z $name ]]」 來代替
 ```

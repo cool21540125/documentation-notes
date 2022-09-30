@@ -122,52 +122,14 @@ host:
     path: /usr/bin/conmon
     version: 'conmon version 2.0.29, commit: '
   cpus: 1
-  distribution:
-    distribution: fedora
-    version: "34"
-  eventLogger: journald
-  hostname: localhost
-  idMappings:
-    gidmap:
-    - container_id: 0
-      host_id: 1000
-      size: 1
-    - container_id: 1
-      host_id: 100000
-      size: 65536
-    uidmap:
-    - container_id: 0
-      host_id: 1000
-      size: 1
-    - container_id: 1
-      host_id: 100000
-      size: 65536
-  kernel: 5.14.9-200.fc34.x86_64
-  linkmode: dynamic
-  logDriver: ""
-  memFree: 1264209920
-  memTotal: 2061860864
   ociRuntime:
     name: crun
     package: crun-1.0-1.fc34.x86_64
     path: /usr/bin/crun
-    version: |-
-      crun version 1.0
-      commit: 139dc6971e2f1d931af520188763e984d6cdfbf8
-      spec: 1.0.0
-      +SYSTEMD +SELINUX +APPARMOR +CAP +SECCOMP +EBPF +CRIU +YAJL
   os: linux
   remoteSocket:
     exists: true
     path: /run/user/1000/podman/podman.sock
-  security:
-    apparmorEnabled: false
-    capabilities: CAP_CHOWN,CAP_DAC_OVERRIDE,CAP_FOWNER,CAP_FSETID,CAP_KILL,CAP_NET_BIND_SERVICE,CAP_SETFCAP,CAP_SETGID,CAP_SETPCAP,CAP_SETUID,CAP_SYS_CHROOT
-    rootless: true
-    seccompEnabled: true
-    seccompProfilePath: /usr/share/containers/seccomp.json
-    selinuxEnabled: true
-  serviceIsRemote: true
   slirp4netns:
     executable: /usr/bin/slirp4netns
     package: slirp4netns-1.1.12-2.fc34.x86_64
@@ -194,26 +156,9 @@ store:
     paused: 0
     running: 0
     stopped: 0
-  graphDriverName: overlay
-  graphOptions: {}
-  graphRoot: /var/home/core/.local/share/containers/storage
-  graphStatus:
-    Backing Filesystem: xfs
-    Native Overlay Diff: "true"
-    Supports d_type: "true"
-    Using metacopy: "false"
-  imageStore:
-    number: 0
-  runRoot: /run/user/1000/containers
-  volumePath: /var/home/core/.local/share/containers/storage/volumes
 version:
   APIVersion: 3.3.1
-  Built: 1630356396
-  BuiltTime: Mon Aug 30 20:46:36 2021
-  GitCommit: ""
-  GoVersion: go1.16.6
-  OsArch: linux/amd64
-  Version: 3.3.1
+# 僅隨意節錄部分資訊
 ```
 
 

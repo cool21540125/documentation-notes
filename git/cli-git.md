@@ -3,6 +3,12 @@
 ## 設定篇
 
 ```bash
+### 使用不同 key 來做 clone
+$# GIT_SSH_COMMAND='ssh -i ${PATH_TO_ANOTHER_KEY} -o IdentitiesOnly=yes' git clone ${Git_Url}
+# ex: 在 Public Gitlab 裡頭有自己帳號塞一把 key && 公司帳號也塞一把 key
+# 在做 git 操作時, 預設都會使用 `~/.ssh/id_rsa` 這把做金鑰認證
+
+
 ### 基本資訊
 git config --global user.name "TonyChou"
 git config --global user.email "cool21540125@gmail.com"
