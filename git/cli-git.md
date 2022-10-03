@@ -4,9 +4,16 @@
 
 ```bash
 ### 使用不同 key 來做 clone
-$# GIT_SSH_COMMAND='ssh -i ${PATH_TO_ANOTHER_KEY} -o IdentitiesOnly=yes' git clone ${Git_Url}
+# https://dev.to/web3coach/how-to-configure-a-local-git-repository-to-use-a-specific-ssh-key-4aml
+$# GIT_SSH_COMMAND='ssh -i ~/.ssh/use_another_key_to_operate' git clone ${Git_Url}
 # ex: 在 Public Gitlab 裡頭有自己帳號塞一把 key && 公司帳號也塞一把 key
 # 在做 git 操作時, 預設都會使用 `~/.ssh/id_rsa` 這把做金鑰認證
+# OR
+### 一次性設定
+$# git config core.sshCommand "ssh -i ~/.ssh/use_another_key_to_operate" --local
+# 上述配置會記錄在 ./.git/config 裡頭的
+# [core]
+#    sshCommand = ssh -i ~/.ssh/use_another_key_to_operate
 
 
 ### 基本資訊
