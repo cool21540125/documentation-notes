@@ -1,0 +1,30 @@
+
+
+@url=https://hooks.slack.com/services/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
+
+@ChannelID=C045FUVSC2U
+
+
+###
+POST {{url}}
+Content-type: application/json
+
+{
+    "text": "Hello, World!"
+}
+
+
+
+### ----------------------------------
+POST https://slack.com/api/chat.scheduleMessage
+Content-type: application/json
+Authorization: Bearer {{Slack_AccessToken}}
+
+{
+  "channel": "{{ChannelID}}",
+  "text": "5 秒後發送",
+  "post_at": {{$timestamp +5 s}}
+}
+
+
+### 

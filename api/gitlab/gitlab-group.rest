@@ -1,0 +1,7 @@
+# Gitlab api
+#    https://docs.gitlab.com/ee/api/api_resources.html#group-resources
+
+
+### 查詢 特定 
+GET {{Gitlab_api_v4}}/groups
+Authorization: Bearer {{Gitlab_AccessToken}}

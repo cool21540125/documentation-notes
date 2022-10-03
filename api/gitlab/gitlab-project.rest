@@ -1,0 +1,12 @@
+
+@project_id={{$dotenv project_id}}
+
+
+### 查詢 特定 project_id 詳細資訊
+GET {{Gitlab_api_v4}}/projects/{{project_id}}
+Authorization: Bearer {{Gitlab_AccessToken}}
+
+
+### 查詢 特定 project_id 所歸屬的 groups 相關資訊
+GET {{Gitlab_api_v4}}/projects/{{project_id}}/groups
+Authorization: Bearer {{Gitlab_AccessToken}}

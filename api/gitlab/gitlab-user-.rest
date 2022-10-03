@@ -1,0 +1,14 @@
+
+
+
+### 查詢 特定 user_id 基本資料(詳細, 需認證))
+GET {{Gitlab_api_v4}}/users/{{Gitlab_user_id}}
+Authorization: Bearer {{Gitlab_AccessToken}}
+
+
+### 查詢 特定 user_id 底下的 projects
+GET {{Gitlab_api_v4}}/users/{{Gitlab_user_id}}/projects
+    ?order_by=name
+    &sort=asc
+    &visibility=internal
+Authorization: Bearer {{Gitlab_AccessToken}}

@@ -5,7 +5,7 @@
 
 
 # Domain 的 NS 要切換到哪台上面(逗號分隔)
-@nameserver=fay.ns.cloudflare.com,sid.ns.cloudflare.com
+@nameserver={{$dotenv ns}}
 #※ ↓↓↓↓↓↓↓↓↓↓ ex: example.com, 要拆成 TLD=com & SLD=domain
 @SLD=domain
 @TLD=com
