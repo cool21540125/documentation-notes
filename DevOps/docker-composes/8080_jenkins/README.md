@@ -30,8 +30,14 @@ docker-compose up -d
     > 
     > Client Key && Client Certificate && Server CA Certificate
     > 
-    > 可由 jenkins-docker-dind 裡頭的 `/certs/client` 找到, Copy-Paste 到對應欄位, 再次 `Test connection`
+    > 可由 jenkins-docker-dind 裡頭的 `/certs/client` 找到, Copy-Paste 到對應欄位, 
     > 
-    > 可看到 *Version = 20.10.18, API Version = 1.41* 表示成功~
+    > 分別是 `key.pem`, `cert.pem`, `ca.pem`
+    > 
+    > 再次 `Test connection`. 可看到 *Version = 20.10.18, API Version = 1.41* 表示成功~
     > 
     > 至於這證明了什麼? 完成了什麼? (老實說我現在也搞不清楚Orz)
+- 配置 Docker Agent Templates (這要幹啥我開始有點不明不白了)
+    > Dashboard > Manage Jenkins > Manage nodes and clouds > Configure Clouds > Docker Agent Templates > Add Docker Template
+    > 
+    > 
