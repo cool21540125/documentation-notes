@@ -21,6 +21,14 @@ services:
       - DOCKER_HOST=tcp://docker:2376
       - DOCKER_CERT_PATH=/certs/client
       - DOCKER_TLS_VERIFY=1
+    deploy:
+      resources:
+        limits:
+          cpus: '1'
+          memory: 2G
+        reservations:
+          cpus: '0.5'
+          memory: 512M
   dind:
     image: docker:dind
     container_name: jenkins-dind
@@ -36,14 +44,25 @@ services:
       - "jenkins_data:/var/jenkins_home"
       - "jenkins_docker_certs:/certs/client"
       - "$HOME:/home"
+      - "jenkins_docker_root:/var/lib/docker"
     environment:
       - DOCKER_TLS_CERTDIR=/certs
+    deploy:
+      resources:
+        limits:
+          cpus: '1'
+          memory: 2G
+        reservations:
+          cpus: '0.5'
+          memory: 512M
 
 volumes:
   jenkins_data:
     name: jenkins_data
   jenkins_docker_certs:
     name: jenkins_docker_certs
+  jenkins_docker_root:
+    name: jenkins_docker_root
 
 networks:
   net_jenkins:
