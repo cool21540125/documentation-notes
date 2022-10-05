@@ -1,0 +1,58 @@
+imagePullSecrets: xxxx
+basePullUrl: "us.gcr.io/GCR_URL"
+
+storageClass: "standard"
+backNamespace: ""
+
+app01:
+  version: v1.0.1
+  replicas: 3
+app02:
+  version: v1.2.3
+  replicas: 2
+bg_srv01: # 背景服務, replicas 需要分別設定
+  version: v1.0.1
+
+RabbitMQ:
+  Addr: "amqp://USER:SECRET@MQ_URL:5672"
+  Pass: "MQ_PASSWORD"
+
+MySQL:
+  AccountDB:
+    DB: "account_idb"
+    Master:
+      IP: "10.100.100.101"
+      Account: "ACCOUNT1111"
+      Password: "DB_PASSWORD1111"
+      Port: "3306"
+    Slave:
+      IP: "10.100.100.101"
+      Account: "ACCOUNT2222"
+      Password: "DB_PASSWORD2222"
+      Port: "3306"
+  ServiceDB:
+    DB: "service_db"
+    Master:
+      IP: "10.100.100.201"
+      Account: "ACCOUNT1111"
+      Password: "DB_PASSWORD1111"
+      Port: "3306"
+    Slave:
+      IP: "10.100.100.202"
+      Account: "ACCOUNT2222"
+      Password: "DB_PASSWORD2222"
+      Port: "3306"
+
+
+# S3
+S3:
+  Key: "AWS_KEY"
+  Secret: "AWS_SECRET"
+  Region: "ap-northeast-1"
+  Bucket: "BUCKET_NAME"
+
+SYS:
+  ImgDomain: "https://BUCKET_NAME.s3.ap-northeast-1.amazonaws.com/"
+  TempDomain: "https://BUCKET_NAME.s3.ap-northeast-1.amazonaws.com/"
+  FB:
+    CheckDel: "https://fb.DOMAIN.com/facebook"
