@@ -2,16 +2,19 @@
 #     https://www.jenkins.io/doc/book/using/remote-access-api/
 # ---------------------------------------------------
 @URL=http://{{jenkins_user}}:{{jenkins_token}}@{{jenkins_domain}}:{{jenkins_port}}
+@job_name={{$dotenv job_name}}
+@tag={{$dotenv tag}}
+
 
 
 ### 列出 Jenkins Server 所有的 JenkinsJobs
 GET {{URL}}/api/json?tree=jobs[fullName,displayName,url]
 
 
-# ↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓
-@job_name = 
+
 ### 取得 特定JenkinsJob 的 Builds History
-GET {{URL}}/job/{{job_name}}/api/json?tree=builds[number,id,timestamp,result,duration]
+GET {{URL}}/job/{{job_name}}/api/json
+    ?tree=builds[number,id,timestamp,result,duration]
 
 
 
@@ -20,4 +23,10 @@ GET {{URL}}/api/json?pretty=true
 
 
 
-###
+### Trigger build
+POST {{URL}}/job/{{job_name}}/buildWithParameters
+    ?TAG={{tag}}
+
+
+
+### 
