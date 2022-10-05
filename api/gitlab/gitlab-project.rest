@@ -1,10 +1,28 @@
-
+# Gitlab - Projects API
+#    https://docs.gitlab.com/ee/api/projects.html
+# 
+# =========================================================
 @project_id={{$dotenv project_id}}
+
+
+### (如果 projects 很多的話沒有任何意義!!) 列出 GitLab 所有專案
+GET {{Gitlab_api_v4}}/projects
+Authorization: Bearer {{Gitlab_AccessToken}}
 
 
 ### 查詢 特定 project_id 詳細資訊
 GET {{Gitlab_api_v4}}/projects/{{project_id}}
 Authorization: Bearer {{Gitlab_AccessToken}}
+
+
+### 修改 特定 project_id 裡頭的變數設定
+PUT {{Gitlab_api_v4}}/projects/{{project_id}}
+Authorization: Bearer {{Gitlab_AccessToken}}
+Content-Type: application/json
+
+{
+    "restrict_user_defined_variables": false
+}
 
 
 ### 查詢 特定 project_id 所歸屬的 groups 相關資訊
