@@ -13,37 +13,39 @@ services:
       - "50000:50000"
     tty: true
     volumes:
-      - "jenkins_data:/var/jenkins_home"
-      - "jenkins_docker_certs:/certs/client:ro"
-      - "$HOME:/home"
+      - "jenkins-data:/var/jenkins_home"
+      - "jenkins-docker-certs:/certs/client:ro"
       - "/etc/localtime:/etc/localtime:ro"
     environment:
-      - DOCKER_HOST=tcp://docker:2376
+      - DOCKER_HOST=tcp://dind:2376
       - DOCKER_CERT_PATH=/certs/client
       - DOCKER_TLS_VERIFY=1
   dind:
     image: docker:dind
-    container_name: jenkins-dind
-    hostname: jenkinsDinD
+    container_name: dind
+    hostname: dind
     restart: always
     privileged: true
     networks:
       net_jenkins:
-    ports:
-      - "2376:2376"
     tty: true
     volumes:
-      - "jenkins_data:/var/jenkins_home"
-      - "jenkins_docker_certs:/certs/client"
-      - "$HOME:/home"
+      - "jenkins-data:/var/jenkins_home"
+      - "jenkins-docker-certs:/certs/client"
+      - "jenkins-docker-root:/var/lib/docker"
     environment:
       - DOCKER_TLS_CERTDIR=/certs
 
 volumes:
-  jenkins_data:
-    name: jenkins_data
-  jenkins_docker_certs:
-    name: jenkins_docker_certs
+  jenkins-data:
+    name: jenkins-data
+    external: true
+  jenkins-docker-certs:
+    name: jenkins-docker-certs
+    external: true
+  jenkins-docker-root:
+    name: jenkins-docker-root
+    external: true
 
 networks:
   net_jenkins:

@@ -1,8 +1,8 @@
 
 
-@url=https://hooks.slack.com/services/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
+@url=
 
-@ChannelID=C045FUVSC2U
+@ChannelID=
 
 
 ###
