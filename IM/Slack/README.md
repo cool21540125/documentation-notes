@@ -93,3 +93,31 @@ backend -- "Signing Secret\n將 Request 加密" --> slack;
 > **Reinstall to Workspace**
 > 
 > Enjoy~
+
+
+# Slash Commands
+
+讓 channel 裡頭可以使用「/xxxxx」的命令吧
+
+![Slash Command](../img/slashCommand.png)
+
+
+### Source Code
+
+https://github.com/cool21540125/learning_slack/blob/slashCommand/main.py
+
+
+### Slack 配置
+
+> Your App 頁面 > **Slash Commands** > **Create New Command** (依照直覺填吧=.=)
+> 
+> 然後記得 **Event Subscriptions** 裡頭的 **Request URL**(Webhook URL 啦) 一定要通
+> 
+> **OAuth & Permissions** > **Reinstall to Workspace**
+> 
+> 回到 Slack, `/demo-command` 發送出去~
+> 
+> Enjoy~
+
+
+# 
