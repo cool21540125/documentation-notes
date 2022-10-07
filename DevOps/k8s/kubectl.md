@@ -150,13 +150,10 @@ Handling connection for ${LocalPort}
 $# kubectl cluster-info
 Kubernetes control plane is running at https://127.0.0.1:60229
 CoreDNS is running at https://127.0.0.1:60229/api/v1/namespaces/kube-system/services/kube-dns:dns/proxy
-
 To further debug and diagnose cluster problems, use 'kubectl cluster-info dump'.
 
 
-### 
-$# docker ps
-CONTAINER ID   IMAGE                                 STATUS          PORTS                                                                                                                        NAMES
-fc00816ffb34   gcr.io/k8s-minikube/kicbase:v0.0.32   Up 14 minutes   0.0.0.0:60225->22/tcp, 0.0.0.0:60226->2376/tcp, 0.0.0.0:60228->5000/tcp, 0.0.0.0:60229->8443/tcp, 0.0.0.0:60227->32443/tcp   minikube
-#                                                                                                                                                     ^^^^^ 
+### 如果某次進版導致錯誤, 可使用此方式回退
+$# kubectl rollout undo deployment/${DeploymentName}
+$# helm rollback -n ${namespace} ${release} ${REVISION}
 ```
