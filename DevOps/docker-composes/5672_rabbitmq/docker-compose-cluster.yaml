@@ -1,0 +1,62 @@
+version: '3'
+
+services:
+  mq1:
+    image: rabbitmq:management
+    container_name: mq1
+    hostname: mq1
+    restart: always
+    networks:
+      - net_mq
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    environment:
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_DEFAULT_USER}
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_DEFAULT_PASS}
+    volumes:
+      - "mq-data:/var/lib/rabbitmq"
+      - "mq-config:/opt/bitnami/rabbitmq/etc"
+
+  mq2:
+    image: rabbitmq:management
+    container_name: mq2
+    hostname: mq2
+    restart: always
+    networks:
+      - net_mq
+    ports:
+      - "5673:5672"
+    environment:
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_DEFAULT_USER}
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_DEFAULT_PASS}
+    volumes:
+      - "mq-data:/var/lib/rabbitmq"
+      - "mq-config:/opt/bitnami/rabbitmq/etc"
+
+  mq3:
+    image: rabbitmq:management
+    container_name: mq3
+    hostname: mq3
+    restart: always
+    networks:
+      - net_mq
+    ports:
+      - "5674:5672"
+    environment:
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_DEFAULT_USER}
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_DEFAULT_PASS}
+    volumes:
+      - "mq-data:/var/lib/rabbitmq"
+      - "mq-config:/opt/bitnami/rabbitmq/etc"
+
+networks:
+  net_mq:
+    name: net_mq
+    driver: bridge
+
+volumes:
+  mq-data:
+    name: mq-data
+  mq-config:
+    name: mq-config

@@ -1,17 +1,32 @@
 
 
-##### 查詢 RabbitMQ 狀態
+
+## RabbitMQ join Cluster
+
+- RabbitMQ Cluster 裡頭的 Nodes, 至少比需要有一台是 `Disk Node` (其餘可為 `RAM Nodes`)
+- 
 
 ```bash
-### 查看 Node 狀態
-$# rabbitmqctl status
+### (其中兩台 RabbitMQ Nodes)
+$# rabbitmqctl stop_app
+$# rabbitmqctl reset
+$# rabbitmqctl join_cluster --ram rabbit@mq1
+# 可以是 --ram 或 --disk(或 --disc)
 
-### 查看 Cluster 狀態
+$# rabbitmqctl start_app
 $# rabbitmqctl cluster_status
 ```
 
 
-##### RabbitMQ 用戶 & 權限
+## 查詢 RabbitMQ 狀態
+
+```bash
+### 查看 Node 狀態
+$# rabbitmqctl status
+```
+
+
+## RabbitMQ 用戶 & 權限
 
 ```bash
 ### 列出所有用戶
@@ -38,5 +53,3 @@ $# rabbitmqctl set_user_tags 新帳號 權限標籤
 ### 變更密碼
 $# rabbitmqctl change_password guest "設定新的密碼"
 ```
-
-
