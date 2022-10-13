@@ -1,0 +1,13 @@
+
+@project_id={{$dotenv project_id}}
+
+
+###
+GET {{Gitlab_api_v4}}/projects/{{project_id}}/repository/tags
+Authorization: Bearer {{Gitlab_AccessToken}}
+Content-Type: application/json
+
+{
+    "order_by": "name",
+    "sort": "desc"
+}

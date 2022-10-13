@@ -2,6 +2,16 @@
 #    https://docs.gitlab.com/ee/api/api_resources.html#group-resources
 
 
-### 查詢 特定 
+### 查詢 token 有權限訪問的 groups
 GET {{Gitlab_api_v4}}/groups
+Authorization: Bearer {{Gitlab_AccessToken}}
+
+
+### 查詢 特定 group_id 底下的 subgroups
+GET {{Gitlab_api_v4}}/groups/53934743/subgroups
+Authorization: Bearer {{Gitlab_AccessToken}}
+
+
+### 查詢 特定 group_id 底下的 subgroups
+GET {{Gitlab_api_v4}}/groups/53934743/projects
 Authorization: Bearer {{Gitlab_AccessToken}}

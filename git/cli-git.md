@@ -3,25 +3,20 @@
 ## 設定篇
 
 ```bash
-### 使用不同 key 來做 clone
-# https://dev.to/web3coach/how-to-configure-a-local-git-repository-to-use-a-specific-ssh-key-4aml
-$# GIT_SSH_COMMAND='ssh -i ~/.ssh/use_another_key_to_operate' git clone ${Git_Url}
-# ex: 在 Public Gitlab 裡頭有自己帳號塞一把 key && 公司帳號也塞一把 key
-# 在做 git 操作時, 預設都會使用 `~/.ssh/id_rsa` 這把做金鑰認證
-# OR
-### 一次性設定
-$# git config core.sshCommand "ssh -i ~/.ssh/use_another_key_to_operate" --local
-# 上述配置會記錄在 ./.git/config 裡頭的
-# [core]
-#    sshCommand = ssh -i ~/.ssh/use_another_key_to_operate
 
 
-### 基本資訊
+
+### 常用配置
+# ---------------------------------------------------------
 git config --global user.name "TonyChou"
 git config --global user.email "cool21540125@gmail.com"
 
-### 忽略「空白」所造成的影響
+# 忽略檔案屬性變動的追蹤(chmod)
+git config core.fileMode false --global
+
+# 忽略「空白」所造成的影響
 git config --global apply.whitespace nowarn
+# ---------------------------------------------------------
 
 ### (使用非ssh維護專案時)快取密碼 604800 一週 ; 86400 一天
 git config --global credential.helper 'cache --timeout=86400'
@@ -66,6 +61,26 @@ git config --global alias.pu "push"
 
 ### git cm
 git config --global alias.cm "commit -m"
+```
+
+
+### 使用另一把 key 來操作相同 Git Server 底下的其他 Git Projects
+
+- [How to configure a local Git repository to use a specific SSH key](https://dev.to/web3coach/how-to-configure-a-local-git-repository-to-use-a-specific-ssh-key-4aml)
+
+```bash
+### (不動設定) 手動指定 Key path
+$# GIT_SSH_COMMAND='ssh -i ~/.ssh/use_another_key_to_operate' git clone ${Git_Url}
+# ex: 在 Public Gitlab 裡頭有自己帳號塞一把 key && 公司帳號也塞一把 key
+# 在做 git 操作時, 預設都會使用 `~/.ssh/id_rsa` 這把做金鑰認證
+
+# 或
+
+### 一次性設定
+$# git config core.sshCommand "ssh -i ~/.ssh/use_another_key_to_operate" --local
+# 上述配置會記錄在 ./.git/config 裡頭的
+# [core]
+#    sshCommand = ssh -i ~/.ssh/use_another_key_to_operate
 ```
 
 
