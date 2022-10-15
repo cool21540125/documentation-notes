@@ -3,6 +3,7 @@
 - 2021/12/28
 - [Docker - bitnami/kafka](https://hub.docker.com/r/bitnami/kafka/)
 - [Docker - zookeeper](https://hub.docker.com/_/zookeeper)
+- [System Design: Why is Kafka fast?](https://www.youtube.com/watch?v=UNUz1-msbOM&ab_channel=ByteByteGo)
 - kafka 依賴 zookeeper... 所以不得不提到它
 - 資料從給定 partition 的 Leader 寫入/讀取
 
@@ -115,6 +116,91 @@ $# rm -rf /tmp/kafka-logs /tmp/zookeeper
     - 若 Partition Group 有 10 個 Consumer, 但只有分 8 個 Partition, 則會有 2 個 Consumer 沒事做
 - 一個 Consumer 可以接收多個 Partition
 - Kafka Streams 是個 Java library
+
+---
+
+### Read without zero copy
+
+```mermaid
+flowchart LR
+
+subgraph Host Server
+    subgraph app["Application Context"]
+        kabf("Kafka\nApplication Buffer")
+    end
+    subgraph kernel["Kernel Context"]
+        osbf("OS Buffer / RAM")
+        disk("Disk")
+        sbf("Socket Buffer")
+        nicb("NIC Buffer")
+        
+        style kabf fill:#32a86d;
+        style osbf fill:#32a86d;
+        style disk fill:#32a86d;
+        style sbf fill:#32a86d;
+        style nicb fill:#32a86d;
+    end
+end
+
+p(("Producer")) -- "1.1 write data" --> kabf;
+kabf -- "1.2 write data" --> osbf;
+osbf -- "1.3 sync to Disk periodically" --> disk;
+disk -- "2.1 Load data" --> osbf;
+osbf -- "2.2 copy data" --> kabf;
+kabf -- "2.3 copy data" --> sbf;
+sbf -- "2.4 copy data" --> nicb;
+nicb -- "2.5 send data" --> c(("Consumer"));
+
+style p fill:orange,color:blue;
+style c fill:orange,color:blue;
+```
+
+- 做了 2 次 system call
+- 做了 4 copy
+
+---
+
+### Read with zero copy
+
+> 此為 kafka 之所以快速的重要原因之一
+
+```mermaid
+flowchart LR
+
+subgraph Host Server
+    subgraph app["Application Context"]
+        kabf("Kafka\nApplication Buffer")
+    end
+    subgraph kernel["Kernel Context"]
+        osbf("OS Buffer / RAM")
+        disk("Disk")
+        sbf("Socket Buffer")
+        nicb("NIC Buffer")
+        
+        style kabf fill:#32a86d;
+        style osbf fill:#32a86d;
+        style disk fill:#32a86d;
+        style sbf fill:#32a86d;
+        style nicb fill:#32a86d;
+    end
+end
+
+p(("Producer")) -- "1.1 write data" --> kabf;
+kabf -- "1.2 write data" --> osbf;
+osbf -- "1.3 sync to Disk periodically" --> disk;
+disk -- "2.1 Load data" --> osbf;
+osbf -- "3.2 directly copy\nsendfile() syscall" --> nicb;
+nicb -- "3.3 send data" --> c(("Consumer"));
+
+style p fill:orange,color:blue;
+style c fill:orange,color:blue;
+```
+
+- 僅剩下一次 copy 
+    - RAM -> NIC Buffer
+    - 此為 DMA, Direct Memory Access
+
+---
 
 
 ## APIs
