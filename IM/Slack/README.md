@@ -1,13 +1,17 @@
 
 這篇裡頭預計會分成很多個部分來說明 Slack 的用途 & 使用方式
 
-- [Setup & Sending Messages](#setup--sending-messages)
+- [Setup & Sending Messages](#i-setup--sending-messages)
     - Slack 最最最基本的 POST Message
-- [Handling Events (Event API)](#handling-events-event-api)
+- [Handling Events (Event API)](#ii-handling-events-event-api)
     - 請 Slack API 追蹤特定事件, 再將 Request POST 回 Webhook Server
+- [Slash Commands](#iii-slash-commands)
+    - Slack 可使用配置好的 `/COMMAND` 用作類似 CLI 的功能
+- [Slack Markdown](#iv-slack---markdown)
+    - Slack 發送 Markdown
 
 
-# Setup & Sending Messages
+# I. Setup & Sending Messages
 
 2022/10 的現在, Slack 已有新一代的 Slack apps (目前仍為 Beta)
 
@@ -58,7 +62,7 @@
 > 然後盡情的去尻 [chat.postMessage](https://api.slack.com/methods/chat.postMessage) 吧~
 
 
-# Handling Events (Event API)
+# II. Handling Events (Event API)
 
 ```mermaid
 flowchart LR
@@ -95,7 +99,7 @@ backend -- "Signing Secret\n將 Request 加密" --> slack;
 > Enjoy~
 
 
-# Slash Commands
+# III. Slash Commands
 
 讓 channel 裡頭可以使用「/xxxxx」的命令吧
 
@@ -109,7 +113,9 @@ https://github.com/cool21540125/learning_slack/blob/slashCommand/main.py
 
 ### Slack 配置
 
-> Your App 頁面 > **Slash Commands** > **Create New Command** (依照直覺填吧=.=)
+> Your App 頁面 > **Slash Commands** > **Create New Command**
+> 
+> **Request URL** 欄位為: `$WebhookURL/$AppRouting`, ex: `https://domain.ngrok.io/demo-command`
 > 
 > 然後記得 **Event Subscriptions** 裡頭的 **Request URL**(Webhook URL 啦) 一定要通
 > 
@@ -120,4 +126,5 @@ https://github.com/cool21540125/learning_slack/blob/slashCommand/main.py
 > Enjoy~
 
 
-# 
+# IV. Slack - markdown
+
