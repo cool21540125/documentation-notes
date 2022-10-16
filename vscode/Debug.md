@@ -1,101 +1,42 @@
-# [Debugging](https://code.visualstudio.com/docs/editor/debugging)
-
-- [Debugging Python](https://code.visualstudio.com/docs/python/debugging)
-- 2018/07/07
-- Windows 10 
-- Python 3.6.1 :: Anaconda 4.4.0 (64-bit)
-- VSCode 1.24.1
-
-
+# VSCode Debugging
 
 # 變數
 
 - `${workspaceFolder}` : 此專案的 根目錄, 即 `proj/`
 - `${file}` : Editor 內要執行的程式碼 的 檔案名稱
-- 
 
 
-# 專案架構
+# .vscode/launch.json
 
-啟用 dubug 之後, 專案目錄底下會多出了 `.vscode/launch.json`
-```py
-proj/
-    .vscode/
-        launch.json
-        settings.json
-
-    venv/
-        etc/
-        include/
-        Lib/
-        Scripts/        # 虛擬環境直譯器在這~
-
-    proj/
-        manage.py       # Django 啟動文件
-
-        main_proj/
-            __init__.py
-            settings.py
-            urls.py
-            views.py
-            wsgi.py
-        
-        app/
-            __init__.py
-            admin.py
-            apps.py
-            models.py
-            tests.py
-            views.py
-```
-專案 `Python 虛擬環境` 即為 `"python.pythonPath": "${workspaceFolder}/venv/bin/python"`, 放在 `.vscode/settings.json`
-
-
-# settings.json (專案下的 .vscode/settings.json)
-- 2018/07/11
-
-```js
+```jsonc
+// python
 {
-    // Windows + anaconda venv 設法 : 直接指向 虛擬環境 Python.exe
-    "python.pythonPath": "${workspaceFolder}/venv/bin/python",   // 讓 launch.json 來指向
-
-    // Linux   + anaconda venv 設法 : 指向 Python直譯器位置 && 設定虛擬環境
-    "python.pythonPath": "/opt/anaconda3/bin/python",           // 讓 launch.json 來指向
-    "python.venvPath": "/opt/anaconda3/envs/drf/",
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Flask DEBUG Run",
+            "type": "python",
+            "request": "launch",
+            "program": "main.py",               // 直接指定執行目標
+            "program": "${file}",               // 執行目前的檔案
+            "console": "internalConsole",
+            "justMyCode": true,
+            "env": {
+                "PYTHONPATH":"${workspaceFolder}:${workspaceFolder}/devops:${workspaceFolder}/devops/service:"
+                // 上面這邊放 PYTHONPATH
+            },
+            "args": ["runserver", "--noreload", "--nothreading"],  // 用來丟 python xxxx 的這些參數
+        }
+    ]
 }
 ```
 
 
-
-# launch.json
-
-最最基本的組態設定包, 就長得像下面那樣~
-```js
-{
-    "name": "Python: Current File",     // Debug 組態名稱
-    "type": "python",                   // Debug 使用的程式語言
-    "request": "launch",                // launch 或 attach
-    "program": "${file}",               // 執行的目標
-    "pythonPath": "${config:python.pythonPath}",    // 指向 settings.json 虛擬環境直譯器 
-    "args": ["runserver", "--noreload", "--nothreading"],
-    "stopOnEntry": true,                // 預設為 false, 若為 true, 執行Debug模式時, 會在程式第一行停下來
-    "console": "none",
-    "cwd": "",
-    "debugOptions": "",
-    "env": "",
-    "envFile": ""
-}
-```
-
-### program 專案啟動文件
-
-```js
-// program : 也可以設定專案的啟動文件
-"program": "${workspaceFolder}/proj/manage.py"
-```
-
+# Other
 
 ### pythonPath 用來 debug 的 Python 直譯器位置
+
+- 2022/10 的現在, 不知道還能不能使用
 
 ```js
 // 關於 pythonPath, 也可以使用特定的字詞, 來規範不同平台使用的 直譯器
@@ -111,22 +52,6 @@ proj/
 // Note: 上面的「\"」, 為 路徑內含有「 」的必要附加設定
 // 迷之音: Windows 哪時候有 pyspark了...??
 ```
-
-
-### args - Debug 時候的額外 參數
-
-ex: `python manage.py runserver --host 0.0.0.0`, 
-
-則設定為 `["runserver", "--host", "0.0.0.0"]` (應該吧! 不確定參數要不要分開)
-
-
-### console 設定方式
-
-value                   | output displayed
------------------------ | -------------------------------------
-"none"                  | VS Code debug console
-"integratedTerminal"    | (預設) 使用 VS Code 整合式 Terminal
-"externalTerminal"      | 分離式的 console window
 
 
 ### cwd 說明
@@ -173,7 +98,6 @@ ${workspaceFolder}/data         | salaries.csv
 原文 : Optional path to a file that contains environment variable definitions. See [Configuring Python environments - environment variable definitions file](https://code.visualstudio.com/docs/python/environments#_environment-variable-definitions-file).
 
 
-
 # Remote debugging (有點猛)
 
 可在 host, 執行 沒有安裝 VS Code 的 remote 端的程式
@@ -206,4 +130,3 @@ ptvsd.wait_for_attach()
 ## Debugging over SSH (to remote)
 
 因為某些特定因素, 可能也得作加密連線, 來作遠端 debug... (內容 pass)
-
