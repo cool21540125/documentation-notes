@@ -77,7 +77,7 @@ $# GIT_SSH_COMMAND='ssh -i ~/.ssh/use_another_key_to_operate' git clone ${Git_Ur
 # 或
 
 ### 一次性設定
-$# git config core.sshCommand "ssh -i ~/.ssh/use_another_key_to_operate" --local
+$# git config --local core.sshCommand "ssh -i ~/.ssh/use_another_key_to_operate"
 # 上述配置會記錄在 ./.git/config 裡頭的
 # [core]
 #    sshCommand = ssh -i ~/.ssh/use_another_key_to_operate

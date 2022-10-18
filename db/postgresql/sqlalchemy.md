@@ -120,11 +120,14 @@ t = Table("table_that_already_in_db", mo, autoload_with=engine)
 ## Unix Domain Connections
 
 - 2020/11/06
-- [UnixDomainCOnnections](https://docs.sqlalchemy.org/en/13/dialects/postgresql.html#unix-domain-connections)
+- [UnixDomainConnections](https://docs.sqlalchemy.org/en/13/dialects/postgresql.html#unix-domain-connections)
 
 
 ```py
 CONN = "postgresql+psycopg2://user:password@/dbname?host=/var/lib/postgresql"
-#                                          ^^^
+#       ^^^^^^^^^^ ^^^^^^^^                ^^
+#        dialect  + driver                 host
 # 可省略 host 部分, 取而代之的是使用 Unix 內部的 Unix Socket 連線
+# dialect, 翻譯為 方言, 但其實就只是聲明哪種 DB 而已...
+# driver 的部份省略則使用預設
 ```

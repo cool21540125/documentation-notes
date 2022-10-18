@@ -78,7 +78,7 @@ kubelet -> Dockershim              -> Docker Engine -> Containerd -> Containerd-
 kubelet -> CRI-Containerd          ->                  Containerd -> Containerd-shim -> runC/Crun  -> container
 kubelet -> Containerd + CRI Plugin ->                                Containerd-shim -> runC/Crun  -> container
 kubelet -> CRI-O                                                                     -> runC/Crun  -> container
-           ↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑    ↑↑↑↑↑↑↑↑↑
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^    ^^^^^^^^^
                           Container Runtime Interface, CRI                              OCI runtime
 ```
 

@@ -2119,19 +2119,21 @@ $# chronyc sources -v
 
 # Install k8s
 
-- 2021/03/08
+- 2022/10/14
 - [Installing kubeadm](https://kubernetes.io/docs/setup/production-environment/tools/kubeadm/install-kubeadm/)
+- [CRI-O Installation Instructions](https://github.com/cri-o/cri-o/blob/main/install.md)
+
+
+## I. Install && config
 
 ```bash
-### 下面我有改過... 
-cat <<EOF > /etc/yum.repos.d/kubernetes.repo
+cat <<EOF | sudo tee /etc/yum.repos.d/kubernetes.repo
 [kubernetes]
 name=Kubernetes
 baseurl=https://packages.cloud.google.com/yum/repos/kubernetes-el7-\$basearch
 enabled=1
 gpgcheck=1
-repo_gpgcheck=1
-gpgkey=https://packages.cloud.google.com/yum/doc/yum-key.gpg https://packages.cloud.google.com/yum/doc/rpm-package-key.gpg
+gpgkey=https://packages.cloud.google.com/yum/doc/rpm-package-key.gpg
 exclude=kubelet kubeadm kubectl
 EOF
 
@@ -2140,14 +2142,97 @@ setenforce 0
 sed -i 's/^SELINUX=enforcing$/SELINUX=permissive/' /etc/selinux/config
 
 # 不懂 --disableexcludes 在幹嘛
-yum install -y kubelet kubeadm kubectl --disableexcludes=kubernetes
-
+VERSION="-1.24.6"
+yum install -y kubelet${VERSION} kubeadm${VERSION} kubectl${VERSION} --disableexcludes=kubernetes
 systemctl enable --now kubelet
+# 2022/10 的當下, 最新版為 1.25.3 (但是 cri-o 並沒有這版本... 因此才指定較舊版本)
+
+### 必須關閉 swap, 不然 kubelet 可能會發生無法預期的狀況
+swapoff -a
 
 kubelet --version
-Kubernetes v1.20.4
+kubeadm version
+kubectl version
+
+### 需要啟用 br_netfilter 模組, 檢查看看是否已啟用
+$# lsmod | grep br_netfilter
+
+# 啟用 br_netfilter
+$# modprobe br_netfilter
+
+# 再次檢查, 應該就能看到了
+$# lsmod | grep br_netfilter
+br_netfilter           22256  0 
+bridge                151336  1 br_netfilter
+# --- 如上 ---
+
+### 接著需要讓 Linux 的 iptables 能夠正確識別 bridged traffic, 因此需要配置 sysctl
+cat <<EOF | sudo tee /etc/modules-load.d/k8s.conf
+overlay
+br_netfilter
+EOF
+
+modprobe overlay
+modprobe br_netfilter
+
+### 確保 iptables 能夠正常處理 filtering && forwarding 的 packets
+cat <<EOF | sudo tee /etc/sysctl.d/k8s.conf
+net.bridge.bridge-nf-call-iptables  = 1
+net.bridge.bridge-nf-call-ip6tables = 1
+net.ipv4.ip_forward                 = 1
+EOF
+sudo sysctl --system
+
 ```
 
+## II. 選擇 CRI
+
+- CRI 實作有底下一堆...
+  - cri-o (用這個就對了! )
+  - containerd
+  - docker
+  - ...
+
+```bash
+### Install cri-o
+export OS=CentOS_7
+export VERSION=1.25
+# cri-o 的 VERSION 需要與 kubeadm 的版本一致
+
+curl -L -o /etc/yum.repos.d/devel:kubic:libcontainers:stable.repo https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/$OS/devel:kubic:libcontainers:stable.repo
+curl -L -o /etc/yum.repos.d/devel:kubic:libcontainers:stable:cri-o:$VERSION.repo https://download.opensuse.org/repositories/devel:kubic:libcontainers:stable:cri-o:$VERSION/$OS/devel:kubic:libcontainers:stable:cri-o:$VERSION.repo
+
+### (2022/10) 馬的~ 可能是 CentOS7 即將 EOF 或是怎麼了我不清楚, 一直找不到 cri-o
+yum install cri-o
+# (找不到東西安裝QQ)
+```
+
+### III. cgroup drivers 的選擇及配置
+
+- k8s 可選擇使用下列其中一種方式來管理容器資源:
+  - cgroupfs (預設)
+    - 如果 Linux 的 Process 1 為 systemd (而非傳統的 initd), 則不建議使用 cgroupfs
+    - 如果 Linux 使用的是 [cgroup v2](https://kubernetes.io/docs/concepts/architecture/cgroups/), 則建議使用 systemd
+      - 可使用 `stat -fc %T /sys/fs/cgroup/` 來檢查 cgroup 的版本:
+        - `cgroup2fs` 表示為 cgroup v2
+        - `tempfs` 表示為 cgroup v1
+    - > The cgroupfs driver is not recommended when systemd is the init system because systemd expects a single cgroup manager on the system.
+      - 如果 Linux 的 init process 為 systemd, 但選擇了 cgroupfs 作為 container 的 **cgroup manager**
+      - 系統程序的資源管理使用 systemd 管控, 而 container 資源管理使用 cgroup 管控, 在資源匱乏時, 容易造成不穩定的狀況!!
+      - 因此才建議使用 systemd
+  - systemd
+    -  如果選擇此種方式作為 **cgroup manager**, 則需要做以下配置:
+      - 修改 kubelet 的 cgroup driver 為 systemd
+      - 修改 container runtime 的 cgroup driver 為 systemd
+      - 修改 KubeletConfiguration 配置黨裡頭的 `cgroupDriver` 為 systemd
+ 
+
+### IV. Create k8s cluster
+
+
+
+
+---
 
 # Install iptables
 
@@ -2325,6 +2410,14 @@ $# yum install erlang rabbitmq-server -y
 $# systemctl start rabbitmq-server
 $# systemctl enable rabbitmq-server
 $# systemctl status rabbitmq-server
+```
+
+
+# Install jq
+
+```bash
+yum install -y epel-release
+yum install -y jq
 ```
 
 

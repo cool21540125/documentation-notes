@@ -66,7 +66,7 @@ hugetlb 11  5   1
 pids    6   68  1
 
 ### 可查看 /proc/<PID>/cgroup, 來得知 Process 屬於哪些 CGroups
-$# cat /proc/1/cgroup 
+$# cat /proc/1/cgroup
 11:hugetlb:/
 10:devices:/
 9:cpuset:/
