@@ -4,7 +4,7 @@
 - 套件版本 1.0.0
 - [mermaidjs - github.io](https://mermaidjs.github.io/)
 - [mermaidjs - 有點完整的教學](https://mermaidjs.github.io/gantt.html)
-
+- [Diagram Guide](https://kubernetes.io/docs/contribute/style/diagram-guide/)
 
 
 # 基本
