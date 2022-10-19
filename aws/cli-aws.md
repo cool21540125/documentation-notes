@@ -1,4 +1,5 @@
 
+- [Using high-level (s3) commands with the AWS CLI](https://docs.aws.amazon.com/cli/latest/userguide/cli-services-s3-commands.html#using-s3-commands-managing-objects-param)
 
 ## Install awscli
 
@@ -78,23 +79,6 @@ $# aws sts get-session-token \
 
 ### 配置 & 使用 temperory TOKEN
 $# aws configure --profile ${Temp_Profile_Name}
-```
-
-
-## Tools
-
-### Install stress
-
-壓測工具
-
-```bash
-### Install
-$# sudo amazon-linux-extras install epel -y
-$# sudo yum install stress -y
-
-### Usage
-$# stress -c 4
-# 讓 4 個 CPU 飆到 100%
 ```
 
 

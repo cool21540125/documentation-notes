@@ -27,6 +27,13 @@ brew upgrade xxx
 ```
 
 
+# Install Homebrew
+
+```sh
+/usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
+```
+
+
 # Install Postgresql 11
 
 - 2020/01/27

@@ -33,14 +33,18 @@ Authorization: Bearer {{Gitlab_AccessToken}}
 
 # ============================ Pipelines ============================
 ### 列出 Pipeline 清單
+# https://docs.gitlab.com/ee/api/pipelines.html
 GET {{Gitlab_api_v4}}/projects/{{project_id}}/pipelines
     ?page=1
-    &per_page=100
+    &per_page=20
+    &updated_after=2022-10-19T00:00:00Z
+    &order_by=updated_at
+    &sort=desc
 Authorization: Bearer {{Gitlab_AccessToken}}
 
 
 ### 查詢單一 Pipeline 詳細資訊
-@pipelineID={{$dotenv pipelineID}}
+@pipelineID=670740966
 GET {{Gitlab_api_v4}}/projects/{{project_id}}/pipelines/{{pipelineID}}
 Authorization: Bearer {{Gitlab_AccessToken}}
 

@@ -1,49 +1,31 @@
 # printscreen
 
-- command + shift + 3 > 畫面儲存到桌面 （printscreen)
-- command + 
-- command + shift + 4 > 選取區塊, 存到桌面
-
-# 安裝 homebrew
-
-```bash
-/usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
-```
+- command + shift + 3 > 擷取畫面 (printscreen)
+- command + shift + 4 > 截取部分畫面
+- command + shift + . > 顯示/隱藏 隱藏檔
 
 
+# zsh
 
 ```bash
 ### 從 Catalina 不知道哪版開始, default login shell 改為 zsh
 ### ~/.bash_profile -> ~/.zshrc
 alias ls='ls -G'
+alias la='ls -aG'
 alias ll='ls -lG'
-alias lla='ll -a'
+alias lla='ls -alG'
 
 alias dpsa='docker ps -a'
 alias dc='docker-compose'
 
-# 下面這個是 bash 寫法
-PS1='[\u@\h \W]\$ '
-
-# zsh 寫法如下
-PS1='[%n@%m %1~]$ '
+PS1='[\u@\h \W]\$ '  # bash
+PS1='[%n@%m %1~]$ '  # zsh
 # 更多 zsh 的教學可參考這邊: https://wiki.gentoo.org/wiki/Zsh/Guide 
 # 或者直接參考 /etc/zshrc 裡面的寫法
 ```
 
 
-```bash
-### ~/.vimrc
-set expandtab
-set tabstop=4
-set shiftwidth=4
-set nu
-set ai
-set autoindent
-set nocompatible
-```
-
-
+# Other
 
 ```bash
 ### 這在幹嘛的我忘了
@@ -67,46 +49,6 @@ For compilers to find openssl you may need to set:
   export CPPFLAGS="-I/usr/local/opt/openssl/include"
 ```
 
-
-## Tips for mac
-
-```bash
-### 修改畫面截圖路徑
-$# defaults write com.apple.screencapture location ~/Desktop
-
-### 修改 finder 顯示的 標題名稱 -> 完整路徑檔名
-$# defaults write com.apple.finder _FXShowPosixPathInTitle -bool true; killall Finder
-
-### jq
-$# brew install jq
-$# curl https://randomuser.me/api/ | jq  # 交由 jq 做解析(會做 beauty)
-  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
-                                 Dload  Upload   Total   Spent    Left  Speed
-100  1179    0  1179    0     0   1548      0 --:--:-- --:--:-- --:--:--  1547
-{
-  "results": [
-    {
-      "gender": "female",
-      "name": {
-        "title": "Mrs",
-        "first": "Crystal",
-        "last": "Garcia"
-      },
-      "location": {
-        "street": {
-          "number": 2127,
-...(略)...
-
-$# $ curl https://randomuser.me/api/ | jq '.results[0].name'  # 可作 filter
-  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
-                                 Dload  Upload   Total   Spent    Left  Speed
-100  1147    0  1147    0     0   1525      0 --:--:-- --:--:-- --:--:--  1523
-{
-  "title": "Miss",
-  "first": "Mia",
-  "last": "Smith"
-}
-```
 
 ```bash
 ### 自簽憑證位置

@@ -1,0 +1,24 @@
+# Gitlab - Container Registry API
+#    https://docs.gitlab.com/ee/api/container_registry.html
+# 
+# =========================================================
+@project_id={{$dotenv project_id}}
+@repository_id={{$dotenv repository_id}}
+
+### 列出 Container Registry tags
+# https://docs.gitlab.com/ee/api/container_registry.html#list-registry-repositories
+GET {{Gitlab_api_v4}}/projects/{{project_id}}/registry/repositories
+    ?tags=true
+    &tags_count=true
+Authorization: Bearer {{Gitlab_AccessToken}}
+
+
+
+### (未成功)Get details of a registry repository tag
+@tag_name=qat22.10.19.01
+# https://docs.gitlab.com/ee/api/container_registry.html#get-details-of-a-registry-repository-tag
+GET {{Gitlab_api_v4}}/projects/{{project_id}}/registry/repositories/{{repository_id}}/{{tag_name}}
+Authorization: Bearer {{Gitlab_AccessToken}}
+
+
+### 

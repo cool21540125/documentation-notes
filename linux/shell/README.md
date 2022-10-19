@@ -12,9 +12,17 @@ CentOS Linux release 7.4.1708 (Core)
 ### `set -xe`
 
 - [What does set -e mean in a bash script?](https://stackoverflow.com/questions/19622198/what-does-set-e-mean-in-a-bash-script)
+- [What would set +e and set -x commands do in the context of a shell script?](https://superuser.com/questions/1113014/what-would-set-e-and-set-x-commands-do-in-the-context-of-a-shell-script)
 - [Aborting a shell script if any command returns a non-zero value?](https://stackoverflow.com/questions/821396/aborting-a-shell-script-if-any-command-returns-a-non-zero-value/821419#821419)
 - [Stop on first error](https://stackoverflow.com/questions/3474526/stop-on-first-error)
 - [What does set -x do?](https://stackoverflow.com/questions/36273665/what-does-set-x-do)
+
+- set
+    - "-" : set the option
+    - "+" : unset the option
+    - `set -e` : makes the shell script error out whenever a command errors out
+    - `set -x` : makes the shell print out commands after expanding their parameters but before executing them
+    - `set +x` : 像是在 JenkinsJob 裡頭執行 bash, 建議設定這個, 不然任何指令執行結果會被輸出以外, 指令字串本身還會被印出來(畫面會很亂)
 
 ```sh
 # 常看到 ShellScript 出現 `set -xe`
