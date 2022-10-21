@@ -273,3 +273,26 @@ $# sudo mv /tmp/eksctl ~/bin/
 $# eksctl version
 0.112.0
 ```
+
+
+# Install Jenkins
+
+```bash
+### install & start
+$# brew install jenkins-lts
+$# brew services start jenkins-lts
+
+
+### # 2022/10/20
+$# jenkins-lts --version
+2.361.2
+
+### Runtime version
+$# cat /usr/local/opt/jenkins-lts/homebrew.mxcl.jenkins-lts.plist | grep java
+                <string>/usr/local/opt/openjdk@17/bin/java</string>
+# openjdk 17.0.5 2022-10-18
+
+### 相關設定檔
+# Service file: /usr/local/opt/jenkins-lts/homebrew.jenkins-lts.service
+# Config file: /usr/local/opt/jenkins-lts/homebrew.mxcl.jenkins-lts.plist
+```
