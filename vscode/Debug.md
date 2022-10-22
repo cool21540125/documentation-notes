@@ -9,7 +9,6 @@
 # .vscode/launch.json
 
 ```jsonc
-// python
 {
     "version": "0.2.0",
     "configurations": [
@@ -17,15 +16,20 @@
             "name": "Flask DEBUG Run",
             "type": "python",
             "request": "launch",
-            "program": "main.py",               // 直接指定執行目標
-            "program": "${file}",               // 執行目前的檔案
+            "stopOnEntry": false,
+            "module": "flask",
             "console": "internalConsole",
             "justMyCode": true,
             "env": {
-                "PYTHONPATH":"${workspaceFolder}:${workspaceFolder}/devops:${workspaceFolder}/devops/service:"
-                // 上面這邊放 PYTHONPATH
+                // PYTHONPATH 自行加入要 import 的位置
+                "PYTHONPATH":"${workspaceFolder}:${workspaceFolder}/devops:${workspaceFolder}/devops/service:${workspaceFolder}/data",
+                "FLASK_APP": "app.py",
             },
-            "args": ["runserver", "--noreload", "--nothreading"],  // 用來丟 python xxxx 的這些參數
+            "args": [
+                "--debug", 
+                "--reload",
+                "run", 
+            ],
         }
     ]
 }
