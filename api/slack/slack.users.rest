@@ -1,0 +1,16 @@
+
+# https://api.slack.com/methods
+@url=https://slack.com/api
+@channelID={{$dotenv channelID}}
+@token={{$dotenv token}}
+# -------------------------------------
+
+
+### 
+# https://api.slack.com/methods/users.list
+# 需要 users:read 的權限
+GET {{url}}/users.list
+Authorization: Bearer {{token}}
+
+
+### 

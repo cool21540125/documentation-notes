@@ -1,0 +1,20 @@
+# https://zerossl.com/documentation/api/
+@url=https://api.zerossl.com
+@API_KEY={{ZeroSSL_API_KEY}}
+@Domains={{$dotenv Domains}}
+@CSR={{$dotenv CSR}}
+# -------------------------------------------
+
+### List Certificates
+# https://zerossl.com/documentation/api/list-certificates/
+GET {{url}}/certificates?access_key={{API_KEY}}
+
+
+### Create Certificate (尚無法使用)
+# https://zerossl.com/documentation/api/create-certificate/
+POST {{url}}/certificates?access_key={{API_KEY}}
+    &certificate_domains={{Domains}}
+    &certificate_csr={{CSR}}
+
+
+### 

@@ -275,24 +275,72 @@ $# eksctl version
 ```
 
 
-# Install Jenkins
+# Install Jenkins-lts
 
 ```bash
-### install & start
+### install
 $# brew install jenkins-lts
+
+
+### config
+$# cd /usr/local/opt/jenkins-lts/
+$# vim homebrew.jenkins-lts.service
+$# vim homebrew.mxcl.jenkins-lts.plist
+
+
+### start
 $# brew services start jenkins-lts
 
-
-### # 2022/10/20
-$# jenkins-lts --version
-2.361.2
-
-### Runtime version
-$# cat /usr/local/opt/jenkins-lts/homebrew.mxcl.jenkins-lts.plist | grep java
-                <string>/usr/local/opt/openjdk@17/bin/java</string>
-# openjdk 17.0.5 2022-10-18
 
 ### 相關設定檔
 # Service file: /usr/local/opt/jenkins-lts/homebrew.jenkins-lts.service
 # Config file: /usr/local/opt/jenkins-lts/homebrew.mxcl.jenkins-lts.plist
 ```
+
+
+# Install nginx
+
+```bash
+### install
+$# brew install nginx
+
+
+### config
+$# cd /usr/local/etc/nginx
+$# vim nginx.conf
+
+
+### start
+$# brew services start nginx
+
+
+### 修改 Dir owner
+# ex: 要反代 Jenkins 等請求, nginx process 會對此 Dir 裡頭做 filesystem 操作, 因而需要 rwx 權限(預設為 700 nobody admin)
+$# cd /usr/local/var/run/nginx/
+$# chown -R ${USER} *
+
+
+### log
+$# tail -f /usr/local/var/log/nginx/access.log
+$# tail -f /usr/local/var/log/nginx/error.log
+```
+
+
+
+# Install md5sha1sum
+
+```bash
+$# brew install md5sha1sum
+```
+
+
+# Install socat
+
+安裝 `acme.sh` 之前的依賴套件
+
+```bash
+$# brew install socat
+```
+
+
+# 
