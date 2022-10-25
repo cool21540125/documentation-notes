@@ -105,6 +105,14 @@ kube-dns   ClusterIP   10.98.0.10   <none>        53/UDP,53/TCP,9153/TCP   20d
 # k8s 的 DNS
 
 
+### 進入 Pod 中的 Container
+$# kubectl -it  $PodName -c $Container -- bash
+
+
+### 列出 Container logs
+$# kubectl logs $PodName -c $Container
+
+
 ### k8s DNS(內建 Pod)
 $# kubectl describe service kube-dns -n kube-system
 Name:              kube-dns
