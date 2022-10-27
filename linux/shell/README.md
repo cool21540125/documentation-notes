@@ -20,7 +20,7 @@ CentOS Linux release 7.4.1708 (Core)
 - set
     - "-" : set the option
     - "+" : unset the option
-    - `set -e` : makes the shell script error out whenever a command errors out
+    - `set -e` : 如果整個 ShellScript 流程非常嚴謹不容出錯, 就用這個(腳本中遇到任何指令執行後, exitCode 不為 0 則中斷)
     - `set -x` : makes the shell print out commands after expanding their parameters but before executing them
     - `set +x` : 像是在 JenkinsJob 裡頭執行 bash, 建議設定這個, 不然任何指令執行結果會被輸出以外, 指令字串本身還會被印出來(畫面會很亂)
 

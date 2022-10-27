@@ -234,46 +234,6 @@ $ git cherry-pick --abort
 > 任何透過指令修改的`參照(ref)的內容` or `更任何分支的 HEAD 參照內容`, 都會建立歷史紀錄. ex: commit, checkout, pull, push, merge, ...
 
 
-## git diff
-
-- 2020/02/03
-- https://github.com/doggy8088/Learn-Git-in-30-days/blob/master/zh-tw/09.md
-
-指令:
-
-- `git diff` : 比對 `working dir` 與 `current index` 的差異 (工作目錄 vs 索引)
-- `git diff <id1>`: 比對 `working dir` 與 <cmid> 的差異
-- `git diff --cached <cmid>` : 比對 `current index` 與 <cmid> 的差異
-- `git diff <cmid1> <cmid2>` : 比對 `<cmid1>` 到 `<cmid2>` 變化了那些
-- `git diff HEAD` : 工作目錄 vs HEAD
-- `git diff --cached HEAD` : 索引 vs HEAD
-- `git diff --cached` : 索引 vs HEAD
-- `git diff HEAD^ HEAD` : HEAD^ vs HEAD (次新版 commit vs 最新版 commit)
-
-```bash
-### Example:
-mkdir git-demo
-cd git-demo
-git init
-
-echo 1 > a.txt
-echo 2 > b.txt
-git add .
-git commit -m "Initial commit"  # 2f04fb
-
-echo 3 > a.txt
-echo 4 > b.txt
-git add .
-git commit -m "Update a.txt and b.txt to 3 and 4"    # 038de9
-
-### 比較兩個版本的差異
-$# git diff 038d 2f04
-# 會印出內容比較, 直覺意義是, 從 038d -> 2f04 變化了哪些內容
-# - 開頭的是少掉了那些內容
-# + 開頭的是增加了哪些內容
-```
-
-
 # C. Git 組態
 
 ## 層級

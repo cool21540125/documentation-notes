@@ -21,3 +21,5 @@
 - [build user vars](https://plugins.jenkins.io/build-user-vars-plugin/)
     - 可在 JenkinsJob 使用 user 相關的環境變數, ex: BUILD_USER
     - JenkinsJob 裡面要勾選 *Set jenkins user build variables*
+- [Build Timeout](https://plugins.jenkins.io/build-timeout/)
+    - 可在 JenkinsJob build 的時候, 設定 timeout, 避免某些 Job 真的跑壞了, 然後一直 hang 在那邊...

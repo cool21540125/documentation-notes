@@ -322,10 +322,16 @@ $ locate ifconf # 要查詢的東西, 檔名可以不完整
 
 ```sh
 # 產生ssh公私金鑰
-$ ssh-keygen -t rsa -b 4096 -C "<id>@<host>"
+ssh-keygen -t rsa -b 4096 -C "tony@tonynb" -f "key_name"
 # -t [rsa|tsa] : 加密演算法
 # -b <number> : 加密位元數, 建議都 2048 以上
 # -C <xxx> : keygen 名稱
+
+
+### ed25519 (比 rsa 更有效率 && 安全)
+# https://docs.gitlab.com/ee/ssh/README.html#ed25519-ssh-keys
+$# ssh-keygen -t ed25519 -C "tony@tonynb"
+# 產生 id_ed25519 && id_ed25519.pub
 ```
 
 1. 安裝sshd
