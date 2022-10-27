@@ -2,7 +2,8 @@
 @project_id={{$dotenv project_id}}
 
 
-###
+### 列出 project_id 底下所有 tags
+# https://docs.gitlab.com/ee/api/tags.html#list-project-repository-tags
 GET {{Gitlab_api_v4}}/projects/{{project_id}}/repository/tags
 Authorization: Bearer {{Gitlab_AccessToken}}
 Content-Type: application/json
