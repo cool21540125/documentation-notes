@@ -83,6 +83,7 @@ $# gcloud container clusters create hello-cluster
 #                            ^^^^^^ 使用 create
 
 ### Autopilot cluster, such as us-west1:
+$# COMPUTE_REGION=asia-east1
 $# gcloud config set compute/region ${COMPUTE_REGION}
 $# gcloud container clusters create-auto hello-cluster
 #                            ^^^^^^^^^^^ 使用 create-auto
