@@ -3,11 +3,9 @@
 @api=https://api.cloudflare.com/client/v4
 @email={{cf_email}}
 @token={{cf_key}}
-
 @status = active
-### ↓↓↓↓↓↓↓↓↓ 域名 ↓↓↓↓↓↓↓↓↓
-@domain = 
-### ↑↑↑↑↑↑↑↑↑ 域名 ↑↑↑↑↑↑↑↑↑
+
+@domain={{$dotenv domain}}
 
 
 

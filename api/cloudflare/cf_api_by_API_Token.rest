@@ -1,0 +1,33 @@
+### Cloudflare API Documentation - https://api.cloudflare.com/#zone-settings-get-always-online-setting
+
+@api=https://api.cloudflare.com/client/v4
+@token={{Cloudflare_API_Token}}
+@status = active
+
+@domain={{$dotenv domain}}
+
+
+# https://api.cloudflare.com/#zone-list-zones
+### List Zones - 用域名查出對應的 zone_id (域名操作需要它)
+# @name list_zones
+GET {{api}}/zones
+    ?name={{domain}}
+    &page=1
+    &per_page=50
+    &order=status
+    &direction=desc
+Authorization: Bearer {{token}}
+
+
+### Zone ID
+@zone_id = {{list_zones.response.body.result[0].id}}
+
+
+# https://api.cloudflare.com/#dns-records-for-a-zone-list-dns-records
+### List DNS Records - 列出 特定域名 的所有解析紀錄
+GET {{api}}/zones/{{zone_id}}/dns_records
+    ?page=1
+    &per_page=200
+    &order=type
+    &direction=desc
+Authorization: Bearer {{token}}
