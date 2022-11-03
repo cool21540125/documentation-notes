@@ -57,6 +57,10 @@ $# kubectl exec -it ${POD_NAME} -- /bin/sh
 # 等同於 docker exec -it ${ContainerName} /bin/sh
 
 
+### Deployment 運作過程中升級 Image
+$# kubectl set image deployment/${Deployment} ${Container}=${Image}:${ImageTag}
+# ex: kubectl edit deploy/nginx-deployment nginx=nginx:1.20.2
+
 ### 移除 pod
 $# kubectl delete pods ${POD_NAME}
 # master 會送 SIGNAL 給 pod, 並且作 peaceful shutdown
@@ -164,4 +168,21 @@ To further debug and diagnose cluster problems, use 'kubectl cluster-info dump'.
 ### 如果某次進版導致錯誤, 可使用此方式回退
 $# kubectl rollout undo deployment/${DeploymentName}
 $# helm rollback -n ${namespace} ${release} ${REVISION}
+
+
+### 查看 Deployment 更新過程
+$# kubectl rollout status deployment/${Deployment}
+
+
+### 查看 Deployent 的部署歷史
+$# kubectl rollout history deployment/${Deployment}
+
+
+### 查看特定 Deployment 部署歷史
+$# kubectl rollout history deployment/${Deployment} --revision=N
+
+
+### 暫停/還原 Deployment (若要用 kubectl edit 接連修改, 可用這個避免頻繁更新)
+$# kubectl rollout pause deployment/${Deployment}
+$# kubectl rollout resume deployment/${Deployment}
 ```

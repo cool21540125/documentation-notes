@@ -5,6 +5,20 @@
 - [raft演算法(去中心化)-超簡明解說](http://thesecretlivesofdata.com/raft/)
 
 
+# 縮寫
+
+```sh
+alias k=kubectl
+k get svc     # service
+k get cj      # cronjob
+k get po      # pods
+k get ns      # namespace
+k get deploy  # deployment
+k get no      # nodes
+k get cm      # configmap
+k get rs      # replicaset
+```
+
 
 # K8s Interface
 
