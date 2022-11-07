@@ -107,17 +107,6 @@ kubelet -> CRI-O                                                                
 - Open Container Initiative, OCI
 
 
-# 安裝
-
-安裝方式, 看[這裡](https://github.com/cool21540125/documentation-notes/blob/master/linux/install/installCentOS7.md#install-k8s)
-
-需要確保 主叢 之間的 **MAC Address** && **product_uuid** 必須都是不同的 (如果再 VM 內, 可能會一樣)
-
-- `ip link`
-- `cat /sys/class/dmi/id/product_uuid`
-
-
-
 # k3s
 
 - 內建 Ingress
@@ -125,10 +114,22 @@ kubelet -> CRI-O                                                                
 
 
 
-# 未整理雜訊
+# 未整理
 
 - k8s service 的 CLUSTER-IP 不會變動; 而 pod IP 可能會變動
 - k8s apply vs create
   - The key difference between kubectl apply and create is that apply creates Kubernetes objects through a declarative syntax, while the create command is imperative.
   - kubectl apply : declarative syntax, 可用來改變已 deploy 的規格 && 也可用來首次建立
   - kubectl create : imperative, 只能用來首次建立
+- HPA Controller, Horizontal Pod Autoscaler
+  - 用來實現以 CPU 為基礎的 自動 Pod 容量調整機制 
+    - 可以讓 k8s auto-scaling Pods 啦
+  - 細節
+    - HPA, 可在 **kube-controller-manager**
+      - `--horizontal-pod-autoscaler-sync-period` 來調整探測週期
+      - `--horizontal-pod-autoscaler-tolerance` 調整 autoscaling 指標的容忍(不作變動)區間
+    - 早期使用 Heapster 元件來搜集, v1.11 以後改用 Metrics Server 來搜集 Pods 的性能指標
+      - 藉由 Aggregated API, ex: metrics.k8s.io, custom.metrics.k8s.io, external.metrics.k8s.io
+    - 目前有 2 個版本
+      - `autoscaling/v1`, 僅支援 CPU metrics
+      - `autoscaling/v2`, 額外增加 Memory, custom, external metrics, 並且可使用多指標 (直接用這個就對了?)
