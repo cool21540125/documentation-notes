@@ -282,7 +282,7 @@ $# eksctl version
 $# brew install jenkins-lts
 
 
-### config
+### 設定檔
 $# cd /usr/local/opt/jenkins-lts/
 $# vim homebrew.jenkins-lts.service
 $# vim homebrew.mxcl.jenkins-lts.plist
@@ -292,9 +292,12 @@ $# vim homebrew.mxcl.jenkins-lts.plist
 $# brew services start jenkins-lts
 
 
-### 相關設定檔
-# Service file: /usr/local/opt/jenkins-lts/homebrew.jenkins-lts.service
-# Config file: /usr/local/opt/jenkins-lts/homebrew.mxcl.jenkins-lts.plist
+### init 密碼位置
+$# cat ~/.jenkins/secrets/initialAdminPassword
+# 初始化完成後, 會自動移除
+
+### log
+$# cd /usr/local/var/log
 ```
 
 
@@ -342,5 +345,13 @@ $# brew install md5sha1sum
 $# brew install socat
 ```
 
+
+# Install openldap
+
+```bash
+$# brew install openldap
+
+$# 
+```
 
 # 

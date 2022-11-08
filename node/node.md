@@ -1,33 +1,19 @@
 
+# function scope
 
-### import/export
-
----
-movies.js
 ```js
-function printA() {
-	console.log("A");
-}
+function printA() {}
+function printB() {}
 
-function printB() {
-	console.log("B");
-}
-
-// printA 匯出, 為public function
 module.exports.ppA = printA;
-
-// printB 未匯出, 為private function
+// printA 匯出, 為 public function
+// printB 未匯出, 為 private function
 ```
 
-main.js
+
+# REPL 環境
+
 ```js
-movie = require('./movies');
-movie.ppA();
+const process = require('process');
+// 等同於腳本內的 import 'process';
 ```
-
-```sh
-A
-```
----
-
-

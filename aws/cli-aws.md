@@ -52,6 +52,11 @@ $# aws configure
 # 原因可看 credentials chain
 
 
+### S3 concurrent 上傳
+aws configure set default.s3.max_concurrent_requests 100
+# 預設為 10
+
+
 ### 如果有多 IAM User, 可用這樣來動態切換 IAM Users (~/.aws/config && ~/.aws/credential 底下以配置的用戶)
 $# export AWS_PROFILE=XXX
 
