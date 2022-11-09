@@ -5,26 +5,6 @@
 - command + shift + . > 顯示/隱藏 隱藏檔
 
 
-# zsh
-
-```bash
-### 從 Catalina 不知道哪版開始, default login shell 改為 zsh
-### ~/.bash_profile -> ~/.zshrc
-alias ls='ls -G'
-alias la='ls -aG'
-alias ll='ls -lG'
-alias lla='ls -alG'
-
-alias dpsa='docker ps -a'
-alias dc='docker-compose'
-
-PS1='[\u@\h \W]\$ '  # bash
-PS1='[%n@%m %1~]$ '  # zsh
-# 更多 zsh 的教學可參考這邊: https://wiki.gentoo.org/wiki/Zsh/Guide 
-# 或者直接參考 /etc/zshrc 裡面的寫法
-```
-
-
 # Other
 
 ```bash

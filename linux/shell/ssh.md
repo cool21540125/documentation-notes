@@ -108,8 +108,7 @@ $ ssh -N -L 8088:169.254.10.10:80 tony@169.254.10.20
 # -N: 單純只給 forwarding ports 使用(不執行 remote command)
 # -L: Local Port Forwarding
 # 瀏覽器~~ 「localhost:8088」 就看到網頁了~~
-# 但是不知道為什麼　curl會出現
-# curl: (7) Failed to connect to localhost port 8088: Connection refused
+# 但是不知道為什麼　curl會出現 「curl: (7) Failed to connect to localhost port 8088: Connection refused」
 
 ### 或者, 可以更嚴格的限定, 只能由 localhost:8888 來做 Tunneling
 $ ssh -N -L 127.0.0.1:8088:169.254.10.10:80 tony@169.254.10.20

@@ -1,7 +1,3 @@
-# Shell
-
-- 2018/11/21
-
 
 # 路徑與指令順序
 
@@ -15,6 +11,7 @@
 
 1. login shell
 2. non-login shell
+
 
 ## 1. login shell
 
@@ -68,6 +65,11 @@ trap "" INT
 
 trap "echo YO" EXIT
 # ↑ 若腳本執行完後, 會執行的動作
-
-
 ```
+
+
+# 
+
+- bash
+- zsh
+    - `~/.zprofile` 優先於 `~/.zshrc`

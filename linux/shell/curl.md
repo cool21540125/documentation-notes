@@ -26,28 +26,27 @@ $# curl -X<Verb> '<Protocol>://<Host>:<Port>/<Path>?<Query_String>' -d '<Body>'
 # 使用檔案作 POST
 curl -X POST -d "@data.txt" http://localhost:3000/data
 
-# 使用 JSON 作 POST
-curl -d '{"k1": "v1", "k2": "v2"}' -H "Content-Type: application/json" -X http://localhost:8000/data
-```
 
-## hacking curl (讓 curl 變好用!? )
-
-```sh
+### hacking curl (讓 curl 變好用!? )
 $# mkdir ~/bin
 $# vim ~/bin/curl
 $# echo '#!/bin/bash' > ~/bin/curl
 $# echo '/usr/bin/curl -H "Content-Type: application/json" "$@"' > ~/bin/curl
 $# chmod +x bin/curl
-
 # 將來使用 curl 就可以省略掉 application/json 那一包了~
-```
 
-```sh
+
+### 藉由 Unix Socket(而非 TCP Socket) 的方式做連線
 curl --unix-socket /path-to-docker/docker.sock http://localhost/version
-```
 
-```bash
+
+### 若域名有做 load balance, 此方式可強制訪問特定一台
 $# DOMAIN=tonychoucc.com
 $# IP=1.2.3.4
 $# curl -sv --resolve www.${DOMAIN}:${IP} https://www.${DOMAIN}/checked
+
+
+### 
+$# domain=
+$# curl -IvskL https://${domain}
 ```

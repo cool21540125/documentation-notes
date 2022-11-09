@@ -1,19 +1,18 @@
-# bash
-
 
 ```bash
+### 可看到目前 shell 的 PID
 $ echo $$
 1631
-# 可看到目前 shell 的 PID
-```
 
-## 快速命令
 
-```sh
-# 取消 已經設定過的別名
+### 取消 已經設定過的別名
 $ unalias lm
 ```
 
+
+bash 加載順序:
+
+- `~/.profile` 優先於 `~/.bashrc`
 
 
 ## 變數相關
