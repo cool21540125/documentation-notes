@@ -25,3 +25,6 @@
     - 可在 JenkinsJob build 的時候, 設定 timeout, 避免某些 Job 真的跑壞了, 然後一直 hang 在那邊...
 - [AnsiColor](https://plugins.jenkins.io/ansicolor/)
     - Jenkins execute shell 的時候, 可以使用不同的 Console output 來做不同顏色的輸出
+- [Locale](https://plugins.jenkins.io/locale/)
+    - 不知為啥... 工作環境上, iMac Server 上頭的 Jenkins, 大家訪問後都變成亂碼
+    - Jenkins > Manage Jenkins > Configuration System > Locale > Default Language > en-us

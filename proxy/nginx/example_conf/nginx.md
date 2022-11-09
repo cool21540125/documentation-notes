@@ -285,12 +285,11 @@ img.youwillneverknow.com    A   <IP4>
 # other
 
 ```conf
-### 可查 public IP
+### 回傳 Client IP
 location /ip {
     default_type text/plain;
     return 200 $remote_addr;
 }
-# curl XXXX/ip
 ```
 
 
