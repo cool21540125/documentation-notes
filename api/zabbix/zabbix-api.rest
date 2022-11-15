@@ -1,10 +1,9 @@
 ### https://www.zabbix.com/documentation/4.0/manual/api
 # 多數 APIs 都包含了 get, create, update, delete 方法
 
-@ApiEndpoint=http://192.168.1.220:7777
-@ApiEndpoint=http://192.168.2.158/zabbix
+@url=http://{{$dotenv domain}}
 
-#@ApiEndpoint=http://zabbix.gbbos.com:3001  // 我根本不知道密碼
+#@url=http://zabbix.gbbos.com:3001  // 我根本不知道密碼
 
 // CPU Load (vm158=28637, vm157=28638, Newtemplate=28647)
 @itemId=28638
@@ -17,7 +16,7 @@
 // https://www.zabbix.com/documentation/4.0/manual/api/reference/user/login
 ### 登入
 # @name login
-GET {{ApiEndpoint}}/api_jsonrpc.php
+GET {{url}}/api_jsonrpc.php
 Content-Type: application/json
 
 {
@@ -37,7 +36,7 @@ Content-Type: application/json
 // https://www.zabbix.com/documentation/4.0/manual/api/reference/host/get
 ### 查詢 被監控站台 清單
 # @name hosts
-GET {{ApiEndpoint}}/api_jsonrpc.php
+GET {{url}}/api_jsonrpc.php
 Content-Type: application/json
 
 {
@@ -62,7 +61,7 @@ Content-Type: application/json
 
 // https://www.zabbix.com/documentation/4.0/manual/api/reference/item/get
 ### 查詢 監控項目
-GET {{ApiEndpoint}}/api_jsonrpc.php
+GET {{url}}/api_jsonrpc.php
 Content-Type: application/json
 
 {
@@ -91,7 +90,7 @@ Content-Type: application/json
 
 // https://www.zabbix.com/documentation/4.0/manual/api/reference/trend/get
 ### 查詢 trend data @@?
-GET {{ApiEndpoint}}/api_jsonrpc.php
+GET {{url}}/api_jsonrpc.php
 Content-Type: application/json
 
 {
@@ -114,7 +113,7 @@ Content-Type: application/json
 
 // https://www.zabbix.com/documentation/4.0/manual/api/reference/history/get
 ### 抓出歷史資料 (監控資料)
-GET {{ApiEndpoint}}/api_jsonrpc.php
+GET {{url}}/api_jsonrpc.php
 Content-Type: application/json
 
 {
@@ -138,7 +137,7 @@ Content-Type: application/json
 
 // https://www.zabbix.com/documentation/4.0/manual/api/reference/application/get
 ### retrieve applications
-GET {{ApiEndpoint}}/api_jsonrpc.php
+GET {{url}}/api_jsonrpc.php
 Content-Type: application/json
 
 {
@@ -156,7 +155,7 @@ Content-Type: application/json
 
 // https://www.zabbix.com/documentation/4.0/manual/api/reference/problem/get
 ### 查詢 尚未解決的問題
-GET {{ApiEndpoint}}/api_jsonrpc.php
+GET {{url}}/api_jsonrpc.php
 Content-Type: application/json
 
 {
@@ -177,7 +176,7 @@ Content-Type: application/json
 
 // https://www.zabbix.com/documentation/4.0/manual/api/reference/user/logout
 ### 登出
-GET {{ApiEndpoint}}/api_jsonrpc.php HTTP/1.1
+GET {{url}}/api_jsonrpc.php HTTP/1.1
 Content-Type: application/json
 
 {
@@ -192,7 +191,7 @@ Content-Type: application/json
 # ******************************* Useless *******************************
 // https://www.zabbix.com/documentation/4.0/manual/api/reference/apiinfo/version
 ### 尋找 API methods version (4.0.10) (沒啥鳥用)
-GET {{ApiEndpoint}}/api_jsonrpc.php HTTP/1.1
+GET {{url}}/api_jsonrpc.php HTTP/1.1
 Content-Type: application/json
 
 {
@@ -208,7 +207,7 @@ Content-Type: application/json
 
 /////////////////// TESTING ///////////////////
 ### 抓出歷史資料 (監控資料)
-GET {{ApiEndpoint}}/api_jsonrpc.php
+GET {{url}}/api_jsonrpc.php
 Content-Type: application/json
 
 {
