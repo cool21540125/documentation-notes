@@ -5,7 +5,6 @@
 
 
 
-
 # Useful Plugins
 
 - [Git Parameter](https://plugins.jenkins.io/git-parameter/)
@@ -15,9 +14,6 @@
     - Manage Jenkins -> Configure Global Security > Markup Formatter > Markdown Formatter > Save
 - [Parameterized Trigger](https://plugins.jenkins.io/parameterized-trigger/)
     - JenkinsJob build 結束後, 觸發下游專案可帶參數
-- [Custom Checkbox Parameter](https://plugins.jenkins.io/custom-checkbox-parameter/)
-    - 可在 JenkinsJob 執行時, 帶入的參數可以藉由勾選某些選項. 而這些選項, 來自於解析某個 yaml file
-    - a.k.a. 可以隨時變更 yaml file 來動態增減 JenkinsJob 帶入的參數
 - [build user vars](https://plugins.jenkins.io/build-user-vars-plugin/)
     - 可在 JenkinsJob 使用 user 相關的環境變數, ex: BUILD_USER
     - JenkinsJob 裡面要勾選 *Set jenkins user build variables*
@@ -28,3 +24,12 @@
 - [Locale](https://plugins.jenkins.io/locale/)
     - 不知為啥... 工作環境上, iMac Server 上頭的 Jenkins, 大家訪問後都變成亂碼
     - Jenkins > Manage Jenkins > Configuration System > Locale > Default Language > en-us
+- [Multiselect parameter](https://plugins.jenkins.io/multiselect-parameter/)
+    - (還沒使用過)
+    - JenkinsJob 可使用 (多階層)條件化下拉式選單
+- [Active Choices](https://plugins.jenkins.io/uno-choice/)
+    - JenkinsJob 可使用 很豐富的參數選單
+- [Custom Checkbox Parameter](https://plugins.jenkins.io/custom-checkbox-parameter/)
+    - JenkinsJob 可依賴外部 file/URL 來動態變更 構建參數
+        - ex: 可以隨時變更 yaml file 來動態增減 JenkinsJob 帶入的參數
+    - 似乎有漏洞, 目前(2022Q4) 尚未修補
