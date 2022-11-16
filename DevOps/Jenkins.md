@@ -1,10 +1,4 @@
 
-
-# Configure
-
-
-
-
 # Useful Plugins
 
 - [Git Parameter](https://plugins.jenkins.io/git-parameter/)
@@ -33,3 +27,25 @@
     - JenkinsJob 可依賴外部 file/URL 來動態變更 構建參數
         - ex: 可以隨時變更 yaml file 來動態增減 JenkinsJob 帶入的參數
     - 似乎有漏洞, 目前(2022Q4) 尚未修補
+
+
+# Configure
+
+## 設定 Jenkins URL
+
+Dashboard > Manage Jenkins > Configure System > 
+
+在 「Jenkins URL」裡頭, 輸入訪問的 Jenkins Server 的 URL
+
+如果沒這麼做, (好像)不會怎樣, 只是 Jenkins 會一直跳出警告, 是否會導致其他錯誤目前還未知
+
+
+## 設定 Credentials
+
+Dashboard > Manage Jenkins > Credentials >
+
+點選 **Stores scoped to Jenkins** 底下的 System
+
+點選 **Global credentials (unrestricted)**
+
+點選 右上角的 **Add Credentials**
