@@ -85,7 +85,9 @@ OS:           Mac OS X 12.6.1 x86_64
 $# ./gradlew bundle
 
 
-$# ./gradlew bundleRelease
+### 產出 apk 或 aab
+$# ./gradlew bundleDebug       # outputs/bundle/debug
+$# ./gradlew bundleRelease     # outputs/bundle/release
 # 等同於 
 # java \
 #   -Xdock:name=Gradle \
@@ -95,6 +97,9 @@ $# ./gradlew bundleRelease
 #   org.gradle.wrapper.GradleWrapperMain \
 #   bundleRelease
 
+$# ./gradlew assembleDebug    # outputs/apk/debug
+$# ./gradlew assembleRelease  # outputs/apk/release
 
-$# jarsigner -keystore $pathToKeyStore ${APP.aab} $keyAlias
+
+$# apksigner sign --ks ${KeyStore} ${APK}
 ```
