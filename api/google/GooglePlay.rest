@@ -1,0 +1,34 @@
+
+
+@packageName={{$dotenv packageName}}
+@editId={{$dotenv editId}}
+@url=https://androidpublisher.googleapis.com
+@client_id={{$dotenv client_id}}
+@redirect_uri=
+@API_KEY={{$dotenv API_KEY}}
+
+
+### Generate refresh token
+# https://developers.google.com/android-publisher/authorization#generating_a_refresh_token
+GET https://accounts.google.com/o/oauth2/auth?scope=https://www.googleapis.com/auth/androidpublisher&response_type=code&access_type=offline&redirect_uri={{redirect_uri}}&client_id={{client_id}}
+
+
+
+###
+# https://developers.google.com/android-publisher/api-ref/rest/v3/edits.bundles/list
+GET {{url}}/androidpublisher/v3/applications/{{packageName}}/edits/{{editId}}/bundles
+
+
+
+### Method: reviews.list
+# https://developers.google.com/android-publisher/api-ref/rest/v3/reviews/list
+GET {{url}}/androidpublisher/v3/applications/{{packageName}}/reviews
+
+
+### Method: edits.details.get
+# https://developers.google.com/android-publisher/api-ref/rest/v3/edits.details/get?hl=en
+GET {{url}}/androidpublisher/v3/applications/{{packageName}}/edits/{{editId}}/details?key={{API_KEY}}
+
+
+
+### 
