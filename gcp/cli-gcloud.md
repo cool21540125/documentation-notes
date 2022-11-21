@@ -1,12 +1,27 @@
 
-
 # Environment variables
 
 ```bash
 ### 可取得目前 CloudShell 所在的 project
 $# echo ${DEVSHELL_PROJECT_ID}
+# 如果自行在本機使用 gcloud 則無此 env
 ```
 
+
+```sh
+### Access to gcloud sh
+$# VOLUME_CONTAINER=
+
+$# docker run -ti \
+  --name ${VOLUME_CONTAINER} \
+  gcr.io/google.com/cloudsdktool/google-cloud-cli \
+  gcloud auth login
+
+$# docker run -it --rm \
+  --volumes-from ${VOLUME_CONTAINER} \
+  gcr.io/google.com/cloudsdktool/google-cloud-cli \
+  sh
+```
 
 
 # CMD
@@ -14,25 +29,20 @@ $# echo ${DEVSHELL_PROJECT_ID}
 ```bash
 ### 設定 project default region
 $# REGION=asia-east1
-$# gcloud config set compute/region ${REGION}
+$# echo y | gcloud config set compute/region ${REGION}
 # (會花上幾分鐘...)
 
 
-### 列出所有 GCP projects
+### 列出目前帳戶有權訪問的所有 GCP projects
 $# gcloud projects list
 
 
-### 列出所有 GCP regions
+### 列出所有 GCP regions (沒事別用, 沒啥意義...)
 $# gcloud compute regions list
 
 
-### 設定 gcloud default project
-$# YOUR_PROJECT_ID=
-$# gcloud config set project ${YOUR_PROJECT_ID}
-# or
+$# gcloud config set project ${PROJECT_ID}
 $# gcloud config get-value project
-# ↑ 取得目前 gcloud shell 所在的 project
-
 
 
 ### Get a list of services that you can enable in your project:
@@ -45,4 +55,12 @@ $# SERVICE=
 $# gcloud endpoints services add-iam-policy-binding ${SERVICE} \
   --member='user:example-user@gmail.com' \
   --role='roles/servicemanagement.admin'
+
+
+### 
+$# gcloud services enable ${GOOGLE_CLOUD_SERVICE}
+
+
+### 列出該帳戶的 token
+$# gcloud auth print-access-token
 ```

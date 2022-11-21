@@ -374,3 +374,59 @@ $# export PATH="$JAVA_HOME/bin:$PATH"
 $# java -version
 $# javac -version
 ```
+
+
+# Install gcloud
+
+- 2022/11/20
+- 底下列出 2 種安裝方式
+
+
+## 1. by docker
+
+```zsh
+### download
+$# docker pull gcr.io/google.com/cloudsdktool/google-cloud-cli:latest
+
+
+### verify version
+$# docker run --rm gcr.io/google.com/cloudsdktool/google-cloud-cli:latest gcloud version | head -n 1
+Google Cloud SDK 410.0.0
+# (裡頭有 20 多個東西的版本...)
+
+
+### 建立紀錄 GCP 帳戶認證資訊的 Volume Container
+$# VOLUME_CONTAINER=tonychoucc2022-gcp-config
+$# docker run -ti \
+  --name ${VOLUME_CONTAINER} \
+  gcr.io/google.com/cloudsdktool/google-cloud-cli \
+  gcloud auth login
+Go to the following link in your browser:
+
+    Browser 訪問這個 URL
+
+Enter authorization code: (貼上 verification code)
+# 上面這動作會建立一個名為 ${VOLUME_CONTAINER} 的 Volume Container (裡頭存放認證資訊)
+
+### Access to gcloud sh
+$# VOLUME_CONTAINER=tonychoucc2022-gcp-config
+$# docker run -it --rm \
+  --volumes-from ${VOLUME_CONTAINER} \
+  gcr.io/google.com/cloudsdktool/google-cloud-cli \
+  sh
+
+$# PROJECT_ID=demo1119
+$# gcloud config set project ${PROJECT_ID}
+Updated property [core/project].
+# 然後就可以開始使用 gcloud 了
+```
+
+
+## 2. by handy
+
+```zsh
+
+```
+
+
+# 

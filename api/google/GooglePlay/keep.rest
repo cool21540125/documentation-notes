@@ -1,0 +1,9 @@
+
+@redirect_uri={{$dotenv redirect_uri}}
+@client_id={{$dotenv client_id}}
+
+
+
+### Generate refresh token
+# https://developers.google.com/android-publisher/authorization#generating_a_refresh_token
+GET https://accounts.google.com/o/oauth2/auth?scope=https://www.googleapis.com/auth/androidpublisher&response_type=code&access_type=offline&redirect_uri={{redirect_uri}}&client_id={{client_id}}
