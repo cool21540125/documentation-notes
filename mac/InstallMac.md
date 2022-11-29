@@ -287,6 +287,9 @@ $# cd /usr/local/opt/jenkins-lts/
 $# vim homebrew.jenkins-lts.service
 $# vim homebrew.mxcl.jenkins-lts.plist
 
+# 如果要自訂 JENKINS_HOME, 可修改 homebrew.jenkins-lts.service
+# <string>-DJENKINS_HOME=/Users/cicd/.jenkins-lts/</string>
+
 
 ### start
 $# brew services start jenkins-lts
@@ -424,8 +427,17 @@ Updated property [core/project].
 
 ## 2. by handy
 
+- [Install the gcloud CLI](https://cloud.google.com/sdk/docs/install)
+
 ```zsh
 
+```
+
+
+# Install pstree
+
+```sh
+$# brew install pstree
 ```
 
 
