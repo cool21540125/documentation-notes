@@ -1,0 +1,14 @@
+# https://docs.gitlab.com/ee/api/jobs.html
+
+@project_id={{$dotenv project_id}}
+
+
+
+### List project jobs
+# https://docs.gitlab.com/ee/api/jobs.html#list-project-jobs
+GET {{Gitlab_api_v4}}/projects/{{project_id}}/jobs
+    ?scope[]=failed
+Authorization: Bearer {{Gitlab_AccessToken}}
+
+
+### 

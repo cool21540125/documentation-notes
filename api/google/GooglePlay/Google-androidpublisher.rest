@@ -9,7 +9,7 @@
 
 ### Methods: edits.bundles.list
 # https://developers.google.com/android-publisher/api-ref/rest/v3/edits.bundles/list
-GET {{url}}/androidpublisher/v3/applications/{{packageName}}/edits/{{editId}}/bundles?
+GET {{url}}/androidpublisher/v3/applications/{{packageName}}/edits/{{editId}}/bundles
 Authorization: Bearer {{token}}
 
 

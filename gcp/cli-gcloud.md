@@ -9,9 +9,11 @@ $# echo ${DEVSHELL_PROJECT_ID}
 
 
 ```sh
+### Download
+$# docker pull gcr.io/google.com/cloudsdktool/google-cloud-cli
+
 ### Access to gcloud sh
 $# VOLUME_CONTAINER=
-
 $# docker run -ti \
   --name ${VOLUME_CONTAINER} \
   gcr.io/google.com/cloudsdktool/google-cloud-cli \
