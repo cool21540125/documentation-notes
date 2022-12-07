@@ -444,5 +444,30 @@ $# brew install pstree
 # Install python3
 
 ```zsh
+$# brew install python@3.9
+$# which python3.9
+/usr/local/bin/python3.9
 
+$# ls -l /usr/local/bin/python3.9
+lrwxr-xr-x  1 USER  GROUP  41 11 17 17:28 /usr/local/bin/python3.9 -> ../Cellar/python@3.9/3.9.15/bin/python3.9
 ```
+
+
+# Install golang
+
+```zsh
+$# brew install go@1.19
+$# go version
+go version go1.19.4 darwin/amd64
+
+$# which go
+/usr/local/bin/go
+
+$# ll /usr/local/bin/go*
+lrwxr-xr-x  1 USER  GROUP  26 12  7 16:24 /usr/local/bin/go -> ../Cellar/go/1.19.4/bin/go
+lrwxr-xr-x  1 USER  GROUP  39 11 10 14:34 /usr/local/bin/gobject-query -> ../Cellar/glib/2.74.0/bin/gobject-query
+lrwxr-xr-x  1 USER  GROUP  29 12  7 16:24 /usr/local/bin/gofmt -> ../Cellar/go/1.19.4/bin/gofmt
+```
+
+
+# 
