@@ -31,6 +31,7 @@ Content-Type: application/json
 
 // Use this method to send text messages. On success, the sent Message is returned.
 ### 發送消息 - https://core.telegram.org/bots/api#sendmessage
+# 可更改 chat_id 來發送給 BOT 或是 GroupBOT
 GET {{URL}}/bot{{tg_token}}/sendMessage
 Content-Type: application/json
 
@@ -38,6 +39,26 @@ Content-Type: application/json
     "chat_id": "{{tg_chat_id}}",
     "parse_mode": "MarkdownV2",
     "text": "RestClient test on `{{$localDatetime 'YYYY-MM-DD HH:mm:ss'}}`"
+}
+
+
+
+### to「BOT Group」(發送多行訊息) ===========
+### 發送消息 - https://core.telegram.org/bots/api#sendmessage
+POST {{URL}}/sendMessage
+Content-Type: application/json
+
+{
+    "chat_id": "{{tg_chat_id}}",
+    "parse_mode": "MarkdownV2",
+    "text": "不知道這個能幹嘛可以發送多行",
+    "entities": [
+        {
+            "type": "mention",
+            "offset": 0,
+            "length": 10
+        }
+    ]
 }
 
 

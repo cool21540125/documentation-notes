@@ -17,7 +17,7 @@
 
 這篇聚焦在 Traditional Slack apps
 
-![Traditional Slack App](../img/SlackAPI_traditionalApps.png)
+![Traditional Slack App](./img/SlackAPI_traditionalApps.png)
 
 
 ### 在 workspace 裡頭建立 App
@@ -88,7 +88,7 @@ backend -- "Signing Secret\n將 Request 加密" --> slack;
 > 
 > 填妥 `Request URL` (記得要有 suffix) > `challenge` 要能夠成功~
 
-![Example Slack Event Setting](../img/ExampleSlackEvent.png)
+![Example Slack Event Setting](./img/ExampleSlackEvent.png)
 
 > 底下的 **Subscribe to bot events** > **Add Bot User Event** > `message.channels`
 > 
@@ -103,7 +103,7 @@ backend -- "Signing Secret\n將 Request 加密" --> slack;
 
 讓 channel 裡頭可以使用「/xxxxx」的命令吧
 
-![Slash Command](../img/slashCommand.png)
+![Slash Command](./img/slashCommand.png)
 
 
 ### Source Code
