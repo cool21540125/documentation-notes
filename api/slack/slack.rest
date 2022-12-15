@@ -28,7 +28,7 @@ Content-type: application/json
 
 ### 發送 排程訊息 -> 特定 channel
 # https://api.slack.com/methods/chat.scheduleMessage
-@preparePostTS={{$timestamp 10 s}}
+@preparePostTS={{$timestamp 11 s}}
 POST {{url}}/chat.scheduleMessage
 Authorization: Bearer {{token}}
 Content-type: application/json

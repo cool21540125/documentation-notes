@@ -1,7 +1,7 @@
 # Reference:
 #     https://www.jenkins.io/doc/book/using/remote-access-api/
 # ---------------------------------------------------
-@URL=http://{{jenkins_user}}:{{jenkins_token}}@{{jenkins_domain}}:{{jenkins_port}}
+@URL=http://{{jenkins_user}}:{{jenkins_token}}@{{jenkins_domain}}
 @job_name={{$dotenv job_name}}
 @tag={{$dotenv tag}}
 
