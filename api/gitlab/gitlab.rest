@@ -11,3 +11,7 @@
 GET {{Gitlab_api_v4}}/metadata
 Authorization: Bearer {{Gitlab_AccessToken}}
 
+
+### 
+GET {{Gitlab_api_v4}}/version
+Authorization: Bearer {{Gitlab_AccessToken}}

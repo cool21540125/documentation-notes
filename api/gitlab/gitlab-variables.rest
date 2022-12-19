@@ -1,0 +1,20 @@
+# Project-level CI/CD variables API
+#     https://docs.gitlab.com/ee/api/project_level_variables.html
+# 
+# =========================================================
+
+@project_id={{$dotenv project_id}}
+@group_id={{$dotenv group_id}}
+
+
+### List environments
+# https://docs.gitlab.com/ee/api/project_level_variables.html#list-project-variables
+GET {{Gitlab_api_v4}}/projects/{{project_id}}/variables
+Authorization: Bearer {{Gitlab_AccessToken}}
+
+
+
+### List group variables
+# https://docs.gitlab.com/ee/api/group_level_variables.html#list-group-variables
+GET {{Gitlab_api_v4}}/groups/{{group_id}}/variables
+Authorization: Bearer {{Gitlab_AccessToken}}

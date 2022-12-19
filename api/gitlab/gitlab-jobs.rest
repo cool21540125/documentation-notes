@@ -7,7 +7,9 @@
 ### List project jobs
 # https://docs.gitlab.com/ee/api/jobs.html#list-project-jobs
 GET {{Gitlab_api_v4}}/projects/{{project_id}}/jobs
-    ?scope[]=failed
+    ?order_by=updated_at
+    &sort=desc
+    &updated_after=2022-12-19T00:00:00Z
 Authorization: Bearer {{Gitlab_AccessToken}}
 
 

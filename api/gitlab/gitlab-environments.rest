@@ -1,0 +1,20 @@
+# Gitlab - Projects API
+#    https://docs.gitlab.com/ee/api/environments.html
+# 
+# =========================================================
+
+@project_id={{$dotenv project_id}}
+
+
+### List environments
+# https://docs.gitlab.com/ee/api/environments.html#list-environments
+GET {{Gitlab_api_v4}}/projects/{{project_id}}/environments
+Authorization: Bearer {{Gitlab_AccessToken}}
+
+
+
+### Get a specific environment
+@environment_id={{$dotenv environment_id}}
+# https://docs.gitlab.com/ee/api/environments.html#get-a-specific-environment
+GET {{Gitlab_api_v4}}/projects/{{project_id}}/environments/{{environment_id}}
+Authorization: Bearer {{Gitlab_AccessToken}}
