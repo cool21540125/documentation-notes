@@ -52,6 +52,14 @@ $# kubectl port-forward --address $IP pod/a1 9999:8888
 # 本地可訪問 http://POD_IP:9999
 
 
+### 查看 Services 與 Endpoints 的對應
+$# kubectl get endpoints
+
+
+### 快速建立 (ClusterIP) Service (port 則等同於 Pod 的 containerPort)
+$# kubectl expose deployment ${Deployment}
+# 不過依舊建議使用 yaml 統一管理 Service
+
 ### 進入到 pod 裏頭
 $# kubectl exec -it ${POD_NAME} -- /bin/sh
 # 等同於 docker exec -it ${ContainerName} /bin/sh
