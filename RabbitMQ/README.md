@@ -1,3 +1,4 @@
+
 # RabbitMQ
 
 - 2019/07/05
@@ -6,6 +7,7 @@
 - [Part 3: The RabbitMQ Management Interface](https://www.cloudamqp.com/blog/2015-05-27-part3-rabbitmq-for-beginners_the-management-interface.html) 監控 web GUI
 - [Part 4: RabbitMQ Exchanges, routing keys and bindings](https://www.cloudamqp.com/blog/2015-09-03-part4-rabbitmq-for-beginners-exchanges-routing-keys-bindings.html) 圖表流程清晰
 - [RabbitMQ笔记三：四种类型Exchange](https://www.jianshu.com/p/04f443dcd8bd)
+
 
 # port
 
@@ -21,9 +23,10 @@
 
 # 觀念
 
-- `routing key` 是 message 的屬性
+- RabbitMQ 是個 *message-queueing software*, 也被稱之為 **message broker** 或 **queue manager**
+- message 屬性:
+    - routing key
 
-RabbitMQ 是個 message-queueing software, 被稱為 *message broker* or *queue manager*
 
 ![RabbitMQ](/img/RabbitMQ.png)
 
