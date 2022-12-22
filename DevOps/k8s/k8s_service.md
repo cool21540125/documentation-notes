@@ -4,42 +4,24 @@ k8s 的 Pods 都有它自己的 IP (ephemeral), Pod 隨時死給你看, IP 隨�
 - Service 有一組 Static IP, 用來讓 User 與 Service 後面的 Pods 做通訊
     - User 不用鳥 Pods 死活, Service 會幫忙通訊就對了
     - ReplicaSet 會協助幫掛掉的 Pods 抓交替
+- Service 的域名表示方法為: `<servicename>.<namespace>.svc.<clusterdomain>`
+    - clusterdomain: 為 k8s cluster 設置的 域名尾碼
 
 
 # k8s service
 
 Kubernetes 有底下 4 種常見的 Service Types:
+    - ClusterIP
+    - NodePort
+    - LoadBalancer
+    - ExternalName
 
 
 ## type: ClusterIP
 
 - 此為 default service type
-- Exposes the service on a cluster-internal IP. Choosing this value makes the service only reachable from within the cluster.
 - Cluster 裡頭的任何 Pod 都可以訪問
 - 可指定 1~N 個 Node IP, 用來提供服務 (自動映射到 ClusterIP)
-
-```mermaid
-flowchart LR
-
-subgraph Node1
-    subgraph Pod1["Pod\n10.2.2.5"]
-        app11["APP(port: 3000)"]
-        app12["Sidecar(port: 9000)"]
-    end
-end
-subgraph Node2
-    subgraph Pod2["Pod\n10.2.1.4"]
-        app21["APP(port: 3000)"]
-        app22["Sidecar(port: 9000)"]
-    end
-end
-
-Browser --> Ingress
-Ingress --> Service["Service clusterIP \n 10.128.8.64(port: 3200)"]
-
-Service --> Node1
-Service --> Node2
-```
 
 
 ## type: NodePort
@@ -52,5 +34,14 @@ Service --> Node2
 
 ## type: LoadBalancer
 
+- 於 Public Cloud 使用
+- mapping 到 Cloud LB
 
-## type: Headless
+
+## type: ExternalName
+
+- 將 Service 映射為一個 external address
+- 藉由 `externalName` 來設置
+
+
+# 

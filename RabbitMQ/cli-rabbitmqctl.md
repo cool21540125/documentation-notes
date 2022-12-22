@@ -1,7 +1,5 @@
 
-
-
-## RabbitMQ join Cluster
+# RabbitMQ join Cluster
 
 - RabbitMQ Cluster 裡頭的 Nodes, 至少比需要有一台是 `Disk Node` (其餘可為 `RAM Nodes`)
 - 
@@ -18,22 +16,54 @@ $# rabbitmqctl cluster_status
 ```
 
 
-## 查詢 RabbitMQ 狀態
+# 查詢 RabbitMQ 狀態
 
 ```bash
 ### 查看 Node 狀態
 $# rabbitmqctl status
+
+
+### 列出 Queues
+$# rabbitmqctl list_queues
+Timeout: 60.0 seconds ...
+Listing queues for vhost / ...
+name    messages
+hello   1
+# 這邊可以看到 QueueName, 及其含有多少 Messages 尚未處理
+
 ```
 
 
-## RabbitMQ 用戶 & 權限
+# Exchange 與 Queue
+
+```bash
+### 列出所有 exchanges
+$# rabbitmqctl list_exchanges
+Listing exchanges for vhost / ...
+name    type
+amq.rabbitmq.trace      topic
+amq.direct      direct
+amq.headers     headers
+amq.topic       topic
+amq.fanout      fanout
+        direct               # 此為 default (unnamed) exchange
+amq.match       headers
+# 
+
+
+### 
+$# 
+```
+
+
+# RabbitMQ 用戶 & 權限
 
 ```bash
 ### 列出所有用戶
 $# rabbitmqctl list_users --formatter=json
 [
-{"user":"app_user","tags":["management"]}
-,{"user":"guest","tags":["administrator"]}
+    {"user":"app_user","tags":["management"]},
+    {"user":"guest","tags":["administrator"]}
 ]
 
 

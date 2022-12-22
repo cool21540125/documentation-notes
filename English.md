@@ -29,6 +29,7 @@
 - immutable : 不可變的
 - ingress : 入口
 - IP Masquerade: IP掩蔽
+- jargon : 行話
 - jurisdiction : 管轄權
 - linter : code 語法 check
 - malformed : 異常
