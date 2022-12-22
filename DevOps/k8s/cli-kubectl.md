@@ -185,4 +185,17 @@ $# kubectl rollout history deployment/${Deployment} --revision=N
 ### 暫停/還原 Deployment (若要用 kubectl edit 接連修改, 可用這個避免頻繁更新)
 $# kubectl rollout pause deployment/${Deployment}
 $# kubectl rollout resume deployment/${Deployment}
+
+
+### 顯示目前有哪些 context
+$# kubectl config get-contexts
+CURRENT   NAME                  CLUSTER               AUTHINFO   NAMESPACE
+*         str                   str                   str        
+          str-demo-k8s-str-02   str-demo-k8s-str-02   str        
+          str-demo-k8s-str-03   str-demo-k8s-str-03   str        
+          str-demo-k8s-str01    str-demo-k8s-str01    str
+
+
+### 
+$# 
 ```

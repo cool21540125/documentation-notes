@@ -3,18 +3,10 @@
 
 @url=http://{{$dotenv domain}}
 
-#@url=http://zabbix.gbbos.com:3001  // 我根本不知道密碼
-
-// CPU Load (vm158=28637, vm157=28638, Newtemplate=28647)
-@itemId=28638
-
-// host (vm158=10263, vm157=10264, Newtemplate=10267)
-@hostId=10264
 
 
 
 // https://www.zabbix.com/documentation/4.0/manual/api/reference/user/login
-### 登入
 # @name login
 GET {{url}}/api_jsonrpc.php
 Content-Type: application/json
