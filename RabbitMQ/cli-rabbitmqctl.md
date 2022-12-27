@@ -1,5 +1,5 @@
 
-# RabbitMQ join Cluster
+# Cluster && Status
 
 - RabbitMQ Cluster 裡頭的 Nodes, 至少比需要有一台是 `Disk Node` (其餘可為 `RAM Nodes`)
 - 
@@ -13,12 +13,8 @@ $# rabbitmqctl join_cluster --ram rabbit@mq1
 
 $# rabbitmqctl start_app
 $# rabbitmqctl cluster_status
-```
 
 
-# 查詢 RabbitMQ
-
-```bash
 ### 查看 Node 狀態
 $# rabbitmqctl status
 
@@ -33,7 +29,7 @@ $#
 ```
 
 
-# Exchange 與 Queue
+# Exchange && Queue && Consumer
 
 ```bash
 ### 列出所有 exchanges
@@ -50,21 +46,29 @@ amq.match       headers
 # 
 
 
-### 列出 Queues
-$# rabbitmqctl list_queues
-Timeout: 60.0 seconds ...
-Listing queues for vhost / ...
-name    messages
-hello   1
-# 這邊可以看到 QueueName, 及其含有多少 Messages 尚未處理
+### list bindings - 列出現存的 bindings (exchange 與 queue 之間的關係)
+$# rabbitmqctl list_bindings
 
 
-### 
-$# 
+### 查詢特定 vhost 的所有 consumers
+$# rabbitmqctl list_consumers -p '/game/sg001'
+Listing consumers on vhost /game/sg001 ...
+app1         <mq1@mq1.2.1554.0>      ctag2.972fffd4fe23049ad361db299b1834dc  true   10  []
+app1         <mq1@mq1.2.1419.0>      ctag2.241b42bc13a43921be019d2ddf3f5302  true   10  []
+game.sg001   <mq1@mq1.2.1560.0>      ctag3.f7f58a3d7b4e932dbeae2354f9aa3cef  true   10  []
+game.sg001   <mq1@mq1.2.1425.0>      ctag3.adbb4ba2d2325b1844d697a7e4daee26  true   10  []
+app1.daemon  <mq1@mq1.2.1548.0>      ctag1.0e2932e01eae88ff1843395cb6e956ae  true   10  []
+app1.daemon  <mq1@mq1.2.1413.0>      ctag1.4756e3ee9e6c6b6ed9e9330e7ce998d1  true   10  []
+
+
+### 刪除上述的 consumer connection
+$# rabbitmqctl close_connection "<mq1@mq1.2.1413.0>" "(delete reason)"
+# 但實測發現會有些問題(有待驗證)
+
 ```
 
 
-# RabbitMQ 用戶 & 權限
+# User && Auth
 
 ```bash
 ### 列出所有用戶
