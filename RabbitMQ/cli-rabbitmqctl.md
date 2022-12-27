@@ -16,21 +16,20 @@ $# rabbitmqctl cluster_status
 ```
 
 
-# 查詢 RabbitMQ 狀態
+# 查詢 RabbitMQ
 
 ```bash
 ### 查看 Node 狀態
 $# rabbitmqctl status
 
 
-### 列出 Queues
-$# rabbitmqctl list_queues
-Timeout: 60.0 seconds ...
-Listing queues for vhost / ...
-name    messages
-hello   1
-# 這邊可以看到 QueueName, 及其含有多少 Messages 尚未處理
+### Version
+$# rabbitmqctl version
+3.10.7
 
+
+### 
+$# 
 ```
 
 
@@ -49,6 +48,15 @@ amq.fanout      fanout
         direct               # 此為 default (unnamed) exchange
 amq.match       headers
 # 
+
+
+### 列出 Queues
+$# rabbitmqctl list_queues
+Timeout: 60.0 seconds ...
+Listing queues for vhost / ...
+name    messages
+hello   1
+# 這邊可以看到 QueueName, 及其含有多少 Messages 尚未處理
 
 
 ### 

@@ -24,3 +24,4 @@ keyfile
 *.tar.gz
 *.volume_dir/
 .kube/
+**/.DS_Store
