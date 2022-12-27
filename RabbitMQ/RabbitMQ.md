@@ -7,6 +7,10 @@
 - [Part 3: The RabbitMQ Management Interface](https://www.cloudamqp.com/blog/2015-05-27-part3-rabbitmq-for-beginners_the-management-interface.html) 監控 web GUI
 - [Part 4: RabbitMQ Exchanges, routing keys and bindings](https://www.cloudamqp.com/blog/2015-09-03-part4-rabbitmq-for-beginners-exchanges-routing-keys-bindings.html) 圖表流程清晰
 - [RabbitMQ笔记三：四种类型Exchange](https://www.jianshu.com/p/04f443dcd8bd)
+- [Production Checklist](https://www.rabbitmq.com/production-checklist.html)
+- [Monitoring](https://www.rabbitmq.com/monitoring.html)
+- [Consumer Acknowledgements and Publisher Confirms](https://www.rabbitmq.com/confirms.html)
+- [AMQP 0-9-1 Model Explained](https://www.rabbitmq.com/tutorials/amqp-concepts.html) 裡面看 headers exchange
 
 
 # port
@@ -22,11 +26,6 @@
 
 
 # 觀念
-
-- RabbitMQ 是個 *message-queueing software*, 也被稱之為 **message broker** 或 **queue manager**
-- message 屬性:
-    - routing key
-
 
 ![RabbitMQ](/img/RabbitMQ.png)
 
@@ -71,13 +70,6 @@ Fanout        | `amq.fanout`
 Topic         | `amq.topic`
 Headers       | `amq.headers`  (AMQP 0-9-1 協議上, 定義的名稱為 `amq.match`)
 
-
-# 更細節閱讀
-
-- [Production Checklist](https://www.rabbitmq.com/production-checklist.html)
-- [Monitoring](https://www.rabbitmq.com/monitoring.html)
-- [Consumer Acknowledgements and Publisher Confirms](https://www.rabbitmq.com/confirms.html)
-- [AMQP 0-9-1 Model Explained](https://www.rabbitmq.com/tutorials/amqp-concepts.html) 裡面看 headers exchange
 
 ## 實作
 
