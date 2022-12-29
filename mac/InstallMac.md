@@ -218,30 +218,27 @@ SAM CLI, version 1.53.0
 ```
 
 
-# Install terraform (尚未)
+# Install terraform
+
+- 2022/12/30
+- [Install Terraform](https://developer.hashicorp.com/terraform/tutorials/gcp-get-started/install-cli)
 
 ```bash
-### install the HashiCorp tap, a repository of all our Homebrew packages.
+
+### 法1. 使用 brew (需要依賴噁爛到爆的 xcode) -----------------
+# install the HashiCorp tap, a repository of all our Homebrew packages.
 $# brew tap hashicorp/tap
 
-### install Terraform with hashicorp/tap/terraform
+# install Terraform with hashicorp/tap/terraform
 $# brew install hashicorp/tap/terraform
-==> Downloading https://releases.hashicorp.com/terraform/1.2.8/terraform_1.2.8_darwin_amd64.zip
-Already downloaded: /Users/tony/Library/Caches/Homebrew/downloads/6cf027cb532d2f4e3d638253209a68827d4ee05d5b51785cff70fad958c880a6--terraform_1.2.8_darwin_amd64.zip
-==> Installing terraform from hashicorp/tap
-Error: Your Command Line Tools are too outdated.
-Update them from Software Update in System Preferences or run:
-  softwareupdate --all --install --force
+# 此方法安裝後, 會自動更新
 
-If that doesn''t show you any updates, run:
-  sudo rm -rf /Library/Developer/CommandLineTools
-  sudo xcode-select --install
 
-Alternatively, manually download them from:
-  https://developer.apple.com/download/all/.
-You should download the Command Line Tools for Xcode 13.4.
-# 得知, macbook 又要我去安裝 XCode 這噁心的爛東西了...
-# 放棄使用 brew 來安裝....
+### 法2. 尊重生命, 選離 xcode, 所以我選擇直接抓 binary -----------------
+$# terraform version
+Terraform v1.3.6
+on darwin_amd64
+
 ```
 
 
