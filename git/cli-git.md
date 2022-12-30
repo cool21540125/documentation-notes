@@ -17,7 +17,7 @@ git config --global credential.helper 'cache --timeout=86400'  # (使用非ssh�
 git config --global credential.helper store                    # 慎用!! 會以明碼的方式, 儲存在 「~/.git-credentials」
 
 
-### 懶人指令
+### 懶人指令 (git tree)
 git config --global alias.tree "log --graph --decorate --pretty=oneline --abbrev-commit"
 git config --global alias.lg "log --color --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset'"
 git config --global alias.lgg "log --pretty=format:'%C(yellow)%h%Cred%d %Creset%s%Cblue [%cn]%Creset' --decorate"
@@ -30,7 +30,7 @@ git config --global alias.cm "commit -m"
 
 ```bash
 ### 測試能否與 Git Server 連線
-$# ssh -vT git@GIT_SERVER_DOMAIN -p PORT
+$# ssh -vT git@${GIT_SERVER_DOMAIN} -p ${PORT}
 # 若 PORT 為預設的 22, -p PORT 可略
 # GIT_SERVER_DOMAIN, ex: gitlab.com
 # 永遠使用 git user 來測
