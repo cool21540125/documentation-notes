@@ -15,39 +15,52 @@
 
 
 ```bash
-### 
+### 增加 helm 訂閱的 helm repository
 $# helm repo add stable https://charts.helm.sh/stable
 "stable" has been added to your repositories
 
+$# helm repo add bitnami https://charts.bitnami.com/bitnami
+"bitnami" has been added to your repositories
 
-$# helm repo update
+$# helm repo add nfs-subdir-external-provisioner https://kubernetes-sigs.github.io/nfs-subdir-external-provisioner/
+"nfs-subdir-external-provisioner" has been added to your repositories
+# Example: 增加 Dynamic Volume Provider
+
+
+### 列出 helm client 以追蹤的 helm repository
+$# helm repo list
+NAME    URL
+stable  https://charts.helm.sh/stable     
+bitnami https://charts.bitnami.com/bitnami
+
+
+### 搜尋 特定 helm repo
+$# helm search repo ${Helm_Repo_Name}
+
+
+### 排除特定
+$# helm search repo ${Helm_Repo_Name} | grep -v DEPRECATED
+### 2021/11 的現在, 會有一大堆 DEPRECATED (推測是大型贊助者不贊助了)
+
+
+### 有點像是 apt-get update 那種感覺...
+$# helm repo update ${Helm_Repo_Name}
 Hang tight while we grab the latest from your chart repositories...
 ...Successfully got an update from the "nfs-subdir-external-provisioner" chart repository
 ...Successfully got an update from the "stable" chart repository
 Update Complete. ⎈Happy Helming!⎈
 
 
-### 
-$# helm repo list
-NAME    URL
-stable  https://charts.helm.sh/stable
-
-
-### 
-$# helm search repo stable | grep -v DEPRECATED
-### 2021/11 的現在, 會有一大堆 DEPRECATED (推測是大型贊助者不贊助了)
-
-### 
-$# helm repo add nfs-subdir-external-provisioner https://kubernetes-sigs.github.io/nfs-subdir-external-provisioner/
-"nfs-subdir-external-provisioner" has been added to your repositories
-# Example: 增加 Dynamic Volume Provider
+### 由本地的 Helm Charts 部署 Release
+$# helm install -f ${PATH_to_valuesyaml} ${ReleaseName} ${PATH_to_ChartDir}
+$# helm upgrade -f ${PATH_to_valuesyaml} ${ReleaseName} ${PATH_to_ChartDir}
 
 
 ### 
 $# helm install nfs-subdir-external-provisioner nfs-subdir-external-provisioner/nfs-subdir-external-provisioner \
---set storageClass.defaultClass=true \
---set nfs.server=192.168.152.4 \
---set nfs.path=/opt/nfs
+    --set storageClass.defaultClass=true \
+    --set nfs.server=192.168.152.4 \
+    --set nfs.path=/opt/nfs
 NAME: nfs-subdir-external-provisioner
 LAST DEPLOYED: Sat Nov 20 13:51:30 2021
 NAMESPACE: default

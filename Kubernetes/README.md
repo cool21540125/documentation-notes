@@ -17,6 +17,7 @@ k get deploy  # deployment
 k get no      # nodes
 k get cm      # configmap
 k get rs      # replicaset
+k get sta     # statefulset
 ```
 
 
