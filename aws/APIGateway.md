@@ -2,23 +2,34 @@
 # API Gateway
 
 - [What is Amazon API Gateway?](https://docs.aws.amazon.com/apigateway/latest/developerguide/welcome.html)
-    - creating/publishing/maintaining/monitoring/securing REST, HTTP, and WebSocket APIs at any scale
+    - creating/publishing/maintaining/monitoring/securing ... at any scale
+        - REST
+        - HTTP
+        - WebSocket
 - 常見問題: HTTP API v.s. REST API
     - HTTP API, 如果僅需要做 proxy, 使用這個就對了, 成本 ↓ 70% && 效率 ↑ 60%
     - REST API, 相較於 HTTP API, 多了一些功能~ ex: 
         - cache
         - API Keys (認證)
         - usage plans (不知道這啥)
-- 具備底下功能:
-    - authentication
-    - authorization
+- API Gateway 具備底下功能:
+    ```mermaid
+    flowchart LR;
+
+        client <-- REST API --> gw[API Gateway] <-- proxy request --> Lambda <-- CRUD --> DynamoDB;
+    ```
+    - handle Security - authentication & authorization
     - throttling
-    - cache Response
+    - cache API Response
+    - handle different API versioning
+    - handle different environments
+    - 後端可放任何 AWS Services
 - 具有底下幾種 Endpoint Types:
-    - Edge-Optimized (default)
-        - API Gateway 存在於一開始建立的 Region, 不過 Request 來自 [CloudFront Edge Locations]
+    - Edge-Optimized (default) (for global clients)
+        - API Gateway 存在於一開始建立的 Region, 不過 Request 會打到 **CloudFront Edge Locations** 再回源
             - improve latency
             - 如果想搞 global services 可考慮這個
+        - 如果使用此 Endpoint Type, 又結合 ACM, 則證書會放在 `us-east-1`
     - Regional
         - API Gateway 存在於一開始建立的 Region && 預估 clients 也都來自於這個 Region
             - 如果預估 service 限縮於某些地區
@@ -27,7 +38,9 @@
     - Private
         - clients from VPC
             - VPC Endpoint (ENI)
-        - 訪問權限可使用 Resource Policy
+        - 訪問權限可使用 Resource Policy 做配置
+
+---
 
 ```mermaid
 flowchart TB;

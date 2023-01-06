@@ -3,6 +3,7 @@ Ansible
 
 - 2019/01/12
 - 這東西可以快速部署一群遠端主機(透過 ssh, 使用 PKI 認證)
+- [What is Ansible | Ansible Playbook explained | Ansible Tutorial for Beginners](https://www.youtube.com/watch?v=1id6ERvfozo&ab_channel=TechWorldwithNana)
 
 
 ## Terms

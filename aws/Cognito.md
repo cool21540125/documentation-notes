@@ -35,6 +35,25 @@
             Google; FB; SAML; OpenID
         end
     ```
+- 較現代化的 **authentication flows** 包含了新的 challenge types(除了密碼驗證以外), AWS Cognito 的 authentication 需要實踐底下 API 的驗證流程:
+    - InitiateAuth
+    - RespondToAuthChallenge
+    ```mermaid
+    flowchart LR
+
+    cup["Cognito User Pools"]
+    subgraph c
+        direction LR
+        m["mobile client"]
+        w["web client"]
+    end
+
+    c -- "1. InitiateAuth (SRP)" --> cup;
+    cup -- "2. Challenge" --> c;
+    c -- "3. RespondToAuthChallenge" --> cup;
+    cup -- "4. Cognito Tokens" --> c;
+    ```
+    - https://docs.aws.amazon.com/cognito/latest/developerguide/amazon-cognito-user-pools-authentication-flow.html
 - CUP 內建已整合了 API Gateway 以及 ALB
     ```mermaid
     flowchart LR
@@ -46,6 +65,7 @@
     cup <-- 3. Evaluate Token --> api;
     api <-- 4. access --> backend;
     ```
+
     ```mermaid
     flowchart LR
 
