@@ -224,8 +224,7 @@ SAM CLI, version 1.53.0
 - [Install Terraform](https://developer.hashicorp.com/terraform/tutorials/gcp-get-started/install-cli)
 
 ```bash
-
-### 法1. 使用 brew (需要依賴噁爛到爆的 xcode) -----------------
+### 法1. (放棄使用 brew 吧!!) (需要依賴噁爛到爆的 xcode) -----------------
 # install the HashiCorp tap, a repository of all our Homebrew packages.
 $# brew tap hashicorp/tap
 
