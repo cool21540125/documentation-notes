@@ -50,6 +50,7 @@
 - replica : 即時備援 (即時複製一份到其他節點的概念, HA), 資料備份的另一種可行性作法
 - retention : 保留
 - routing mesh : 路由網路
+- rss memory : resident set size memory, 常駐集記憶體大小, a.k.a. 記憶體耗用啦
 - sharding : 分片(把東西拆成幾分的概念吧??)
 - SIGSEGV : 記憶體區段錯誤
 - slirp4netns : User-mode networking for unprivileged network namespaces

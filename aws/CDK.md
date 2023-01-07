@@ -15,7 +15,7 @@ npm install -g aws-cdk
 cdk --version
 # 2.29.0 (build 47d7ec4
 
-### 可用來取得 Account ID
+### 可用來取得 Account && UserId && Arn
 aws sts get-caller-identity
 
 ### ====== Init ======

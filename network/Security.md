@@ -6,6 +6,22 @@
 - [19. Cross Site Request Forgery (CSRF)](https://docs.spring.io/spring-security/site/docs/current/reference/html/csrf.html) not yet
 
 
+# base64
+
+```bash
+### base64 encode && base64 decode 基本用法
+
+$# YOUR_PASSWORD='abcdefg'
+$# echo -n ${YOUR_PASSWORD} | base64
+YWJjZGVmZw==
+# 此為 base64 encoded
+
+
+$# echo 'YWJjZGVmZw==' | base64 -d
+abcdefg
+```
+
+
 # 密碼學
 
 ## Encode 編碼
