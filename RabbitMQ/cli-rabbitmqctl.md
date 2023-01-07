@@ -1,5 +1,5 @@
 
-# Cluster && Status
+# Cluster && Status && Connections && Channels
 
 - RabbitMQ Cluster 裡頭的 Nodes, 至少比需要有一台是 `Disk Node` (其餘可為 `RAM Nodes`)
 - 
@@ -24,8 +24,14 @@ $# rabbitmqctl version
 3.10.7
 
 
-### 
-$# 
+### 列出 Channels
+$# rabbitmqctl list_channels
+Listing channels ...
+pid     user    consumer_count  messages_unacknowledged
+<rabbit@event-driven-rabbitmq-1.event-driven-rabbitmq-headless.ele-rabbitmq.svc.cluster.local.1672821890.22819.1>       user    0       0
+<rabbit@event-driven-rabbitmq-1.event-driven-rabbitmq-headless.ele-rabbitmq.svc.cluster.local.1672821890.22834.1>       user    1       0
+...
+# 
 ```
 
 

@@ -173,6 +173,18 @@ CoreDNS is running at https://127.0.0.1:60229/api/v1/namespaces/kube-system/serv
 To further debug and diagnose cluster problems, use 'kubectl cluster-info dump'.
 
 
+### 依照狀態找 pods
+$# kubectl get pods --field-selector status.phase=Running
+# status.phase = Pending / Running / Succeeded / Failed / Unknown
+
+
+### 依照特定以支援的 operators 找 pods
+$# kubectl get pods \
+    --all-namespaces \
+    --field-selector=metadata.namespace!=default
+# 如果沒有 --all-namespaces, 預設會到 default namespace 找到後, 再做 filter
+
+
 ### 如果某次進版導致錯誤, 可使用此方式回退
 $# kubectl rollout undo deployment/${DeploymentName}
 $# helm rollback -n ${namespace} ${release} ${REVISION}
@@ -204,6 +216,10 @@ CURRENT   NAME                  CLUSTER               AUTHINFO   NAMESPACE
           str-demo-k8s-str01    str-demo-k8s-str01    str
 
 
-### 
-$# 
+### 查看 nodes 資源耗用狀態 (需要依賴 Metrics Server)
+$# kubectl top nodes
+
+
+### 查看 pods 資源耗用狀態 (需要依賴 Metrics Server)
+$# kubectl top pods -n kube-system
 ```

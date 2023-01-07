@@ -1,0 +1,41 @@
+
+@url=https://api.datadoghq.com
+@DD_API_KEY={{$dotenv DD_API_KEY}}
+@DD_APP_KEY={{$dotenv DD_APP_KEY}}
+
+
+
+### Get active metrics list
+@from=1669852800
+# https://docs.datadoghq.com/api/latest/metrics/?code-lang=curl#get-active-metrics-list
+GET {{url}}/api/v1/metrics?from={{from}}
+DD-API-KEY: {{DD_API_KEY}}
+DD-APPLICATION-KEY: {{DD_APP_KEY}}
+
+
+
+### Get a list of metrics
+# https://docs.datadoghq.com/api/latest/metrics/?code-lang=curl#get-a-list-of-metrics
+GET {{url}}/api/v2/metrics
+DD-API-KEY: {{DD_API_KEY}}
+DD-APPLICATION-KEY: {{DD_APP_KEY}}
+
+
+
+### Get metric metadata
+# https://docs.datadoghq.com/api/latest/metrics/?code-lang=curl#get-metric-metadata
+#@metric_name={{$dotenv metric_name}}
+@metric_name=system.cpu.system
+GET {{url}}/api/v1/metrics/{{metric_name}}
+DD-API-KEY: {{DD_API_KEY}}
+DD-APPLICATION-KEY: {{DD_APP_KEY}}
+
+
+
+###
+# 
+# 
+
+
+
+### 

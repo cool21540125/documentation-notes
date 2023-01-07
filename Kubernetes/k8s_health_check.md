@@ -152,6 +152,7 @@ startupProbe:
 ```
 
 - 最多能有 failureThreshold * periodSeconds 秒 來做 startup
-
+  - failureThreshold : default 3. 連續探測多少次失敗才會被認定失敗
+  - periodSeconds : default 10s. 探測頻率
 
 ### 
