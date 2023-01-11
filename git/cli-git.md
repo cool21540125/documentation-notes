@@ -40,6 +40,12 @@ $# ssh -vT git@${GIT_SERVER_DOMAIN} -p ${PORT}
 # 使用
 
 ```bash
+### 強制 Golang 使用 ssh(而非 http) 從 private repo 拉資料
+# https://matthung0807.blogspot.com/2021/07/go-unable-to-get-modules-from-private-gitlab-repository.html
+# Golang 從私有的GitLab取得依賴module Unable to get modules from private gitlab repository
+git config --global url."git@gitlab.com:".insteadOf "https://gitlab.com/"
+
+
 ### 重新 Commit
 git commit --amend -m "<Commit String>"
 

@@ -10,18 +10,19 @@
 ```bash
 ### ====== Install ======
 ### 須先安裝 nodejs
-npm install -g aws-cdk
+$# npm install -g aws-cdk
 
-cdk --version
+$# cdk --version
 # 2.29.0 (build 47d7ec4
 
 ### 可用來取得 Account && UserId && Arn
-aws sts get-caller-identity
+$# aws sts get-caller-identity
+# 可以看到 當時設定的 aws configure 是啥
 
 ### ====== Init ======
-cdk bootstrap aws://${ACCOUNT_NUMBER}/${REGION}
+$# cdk bootstrap aws://${ACCOUNT_NUMBER}/${REGION}
 
 ### 初始化 CDK(特定語言) project
-cdk init --language $PROGRAM_LANGUAGE
+$# cdk init --language $PROGRAM_LANGUAGE
 # ex: PROGRAM_LANGUAGE=typescript
 ```

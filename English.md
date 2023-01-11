@@ -100,6 +100,7 @@ OLAP   | Online Analytics Processing                 | 線上分析處理       
 OLTP   | Online Transaction Processing               | 線上交易處理        | 
 PERT   | Program Evaluation and Review Technique     | 專案管理           | [PERT 網路分析法](https://wiki.mbalib.com/zh-tw/PERT%E7%BD%91%E7%BB%9C%E5%88%86%E6%9E%90%E6%B3%95)
 POC    | Proof of Concept                            | DevOps             |
+QoS    | Quality of Service                          | 服務質量            | Quality of service (QoS) is the use of mechanisms or technologies that work on a network to control traffic and ensure the performance of critical applications with limited network capacity. It enables organizations to adjust their overall network traffic by prioritizing specific high-performance applications.
 RADOS  | Reliable Autonomic Distributed Object Store | Storage            | 
 RBD    | RADOS Block Device                          | Storage            | 
 SEO    | Search Engine Optimization                  | FrontEnd           |
