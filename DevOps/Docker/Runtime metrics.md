@@ -1,15 +1,16 @@
-# [Runtime metrics](https://docs.docker.com/config/containers/runmetrics/)
+
+- [Runtime metrics](https://docs.docker.com/config/containers/runmetrics/)
 - 2021/03/05
 
 
-## Docker stats
+# Docker stats
 
 使用 `docker stats` 監控 Containers `CPU, memory usage, memory limit, network IO metrics` 的即時串流指標 
 
 ![docker stats](../img/docker-stats.png)
 
 
-## Control groups
+# Control groups
 
 Linux Containers 依賴底層的 *CGroup*, 這些 *CGroup* 揭露了 `processes`, `CPU, memory, block I/O usage` 的 metrics
 
@@ -28,25 +29,22 @@ cgroup /sys/fs/cgroup/cpu,cpuacct cgroup rw,nosuid,nodev,noexec,relatime,cpu,cpu
 # 以上來自 ec2 免費的 VM.... (僅節錄部分)
 ```
 
-### Enumerate cgroups
+# Enumerate cgroups
 
 若藉由 `grep cgroup /proc/mounts` 查詢的結果有看到 `/sys/fs/cgroup/cgroup.controllers`(有無 `/sys/fs/cgroup/` 這個資料夾), 表示使用的是 `CGroup v2`, 否則為 `CGroup v1`
 
 ↑ 這個是 docker 官網寫的, 但查其它地方的答案好像有些不同Orz
 
 ```bash
-# 如果只看到2行, 表示系統支援 v2
+# 可查看系統支援哪些 cgroup 版本
 grep cgroup /proc/filesystems
 #nodev cgroup
 #nodev cgroup2
-# 如果只看到第一行, 表示為 v1
 ```
-
-NOTE: aws 免費的 EC2 看起來是 v2, 但是以現在電腦環境來說, 得做些升級才能讓 Docker 使用 CGroup v2...
 
 ---------------------------------
 
-#### CGROUP V1
+# CGROUP V1
 
 ```bash
 ### 查看 OS 已知的 CGroup subsystems
@@ -83,18 +81,20 @@ $# cat /proc/1/cgroup
 # ex: /lxc/pumpkin 則可看出, 這個 Process 是名為 pumpkin 的 Container 的成員之一
 ```
 
-#### CGROUP V2
+
+# CGROUP V2
 
 `/proc/cgroups` 沒有意義. 取而代之應去查看 `/sys/fs/cgroup/`
 
 
-### Changing cgroup version
+# Changing cgroup version
 
 這邊引導如何把 OS 由 *CGroup v1* -> *CGroup v2*
 
 遇到再說
 
-### Running Docker on cgroup v2
+
+## Running Docker on cgroup v2
 
 由 *Docker 20.10* 開始實驗性的支援 v2. 有底下版本的基本要求:
 
@@ -105,19 +105,19 @@ $# cat /proc/1/cgroup
 其餘細節遇到再說
 
 
-### Find the cgroup for a given container
+## Find the cgroup for a given container
 
 看不懂這章節在說啥...
 
 
-### Metrics from cgroups: memory, CPU, block I/O
+## Metrics from cgroups: memory, CPU, block I/O
 
 NOTE: 在閱讀文件的今天, 這部分依舊在講的是 Docker using CGroup v1
 
 對於每個 subsystem (memory, CPU, block I/O), 存在了 一或多個 pseudo-files, 並包含了統計資訊
 
 
-#### Memory metrics: `MEMORY.STAT`
+## Memory metrics: `MEMORY.STAT`
 
 - 相較於 *CPU metrics*, *block I/O*, *Memory* 會比較複雜一點...
 - 可在 *memory cgroup* 裡面找到 *Memory metrics*
@@ -191,14 +191,14 @@ total_unevictable 32768
 
 - *CPU metrics* 存在於 `cpuacct` controller
 - 對於每個容器來說, pseudo-file `cpuacct.stat` 包含 容器進程 的 CPU 累計使用情況, 可再切分為:
-    - user time: exec process code 後, 一個 Process 直接控制 CPU 的時間
-    - system time: kernel 代表 Process 執行 syscall 的時間
+    - user time   : exec process code 後, 一個 Process 直接控制 CPU 的時間
+    - system time : kernel 代表 Process 執行 syscall 的時間
 - 上述時間以 *1/100th of a second* 來作表示, 又稱為 *user jiffies*
     - There are `USER_HZ` "jiffies" per second, and on x86 systems, `USER_HZ` is 100. (不懂...)
-    - 綜觀歷史, 這精確地映射到 *the number of scheduler "ticks" per second*, 但對於 更高頻率的排程 or *tickless kernels*, 使 *number of ticks* 變得無關緊要
+    - 綜觀歷史, 這精確地映射到 *the number of scheduler "ticks" per second*, 但對於 更高頻率的排程 or *tickless kernels*, 會讓 *number of ticks* 變得較無意義
 
 
-#### BLOCK I/O METRICS
+### BLOCK I/O METRICS
 
 *Block I/O* 在 `blkio controller` 裡頭計算. 不同的 metrics 被分散在不同的 files
 

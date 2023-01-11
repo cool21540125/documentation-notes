@@ -1,5 +1,8 @@
 
-## kubectl CLI
+kubectl CLI
+
+
+# Basic Usage
 
 ```bash
 ### Imperative  運行 k8s
@@ -28,7 +31,7 @@ NAME            READY   STATUS    RESTARTS   AGE   LABELS
 my-helloworld   1/1     Running   0          9s    app=helloworld
 
 
-###
+### 查看 kube-system Namespace 底下 pods 的詳細資訊
 $# kubectl get pods -n kube-system -o wide
 NAME                        READY  STATUS   RESTARTS  AGE  IP             NODE  NOMINATED NODE  READINESS GATES
 coredns-78fcd69978-lp4ww    1/1    Running  4         20d  10.233.0.11    m1    <none>          <none>  # k8s 內建提供 DNS 服務的 Pods. load-balance
@@ -45,11 +48,16 @@ kube-proxy-m4vz7            1/1    Running  4         20d  192.168.152.6  w1    
 kube-scheduler-m1           1/1    Running  9         20d  192.168.152.4  m1    <none>          <none>
 
 
-### (前景方式)啟用 ip-forward
-$# kubectl port-forward --address $IP pod/${POD_NAME} ${FORWARD_PORT}:${POD_SERVICE_PORT}
-# ex: 
+### (前景方式)啟用 ip-forward (port forwarding)
+## kubectl port-forward --address $IP pod/${PodName} ${FORWARD_PORT}:${POD_SERVICE_PORT}
 $# kubectl port-forward --address $IP pod/a1 9999:8888
 # 本地可訪問 http://POD_IP:9999
+
+## kubectl port-forward ${PodName} ${LocalPort}:${PodPort}
+Forwarding from 127.0.0.1:${LocalPort} -> ${PodPort}
+Forwarding from [::1]:${LocalPort} -> ${PodPort}
+Handling connection for ${LocalPort}
+# 本地可訪問 localhost:${LocalPort}
 
 
 ### 查看 Services 與 Endpoints 的對應
@@ -60,45 +68,29 @@ $# kubectl get endpoints
 $# kubectl expose deployment ${Deployment}
 # 不過依舊建議使用 yaml 統一管理 Service
 
-### 進入到 pod 裏頭
-$# kubectl exec -it ${POD_NAME} -- /bin/sh
-# 等同於 docker exec -it ${ContainerName} /bin/sh
+
+### 進入 Pod 取得 sh
+$# kubectl exec -it ${PodName} -- /bin/sh
+$# kubectl exec -it ${PodName} -c ${ContainerName} -- sh
+# 等同於 docker exec -it ContainerName sh
+
+$# kubectl exec ${PodName} -c ${ContainerName} -- ${Commands}
+# 等同於 docker exec ContainerName commands
 
 
 ### Deployment 運作過程中升級 Image
 $# kubectl set image deployment/${Deployment} ${Container}=${Image}:${ImageTag}
 # ex: kubectl edit deploy/nginx-deployment nginx=nginx:1.20.2
 
+
 ### 移除 pod
-$# kubectl delete pods ${POD_NAME}
+$# kubectl delete pods ${PodName}
 # master 會送 SIGNAL 給 pod, 並且作 peaceful shutdown
 # 不過如果有使用 ReplicaSet.... 效果等同於重新建立新的 pod
 
 
 ### 取得 pod 運作狀態
-$# kubectl describe pods ${POD_NAME}
-
-
-### 取得 pod 運作的資訊(前提是, pod 需要存在)
-$# kubectl logs ${POD_NAME}
-
-
-### 列出與 Application 有關的 k8s 物件 (並非所有 k8s 物件)
-$# kubectl get all
-
-
-### 針對 pod 內的 Container 執行命令
-$# kubectl exec ${PodName} -c ${ContainerName} -- commands
-# 等同於 docker exec Container_Name commands
-
-
-### 進入容器執行互動式 sh
-$# kubectl exec -it ${PodName} -c ${ContainerName} -- sh
-# 等同於 docker exec -it Container_Name sh
-
-
-### 查看 log
-$# kubectl logs ${PodName} -c ${ContainerName}
+$# kubectl describe pods ${PodName}
 
 
 ### 列出所有 k8s Namespace
@@ -110,19 +102,16 @@ kube-public       Active   20d
 kube-system       Active   20d
 
 
-### k8s DNS(內建 Service) 位置, 一定會是 10.X.X.10 && 固定會開啟 53 & 9153 port
-$# kubectl -n kube-system get service
-NAME       TYPE        CLUSTER-IP   EXTERNAL-IP   PORT(S)                  AGE
-kube-dns   ClusterIP   10.98.0.10   <none>        53/UDP,53/TCP,9153/TCP   20d
-# k8s 的 DNS
+### 列出與 Application 有關的 k8s 物件 (並非所有 k8s 物件)
+$# kubectl get all
 
 
-### 進入 Pod 中的 Container
-$# kubectl -it  $PodName -c $Container -- bash
+### 查看 logs - Pod logs (前提是, pod 需要存在)
+$# kubectl logs ${PodName}
 
 
-### 列出 Container logs
-$# kubectl logs $PodName -c $Container
+### 查看 logs - Container logs
+$# kubectl logs ${PodName} -c ${ContainerName}
 
 
 ### k8s DNS(內建 Pod)
@@ -153,24 +142,8 @@ Session Affinity:  None
 Events:            <none>
 
 
-### 將目前 NS 的 config 列出為 yaml
+### 查詢 ConfigMap 內容
 $# kubectl get configmap -o yaml
-# (但我還不知道怎麼解讀)
-
-
-### 
-$# kubectl port-forward ${PodName} ${LocalPort}:${PodPort}
-Forwarding from 127.0.0.1:${LocalPort} -> ${PodPort}
-Forwarding from [::1]:${LocalPort} -> ${PodPort}
-Handling connection for ${LocalPort}
-# 本地可訪問 localhost:${LocalPort}
-
-
-### 
-$# kubectl cluster-info
-Kubernetes control plane is running at https://127.0.0.1:60229
-CoreDNS is running at https://127.0.0.1:60229/api/v1/namespaces/kube-system/services/kube-dns:dns/proxy
-To further debug and diagnose cluster problems, use 'kubectl cluster-info dump'.
 
 
 ### 依照狀態找 pods
@@ -207,6 +180,25 @@ $# kubectl rollout pause deployment/${Deployment}
 $# kubectl rollout resume deployment/${Deployment}
 
 
+### 查看 nodes 資源耗用狀態 (需要依賴 Metrics Server)
+$# kubectl top nodes
+
+
+### 查看 pods 資源耗用狀態 (需要依賴 Metrics Server)
+$# kubectl top pods -n kube-system
+```
+
+
+# Cluster
+
+```bash
+### k8s DNS(內建 Service) 位置, 一定會是 10.X.X.10 && 固定會開啟 53 & 9153 port
+$# kubectl -n kube-system get service
+NAME       TYPE        CLUSTER-IP   EXTERNAL-IP   PORT(S)                  AGE
+kube-dns   ClusterIP   10.98.0.10   <none>        53/UDP,53/TCP,9153/TCP   20d
+# k8s 的 DNS
+
+
 ### 顯示目前有哪些 context
 $# kubectl config get-contexts
 CURRENT   NAME                  CLUSTER               AUTHINFO   NAMESPACE
@@ -216,10 +208,22 @@ CURRENT   NAME                  CLUSTER               AUTHINFO   NAMESPACE
           str-demo-k8s-str01    str-demo-k8s-str01    str
 
 
-### 查看 nodes 資源耗用狀態 (需要依賴 Metrics Server)
-$# kubectl top nodes
+### 
+$# kubectl cluster-info
+Kubernetes control plane is running at https://127.0.0.1:60229
+CoreDNS is running at https://127.0.0.1:60229/api/v1/namespaces/kube-system/services/kube-dns:dns/proxy
+To further debug and diagnose cluster problems, use 'kubectl cluster-info dump'.
 
 
-### 查看 pods 資源耗用狀態 (需要依賴 Metrics Server)
-$# kubectl top pods -n kube-system
+### 
+$# kubectl get apiservices
+NAME                              SERVICE                      AVAILABLE   AGE
+v1.                               Local                        True        452d
+v1.admissionregistration.k8s.io   Local                        True        452d
+v1.apiextensions.k8s.io           Local                        True        452d
+v1beta1.metrics.k8s.io            kube-system/metrics-server   True        452d  # 表示 resource metrics API 有啟用
+# 僅節錄部分
+
+
+###
 ```
