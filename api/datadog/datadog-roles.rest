@@ -1,0 +1,32 @@
+
+@url=https://api.datadoghq.com
+@DD_API_KEY={{$dotenv DD_API_KEY}}
+@DD_APP_KEY={{$dotenv DD_APP_KEY}}
+
+@metric_name={{$dotenv metric_name}}
+
+
+### List permissions - 403
+# https://docs.datadoghq.com/api/latest/roles/#list-permissions
+GET {{url}}/api/v2/permissions
+DD-API-KEY: {{DD_API_KEY}}
+DD-APPLICATION-KEY: {{DD_APP_KEY}}
+
+
+
+### List roles - 403
+# https://docs.datadoghq.com/api/latest/roles/#list-roles
+GET {{url}}/api/v2/roles
+DD-API-KEY: {{DD_API_KEY}}
+DD-APPLICATION-KEY: {{DD_APP_KEY}}
+
+
+### List permissions for a role
+# https://docs.datadoghq.com/api/latest/roles/#list-permissions-for-a-role
+GET {{url}}/api/v2/roles/{role_id}/permissions
+DD-API-KEY: {{DD_API_KEY}}
+DD-APPLICATION-KEY: {{DD_APP_KEY}}
+
+
+
+### 
