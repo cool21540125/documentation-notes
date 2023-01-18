@@ -123,13 +123,18 @@ kubelet -> CRI-O                                                                
   - kubectl apply : declarative syntax, 可用來改變已 deploy 的規格 && 也可用來首次建立
   - kubectl create : imperative, 只能用來首次建立
 - HPA Controller, Horizontal Pod Autoscaler
-  - 用來實現以 CPU 為基礎的 自動 Pod 容量調整機制 
+  - 用來實現以 CPU 為基礎的 自動 Pod 容量調整機制
     - 可以讓 k8s auto-scaling Pods 啦
   - 細節
     - HPA, 可在 **kube-controller-manager**
       - `--horizontal-pod-autoscaler-sync-period` 來調整探測週期
       - `--horizontal-pod-autoscaler-tolerance` 調整 autoscaling 指標的容忍(不作變動)區間
     - 早期使用 Heapster 元件來搜集, v1.11 以後改用 Metrics Server 來搜集 Pods 的性能指標
+      - Metrics-Server 使用 *Metrics API* 來將 metrics expose 給 APIServer
+        - 像是使用 `kubectl top`, 就是去尻 Metrics API
+        - Metric Server 適合用於 Horizontal Pod Autoscaler and Vertical Pod Autoscaler.
+        - 此指標 不適合用於 non-autoscaling purposes. 不建議用來作為監控使用!!
+          - 取而代之, 可使用 kubelet 上頭的 `/metrics/resource` Endpoint
       - 藉由 Aggregated API, ex: metrics.k8s.io, custom.metrics.k8s.io, external.metrics.k8s.io
     - 目前有 2 個版本
       - `autoscaling/v1`, 僅支援 CPU metrics
