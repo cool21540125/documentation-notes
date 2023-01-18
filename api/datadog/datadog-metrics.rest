@@ -1,9 +1,10 @@
 
-@url=https://api.datadoghq.com
+@url={{$dotenv DDOG_SITE}}
 @DD_API_KEY={{$dotenv DD_API_KEY}}
 @DD_APP_KEY={{$dotenv DD_APP_KEY}}
 
 @metric_name={{$dotenv metric_name}}
+@q={{$dotenv q}}
 
 
 ### Get active metrics list
@@ -41,6 +42,14 @@ GET {{url}}/api/v1/query
   ?from=1673247580
   &to=1673593180
   &query={{metric_name}}
+DD-API-KEY: {{DD_API_KEY}}
+DD-APPLICATION-KEY: {{DD_APP_KEY}}
+
+
+
+### Search metrics
+# https://docs.datadoghq.com/api/latest/metrics/?code-lang=curl#search-metrics
+GET {{url}}/api/v1/search?q={{q}}
 DD-API-KEY: {{DD_API_KEY}}
 DD-APPLICATION-KEY: {{DD_APP_KEY}}
 
