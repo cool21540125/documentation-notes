@@ -39,6 +39,25 @@
         - clients from VPC
             - VPC Endpoint (ENI)
         - 訪問權限可使用 Resource Policy 做配置
+- API Gateway 具備下列的 Integration Types:
+    - Lambda Function / AWS Service
+        - 需要自行配置 Integration Request && Integration Response
+        - 需要配置 mapping templates
+    - Lambda Proxy
+        - 將 Client Request 轉變成 Lambda 的 input
+        - 因而此 Lambda 會變成 Request/Response 的處理邏輯
+        - 無 mapping template, headers, query string parameters 作為輸入參數
+    - HTTP Proxy
+        - 無 mapping template
+        ```mermaid
+        flowchart LR
+
+        api[API Gateway]
+        Client <-- HTTP Request --> api <-- "HTTP Proxy\nproxy Request/Response" --> ALB;
+        ```
+    - HTTP
+    - Mock
+    - VPC Link
 
 ---
 
