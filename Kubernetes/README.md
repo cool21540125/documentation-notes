@@ -9,15 +9,16 @@
 
 ```sh
 alias k=kubectl
-k get svc     # service
-k get cj      # cronjob
-k get po      # pods
-k get ns      # namespace
-k get deploy  # deployment
-k get no      # nodes
-k get cm      # configmap
-k get rs      # replicaset
-k get sta     # statefulset
+k get svc           # service
+k get cj            # cronjob
+k get po            # pods
+k get ns            # namespace
+k get deploy        # deployment
+k get no            # nodes
+k get cm            # configmap
+k get rs            # replicaset
+k get sts           # statefulset
+k get storageclass  # storageclass
 ```
 
 
@@ -143,3 +144,14 @@ kubelet -> CRI-O                                                                
     - 目前有 2 個版本
       - `autoscaling/v1`, 僅支援 CPU metrics
       - `autoscaling/v2`, 額外增加 Memory, custom, external metrics, 並且可使用多指標 (直接用這個就對了?)
+
+
+# Helm
+
+```yaml
+mychart/       # 資料夾名稱(Helm Chart 名稱)
+  Chart.yaml   # chart 的 meta info (name, version, dependencies, ...)
+  values.yaml  # template files 的 values (通常為 default values)
+  charts/      # Chart dependencies (ex: 依賴其他 Charts, ...)
+  templates/   # template files (裡頭的變數會來自 values.yaml)
+```

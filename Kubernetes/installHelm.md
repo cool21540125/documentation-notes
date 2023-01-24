@@ -7,6 +7,7 @@ Install services using Helm
 ```bash
 ### repo 來自 bitnami
 $# helm repo add bitnami https://charts.bitnami.com/bitnami
+# 將最後的 URL (Helm Repo) 加入本地, 並命名為 bitnami
 
 
 ### Install RabbitMQ - https://bitnami.com/stack/rabbitmq
@@ -17,12 +18,13 @@ $# helm install ${Release_Name} bitnami/rabbitmq \
     -n ns-rabbitmq \
     --set replicaCount=3 \
     --set auth.password="${MQ_PASSWORD}"
+# 安裝 release 的來源為 名為 bitnami 的 Helm Repo 底下的 rabbitmq 
 # replicaCount >=3, 會自動將他們架設為 Cluster
 # 最好是一開始就帶入密碼, 否則將來做 helm upgrade 的時候密碼遺失
 
 
 ### RabbitMQ management~
-$# kubectl port-forward --namespace ns-rabbitmq svc/event-driven-rabbitmq 15672:15672 &
+$# kubectl port-forward --namespace ns-rabbitmq svc/${Release_Name} 15672:15672
 # localhost:15672
 
 
