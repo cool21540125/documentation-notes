@@ -466,4 +466,38 @@ lrwxr-xr-x  1 USER  GROUP  29 12  7 16:24 /usr/local/bin/gofmt -> ../Cellar/go/1
 ```
 
 
-# 
+# Install RabbitMQ
+
+```zsh
+$# brew install rabbitmq
+
+### 背景啟動
+$# brew services start rabbitmq
+
+### 前景啟動
+$# CONF_ENV_FILE="/usr/local/etc/rabbitmq/rabbitmq-env.conf" /usr/local/opt/rabbitmq/sbin/rabbitmq-server
+
+
+### 關閉 RabbitMQ Server
+$# brew services stop rabbitmq
+$# rabbitmqctl shutdown
+
+
+### rabbitmq CLI 安裝路徑在
+$# ls -l /usr/local/Cellar/rabbitmq/${Version}/     # Intel Macs
+$# ls -l /opt/homebrew/Cellar/rabbitmq/${Version}/  # Apple Silicon Mac
+$# ls -l /usr/local/opt/rabbitmq/sbin               # 不過其實東西都放在這邊就是了
+
+
+### Config Path (Intel)
+$# cd /usr/local/etc/rabbitmq
+$# vim /usr/local/etc/rabbitmq/
+
+
+### Log Path
+$# cd /usr/local/var/log/rabbitmq
+
+
+# localhost:15672
+# 預設帳密 guest/guest
+```
