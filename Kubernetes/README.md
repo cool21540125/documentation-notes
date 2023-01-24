@@ -52,6 +52,10 @@ K8s 平台的選擇:
 
 - Kubernetes Master
   - etcd
+    - 儲存一堆元件的資訊及狀態: Nodes, Pods, Configs, Secrets, Accounts, Roles, Bindings, 
+      - 像是使用 `kubectl get ...` 便是從中取得
+    - k8s 儲存在 etcd 裡頭的結構, 會以 `/registry` 為 root directory
+      - 而底下會有像是: minions, pods, replicasets, deployments, roles, secrets, ...
   - API Server
   - Controller Manager Server
     - 確保 Cluster 之中的 desired state 與 actual state 一致
