@@ -501,3 +501,23 @@ $# cd /usr/local/var/log/rabbitmq
 # localhost:15672
 # 預設帳密 guest/guest
 ```
+
+
+# Install protoc
+
+- 
+
+```zsh
+### 法1. Install using a package manager
+$# brew install protobuf
+
+
+### 法2. Install pre-compiled binaries
+$# PB_VERSION="21.0"
+$# PB_REL="https://github.com/protocolbuffers/protobuf/releases"
+$# curl -LO ${PB_REL}/download/v${PB_VERSION}/protoc-${PB_VERSION}-linux-x86_64.zip
+$# unzip protoc-${PB_VERSION}-linux-x86_64.zip -d ${HOME}/bin
+$# protoc --version
+libprotoc 3.21.12
+# 2023Q1
+```

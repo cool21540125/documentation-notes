@@ -89,6 +89,7 @@ ETL    | Extract, Transform, Load                    | 分析               |
 GDPR   | General Data Protection Regulation          | 資安               |
 GWF    | Great Fire Wall                             | 監控               | 中國長城...
 IANA   | Internet Assigned Number Authority          | 網際網路為指指派機構 | 
+IDL    | Interface Definition Language               | 介面描述語言        | ex: SOAP, protobuf
 IPA    | Identiti, Policy and Auditing               | 集中驗證            | 提供 LDAP & Kerberos
 MITM   | Man-In-The-Middle attack                    | 資安               | [MITM](https://en.wikipedia.org/wiki/Man-in-the-middle_attack)
 KDC    | Key Distribution Centers                    | 集中驗證            |
@@ -103,6 +104,7 @@ POC    | Proof of Concept                            | DevOps             |
 QoS    | Quality of Service                          | 服務質量            | Quality of service (QoS) is the use of mechanisms or technologies that work on a network to control traffic and ensure the performance of critical applications with limited network capacity. It enables organizations to adjust their overall network traffic by prioritizing specific high-performance applications.
 RADOS  | Reliable Autonomic Distributed Object Store | Storage            | 
 RBD    | RADOS Block Device                          | Storage            | 
+RMI    | Remote Method Invocation                    | 遠端程序呼叫         | Java 版本的 RPC (for EJB usage)
 SEO    | Search Engine Optimization                  | FrontEnd           |
 SLA    | Service Level Agreement                     | 服務層級協定        | 
 SPF    | Single Point of Failure                     | 單點失效            | SPoF
