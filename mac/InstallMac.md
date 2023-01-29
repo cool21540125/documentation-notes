@@ -513,10 +513,12 @@ $# brew install protobuf
 
 
 ### 法2. Install pre-compiled binaries
-$# PB_VERSION="21.0"
+$# PB_VERSION="21.12"
 $# PB_REL="https://github.com/protocolbuffers/protobuf/releases"
-$# curl -LO ${PB_REL}/download/v${PB_VERSION}/protoc-${PB_VERSION}-linux-x86_64.zip
-$# unzip protoc-${PB_VERSION}-linux-x86_64.zip -d ${HOME}/bin
+$# curl -LO ${PB_REL}/download/v${PB_VERSION}/protoc-${PB_VERSION}-osx-x86_64.zip      # for Mac
+# $# curl -LO ${PB_REL}/download/v${PB_VERSION}/protoc-${PB_VERSION}-linux-x86_64.zip  # for Linux
+$# unzip protoc-${PB_VERSION}-osx-x86_64.zip -d ${HOME}/bin
+$# mv ${HOME}/bin/bin/protoc ${HOME}/bin && rmdir ${HOME}/bin/bin && mv ${HOME}/bin/include ${HOME}/
 $# protoc --version
 libprotoc 3.21.12
 # 2023Q1

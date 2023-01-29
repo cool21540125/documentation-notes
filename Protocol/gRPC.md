@@ -55,4 +55,52 @@
 - gRPC 也有區分成 async 及 sync:
     - synchronous  : 最接近 RPC call 的抽象概念, call RPC 時會 block, 並等待回應後, 再做後續處理
     - asynchronous : 網路傳輸本質上屬於 async, 因此也可在 current thread 實踐 async RPC
-- 
+
+
+# Programming Languages
+
+## python
+
+```bash
+### install
+$# pip install grpcio
+$# pip install grpcio-tools
+
+### gen code && gRPC
+$# python -m grpc_tools.protoc \
+    -I ${PATH_TO_PROTOS}/protos \
+    --python_out=. \
+    --pyi_out=. \
+    --grpc_python_out=. \
+    ../../protos/helloworld.proto
+# -I xxx            : (若無指定, 預設為當前目錄) 聲明要用來 import 的路徑
+# --python_out      : python source file 產出路徑, 此為 proto buffer 使用
+# --grpc_python_out : 「interface type(或 stub)」 及 「interface type 的 server 實作」, 此為 gRPC 使用
+# --pyi_out         : Python pyi stub 產出路徑
+```
+
+
+## golang
+
+```bash
+
+### 
+$# export PATH="$HOME/go/bin:$PATH"
+# PATH 底下必須要找得到 protoc 及 protoc-gen-go 及 protoc-gen-go-grpc
+# protoc             : 用來產生 protocol buffer files 的 binary 
+# protoc-gen-go      : protoc 用來產生 protocol buffer files 的 go plugin binary
+# protoc-gen-go-grpc : protoc 用來產生 gRPC implementation 的 go plugin binary
+
+
+### gen code && gRPC
+$# protoc \
+    --go_out=. \
+    --go_opt=paths=source_relative \
+    --go-grpc_out=. \
+    --go-grpc_opt=paths=source_relative \
+    routeguide/route_guide.proto
+# --go_out      : 產生 protocol buffer code, 此為 proto buffer 使用
+# --go-grpc_out : 「interface type(或 stub)」 及 「interface type 的 server 實作」, 此為 gRPC 使用
+# --go_opt      : 「--go_opt=paths=source_relative」 告知 --go_out 輸出路徑位置, 相對於 --go_out 的路徑
+# --go-grpc_opt : 同 --go_opt
+```
