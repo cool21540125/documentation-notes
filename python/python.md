@@ -256,10 +256,13 @@ getattr(p, 'name')
 ## zip
 - `zip(seq, *seqs) -> iterator`, 因為這樣的關係, 他本質上與 generator 一樣 (會回傳 iterator)
 
+
 # Other
 
 ## 從類別取得屬性
+
 類別屬性(name) 的查找順序:
+
 1. 若 `'name' in C.__dict__`, 則從 `C.__dict__['name']` 取出它的值 v, 然後若
     - v 為 Descriptor, 則回傳 `type(v).__get__(v, None, C)` 的結果
     - v 非 Descriptor, 則回傳 C.name 的值, 即 v
@@ -267,10 +270,10 @@ getattr(p, 'name')
 3. 若無, 拋出 AttributeError
 
 
-
-
 ## 從實例取得屬性
+
 實例屬性(name) 的查找順序:
+
 1. 若 'name' 出現在 C(或父類別們)裡頭, 且 name 的值(v) 恰巧為 覆寫式描述器, 則 `x.name` 會得到 `type(v).__get__(v, x, C)` 的結果
 2. 若 `'v' in x.__dict__`, 則回傳 `x.__dict__['name']` 的結果
 3. `C.name` 的動作會 委派(delegate) 到他的父類別們去尋找
@@ -283,8 +286,10 @@ getattr(p, 'name')
 class C(D, E, F):
     name = XX
 
+C.name  # 從類別取的屬性
+
 x = C()
-x.name
+x.name  # 從實例取的屬性
 ```
 
 

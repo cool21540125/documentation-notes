@@ -65,6 +65,13 @@ $# export AWS_REGION=ap-northeast-1
 # ap-northeast-1 : Tokyo
 # ap-northeast-3 : Osaka
 
+
+###
+$# export AWS_ACCESS_KEY_ID=
+$# export AWS_SECRET_ACCESS_KEY=
+$# export AWS_SESSION_TOKEN=
+
+
 ### Simple Usage
 $# aws iam list-users
 
@@ -84,6 +91,10 @@ $# aws sts get-session-token \
 
 ### 配置 & 使用 temperory TOKEN
 $# aws configure --profile ${Temp_Profile_Name}
+
+
+### 可用來查詢 目前正在下 aws xxx 指令的 User 是誰 (查看自己啦)
+$# aws sts get-caller-identity
 ```
 
 

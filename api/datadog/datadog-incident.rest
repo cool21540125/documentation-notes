@@ -1,5 +1,5 @@
 
-@url=https://api.datadoghq.com
+@url={{$dotenv DDOG_SITE}}
 @DD_API_KEY={{$dotenv DD_API_KEY}}
 @DD_APP_KEY={{$dotenv DD_APP_KEY}}
 

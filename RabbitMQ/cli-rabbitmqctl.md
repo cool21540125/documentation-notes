@@ -101,3 +101,46 @@ $# rabbitmqctl set_user_tags 新帳號 權限標籤
 ### 變更密碼
 $# rabbitmqctl change_password guest "設定新的密碼"
 ```
+
+
+# CLI - rabbitmq-plugins
+
+```bash
+### 列出已啟用的 rabbitmq plugins
+$# rabbitmq-plugins list
+```
+
+
+# CLI - rabbitmq-diagnostics
+
+> RabbitMQ diagnostics, monitoring and health checks tools
+
+```bash
+### (不知道這在幹嘛... 先記著吧)
+$# rabbitmq-diagnostics erlang_cookie_sources
+Listing Erlang cookie sources used by CLI tools...
+Cookie File
+
+Effective user: (none)
+Effective home directory: /opt/bitnami/rabbitmq/.rabbitmq
+Cookie file path: /opt/bitnami/rabbitmq/.rabbitmq/.erlang.cookie
+Cookie file exists? true
+Cookie file type: regular
+Cookie file access: read
+Cookie file size: 33
+
+Cookie CLI Switch
+
+--erlang-cookie value set? false
+--erlang-cookie value length: 0
+
+Env variable  (Deprecated)
+
+RABBITMQ_ERLANG_COOKIE value set? false
+RABBITMQ_ERLANG_COOKIE value length: 0
+# 
+
+
+### 
+$# 
+```

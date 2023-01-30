@@ -18,7 +18,7 @@
 - [Networking and RabbitMQ](https://www.rabbitmq.com/networking.html)
 
 - 4369 : epmd, a peer discovery service used by RabbitMQ nodes and CLI tools * 5672, 5671: used by AMQP 0-9-1 and 1.0 clients without and with TLS
-- 5671 :
+- 5671 : TLS 的 5672
 - 5672 : 監聽監聽資料的 default port
 - 15671:
 - 15672 : Web UI. HTTP API clients, management UI and rabbitmqadmin (only if the management plugin is enabled)

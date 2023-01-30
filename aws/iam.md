@@ -106,8 +106,8 @@ r2 -.- srv2["AWS Services \n (ex: S3)"];
         - SAML 2.0 Federation
         - Custom trust policy
 - 如何允許 IAM 用戶看帳單 (預設只有 root Account 可看)
-    - Billing > Bills > IAM User and Role Access to Bill Information > Edit > Activate IAM Access
-        - ![Billing](../img/iam_billing.png)
+    - (右上角) > Account > IAM User and Role Access to Billing Information > Edit > Activate IAM Access
+        - ![Billing](./img/iam_billing.png)
 - 若建立了針對特定 Resource 訪問權限的 Policy, 此 Policy 分為:
     - Identity-based Policy
         - 可被指派給 *Users*, *Groups*, *Roles*
@@ -599,3 +599,123 @@ users -- auth --> aws["AWS Simple AD"];
     - Web Console 操作上, 我們會去 create EC2 Instance Profile, 其實是 2 個動作:
         - 建立 Instance Profile, 用途僅僅是, 讓 EC2 可以扮演某個角色 (assume a role)
         - 建立一個 Role (裡面有必要的 permissions), 然後讓 EC2 可以扮演這個 Role
+
+
+# CLI - assume an IAM role using AWS CLI
+
+- [How do I assume an IAM role using the AWS CLI?](https://www.youtube.com/watch?v=-uogKFE1r60&ab_channel=AmazonWebServices)
+
+```bash
+$# export ACCOUNT_ID= xxxxx
+# 自行填寫 AWS Account ID
+
+### 建立 IAM User
+$# DEMO_USER_NAME="test-user"
+$# aws iam create-user \
+    --user-name ${DEMO_USER_NAME}
+
+
+### IAM Policy definition
+$# LOCAL_FILE="test-policy.json"
+$# cat <<EOF > ${LOCAL_FILE}
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Effect": "Allow",
+            "Action": [
+                "ec2:Describe*",
+                "iam:ListRoles",
+                "sts:AssumeRole"
+            ],
+            "Resource": "*"
+        }
+    ]
+}
+EOF
+
+
+### 依照本地檔案, 建立 Policy
+$# POLICY_NAME_ON_AWS="test-policy"
+$# aws iam create-policy \
+    --policy-name ${POLICY_NAME_ON_AWS} \
+    --policy-document file://${LOCAL_FILE}
+
+
+### 將 policy attach 給 user
+$# TEST_POLICY_ARN="arn:aws:iam::${ACCOUNT_ID}:policy/${POLICY_NAME_ON_AWS}"
+$# aws iam attach-user-policy \
+    --user-name ${DEMO_USER_NAME} \
+    --policy-arn ${TEST_POLICY_ARN}
+
+
+### 查看 User 已有的 Policies
+$# aws iam list-attached-user-policies \
+    --user-name ${DEMO_USER_NAME}
+
+
+### 為 User 建立 Access Key
+$# aws iam create-access-key \
+    --user-name ${DEMO_USER_NAME}
+# 可從 CLI Response 看到 AccessKeyId && SecretAccessKey
+
+
+### 
+$# LOCAL_FILE2="test-role-trust-policy.json"
+$# TEST_POLICY2_ARN="arn:aws:iam::${ACCOUNT_ID}:root"
+# 上一步建立的 ARN
+
+$# cat <<EOF > ${LOCAL_FILE2}
+{
+    "Version": "2012-10-17",
+    "Statement": {
+        "Effect": "Allow",
+        "Principal": { "AWS": "${TEST_POLICY2_ARN}" },
+        "Action": "sts:AssumeRole"
+    }
+}
+EOF
+# 解釋
+# 此 Policy 的 主體(Principal) 是針對 root User
+# 用來允許所有 此帳戶內的 IAM user, 
+# 如果他們對於 sts:AssumeRole API 有足夠的 IAM Permission, 則可用來 assume this role
+
+
+### 建立前述的 Role
+$# ROLE_NAME_ON_AWS="test-powerful-role"
+$# aws iam create-role \
+    --role-name ${ROLE_NAME_ON_AWS} \
+    --assume-role-policy-document file://${LOCAL_FILE2}
+# 把 Arn 記錄下來...
+
+
+### 
+$# Arn="arn:aws:iam::${ACCOUNT_ID}:role/${ROLE_NAME_ON_AWS}"
+$# aws iam attach-role-policy \
+    --role-name ${ROLE_NAME_ON_AWS} \
+    --policy-arn ${Arn}
+# 忘了怎麼解釋...
+
+
+### 賦予 AWS 內建的 `RDS ro 權限` 給 Role
+$# RDS_ro_Arn="arn:aws:iam::aws:policy/AmazonRDSReadOnlyAccess"
+$# aws iam attach-role-policy \
+    --role-name ${ROLE_NAME_ON_AWS} \
+    --policy-arn ${RDS_ro_Arn}
+# 此為 Permission policy
+
+
+### 用來查看 Role 具備了哪些 Policies
+$# aws iam list-attached-role-policies \
+    --role-name ${ROLE_NAME_ON_AWS}
+
+
+### 
+$# aws sts assume-role \
+    --role-arn "" \
+    --role-session-name AWSCLI-Session
+
+
+### 
+$# 
+```
