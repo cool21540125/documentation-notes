@@ -39,8 +39,8 @@ DD-APPLICATION-KEY: {{DD_APP_KEY}}
 ### Query timeseries points - 還需要問 DDOG 官方, 這說明文件太弱了
 # https://docs.datadoghq.com/api/latest/metrics/?code-lang=curl#query-timeseries-points
 GET {{url}}/api/v1/query
-  ?from=1673247580
-  &to=1673593180
+  ?from={{$timestamp -8 h}}
+  &to={{$timestamp}}
   &query={{metric_name}}
 DD-API-KEY: {{DD_API_KEY}}
 DD-APPLICATION-KEY: {{DD_APP_KEY}}
