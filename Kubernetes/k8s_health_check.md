@@ -2,6 +2,9 @@
 - [Configure Liveness, Readiness and Startup Probes](https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/)
 - 2022/09/24
 
+
+# Note
+
 - Health Check 分成下列幾種:
   - Liveness
     - kubelet 用此指標判斷 是否 restart container
