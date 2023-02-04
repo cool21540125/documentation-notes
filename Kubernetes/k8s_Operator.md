@@ -1,7 +1,7 @@
 
 - [Setup Prometheus Monitoring on Kubernetes using Helm and Prometheus Operator | Part 1](https://www.youtube.com/watch?v=QoDqxm7ybLc)
 - [OperatorHub.io](https://operatorhub.io/)
-
+≈
 
 ### Operator 主要用於 **Stateful** Applications
 

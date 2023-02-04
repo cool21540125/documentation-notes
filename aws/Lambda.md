@@ -8,6 +8,9 @@
     - 使用 Lambda 建立 *Lambda Funciton* 時, 會連帶建立授予此 FN 的 *execution role*
         - 此 Role grants permission to upload logs
     - 每當調用 FN 時, 會藉此 *execution role* 取得 creds for AWS SDK 並可 read data from source
+- concurrency: 同一時間能處理的 requests 數量, Lambda concurrency 分成下面 2 種:
+    - Reserved concurrency
+    - Provisioned concurrency
 - Lambda Destionation
     - 類似 SQS DLQ (用來存放 SQS 調用 failure 的 Message), 此方式可用來存放 Lambda Execution Result
         - 包含 success & failure

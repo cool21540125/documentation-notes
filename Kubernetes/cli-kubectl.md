@@ -189,6 +189,41 @@ $# kubectl top pods -n kube-system
 ```
 
 
+# Metrics API
+
+需要安裝好 Metrics Server: `kubectl apply -f https://github.com/kubernetes-sigs/metrics-server/releases/latest/download/components.yaml`
+
+```bash
+### 
+$# NODE_NAME=
+$# kubectl get --raw /apis/metrics.k8s.io/v1beta1/nodes/${NODE_NAME} | jq
+
+
+### 
+$# NAMESPACE=
+$# POD_NAME=
+$# kubectl get --raw /apis/metrics.k8s.io/v1beta1/namespaces/${NAMESPACE}/pods/${POD_NAME} | jq
+
+
+### 
+$# kubectl get --raw /apis/metrics.k8s.io/v1beta1/nodes/${POD_NAME} | jq
+{
+  "kind": "NodeMetrics",
+  "apiVersion": "metrics.k8s.io/v1beta1",
+  "metadata": {
+    "name": "gke-john-m-research-default-pool-15c38181-m4xw",
+    "selfLink": "/apis/metrics.k8s.io/v1beta1/nodes/gke-john-m-research-default-pool-15c38181-m4xw",
+    "creationTimestamp": "2019-12-10T18:34:01Z"
+  },
+  "timestamp": "2019-12-10T18:33:41Z",
+  "window": "30s",
+  "usage": {
+    "cpu": "62789706n",
+    "memory": "641Mi"
+  }
+}
+```
+
 # Cluster
 
 ```bash

@@ -29,6 +29,7 @@
     - `kube-apiserver` 需要 enable an aggregation layer
         - 此 aggregation layer 並非 core K8s APIs, 可用來擴展 APIs
     - 還有一大堆要求... https://github.com/kubernetes-sigs/metrics-server#requirements
+- 查看是否已安裝 Metrics Server: `kubectl get pods -A | grep metrics-server`
 
 
 ## kube-state-metrics, KSM
@@ -104,6 +105,9 @@ end
         - 則在 k8s 可看到具有 8000m (8 cores, 8 vCPUs)
 - Resource limits 以及 Resource requests, 是針對 Pod 之中的 sum(all Containers usage) 來做上下限規範
 - k8s 的 `kube-scheduler`, 使用了 *CFS, Completely Fair Scheduler*
+    - [CFS](https://www.kernel.org/doc/Documentation/scheduler/sched-design-CFS.txt)
+    - 一語概括 CFS 的設計理念: 「ideal, precise multi-tasking CPU" on real hardware」
+    - 此 CFS 會盡力確保, no one can steal the CPU from others
 - Container Memory Usage > limit
     - 則此 Container becomes a candidate for termination
     - 如果持續性的超標, 則此 Container 會被 terminate
@@ -115,12 +119,39 @@ end
 
 ![Open-source monitoring pipeline](./img/monitoring_architecture.png)
 
+---
+
+- Memory Usage > (Memory available 或 Memory limit) -> Pod OOM killed
+- Memory limit 不要設太高
+    - 極端情況下, 可能要不到資源, ex: 
+    - 「request 1GiB && limit 4GiB」, 該 Pod 可能被分配到 2GiB available 的 Node 上頭. 但等到 Pod 真的開始要 resource 時, 它也會被 OOM killed
+        - 白話文: 我們家每天有 2 碗飯, 你說你平常吃一碗, 餓的時候吃 4 晚. 我就先收留你了, 但你真的餓了的時候開始把我家米飯啃食殆盡的時候, 你會被逐出門外
+- Memory request 不要設太低
+    - 在一般情況下, 該 Pod 很可能會被驅逐, ex:
+    - 「request 64Mib && limit 4GiB」, 但實際使用 2GiB. 已大大超過 request
+        - 白話文: 你說你平常只喝 1 瓶水, 渴的時候會喝 10 瓶. 但我看你平常都喝 5 瓶水, 我會認真考慮把你逐出門外
+- k8s 使用 `kernel throttling` 來實現 CPU limit
+
+
 
 ## Control CPU Management Policies on the Node
 
+- [CPU limits and aggressive throttling in Kubernetes](https://medium.com/omio-engineering/cpu-limits-and-aggressive-throttling-in-kubernetes-c5b20bd8a718)
+    - (這篇有點深度... 看得不是很懂Orz)
+    - k8s 用 CFS quota 機制來實現 limit
+    - cgroups 裡頭有幾個配置:
+        - `cpu.share`
+        - `cfs_period_us`
+            - always 100ms
+            - 基於 **time period**, 而非 available CPU power
+            - scheduler 用此來 reset **used quota**
+        - `cfs_quota_us`
+            - 用來表示 quota period 的 **allowed quota**
+            - 可 > 100ms
 - https://v1-22.docs.kubernetes.io/docs/tasks/administer-cluster/cpu-management-policies/
     - 此為 k8s v1.22, 連結可能於未來某天失效
 - k8s 的 `kubelet` 預設使用 *CFS quota* 來 enforce CPU limits
+    - k8s 用 CFS quota 來實現 CPU limit
     - *CFS, Completely Fair Scheduler quota* 為 linux task 的 default scheduler, 是一種 process scheduler (用來作資源控管啦)
     - 目標是極大化 XCPU 的利用率 && 交互性能(interactive performance)
 - CPU 管控政策

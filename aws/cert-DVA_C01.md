@@ -64,7 +64,7 @@ $#
 # Elastic Beanstalk
 
 - [clf-Beanstalk](./cert-CLF_C01.md#aws-beanstalk)
-- 幾乎所有 Web APP 架構都會用到 ELB, ASG, 因此這兩者已經直接納入到 Beanstalk
+- 幾乎所有 Web APP 架構都會用到 ELB && ASG, 因此這兩者已經直接納入到 Beanstalk
     - Beanstalk 的 APP 一旦建立以後, 無法再修改它的 ELB
         - 因此若有此需求, 需要重建
 - Beanstalk 可將節點分成:
@@ -72,23 +72,27 @@ $#
     - Worker Tier, 處理耗時請求
         - 使用 [SQS](./cert-SAA_C02.md#sqs-sns-kinesis-activemq)
         - 裡頭放置 `cron.yaml` 來讓節點去 poll jobs
+    - NOTE: 下圖的 ALB: Application Load Balancer
     ```mermaid
     flowchart LR
 
     subgraph web["Web Tier = ELB + EC2"]
         ALB --> asg1["ASG"]
     end
+
     subgraph worker["Worker Tier = SQS + EC2"]
         SQS --> asg2["ASG"]
     end
+
     asg1 -- PUT --> SQS
     Client -- request --> ALB
     ```
-- Beanstalk 有他專屬的 CLI, 有需要再找 `EB cli` (更為簡易使用)
+- Beanstalk 有他專屬的 CLI, 有需要再找 `eb cli` (更為簡易使用)
 - 對於 Beanstalk 的環境變數 && 依賴服務, 可放在專案目錄下的:
     - `/.ebextensions/*.config`, 可定義環境變數 && 依賴的 AWS Services
         - 但需要非常留意!!! 如果裡面有放 DB, 那如果 Beanstalk APP 移除的話, 相關資源也會消失
             - Beanstalk Decouple RDS 的議題, 底下為 migration 建議方式
+                - [decouple RDS from Beanstalk](https://aws.amazon.com/premiumsupport/knowledge-center/decouple-rds-from-beanstalk/)
                 - 先到 RDS 建立 snapshot (保險起見)
                 - RDS console > protect the RDS database from deletion
                 - 建立新的 Beanstalk Environment (without RDS)
@@ -218,7 +222,7 @@ $#
     - EC2 Instance Profile(Role)
         - 如果使用 EC2 來 deploy, 要讓 EC2 能夠 read S3 (ReadOnly 即可)
 - 原始碼
-    - 來源目前只能可以是 *S3* 或 *GitHub*
+    - 來源目前(2022q3)只能可以是 *S3* 或 *GitHub*
 - CodeDeploy 主要元件:
     - Application
         - a unique name functions as a container (不知道這在說啥, 可能只是在講部署的服務名稱吧)

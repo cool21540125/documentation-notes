@@ -498,15 +498,16 @@ tmpl --> CloudFormation;
     ```mermaid
     flowchart LR;
 
-    subgraph asg
-    az1["EC2"];
-    az2["EC2"];
+    subgraph ASG
+        direction LR;
+        az1["EC2"];
+        az2["EC2"];
     end
 
     User --> elb["ELB \n (Multi-AZ)"];
-    elb --> asg;
-    asg --> ElasticCache;
-    asg --> RDS;
+    elb --> ASG;
+    ASG --> ElasticCache;
+    ASG --> RDS;
     ```
 
 

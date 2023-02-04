@@ -1,8 +1,10 @@
 
 # Prometheus
 
+- 使用 `Prometheus query language, PromQL)` 從 k8s 來 filter, aggregate, ingest, and query time series metrics.
 - Prometheus 主要有 3 個元件:
-    - Retrieval : 到處去 pull metrics data, 並存入 TSDB
+    - Retrieval
+        - 到處去 pull metrics data, 並存入 TSDB
     - TSDB
     - HTTP Server
         - 提供 API Endpoints
@@ -21,9 +23,10 @@
     ```
 - Endpoints
     - '/metrics'
-        -   
     - '/federate'
         - 讓 Prometheus 可以串 Prometheus
+    - '/graph'
+        - GUI 介面
 
 
 ## Exporter
@@ -32,10 +35,13 @@
 - Exporter 可視為是 Service 的 Sidecar
 
 ```mermaid
-flowchart BT
+flowchart LR
 
-Exporter -- fetch metrics --> Service;
-Prometheus -- fetch /metrics --> Exporter;
+Prometheus -- fetch '/metrics' --> Exporter;
+
+subgraph ap
+    Exporter -- fetch metrics --> Service;
+end
 ```
 
 
