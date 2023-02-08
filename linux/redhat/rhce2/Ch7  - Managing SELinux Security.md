@@ -177,11 +177,15 @@ $# ll -Zd /hellogg/
 drwxr-xr-x. root root unconfined_u:object_r:default_t:s0 /hellogg/
 #                     ___________u:_______r:________t:__
 
+
+### 使用 chcon 修改 安全脈絡標籤 的 type context
 $# chcon -t httpd_sys_content_t /hellogg/
 $# ll -Zd /hellogg/
 drwxr-xr-x. root root unconfined_u:object_r:httpd_sys_content_t:s0 /hellogg/
 #                     ___________u:_______r:__________________t:__
 
+
+### 實務上, 可能會因為各種原因, 或是因為某些逼不得已的狀況, 重新對系統 selinx-relabel, 所以不要用這個
 $# restorecon -RFv /hellogg/
 restorecon reset /hellogg context unconfined_u:object_r:httpd_sys_content_t:s0->system_u:object_r:default_t:s0
 #                                 ___________u:_______r:__________________t:__  _______u:_______r:________t:__
@@ -189,10 +193,12 @@ restorecon reset /hellogg context unconfined_u:object_r:httpd_sys_content_t:s0->
 # -F : 連同 user, role, range
 # -v : 列出改變前後
 
-# 實務上, 可能會因為各種原因, 或是因為某些逼不得已的狀況, 重新對系統 selinx-relabel, 所以不要用這個
+
 $# ll -Zd /hellogg/
 drwxr-xr-x. root root system_u:object_r:default_t:s0   /hellogg/
 #                     _______u:_______r:________t:__
+# 看吧!! 之前貼好的 'httpd_sys_content_t' 又變回原本的 'default_t' 了
+
 
 $# rmdir /hellogg
 ```

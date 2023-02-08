@@ -24,8 +24,11 @@
     - 用來啟動 pods && containers (與 API Server 溝通), 可理解成是 Node 上頭的 Container 代理
 - kube-proxy
     - 讓其他 Nodes 上的其他物件可以與此 Node 內的 Pods 溝通 (處理 iptables)
-- flannel
-    - k8s CNI 的實作
+- K8S CNI 實作:
+    - Flannel
+    - Calico
+    - Cilium
+    - ...
 - CRI-O
     - OCI-based implementation of Kubernetes Container Runtime Interface
 - K8s Cluster

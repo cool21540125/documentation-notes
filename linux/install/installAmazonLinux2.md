@@ -70,4 +70,55 @@ $# stress --vm 1 --vm-bytes 250M --vm-hang 1
 ```
 
 
-# 
+# Install kubernetes (install k8s)
+
+- 2023/02/07
+- [Install K8s v1.25 on AWS Amazon Linux 2](https://blog.devgenius.io/install-k8s-v1-25-on-amazon-linux-2-e2a717444736)
+- 使用 kubeadm
+    - 建立 Contral Plane: `kubeadm init ...`
+    - 加入 Cluster: `kubeadm join ...`
+
+```bash
+### yum repo
+$# cat <<EOF | sudo tee /etc/yum.repos.d/kubernetes.repo
+[kubernetes]
+name=Kubernetes
+baseurl=https://packages.cloud.google.com/yum/repos/kubernetes-el7-\$basearch
+enabled=1
+gpgcheck=1
+gpgkey=https://packages.cloud.google.com/yum/doc/yum-key.gpg https://packages.cloud.google.com/yum/doc/rpm-package-key.gpg
+exclude=kubelet kubeadm kubectl
+EOF
+
+
+### 處理 SELinux
+$# setenforce 0
+$# sed -i 's/^SELINUX=enforcing$/SELINUX=permissive/' 
+
+
+### install
+$# yum install -y kubelet-1.25.0-0 kubeadm-1.25.0-0 kubectl-1.25.0-0 --disableexcludes=kubernetes
+
+
+### Start kubeadm
+$# systemctl enable --now kubelet
+
+
+### 安裝 Container runtime
+# cri-o : https://github.com/cri-o/cri-o/releases?q=&expanded=true
+$# wget https://storage.googleapis.com/cri-o/artifacts/cri-o.amd64.v1.25.0.tar.gz
+$# tar -zxf cri-o.amd64.v1.25.0.tar.gz
+$# cd cri-o
+$# ./install
+# 目前出現底下錯誤(僅節錄錯誤部分)
+# install: failed to access ‘/usr/local/share/oci-umount/oci-umount.d’: No such file or directory
+# install: failed to access ‘/etc/crio’: No such file or directory
+# install: failed to access ‘/etc/crio/crio.conf.d’: No such file or directory
+# install: failed to access ‘/usr/local/lib/systemd/system’: No such file or directory
+# ++ command -v runc
+#
+
+
+### Create Control Plane
+$# 
+```
