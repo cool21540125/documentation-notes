@@ -23,7 +23,7 @@
     - Infrequent Access, IA
 - store documents, key-value
     - max: 一筆 400 KB
-    - 可配置 RCU && WCU
+    - 可配置 `Read Capacity Unit, RCU` && `Write Capacity Unit, WCU`
 - 常見查詢
     - Scan
         - 應盡可能地避免, 因為會把 all data in Table 全部跑過 (耗費大量 RCU)
@@ -38,6 +38,10 @@
         - 如果要查詢特定 Range Key, 但是不知道 Partition Key, 則需要借助 GSI
         - Performance 為 O(1)
     - GetItem API
+- 多人同時寫入的問題
+    - 如果發生 multiple users 同時寫入到 DynamoDB
+        - 預設寫入 DynamoDB(`PutItem`, `UpdateItem`, `DeleteItem`) 為 unconditional 操作
+        - 不過, DynamoDB 提供了 `Conditional Writes` 的操作
 - 名詞解釋
     - FilterExpression
         - If you need to further refine the Query results, you can optionally provide a filter expression. A filter expression determines which items within the Query results should be returned to you. All of the other results are discarded.

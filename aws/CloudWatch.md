@@ -17,15 +17,20 @@
         - 每個 Metric 最多能有 10 個 Dimensions
         - 好像可以理解成 OOP 裡頭的 class, attribute name, attribute value 的概念
             - ex: Instance.id, Environment.name, ...
-    - Resolution
-        - Metric 的蒐集頻率(StorageResolution API parameter)
+        - 每一筆 Metric 都有它的蒐集頻率(StorageResolution API parameter)
             - Standard resolution : 60 secs
-            - High resoultion     : 1 / 10 / 30 secs (貴)
+            - High resoultion     : 1 sec
+                - 很貴
+                - 使用 [collected plugin](https://github.com/awslabs/collectd-cloudwatch) 來搜集 metrics
+                - 儲存後, 查看 metrics 時, 可再自行選擇資料頻率 1/5/10/30/60 甚至更長的資料頻率
                 - 很容易與 EC2 detailed monitoring && CloudWatch Alarm high resolution 搞混!!
+        - 如果自行搜集 custom metric 時, 都會去尻 `PutMetricData API`(收費~), 假設又使用 High Resolution, 小心錢包哭哭
     - Statistics (不解釋)
     - Percentiles (不解釋)
     - Alarms
-        - 針對一段時間特定 Metric 達到某個 threshold 的狀態, 再對此來做因應
+        - 針對一段時間特定 Metric 達到某個 threshold 的狀態, 所做的 actions
+- CloudWatch 會以 time series 的方式, 將這些 metrics 伴隨他的 timestamp 做儲存
+    - user 也可自行發布 `aggregated set of data point`, 即 `statistic set` 到 CloudWatch
 
 
 ## CloudWatch Dashboards

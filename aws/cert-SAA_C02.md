@@ -287,7 +287,7 @@ ss -- SSO access --> saml["SAML APPs"]
 
 # Security & Encryption
 
-- [KMS, Key Management Service](#aws-kms-key-management-service)
+- [KMS, Key Management Service](#kms,-key-management-service)
 - [SSM Parameter Store](#ssm-parameter-store)
 - [Secret Manager](#secret-manager)
 - [CloudHSM](#cloudhsm-hardware-security-module)
@@ -311,8 +311,11 @@ ss -- SSO access --> saml["SAML APPs"]
 
 ## KMS, Key Management Service
 
-- 常被拿來與 [CloudHSM](#cloudhsm-hardware-security-module) 做比較
-- 可藉由 CloudTrail 來查看 Key Usage. 與 IAM 有高度的整合
+- [AWS Key Management Service](https://docs.aws.amazon.com/kms/latest/developerguide/overview.html)
+    - KMS 使用 硬體安全模組(HSM), 依照 FIPS 140-2 Cryptographic Module Validation Program 來保護及驗證 `AWS KMS keys`
+    - KMS 也有和 CloudTrail 做整合, 用以滿足 auditing, regulatory, and compliance needs
+        - 可使用 CloudTrail 來查看 KMS 的使用
+- KMS 常被拿來與 [CloudHSM](#cloudhsm-hardware-security-module) 做比較
 - Charge: `$0.03/10000` call KMS API
 - API call > 4KB data 須借助 *envelop encryption*
 - *KMS Key* 無法 cross region 傳送

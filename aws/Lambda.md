@@ -28,20 +28,24 @@
     - [polling invoke](#polling-invoke)
         - retry 機制: Depends on event source
 - Lambda Execution environment lifecycle (Lambda 運行階段):
-    ```mermaid
-    flowchart LR
-    subgraph init
-        ext0["Extension init"] --> run["Runtime init"] --> fn["Function init"]
-    end
-    subgraph invoke
-        invk1["invoke FN1"] --> invk2["invoke FN2"]
-    end
-    subgraph shutdown
-        rt["Runtime shutdown"] --> ext1["Extension shutdown"]
-    end
-    init --> invoke --> shutdown
-    ```
     - init 階段, 包含了 Lambda Function 運行前的 main function 以外的 Codes
+- 效能
+    - 跑 Lambda FN 只能調整 memory. 
+        - ex: Memory=1792 MiB, 可獲得完整一顆 CPU. 隨著 Memory 增加, CPU 也會跟著增加
+
+```mermaid
+flowchart LR
+subgraph init
+    ext0["Extension init"] --> run["Runtime init"] --> fn["Function init"]
+end
+subgraph invoke
+    invk1["invoke FN1"] --> invk2["invoke FN2"]
+end
+subgraph shutdown
+    rt["Runtime shutdown"] --> ext1["Extension shutdown"]
+end
+init --> invoke --> shutdown
+```
 
 
 ### [sync invoke](https://docs.aws.amazon.com/lambda/latest/dg/invocation-sync.html)
@@ -86,6 +90,7 @@ lambda -- result --> Destination
 ```
 
 - The configuration of services as event triggers is known as event source mapping.
+    - 觸發 event 的配置, 稱之為 `event source mapping`
 - 需要使用 Lambda Function 的 execution role, 授予權限可至 Event Source 取得資料
 - polling invoke pattern 比較適用於 streaming 或 queuing based services
 - 特殊情況: 由於 *distributed nature of its pollers*, Lambda 極少數情況下會收到重複事件
@@ -153,7 +158,23 @@ client <--> ALB <--> Lambda
     1. 結合 S3 event, 用戶上傳 img 以後, 藉由 Lambda 將圖片做縮圖, 另存到另一個 S3 Bucket
     2. 結合 EventBridge, 藉由 serverless cron, 定期 trigger Lambda 做事情, 省掉一台 EC2 的費用
     3. 結合 ALB, 作為 Serverless API Server
-            
+- Handling Errors
+    - API Gateway 與 Lambda 整合後, 發生錯誤時, Lambda 需附加必要的 Error Type
+        - Lambda 可回應的 Error types 分成 2 種:
+            - standard errors
+            - custom errors (如下範例)
+                ```jsonc
+                {
+                    "isBase64Encoded" : "boolean",
+                    "statusCode": "number",
+                    "headers": { 
+                        "X-Amzn-ErrorType":"InvalidParameterException",
+                        "(note)": "(上面是假設發生 Lambda Type Error)"
+                    },
+                    "body": "JSON string"
+                }
+                ```
+
 
 # Lambda@Edge
 
