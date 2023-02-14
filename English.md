@@ -96,6 +96,7 @@ KDC    | Key Distribution Centers                    | 集中驗證            |
 LDAP   | Lightweight Directory Access Protocol       | 集中驗證            |
 NAT    | Network Address Translation                 | IPv4               |
 NFS    | Network File System                         | Linux              |
+OCI    | Open Container Initiative                   | 容器               | 包含 2 個規範: runtime-spec && image-spec
 OCSP   | Online Certificate Status Protocol          | 在線憑證狀態協定    |
 OLAP   | Online Analytics Processing                 | 線上分析處理        | 
 OLTP   | Online Transaction Processing               | 線上交易處理        | 

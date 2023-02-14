@@ -111,6 +111,11 @@ kubelet -> CRI-O                                                                
   - 使用 `containers/storage` library 來將 pull 下來的 image 做 unpack 到 root-filesystem && 儲存到 COW file system
   - OCI-based implementation of Kubernetes Container Runtime Interface
 - Open Container Initiative, OCI
+  - 包含 2 個規範:
+    - Buntime Specification(runtime-spec)
+      - The Runtime Specification outlines how to run a “filesystem bundle” that is unpacked on disk
+    - Image Specification(image-spec)
+      - 
 
 
 # k3s

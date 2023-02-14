@@ -85,3 +85,17 @@ graph TD;
     READY   -- Scheduler dispatch      --> RUNNING;
     RUNNING   -- Exit                    --> TERMINATED;
 ```
+
+
+# Memory management
+
+- fragmentation(碎片化) 分成:
+    - external fragmentation(外部碎片化)
+        - OS 所有可用記憶體 > 程序所需的記憶體, 但因為 僅存的記憶體空間不連續, 因而無法分配(造成閒置)
+        - 解法: 
+            - 重組
+            - 使用適當的 paging (這是自己看書得到的想法, 但不確定是否正確)
+    - internal fragmentation(內部碎片化)
+        - OS 分配給程序的記憶體 > 程序實際所需的記憶體, 因此造成不必要的浪費
+        - 解法: 降低 page size
+

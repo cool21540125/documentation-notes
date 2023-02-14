@@ -607,7 +607,7 @@ users -- auth --> aws["AWS Simple AD"];
 
 ```bash
 $# export ACCOUNT_ID= xxxxx
-# 自行填寫 AWS Account ID
+
 
 ### 建立 IAM User
 $# DEMO_USER_NAME="test-user"
@@ -616,8 +616,7 @@ $# aws iam create-user \
 
 
 ### IAM Policy definition
-$# LOCAL_FILE="test-policy.json"
-$# cat <<EOF > ${LOCAL_FILE}
+$# cat <<EOF > test-policy.json
 {
     "Version": "2012-10-17",
     "Statement": [
@@ -636,14 +635,13 @@ EOF
 
 
 ### 依照本地檔案, 建立 Policy
-$# POLICY_NAME_ON_AWS="test-policy"
 $# aws iam create-policy \
-    --policy-name ${POLICY_NAME_ON_AWS} \
-    --policy-document file://${LOCAL_FILE}
+    --policy-name test-polich \
+    --policy-document file://test-policy.json
 
 
 ### 將 policy attach 給 user
-$# TEST_POLICY_ARN="arn:aws:iam::${ACCOUNT_ID}:policy/${POLICY_NAME_ON_AWS}"
+$# TEST_POLICY_ARN="arn:aws:iam::${ACCOUNT_ID}:policy/test-polich"
 $# aws iam attach-user-policy \
     --user-name ${DEMO_USER_NAME} \
     --policy-arn ${TEST_POLICY_ARN}

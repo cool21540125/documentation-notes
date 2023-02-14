@@ -1,0 +1,54 @@
+### 其他的 CloudFormation 欄位(略)
+
+Resources:
+  WebServer01:                  # 資源名稱: WebServer
+    Type: AWS::EC2::Instance  # 資源類型: EC2 Instance
+    Properties:
+      ImageId: !FindInMap [AWSRegionArch2AMI, !Ref 'AWS::Region', !FindInMap [AWSInstanceType2Arch, !Ref InstanceType, Arch]]      
+      InstanceType:
+        Ref: InstanceType
+      KeyName:
+        Ref: KeyName  # 此 Resources.WebServer01 使用 Parameters.KeyName88
+      SecurityGroups:
+      - Ref: WebServerSecurityGroup
+      UserData:
+        Fn::Base64: !Sub |
+           #!/bin/bash -xe
+           yum update -y aws-cfn-bootstrap
+           /opt/aws/bin/cfn-init -v --stack ${AWS::StackId} --resource WebServer --configsets wordpress_install --region ${AWS::Region}
+           /opt/aws/bin/cfn-signal -e $? --stack ${AWS::StackId} --resource WebServer --region ${AWS::Region}
+    ...
+  ...
+  
+  WebServerSecurityGroup:          # 資源名稱: WebServerSecurityGroup
+    Type: AWS::EC2::SecurityGroup  # 資源類型: Security Group
+    Properties:
+      GroupDescription: "Enable HTTP access via port 80 locked down to the load balancer + SSH access"
+      SecurityGroupIngress:
+      - CidrIp: 0.0.0.0/0
+        FromPort: 80
+        IpProtocol: tcp
+        ToPort: 80
+      - CidrIp: !Ref SSHLocation
+        FromPort: 22
+        IpProtocol: tcp
+        ToPort: 22
+  ...
+
+
+Parameters:
+  KeyName88:
+    ConstraintDescription: must be the name of an existing EC2 KeyPair.
+    Description: Name of an existing EC2 KeyPair to enable SSH access to the instances
+    Type: AWS::EC2::KeyPair::KeyName  # 此處的 Type 為 唯一的 Required
+    NoEcho: true  # 像是使用 aws cloudformation describe-stacks 的時候, 不要列出此欄位的資訊 
+  InstanceType:
+    AllowedValues:
+    - t1.micro
+    - t2.nano
+    - t2.micro
+    - t2.small
+    ConstraintDescription: must be a valid EC2 instance type.
+    Default: t2.small
+    Description: WebServer EC2 instance type
+    Type: String

@@ -24,48 +24,12 @@
     - handle different API versioning
     - handle different environments
     - 後端可放任何 AWS Services
-- 具有底下幾種 Endpoint Types:
-    - Edge-Optimized (default) (for global clients)
-        - API Gateway 存在於一開始建立的 Region, 不過 Request 會打到 **CloudFront Edge Locations** 再回源
-            - improve latency
-            - 如果想搞 global services 可考慮這個
-        - 如果使用此 Endpoint Type, 又結合 ACM, 則證書會放在 `us-east-1`
-    - Regional
-        - API Gateway 存在於一開始建立的 Region && 預估 clients 也都來自於這個 Region
-            - 如果預估 service 限縮於某些地區
-            - 也可以自行結合 CloudFront 來做 caching
-                - 可自行定義 caching strategy && 將服務擴展到 「非 Global 但是多 Region」
-    - Private
-        - clients from VPC
-            - VPC Endpoint (ENI)
-        - 訪問權限可使用 Resource Policy 做配置
-- API Gateway 具備下列的 Integration Types:
-    - Lambda Function / AWS Service
-        - 需要自行配置 Integration Request && Integration Response
-        - 需要配置 mapping templates
-    - Lambda Proxy
-        - 將 Client Request 轉變成 Lambda 的 input
-        - 因而此 Lambda 會變成 Request/Response 的處理邏輯
-        - 無 mapping template, headers, query string parameters 作為輸入參數
-    - HTTP Proxy
-        - 無 mapping template
-        ```mermaid
-        flowchart LR
-
-        api[API Gateway]
-        Client <-- HTTP Request --> api <-- "HTTP Proxy\nproxy Request/Response" --> ALB;
-        ```
-    - HTTP
-    - Mock
-    - VPC Link
-
----
 
 ```mermaid
-flowchart TB;
+flowchart LR;
 
 subgraph api["API Gateway"]
-    direction TB
+    direction LR
     cache["API Gateway Cache"]
     cw["CloudWatch"]
 end
@@ -82,3 +46,63 @@ User <--> api;
 api <--> AWS
 api <--> On-Premise
 ```
+
+
+# API Gateway 的 Endpoint Types:
+
+- Edge-Optimized (default) (for global clients)
+    - API Gateway 存在於一開始建立的 Region, 不過 Request 會打到 **CloudFront Edge Locations** 再回源
+        - improve latency
+        - 如果想搞 global services 可考慮這個
+    - 如果使用此 Endpoint Type, 又結合 ACM, 則證書會放在 `us-east-1`
+- Regional
+    - API Gateway 存在於一開始建立的 Region && 預估 clients 也都來自於這個 Region
+        - 如果預估 service 限縮於某些地區
+        - 也可以自行結合 CloudFront 來做 caching
+            - 可自行定義 caching strategy && 將服務擴展到 「非 Global 但是多 Region」
+- Private
+    - clients from VPC
+        - VPC Endpoint (ENI)
+    - 訪問權限可使用 Resource Policy 做配置
+
+
+# API Gateway 的 Integration Types:
+
+## 1. Lambda Function / AWS Service
+
+- 需要自行配置 Integration Request && Integration Response
+- 需要配置 mapping templates
+- 
+
+```jsonc
+// Lambda 回應給 API Gateway 的內容格式需有下列欄位(否則 API Gateway 會拋出 502):
+{
+    "statusCode": httpStatusCode,
+    "headers": { 
+        "headerName": "headerValue",
+        "otherHeaderKey": "otherHeaderValue"
+    },
+    "isBase64Encoded": true|false,
+    "body": "..."
+}
+```
+
+## 2. Lambda Proxy
+
+- 將 Client Request 轉變成 Lambda 的 input
+- 因而此 Lambda 會變成 Request/Response 的處理邏輯
+- 無 mapping template, headers, query string parameters 作為輸入參數
+
+
+## 3. HTTP Proxy
+
+- 無 mapping template
+```mermaid
+flowchart LR
+
+api[API Gateway]
+Client <-- HTTP Request --> api <-- "HTTP Proxy\nproxy Request/Response" --> ALB;
+```
+- HTTP
+- Mock
+- VPC Link

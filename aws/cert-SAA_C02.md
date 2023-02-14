@@ -690,65 +690,7 @@ dms -- insert/update/delete --> rds;
     - 可將 On-Premise DB 做 incremental backup -> AWS
 
 
-## DataSync
-
-- [What is AWS DataSync?](https://docs.aws.amazon.com/datasync/latest/userguide/what-is-datasync.html)
-    - online data transfer service
-    - 大量 data 想從 On-Premise Data -> AWS, 可參考此服務
-    - 可設定 rate limit
-    - online data transfer service
-- [clf-DataSync](./cert-CLF_C01.md#aws-datasync)
-- Charge:
-    - 針對 DataSync 傳輸的流量計費
-- Use Case:
-
-```mermaid
-flowchart LR
-
-subgraph dc["On-Premise"]
-    srv["Server"]
-    dsa["AWS DataSync Agent"]
-
-    srv <-- NFS/SMB protocal --> dsa
-end
-
-subgraph Region
-    ds["AWS DataSync"]
-    subgraph rr["AWS Storage Resources"]
-        direction LR
-        S3; S3-IA;
-        glacier["S3 Glacier"]
-        efs["AWS EFS"]
-        fsx["Amazon FSx"]
-    end
-    ds <--> rr
-end
-
-dsa <-- TLS --> ds;
-```
-
------------
-
-```mermaid
-flowchart BT
-
-subgraph r0["Region A \n (source)"]
-    subgraph VPC
-        efs0["Amazon EFS"]
-        ec2["EC2 with DataSync Agent"]
-        ec2 --- efs0
-    end
-end
-
-subgraph r1["Region B \n (Destination)"]
-    ds["AWS DataSync Service endpoint"]
-    efs1["Amazon EFS"]
-    ds --- efs1
-end
-
-ec2 -- sync --> ds;
-```
------------
+## [DataSync](./DataSync.md)
 
 
 ## Transferring Large Datasets

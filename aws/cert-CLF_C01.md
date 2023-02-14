@@ -316,9 +316,34 @@ Networking    | -    | -    | -
 
 ## DocumentDB
 
+- 相對於 Aurora 是 AWS 魔改了 PostgreSQL/MySQL
+- DocumentDB 則是 AWS 發布的 MongoDB 的魔改版本
+- 儲存
+    - 每次擴增儲存的單位是 10 GB
+    - 最大可控增到 64 TB
+- 吞吐量
+    - 可處理 百萬量級 / sec 的請求
 - MongoDB
 - Replication 為 Cross 3 AZ
     - HA
+
+
+## AWS Keyspaces
+
+- 可把 Keyspaces 理解成 AWS 版本的 Apache Cassandra
+- serverless, scalable, HA
+- table data cross 3 AZs
+- 使用 Cassandra Query Language, CQL
+- 吞吐量
+    - 僅百萬毫秒的延遲
+    - 處理上千請求 / sec
+- Mode
+    - provision mode
+    - on-demand mode
+- encryption, backup, PITR up to 35 days
+- 使用範疇
+    - IoT data
+    - time series data 
 
 
 ## Amazon Neptune
@@ -334,7 +359,7 @@ Networking    | -    | -    | -
 - 可下 SQL
 - 量子記帳本 DB
     - Financial Transactional Ledger
-- 非去中心化 (de-centralize, 此仍為 Centralization)
+- 「非」「去中心化」 (de-centralize, 此仍為 Centralization)
 - Serverless, HA
 - Replication 3 AZ
 - 可看到所有 Data 變更的 History (Ledger)
@@ -1194,22 +1219,7 @@ rr -- restore --> S3;
 - 可快速 Recover 本地 Service -> AWS
 
 
-## AWS DataSync
-
-- [saa-DataSync](./cert-SAA_C02.md#datasync)
-- Online data transfer service
-    - simplify && auto && accelerate moving data between storage systems and services
-    - 地端需安裝 `AWS DataSync Agent`
-- 可在底下的各種 服務/儲存系統 之間作移動
-    - NFS
-    - SMB
-    - HDFS
-    - Object storage systems
-    - S3
-    - EFS
-    - Glacier
-    - Snowcone
-    - AWS FSx
+##  [DataSync](./DataSync.md)
 
 
 ## AWS Fault Injection Simulator, FIS

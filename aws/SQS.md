@@ -62,9 +62,10 @@
         - 其他 Consumer poll 會 "再次" Receive/Read this Message
         - 因此一個 Message 可能會被多次 Receive/Read
         - 若 Read 次數過多, 應考慮使用 [DLQ](#dlq-dead-letter-queue)
-- SQS - DelayQueue
-    - default: 0 (max 15 mins)
-    - 過多久後再傳送到 Queue
+- [SQS - Delay Queues](https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/sqs-delay-queues.html)
+    - default: 0 (min 0 sec, max 15 mins)
+    - p 丟 message 到 queue 以後, 在 delay time(此時間內), Consumer 看不到此 message
+    - `Delay queues` 類似於 `visibility timeouts`, 兩者都是讓 Consumer 在一段時間內, 看不到 messages
 - SQS - Long Polling
     - SQS 的 API call 是要錢的 (但有一定的免費額度)
     - default: 0 (range 0 ~ 20 s)

@@ -23,7 +23,6 @@
     - Infrequent Access, IA
 - store documents, key-value
     - max: 一筆 400 KB
-    - 可配置 `Read Capacity Unit, RCU` && `Write Capacity Unit, WCU`
 - 常見查詢
     - Scan
         - 應盡可能地避免, 因為會把 all data in Table 全部跑過 (耗費大量 RCU)
@@ -38,6 +37,11 @@
         - 如果要查詢特定 Range Key, 但是不知道 Partition Key, 則需要借助 GSI
         - Performance 為 O(1)
     - GetItem API
+- RCU(Read Capacity Unit)
+    - 1 單位的 RCU, 表示每秒鐘的讀取量能為:
+        - Strongly consistent   讀取 1 個 4 KB 物件
+        - Eventually consistent 讀取 2 個 4 KB 物件
+- WCU(Write Capacity Unit)
 - 多人同時寫入的問題
     - 如果發生 multiple users 同時寫入到 DynamoDB
         - 預設寫入 DynamoDB(`PutItem`, `UpdateItem`, `DeleteItem`) 為 unconditional 操作

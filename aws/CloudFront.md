@@ -5,13 +5,15 @@
 - 有超過 200+ 個 Edge Locations
     - file cached for TTL
 - 結合了 DDoS protection && Shield, Web Application Firewall
-- Origins
-    - S3 
+- CloudFront 回源到 S3, 有 2 種授權機制:
+    - OAC, Origin Access Control
+        - 相較於 OAI 的額外優點:
+            - 支援 all Region S3 buckets
+            - 支援 SSE-KMS
+            - 支援 Dynamic request(PUT, DELETE) to S3
+    - OAI, Origin Access Identity (legacy)
         - Enhanced security with CloudFront Origin Access Identity, OAI
-            - 讓 S3 只能由 CloudFront 來訪問
-            - OAI 是用來給 CloudFront access S3 的 IAM Role
-            - 如果使用 CloudFront 而不使用 OAI 的話, 那 S3 bucket 必須設成 public access 才可以
-        - CloudFront 可作為 S3 upload file 的 ingress
+        - OAI 是用來給 CloudFront access S3 的 IAM Role
     - Custom Origin(HTTP)
         - ALB && EC2 instance
             - 必須要是 public && SG 要允許 AWS CloudFront IPs 來訪問

@@ -185,7 +185,39 @@ $# aws cloudwatch set-alarm-state \
 
 ## CloudWatch Insights
 
-- 可用來 query logs && 把 query 加到 *CloudWatch Dashboard*
+- 因為 CloudWatch Logs 都是蒐集到 S3, 但是不方便觀看, 因此借助 CloudWatch Logs Insights, 可有效的:
+    - query logs
+    - 把 query 加到 *CloudWatch Dashboard*
+- Examples:
+    1. example - 基本介紹:
+        - 第一行, 要列出的欄位
+        - 第二行, 排序條件
+        - 第三行, 篩選條件
+    ```ini
+    fields @timestamp, @message
+    | sort @timestamp desc
+    | filter @message like "Your Wanted Message"
+    ```
+    2. example - 篩選特定字元:
+        - 假設要列出 'GET /login HTTP/2'
+        - 第三行, 藉由 parse 加上 '*', 可將之視為變數, 並指定到後面去
+    ```ini
+    fields @timestamp, @message
+    | sort @timestamp desc
+    | parse '"GET * HTTP/2' as @location
+      ;;; 可取得 location 欄位
+    | parse '"GET * */2' as @location, @protocol
+      ;;; 可取得 location 及 protocol 兩個欄位
+    ```
+    3. example - 做統計:
+        - 最後一行, 可計算出去尻 login 的次數
+    ```ini
+    fields @timestamp, @message
+    | filter @logStream = "Error Logs"
+    | sort @timestamp desc
+    | parse '"GET * */2' as @location, @protocol
+    | stats count(*) as sum by @location
+    ```
 
 
 ## AWS EventBridge

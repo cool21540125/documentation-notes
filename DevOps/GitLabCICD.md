@@ -1,3 +1,4 @@
+
 # [Getting started with GitLab CI/CD](https://gitlab.com/help/ci/quick_start/README)
 
 - 2018/10/30
@@ -8,6 +9,7 @@
 
 
 ## .gitlab-ci.yml
+
 定義 `GitLab Runner` 要怎麼作, 基本上處理流程為
 
 1. build
@@ -19,12 +21,9 @@
 以上如果沒問題, 會得到 `nice green checkmark`
 
 
-
-
 # .gitlab-ci.yml 範例
 
 * https://docs.gitlab.com/ee/ci/yaml/
-
 
 ```yml
 # 所有 job 起始前先執行
@@ -46,7 +45,6 @@ rubocop:
         - bundle exec rubocop   # 執行的指令
 ```
 
-
 Jobs are used to create jobs, which are then picked by Runners and executed within the environment of the Runner.
 
 把 `.gitlab-ci.yml` 也 push 到 GitLab 後, pipeline 就會被掛起來(啟用)了~~
@@ -65,7 +63,7 @@ A Runner can be a ...
 
 Runner 不僅可提供給單一專案, 也可同時用來給多個專案(稱為 *Shared Runner*)
 
+
 ## 如何設定 Runner
 
 Ans: 專案 > Settings > CI/CD
-
