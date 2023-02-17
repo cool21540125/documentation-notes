@@ -9,7 +9,7 @@
 - 服務免費, 對後端 Resource 收費
 - ELB 能對 ASG 內的 instance 做 Health Check 
     - (疑問, 這個不是 Target Group 做的嗎?)
-- 建立 ASG 時, 需先建立 *Launch Template* (OLD *Launch Configuration* 已 Deprecated)
+- 建立 ASG 時, 需先建立 *Launch Template* (OLD *Launch Configuration* 早於 2022Q2 已 Deprecated)
     - 裡頭包含了建立 EC2 instances 的相關必要資訊
         - AMI, Instance Type, EC2 User Data, EBS Volumes, SG, SSH Key, Network, ELB info, ...
     - 需配置 Min Size && Max Size && Initial Capacity && Scaling Policies
@@ -28,8 +28,7 @@
         - 建立後無法修改
 
 ```mermaid
-flowchart TB
-
+flowchart LR
 
 subgraph ASG
     direction TB;

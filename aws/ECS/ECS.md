@@ -6,6 +6,9 @@
     - Task (ECS Task):
         - The lowest level building block of ECS - Runtimes instances
     - Task Definition: 
+        - 可以把這個理解成 k8s 的 Pod, 建立這東西 Task Definition(or Pod) 以後, 裡頭再跑 Container
+        - `ECS Task` 可視為一個在 AWS ECS 中運行 Container 的最小單元.
+            - 而 Pod 則是 k8s 中運行 Container 的最小單元
         - Defines how to create ECS task (要先建這個, 才能建 ECS Service)
         - 如果有 Service 或 Task 要跑在 ECS Cluster 裡頭, 需要先定義這個
         - Templates for your *Tasks*, 定義 image 來源, Memory, CPU, 等
@@ -59,20 +62,20 @@
     - Auto Scaling Group Scaling
         - 依照 (HERE) 來 +- EC2 instances
     - ECS Cluster Capacity Provider (建議)
-        - auto provision and scal infra for ECS Tasks
+        - auto provision and scale infra for ECS Tasks
         - Capacity Provider paired with an Auto Scaling Group
         - add EC2 Instances when missing capacity
 
 
 # ECS - Load Balancer
 
-- Application Load Balancer
+- ALB, Application Load Balancer
     - 適用多數情況
-- Network Load Balancer
+- NLB, Network Load Balancer
     - high throughput 情境使用
     - 可搭配 **AWS PrivateLink**
-- Classic Load Balancer
-    - 別用就是了
+- CLB, Classic Load Balancer
+    - (因為是官方不建議用的老古董, 所以我不鳥他了)
 
 ```mermaid
 flowchart LR;
@@ -158,19 +161,18 @@ ALB --> Task3;
 - ECS 的 IAM Roles, 有底下 2 者:
     - EC2 Instance Profile
         - 僅適用於 *EC2 Launch Type*
-        - 給 *ECS agent* 使用
-            - *ECS agent* 會借助 Instance Profile 處理一堆事情, ex:
-                - API call -> ECS Service
-                - send container log -> CloudWatch logs
-                - API call -> ECR to pull images
-                - retrive data from [Secret Manager]
-                - retrive data from [SSM Parameter Store]
+        - 給 *ECS agent* 使用. *ECS agent* 會借助 Instance Profile 處理一堆事情, ex:
+            - API call -> ECS Service
+            - send container log -> CloudWatch logs
+            - API call -> ECR to pull images
+            - retrive data from [Secret Manager]
+            - retrive data from [SSM Parameter Store]
     - ECS Task Role
-        - 適用於 *EC2 Launch Type* && *Farget Launch Type*
+        - 同時適用於 *EC2 Launch Type* && *Farget Launch Type*
         - Task Role 定義在 *task definition* 裡頭
         - *ECS agent* 藉由此 Role, 用來授予不同的 *ECS task* 擁有不同的 [Task Role], ex:
             - Task 需要訪問 S3, 因此讓 ECS agent 具備授權的權限, 用來給予 Container 必要的 *Task Role*
-                - 白話文就是, 黑社會老大 派你去暗殺第二把交椅, 而授予你必要權限
+                - 白話文就是, 老大 派你去幹掉第二把交椅, 而授予你必要權限
                     - 老大(Agent)具備 授權的 Role
                     - 你(Task) 具備 Task Role
 
@@ -178,12 +180,14 @@ ALB --> Task3;
 # ECS CLI
 
 ```bash
-$# aws ecs list-task-definitions
+$# aws ecs list-task-definitions \
+    --region "ap-northeast-1"
 
 
 ### List Tasks
 $# Cluster_Name=
 $# aws ecs list-tasks --cluster ${Cluster_Name}
+
 
 ### Describe the Running Task
 $# task_ID=

@@ -1,0 +1,14 @@
+
+@region=ap-northeast-1
+@apigw_stage=prd
+@url=https://{{$dotenv random_apigw_id}}.execute-api.{{region}}.amazonaws.com
+@api_key={{$dotenv api_key}}
+
+
+### (實驗用) 去尻 API Gateway 弄出來的 需要 api_key 的 Endpoint
+GET {{url}}/{{apigw_stage}}/apikey
+x-api-key: {{api_key}}
+
+
+
+### 

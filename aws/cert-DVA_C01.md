@@ -233,6 +233,11 @@ code --> Backend -- deploy --> Amplify
 - 收發信都需要 IAM Permission
 
 
+## AWS Serverless Application Repository, AWS SAR
+
+- 可用來儲存 Serverless APP 的 Repository
+
+
 ## Amazon Certificate Manager, ACM
 
 - provision / manage / deploy / renewal SSL/TLS Certificates
@@ -290,5 +295,5 @@ mm["CloudWatch \n EventBridge \n X-Ray"];
 
 ff -- create --> ee;
 ee -- start --> rr;
-rr --> mm;
+mm -- tracing --> rr;
 ```

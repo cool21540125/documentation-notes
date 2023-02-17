@@ -33,7 +33,7 @@
 
     asg1 -- PUT --> SQS
     Client -- request --> ALB
-    ```
+```
 
 * Beanstalk 有他專屬的 CLI, 有需要再找 `eb cli` (更為簡易使用)
 * 對於 Beanstalk 的環境變數 && 依賴服務, 可放在專案目錄下的:
@@ -77,14 +77,30 @@
         - 使用 `Platform.yaml` 來定義 AMI, 建立 Custom Image
     - 如果需要特殊的 Platform (OS, additional Software, Scripts to run)
         - 使用 **Packer software** 來建立 entirely new Beanstalk Platform
-# Beanstalk 的更新
+
+
+# Beanstalk - Deployment poicies(更新策略)
+
+有底下這些方式:
+
+- All at once
+- Rolling
+- Rolling with additional batches
+- Immutable
+- Traffic splitting
+
+各種策略的比較:
+
+![Beanstalk-deploy-policies](./img/Beanstalk-deploy-policies.png)
+
 
 ## All at once
 
 * 一次更新所有 instances 到 New Version
 * 最快速, 但會有 downtime
 
-![](./img/beanstalk_all-at-once.png)
+![Beanstalk_all-at-once](./img/beanstalk_all-at-once.png)
+
 
 ## Rolling
 
@@ -92,7 +108,8 @@
 * 更新期間的可用規模, 會略小於平常的時候 (因為隨時都有機器在更新)
 * 更新流程示意圖如下
 
-![](./img/beanstalk_rolling.png)
+![Beanstalk_rolling](./img/beanstalk_rolling.png)
+
 
 ## Rolling with additional batches
 
@@ -102,7 +119,8 @@
 * 之後再陸續更新 現有 instances 到 New Version
 * 更新期間的可用規模, 與平常規模一樣
 
-![](./img/beanstalk_rolling-with-additional-batches.png)
+![Beanstalk_rolling-with-additional](./img/beanstalk_rolling-with-additional-batches.png)
+
 
 ## Immutable
 
@@ -110,12 +128,13 @@
 * high cost, double capacity
     - 可快速 rollback(僅需關閉 new ASG)
 * 建一批 (new temp ASG) 跑 New Version
+    - 只跑 1 個 instance, 沒問題後再把其他的 instances 運行起來
 * 完成後 migrate 到 Old ASG
 * 若沒問題, Terminate Old Version instances
 * 若有問題, Terminate New Version instances
 
-![](./img/beanstallk_immutable.png
- )
+![Beanstalk_immutable](./img/beanstallk_immutable.png)
+
 
 ## Blue/Green (非 Beanstalk 直接議題, 但可實作)
 
@@ -125,6 +144,7 @@
     - 就算 New Version 有問題, Rollback 非常快
         - 改 DNS CNAME 即可 (Beanstalk 裡頭直接切換)
 * New Version 剛部署完成時, 藉由 DNS 將少量流量導入來測試
+
 
 ## Traffic Splitting
 

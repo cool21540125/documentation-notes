@@ -42,6 +42,7 @@
         - Strongly consistent   讀取 1 個 4 KB 物件
         - Eventually consistent 讀取 2 個 4 KB 物件
 - WCU(Write Capacity Unit)
+    - 1 單位的 WCU, 表示每秒鐘能寫入 1 KB
 - 多人同時寫入的問題
     - 如果發生 multiple users 同時寫入到 DynamoDB
         - 預設寫入 DynamoDB(`PutItem`, `UpdateItem`, `DeleteItem`) 為 unconditional 操作

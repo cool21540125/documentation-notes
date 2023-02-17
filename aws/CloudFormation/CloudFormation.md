@@ -61,9 +61,10 @@ set of outputs
 ```bash
 ### 刪除 CloudFormation Stack
 $# CloudFormationName=
-$# Region=
+$# Region="ap-northeast-1"
 $# aws cloudformation delete-stack \
-    --stack-name "${CloudFormationName}" --region "${Region}"
+    --stack-name ${CloudFormationName} \
+    --region ${Region}
 
 
 ### 上傳 CloudFormation Template -> S3

@@ -1,6 +1,4 @@
 
-# IAM 核心
-
 ```mermaid
 flowchart LR
 
@@ -34,62 +32,13 @@ r1 -.- srv1["AWS Services \n (ex: S3, RDS)"];
 r2 -.- srv2["AWS Services \n (ex: S3)"];
 ```
 
-- Polciy
-    - 定義 Identity 被 許可/拒絕 針對 Resource 執行特定 Action
-    - Policy 區分為 2 個類別:
-        - Identity-based policy - 以 People 的角度出發,   宣告某個 People 可以/不能 幹嘛
-        - Resource-based policy - 以 Resource 的角度出發, 宣告某個 Resource 可以/不能 被誰怎樣
-            - S3 policy
-            - key policy
-    - 每個 Policy 裏頭, 會有很 1~N 個 Statements
-    - 最終會套用給 User / Group / Role (想像成某個擬人的 Service)
-- Statement
-    - 白話文就是, 許可/拒絕 針對 Resource 做 Action
-        - ex: 可以 delete RDS
-        - ex: 可以 terminate EC2
-        - ex: 不能 edit S3
-    - 內部需要有:
-        - Effect   : Allow 或 Deny
-        - Action   : 執行某個動作
-        - Resource : 規範的資源範圍
-            - ex: 某個 RDS
-            - ex: 某個 S3 Bucket
-            - ex: 某台 EC2
-- Role
-    - 主要目的是要讓 IAM 以外的 `AWS Service`, 能與 `AWS IAM` 做連結
-        - 也就是要讓 `非登入用戶以外的 Services`(也可以把它當成是一個人), 來使用 `IAM` 這個服務
-    - 再白話文就是, Role 就是使用 `AWS Service` 的 某個東西 (但他不是人)
-    - [Roles terms and concepts](https://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles_terms-and-concepts.html)
-    - 可以使用 Role 的對象, 包括: 
-        - AWS Account : 同帳號 / 跨帳號 皆可
-        - AWS 提供的 Resources : ex: EC2 Instance Role
-        - 兼容 SAML 2.0 的外部 IdP 所認證過的 external user
-        - OpenID Connect
-        - custom-built identity broker
-- Principal
-    - 權限適用的 使用者(account / user / role)
-    - 如果 policy 裡頭出現 principal, 則此 policy 為 resource-based policy
-- AWS service role for an EC2 instance
-    - A special type of service role that an application running on an Amazon EC2 instance can assume to perform actions in your account.
-    - EC2 被授予 AssumeARole 的權限, 因此得到相關權限後, 可去訪問對應的 AWS Resources
-- Trust policies 定義了哪個 principal entities(accounts/users/role/federated user) can assume the role
-- AWS service-linked role
-- MFA
-    - Google Authenticator
-    - Authy
-    - Universal 2nd Factor (U2F) Security Key
-        - ex: Yubikey
-    - Hardward Key Fob MFA Device
-    - Hardward Key Fob MFA Device for AWS GovCloud
-
 
 # IAM
 
-- IAM
-    - AWS 的核心服務, 用來控制 存取 Resources
-    - Resources 則是使用者建立的 entities
-    - Users 針對 resources 來 perform actions
-    - actions 需要依賴於 Policy 上頭授予 Authorization
+- AWS 的核心服務, 用來控制 存取 Resources
+- Resources 則是使用者建立的 entities
+- Users 針對 resources 來 perform actions
+- actions 需要依賴於 Policy 上頭授予 Authorization
 - `IAM Role` 是個具備特定 permission 的 `IAM Identity`
     - Roles 本身授予自 users/applications/services
     - 常見的 IAM Roles 有:
@@ -113,9 +62,96 @@ r2 -.- srv2["AWS Services \n (ex: S3)"];
         - 可被指派給 *Users*, *Groups*, *Roles*
     - Resource-based Policy
     - 可參考 [Identity-based policies and resource-based policies](https://docs.aws.amazon.com/IAM/latest/UserGuide/access_policies_identity-vs-resource.html), 來看更多實際範例
+- MFA
+    - Google Authenticator
+    - Authy
+    - Universal 2nd Factor (U2F) Security Key
+        - ex: Yubikey
+    - Hardward Key Fob MFA Device
+    - Hardward Key Fob MFA Device for AWS GovCloud
 
 
-## IAM Permission Boundaries
+# IAM Policy
+
+- 定義 Identity 被 許可/拒絕 針對 Resource 執行特定 Action
+- Policy 區分為 2 個類別:
+    - Identity-based policy - 以 People 的角度出發,   宣告某個 People 可以/不能 幹嘛
+    - Resource-based policy - 以 Resource 的角度出發, 宣告某個 Resource 可以/不能 被誰怎樣
+        - S3 policy
+        - key policy
+- 每個 Policy 裏頭, 會有很 1~N 個 Statements
+- 最終會套用給 User / Group / Role (想像成某個擬人的 Service)
+- Trust policies 定義了哪個 principal entities(accounts/users/role/federated user) can assume the role
+- AWS service-linked role
+- IAM Policy 裡頭可以使用變數, ex, 需要創建給每個 IAM Users 使用 Bucket 底下的 同(IAM)名 Dir:
+```jsonc
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Action": "s3:ListBucket",
+            "Effect": "Allow",
+            "Resource": ["arn:aws:s3:::sharedBucket"],
+            "Condition": {
+                "StringLike": {
+                    "s3:prefix": [ "${aws:username}/*" ]
+                    // 可在自家 list dir
+                }
+            }
+        },
+        {
+            "Action": [
+                "s3:GetObject",
+                "s3:PutObject"
+            ],
+            "Effect": "Allow",
+            "Resource": ["arn:aws:s3:::sharedBucket/${aws:username}/*"]
+            // 可在自家 上傳/查詢 object
+        }
+    ]
+}
+```
+
+
+# IAM Statement
+
+- 白話文就是, 許可/拒絕 針對 Resource 做 Action
+    - ex: 可以 delete RDS
+    - ex: 可以 terminate EC2
+    - ex: 不能 edit S3
+- 內部需要有:
+    - Effect   : Allow 或 Deny
+    - Action   : 執行某個動作
+    - Resource : 規範的資源範圍
+        - ex: 某個 RDS
+        - ex: 某個 S3 Bucket
+        - ex: 某台 EC2
+
+
+# IAM Role
+
+- 主要目的是要讓 IAM 以外的 `AWS Service`, 能與 `AWS IAM` 做連結
+    - 也就是要讓 `非登入用戶以外的 Services`(也可以把它當成是一個人), 來使用 `IAM` 這個服務
+- 再白話文就是, Role 就是使用 `AWS Service` 的 某個東西 (但他不是人)
+- [Roles terms and concepts](https://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles_terms-and-concepts.html)
+- 可以使用 Role 的對象, 包括: 
+    - AWS Account : 同帳號 / 跨帳號 皆可
+    - AWS 提供的 Resources : ex: EC2 Instance Role
+    - 兼容 SAML 2.0 的外部 IdP 所認證過的 external user
+    - OpenID Connect
+    - custom-built identity broker
+
+
+# IAM Principal
+
+- 權限適用的 使用者(account / user / role)
+- 如果 policy 裡頭出現 principal, 則此 policy 為 resource-based policy
+- AWS service role for an EC2 instance
+    - A special type of service role that an application running on an Amazon EC2 instance can assume to perform actions in your account.
+    - EC2 被授予 AssumeARole 的權限, 因此得到相關權限後, 可去訪問對應的 AWS Resources
+
+
+# IAM Permission Boundaries
 
 - 此為設計 IAM Permission && IAM Policy 的進階方式
 - 可套用到 *User* && *Role*, 但無法套用到 *Group*

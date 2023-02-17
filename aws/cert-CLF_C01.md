@@ -888,18 +888,6 @@ ie --> ee["EventBridge Event"];
 ```
 
 
-## AWS X-Ray
-
-- [X-Ray](./CloudWatch.md#aws-x-ray)
-- Old way for debugging in production
-- 可直接在 local test, 並 log -> anywhere
-- 可對 分散式系統的 log 彙整, 並提供 UI, 可在 **X-Ray** Console 看到 Service Performance Status
-- Use Cases:
-    - 用來對 Performance 做 troubleshooting(bottlenecks)
-    - pinpoint service issue
-    - review request behavior
-
-
 ## Amazon CodeGuru
 
 - 藉由 ML
