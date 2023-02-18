@@ -1,6 +1,0 @@
-@url={{$dotenv url}}
-
-
-### 
-GET {{url}}
-x-api-key: 8t5o54RXQq1yDbEgJv5Fx3wqbPSzOw4j2AT39tc0
