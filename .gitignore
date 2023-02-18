@@ -25,3 +25,4 @@ keyfile
 *.volume_dir/
 .kube/
 **/.DS_Store
+**/demo.rest
