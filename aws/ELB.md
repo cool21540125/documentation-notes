@@ -177,44 +177,49 @@ GLB -- 4 --> APP;
     - ALB
 
 
-### With Cross Zone Load Balancing
+## With Cross Zone Load Balancing
+
+cross-zone balancing
 
 ```mermaid
 flowchart LR
 
 subgraph az1
     direction TB;
-    ec0["instance 10"];
-    ec1["instance 10"];
+    ec0["10%"];
+    ec1["10%"];
 end
 subgraph az2
     direction TB;
-    ec2["instance 10 \n (總共 8 instances, 比例都是 10)"];
-
+    ec2["10%"]; ec3["10%"]; ec4["10%"]; ec5["10%"];
+    ec6["10%"]; ec7["10%"]; ec8["10%"]; ec9["10%"];
 end
 
-client -- 50 --> az1;
-client -- 50 --> az2;
+client -- "(每一台比例都一樣)" --> az1;
+client -- "(每一台比例都一樣)" --> az2;
 ```
 
 
-### Without Cross Zone Load Balancing
+## Without Cross Zone Load Balancing
+
+without cross-zone balancing
 
 ```mermaid
 flowchart LR
 
 subgraph az1
     direction TB;
-    ec0["instance 25"];
-    ec1["instance 25"];
+    ec0["25%"];
+    ec1["25%"];
 end
 subgraph az2
     direction TB;
-    ec2["instance 6.25 \n (總共 8 instances, 比例都是 6.25)"];
+    ec2["6.25%"]; ec3["6.25%"]; ec4["6.25%"]; ec5["6.25%"];
+    ec6["6.25%"]; ec7["6.25%"]; ec8["6.25%"]; ec9["6.25%"];
 end
 
-client -- 50 --> az1;
-client -- 50 --> az2;
+client -- "兩個 AZ 比例都 50%" --> az1;
+client -- "兩個 AZ 比例都 50%" --> az2;
 ```
 
 

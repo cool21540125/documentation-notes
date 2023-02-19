@@ -439,17 +439,18 @@ APP -- 5. access --> rr;
 
 # Identity Federation
 
-- 可以有各種不同的 Federation 方式:
-    - [1. SAML 2.0](#saml-20-federation)
-    - [2. Custom Identity Broker](#2-custom-identity-broker)
-    - Web Identity Federation without Web Identity
-        - 如果要用這方法... 算了吧@@, 務必使用 Cognito
-        - 需要自行處理一堆外部的 IAM user
-    - [3. Web Identity Federation with Web Identity](#3-web-identity-federation-with-web-identity)
-        - 建議使用 Cognito
-    - [4. AWS Cognito](#cognito)
-    - Single Sign On, SSO
-    - Non-SAML with AWS Microsoft AD
+有各種不同的 Federation 方式:
+
+- [1. SAML 2.0](#saml-20-federation)
+- [2. Custom Identity Broker](#2-custom-identity-broker)
+- Web Identity Federation without Web Identity
+    - 如果要用這方法... 算了吧@@, 務必使用 Cognito
+    - 需要自行處理一堆外部的 IAM user
+- [3. Web Identity Federation with Web Identity](#3-web-identity-federation-with-web-identity)
+    - 建議使用 Cognito
+- [4. AWS Cognito](./Cognito.md)
+- Single Sign On, SSO
+- Non-SAML with AWS Microsoft AD
 
 ```mermaid
 flowchart LR
@@ -472,43 +473,7 @@ user -- 4.access --> aws;
 - *SAML Federation*(OLD) 可改用 **Amazon Single Sign On, SSO**(NEW)
     - SSO, 用來建立 Federation 的新方式
 
-
 ---
-
-
-### Cognito
-
-- [saa-Cognito](./cert-SAA_C02.md#cognito)
-- 因為這個年代, 大廠之間都有走某種認證標準(我還不曉得是啥), 總之能與 Cognito 兼容就是了
-    - 因此透過大廠的帳號, 就能四處去游走很多需要開帳號的服務了
-    - 結論: Cognito 好棒棒 (大誤)
-- Goal: 讓 client 直接訪問 AWS Resources (免 create IAM users)
-    - ex: 要讓 FB user, 直接使用 S3
-
-> Amazon Cognito provides authentication, authorization, and user management for your web and mobile apps. Your users can sign in directly with a user name and password, or through a third party such as Facebook, Amazon, Google or Apple.
-
-```mermaid
-flowchart TB
-
-co["Cognito Federated Identity"]
-
-subgraph extIdP["External IdP"]
-    direction TB
-    Google
-    Apple
-    FB
-    SAML
-    OpenID
-end
-
-APP["APP \n YOU"] -- 1. login --> extIdP
-extIdP -- 2. token --> APP
-APP -- 3. token --> co
-co <-- 4. verify token --> extIdP
-co <-- "5. temp creds" --> STS
-co -- 6. temp creds --> APP
-APP -- 7. access --> aws["AWS Resources"]
-```
 
 
 # Directory Service - Microsoft Active Directory, AD

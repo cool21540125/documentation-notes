@@ -38,23 +38,35 @@ sudo ./aws/install
 ## Configure awscli
 
 ```bash
+## AWS CLI v2 的相關環境變數
+$# export AWS_PROFILE=default
+$# export AWS_DEFAULT_REGION=ap-northeast-1
+$# export AWS_DEFAULT_OUTTPUT=yaml
+$# export AWS_MAX_ATTEMPTS=
+$# export AWS_RETRY_MODE=
+
+$# export AWS_ACCESS_KEY_ID=
+$# export AWS_SECRET_ACCESS_KEY=
+$# export AWS_SESSION_TOKEN=
+
+
+### AWS CLI settings
+# S3 concurrent 上傳(default: 10)
+aws configure set default.s3.max_concurrent_requests 100
+```
+
+```bash
 # =================== 首次配置 ===================
 ### -------------- Configure --------------
 ### 法1. 僅配置預設
 $# aws configure
 
 ### 法2. 配置多個命名環境
-$# export AWS_PROFILE=
 $# aws configure --profile ${AWS_PROFILE}
 # 切換 cli 環境 (~/.aws/config 裡頭定義好的那些)
 # 不過其實 AWS_PROFILE 為 aws CLI 吃得到的環境變數之一, 因此上面的指令可簡化成:
 $# aws configure
 # 原因可看 credentials chain
-
-
-### S3 concurrent 上傳
-aws configure set default.s3.max_concurrent_requests 100
-# 預設為 10
 
 
 ### 如果有多 IAM User, 可用這樣來動態切換 IAM Users (~/.aws/config && ~/.aws/credential 底下以配置的用戶)
@@ -64,12 +76,6 @@ $# export AWS_PROFILE=XXX
 $# export AWS_REGION=ap-northeast-1
 # ap-northeast-1 : Tokyo
 # ap-northeast-3 : Osaka
-
-
-###
-$# export AWS_ACCESS_KEY_ID=
-$# export AWS_SECRET_ACCESS_KEY=
-$# export AWS_SESSION_TOKEN=
 
 
 ### Simple Usage

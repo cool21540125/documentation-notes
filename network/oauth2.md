@@ -1,24 +1,29 @@
 # Oauth2
 
-- 2020/06/29
+- 2020/06/29, 2023/02/18
 - [OAuth 2.0 筆記](https://blog.yorkxin.org/2013/09/30/oauth2-1-introduction.html)
 - [RFC6749-Oauth2.0](https://tools.ietf.org/html/rfc6749)
-
-# Terms
-
-- *RO*, Resource Owner(User): 可悲的你
-- Client(Third-party APP): 第三方用戶程序
-- *UA*, User Agent: 通常是指瀏覽器
-- *AS*, Authorization Server: 認證伺服器, Http Service Provider 用來做認證的伺服器, 頒發 token 用
-- *RS*, Resource Server: 資源伺服器. 你得拿 token 來驗證身分, 才可領走你想要的東西
+- Terms:
+    - RO, Resource Owner(User): ex: 臉書
+    - Client(Third-party APP): 第三方用戶程序, ex: 開心農場
+    - UA, User Agent: 通常是指 Browser. 但也可能是 APP/Terminal/WebAPP
+    - AS, Authorization Server: 認證伺服器, Http Service Provider 用來做認證的伺服器, 頒發 token 用
+    - RS, Resource Server: 資源伺服器. 你得拿 token 來驗證身分, 才可領走你想要的東西
+- OAuth 2.0 是 「授權協議」
+    - 授權第三方應用程序代表用戶訪問受保護資源
+    - 用戶通過 授權伺服器(AS) grant 客戶端(Client) access 受保護資源(RS)
 
 
 # Client 取得授權的方式
 
-- Authorizaiton code : 最嚴謹 最完整
-- Implicit
-- Resource Owner Password Credentials
-- Client Credentials
+1. Authorization code : 最嚴謹 最完整
+2. Implicit
+3. Resource Owner Password Credentials
+4. Client Credentials
+
+- 四者比較
+    - 複雜程度: 1 > 2 > 3 > 4
+    - Refresh Token: 1, 3, 4
 
 
 ## 1. Authorization Code
@@ -39,7 +44,7 @@
 ## 4. Client Credentials
 
 
-# 摘要
+# Notes
 
 - 自己製作出可以讓別人接我們的 OAuth2 的服務 (自己即是 Provider)
 - Oauth 引入 authorization layer 來把 Resource Owner && Client 分開
@@ -76,22 +81,20 @@
         - 無 User-Agent Redirection
 - Clients 類型分為 Public && Confidential 兩種
 
+
 ### 技術要求
 
 - 使用 TLS(HTTPS)
 - User-Agent 要支援 HTTP Redirection
-    - 
 
 
+# Other Important
 
+## OIDC, OpenID Connect
 
-# Compare
-
-- A. Authorization Code
-- B. Implicit
-- C. Password Credentials
-- D. Client Credentials
-
-複雜程度: A > B > C > D
-
-- Refresh Token: A, C, D
+- 此為 OAuth 2.0 的 Extension
+    - 基於 OAuth2 的 身份認證協議, 用於驗證 User
+- 支援 SSO, Single Sign-On
+- 相較於 OAuth2 的 身份驗證, OIDC 額外提供 User info, ex: UserName, email, ...
+    - 方便 3rd 取得更多 User info, 用來協助確認身份
+- 摘要結論就是, OIDC 提供了 `驗證使用者身份` && `提供有關使用者的信息`

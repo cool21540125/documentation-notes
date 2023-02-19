@@ -65,12 +65,7 @@ workers(consumer) 未限制      | 1250w subscribers & 10w topics |
 - 如果要 Expose EKS Service, 則需要設定 **Load Balancer**
 
 
-## Cognito
-
-- Cognito 用來給 users(outside AWS) identity
-- 即時 && 跨裝置, Store && Sync data (同 [APPSync](#aws-appsync))
-- [What is Amazon Cognito?](https://docs.aws.amazon.com/cognito/latest/developerguide/what-is-amazon-cognito.html)
-- [Cognito](./IAM.md#cognito)
+## [Cognito](./Cognito.md)
 
 
 # Databases && AWS Storage Extras

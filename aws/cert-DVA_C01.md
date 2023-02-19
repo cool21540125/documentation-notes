@@ -132,9 +132,7 @@ $#
 - [clf-Cloud9](./cert-CLF_C01.md#aws-cloud9)
 
 
-## AWS CodeGuru
-
-- [clf-CodeGuru](./cert-CLF_C01.md#amazon-codeguru)
+## [AWS CodeGuru](./cert-CLF_C01.md#amazon-codeguru)
 
 
 # Monitoring & Audit : CloudWatch, X-Ray, CloudTrail

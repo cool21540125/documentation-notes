@@ -81,10 +81,12 @@
 
 # Beanstalk - Deployment poicies(更新策略)
 
+- [Deployment policies and settings](https://docs.aws.amazon.com/elasticbeanstalk/latest/dg/using-features.rolling-version-deploy.html)
+
 有底下這些方式:
 
-- All at once
-- Rolling
+- All at once (預設 deployment policy)
+- Rolling (如果使用 eb CLI 建出 Beanstalk Environment, 則預設使用此 policy)
 - Rolling with additional batches
 - Immutable
 - Traffic splitting
@@ -147,5 +149,8 @@
 
 
 ## Traffic Splitting
+
+- 
+
 
 ## Canary Testing 金絲雀部署
