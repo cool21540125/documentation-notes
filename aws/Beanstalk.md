@@ -35,25 +35,11 @@
     Client -- request --> ALB
 ```
 
-* Beanstalk 有他專屬的 CLI, 有需要再找 `eb cli` (更為簡易使用)
-* 對於 Beanstalk 的環境變數 && 依賴服務, 可放在專案目錄下的:
-    - `/.ebextensions/*.config`, 可定義環境變數 && 依賴的 AWS Services
-        - 但需要非常留意!!! 如果裡面有放 DB, 那如果 Beanstalk APP 移除的話, 相關資源也會消失
-            - Beanstalk Decouple RDS 的議題, 底下為 migration 建議方式
-                - [decouple RDS from Beanstalk](https://aws.amazon.com/premiumsupport/knowledge-center/decouple-rds-from-beanstalk/)
-                - 先到 RDS 建立 snapshot (保險起見)
-                - RDS console > protect the RDS database from deletion
-                - 建立新的 Beanstalk Environment (without RDS)
-                - CNAME swap
-                - Terminate OLD environment
-                    - RDS 會因為剛剛上了保護機制, 因而無法移除
-                    - 後續移除動作也會跟著失敗
-                - 後續手動到 CloudFormation 移除相關 stack (處於 `DELETE_FAILED state` 的這些資源)
-                    - Beanstalk 背後是 CloudFormation
-* Beanstalk Lifecycle Policy
+- Beanstalk 有他專屬的 CLI, 有需要再找 `eb cli` (更為簡易使用)
+- Beanstalk Lifecycle Policy
     - Beanstalk 最多只能有 1000 APP Versions
         - 可善用 *lifecycle policy* 來清理, 或保存到 S3
-* Beanstalk in Docker
+- Beanstalk in Docker
     - 需要定義 `Dockerfile` && `Dockerrun.aws.json`
         - 後者, 告知 Image 位置 && Volume && Port && Logging && ...
     - 建立 APP Environment 的 Platform 的選則:
@@ -66,18 +52,50 @@
                 - EC2 instances, 可用作 ECS Cluster
                 - Load Balancer (in HA mode)
                 - Task definition && execution
-* Beanstalk with HTTPS
+- Beanstalk with HTTPS
     - via ELB console 上傳證書
     - via Beanstalk 的 `/.ebextensions/securelistener-alb.config` 給證書
     - via [ACM](https://aws.amazon.com/certificate-manager/?nc1=h_ls) 託管證書
     - via ALB 的 http 301 https
     - via 程式端的 redirect, [https-redirect](https://github.com/awsdocs/elastic-beanstalk-samples/tree/main/configuration-files/aws-provided/security-configuration/https-redirect)
-* Beanstalk 進階問題
+- Beanstalk 進階問題
     - 如果需要 Beanstalk 不支援的 Language 且 不使用 Docker
         - 使用 `Platform.yaml` 來定義 AMI, 建立 Custom Image
     - 如果需要特殊的 Platform (OS, additional Software, Scripts to run)
         - 使用 **Packer software** 來建立 entirely new Beanstalk Platform
 
+
+# [Beanstalk 的 /.ebextensions/](https://docs.aws.amazon.com/elasticbeanstalk/latest/dg/ebextensions.html)
+
+- 裡頭放 Beanstalk 的環境變數 && 依賴服務
+    - `/.ebextensions/*.config`, 可定義環境變數 && 依賴的 AWS Services
+- IMPORTANT! 如果裡面有放 DB, 那如果 Beanstalk APP 移除的話, 相關資源也會消失
+    - Beanstalk Decouple RDS 的議題, 底下為 migration 建議方式
+        - [decouple RDS from Beanstalk](https://aws.amazon.com/premiumsupport/knowledge-center/decouple-rds-from-beanstalk/)
+        - 先到 RDS 建立 snapshot (保險起見)
+        - RDS console > protect the RDS database from deletion
+        - 建立新的 Beanstalk Environment (without RDS)
+        - CNAME swap
+        - Terminate OLD environment
+            - RDS 會因為剛剛上了保護機制, 因而無法移除
+            - 後續移除動作也會跟著失敗
+        - 後續手動到 CloudFormation 移除相關 stack (處於 `DELETE_FAILED state` 的這些資源)
+            - Beanstalk 背後是 CloudFormation
+
+```ini
+### .ebextensions/network-load-balancer.config
+# Beanstalk 需要一個 NLB
+option_settings:
+  aws:elasticbeanstalk:environment:
+    LoadBalancerType: network
+
+# 配置 ELB && redirect HTTP -> HTTPS
+option_settings:
+  aws:elbv2:listener:443:
+    ListenerEnabled: 'true'
+    Protocol: HTTPS
+    SSLCertificateArns: arn:aws:acm:us-east-2:1234567890:certificate/####################################
+```
 
 # Beanstalk - Deployment poicies(更新策略)
 
@@ -120,6 +138,7 @@
 * 建新一批(bucket) instances 跑 New Version
 * 之後再陸續更新 現有 instances 到 New Version
 * 更新期間的可用規模, 與平常規模一樣
+* 如果遇到部署失敗, 需要手動 Rollback
 
 ![Beanstalk_rolling-with-additional](./img/beanstalk_rolling-with-additional-batches.png)
 

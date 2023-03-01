@@ -143,7 +143,7 @@ kds -- "Record \n * Partition Key \n * Sequence No. \n * Data Blob" --> cc;
             - Charge: 低, latency ~200 ms
             - 一次最多 5 `GetRecords API` calls/sec
                 - 因此, 5 secs 的話, 每個 Shard 只能有 10 MB 或 10000 records
-        - Enhanced Fan-Out
+        - Enhanced Fanout(Fan-Out)
             - 2 MB/sec per consumer per shard
             - 每個 Shard, 對於每個 Consumers, 各自 2MB/sec
             - push model. `call SubscribeToShard() API`

@@ -8,9 +8,14 @@
     - 使用 Lambda 建立 *Lambda Funciton* 時, 會連帶建立授予此 FN 的 *execution role*
         - 此 Role grants permission to upload logs
     - 每當調用 FN 時, 會藉此 *execution role* 取得 creds for AWS SDK 並可 read data from source
-- concurrency: 同一時間能處理的 requests 數量, Lambda concurrency 分成下面 2 種:
-    - Reserved concurrency
-    - Provisioned concurrency
+- [Configuring provisioned concurrency](https://docs.aws.amazon.com/lambda/latest/dg/provisioned-concurrency.html)
+    - concurrency 指的是, 同一時間, Lambda 能夠同時處理的數量, 有底下 2 個控制變數:
+        - Reserved concurrency
+            - Reserved concurrency 用來保證 Lambda FN 高併發的最高數量
+            - 配置此變數不收費
+        - Provisioned concurrency
+            - Provisioned concurrency 用來初始化 execution environments 的數量, 也就是說, 若有請求可立即回覆
+            - 需要課金
 - Lambda Destionation
     - 類似 SQS DLQ (用來存放 SQS 調用 failure 的 Message), 此方式可用來存放 Lambda Execution Result
         - 包含 success & failure
@@ -265,3 +270,9 @@ $# aws lambda create-function \
 # 建立一個 Lambda FN, 指派對應的 Role (事先建立好, 具備 AWSLambdaBasicExecutionRole)
 # handler 的 index.handler 意思是, Lambda FN 的 entrypoint 是從 index.js 這檔案的 handler 這個 Function 去做調用
 ```
+
+
+# Usage
+
+- [Using larger ephemeral storage for AWS Lambda](https://aws.amazon.com/blogs/compute/using-larger-ephemeral-storage-for-aws-lambda/)
+    - 這篇講述如何使用 Lambda, 將資料 encrypted 以後, 存入 Lambda 的 /tmp

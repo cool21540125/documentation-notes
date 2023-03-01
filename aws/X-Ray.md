@@ -13,7 +13,10 @@
     - 而這 Request 發送到 AWS Resources 上頭, Resources 可針對 trace 做一些識別, 最終得出一個 Service Map
         - ![X-Ray graph](./img/x-ray_graph.png)
 - Charge: 針對送到 X-Ray 的資料計費
-    - X-Ray Sampling Rules(採樣規則) - 協助節省傳送到 X-Ray 的流量
+- X-Ray 的各種需求牽扯到的關鍵字
+    - sampling
+        - 因為 X-Ray 收了一大堆數據, 用這個可以僅收集你感興趣的欄位
+        - X-Ray Sampling Rules(採樣規則) - 協助節省傳送到 X-Ray 的流量
         - 預設 X-Ray SDK 會紀錄:
             - 每秒鐘第一筆 Request
             - 該秒內其餘 5% 的 Request
@@ -23,6 +26,18 @@
                 - rate               : ex: 50%, 表示蒐集該秒內 幫我蒐集一半的請求
                     - 會花很多錢... 不過對於排查很有幫助
                 - (還有其他...)
+    - annotations
+        - Key Value pairs used to index traces and use with filters
+        - 方便搜尋及篩選效率
+    - interceptors
+    - filters
+        - X-Ray Filter expression
+        - Use filter expressions to view a service map or traces for a specific request, service, connection between two services (an edge), or requests that satisfy a condition.
+        - 此與節省流量啥的無關... 地位好像是跟 PromQL 一樣, 用來篩選而已?
+    - handlers
+    - middleware
+    - subsegments 
+        - 如果想要 segments 裡頭有更多細節的話參考這個
 - [AWS X-Ray API](https://docs.aws.amazon.com/xray/latest/devguide/xray-api.html)
 - Old way for debugging in production
 - 可直接在 local test, 並 log -> anywhere
@@ -75,13 +90,6 @@ import AWS X-Ray SDK
         - ECS Cluster EC2 Type, 裡頭運行的 Container, 都要有 `X-Ray Sidecar`
         - Fargate Cluster, ECS Cluster 裡頭, 每個 `Fargate Task` 裡頭的 `APP Container` 都需要再掛一個 `X-Ray Sidecar`
         - 上述的這些 sidecar, 都使用 Container 裡頭的 2000 port UDP 來做通訊
-- (進階)或是如果要更加 客製化 的話, 則會有底下的議題:
-    - annotations : Key Value pairs used to index traces and use with filters
-    - interceptors
-    - filters
-    - handlers
-    - middleware
-    - subsegments (如果想要 segments 裡頭有更多細節的話)
 
 
 ## 2. Enable X-Ray

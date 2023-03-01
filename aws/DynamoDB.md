@@ -7,6 +7,8 @@
     - Operations
         - Serverless -> 無需 operations
         - Auto Scaling
+        - HA + Cross 3 AZ replication 的 NoSQL
+            - Key-Value
     - Security
         - IAM Policy
         - KMS encryption
@@ -16,10 +18,11 @@
     - Performance
         - 毫秒等級 latency
         - 若要 caching, 可搭配 DynamoDB Accelerator, DAX
+            - DynamoDB 專用的快取
+            - DynamoDB fully managed in-memory cache
+    - 10x performance improvement
     - Cost
         - Pay for usage
-- Table Classes:
-    - Standard
     - Infrequent Access, IA
 - store documents, key-value
     - max: 一筆 400 KB
@@ -52,6 +55,33 @@
         - If you need to further refine the Query results, you can optionally provide a filter expression. A filter expression determines which items within the Query results should be returned to you. All of the other results are discarded.
     - [ProjectionExpression](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/Expressions.ProjectionExpressions.html)
         - To read data from a table, you use operations such as GetItem, Query, or Scan. Amazon DynamoDB returns all the item attributes by default. To get only some, rather than all of the attributes, use a projection expression.
+- 本身並無 Create Database 的概念
+    - 動作為 Create Table, 如下範例
+        ```
+        TableName: Products
+
+        Primary Key
+            Partition Key (needed)
+            SortKey       (optional)
+
+        Attributes
+            name
+            age
+            ...
+            (每筆資料的欄位都可不同)
+        ```
+- DynamoDB - Global Table
+    - 可作 active-active r/w replication
+
+
+# DynamoDB Index
+
+- DynamoDB 支援底下 2 種 types 的 secondary indexes:
+    - Global secondary index
+        - An index with a partition key and a sort key that can be different from those on the base table. A global secondary index is considered "global" because queries on the index can span all of the data in the base table, across all partitions. A global secondary index has no size limitations and has its own provisioned throughput settings for read and write activity that are separate from those of the table.
+    - Local secondary index
+        - An index that has the same partition key as the base table, but a different sort key. A local secondary index is "local" in the sense that every partition of a local secondary index is scoped to a base table partition that has the same partition key value. As a result, the total size of indexed items for any one partition key value can't exceed 10 GB. Also, a local secondary index shares provisioned throughput settings for read and write activity with the table it is indexing.
+
 
 # DynamoDB Streams
 

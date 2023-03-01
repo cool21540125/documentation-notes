@@ -10,8 +10,6 @@
 
 - DKIM, DomainKeys Identified Mail : 讓寄件者為信件作加密.
 
-- KMS, Key Management Service
-
 
 ## S3
 

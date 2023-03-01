@@ -47,11 +47,6 @@ workers(consumer) 未限制      | 1250w subscribers & 10w topics |
 - [ECS](./ECS.MD)
 
 
-## ECR, Elastic Container Registry
-
-- 不解釋
-
-
 ## EKS, Amazon Elastic Kubernetes Service
 
 - 類似於 ECS, 但使用不同的 API
@@ -319,15 +314,14 @@ ss -- SSO access --> saml["SAML APPs"]
 - 2 types of KMS:
     - Symmetric Keys
         - AES-256
-        - CMK, Customer Master Key
-            - 又有分成 3 種:
-                - AWS Managed Service Default CMK (AWS owned CMK)
-                    - Free
-                - User Keys created in KMS (AWS managed CMK)
-                    - 一把 Key $1/month
-                - User Keys imported (Customer managed CMK)
-                    - 一把 Key $1/month
-                    - 必須為 256 bit symmetric key
+        - CMK, Customer Master Key, 又分成 3 種:
+            - AWS Managed Service Default CMK (AWS owned CMK)
+                - Free
+            - User Keys created in KMS (AWS managed CMK)
+                - 一把 Key : 1/month
+            - User Keys imported (Customer managed CMK)
+                - 一把 Key : 1/month
+                - 必須為 256 bit symmetric key
         - envelop encryption
         - user call API to use Key
     - Asymmetric Keys

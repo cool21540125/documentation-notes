@@ -1,10 +1,10 @@
 
+- [What is Amazon Elastic Container Service?](https://docs.aws.amazon.com/AmazonECS/latest/developerguide/Welcome.html)
+
 
 # ECS, Elastic Container Service
 
 - 名詞定義:
-    - Task (ECS Task):
-        - The lowest level building block of ECS - Runtimes instances
     - Task Definition: 
         - 可以把這個理解成 k8s 的 Pod, 建立這東西 Task Definition(or Pod) 以後, 裡頭再跑 Container
         - `ECS Task` 可視為一個在 AWS ECS 中運行 Container 的最小單元.
@@ -13,6 +13,8 @@
         - 如果有 Service 或 Task 要跑在 ECS Cluster 裡頭, 需要先定義這個
         - Templates for your *Tasks*, 定義 image 來源, Memory, CPU, 等
             - 像是 版本升級, 則須改這個, 來拉新版本 image
+    - Task (ECS Task):
+        - The lowest level building block of ECS - Runtimes instances
     - Container(EC2 Only)
         - Virtualized instance that run Tasks.
         - 如果運行 Farget Mode 的話, 我們在意的只有 Task (沒有 Container 的概念)
@@ -195,3 +197,11 @@ $# aws ecs describe-tasks \
     --cluster ${Cluster_Name} \
     --task ${task_ID}
 ```
+
+
+# Metrics
+
+- CPUUtilization
+    - cluster 或 service 使用的 CPU%
+- MemoryUtilization
+    - cluster 或 service 使用的 Memory%

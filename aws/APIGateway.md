@@ -76,7 +76,7 @@ api <--> On-Premise
 ```jsonc
 // Lambda 回應給 API Gateway 的內容格式需有下列欄位(否則 API Gateway 會拋出 502):
 {
-    "statusCode": httpStatusCode,
+    "statusCode": "${httpStatusCode}",
     "headers": { 
         "headerName": "headerValue",
         "otherHeaderKey": "otherHeaderValue"

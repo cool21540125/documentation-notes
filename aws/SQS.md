@@ -10,9 +10,8 @@
             - 盡力而為的維持 Message 順序, 但不保證
         - message 可能會被 read > 1 次
         - Latency < 10 ms
-        - Retention period
-            - 可自行設定 Message 存活期間 Between : 1 min ~ 14 days
-            - Default 4 days
+        - Retention period, MessageRetentionPeriod
+            - 可自行設定 Message 存活期間 Between : 1 min ~ 14 days, default to 14 days
         - Maximum message size, 1 ~ 256 KB
     2. FIFO Queues
         - Throughput
@@ -53,6 +52,8 @@
         sqs -- Poll for messages --> asg;
         ```
 - SQS - Message Visibility Timeout (預設 30s)
+    - 因為 SQS 為 distributed service, 因此當 Consumer 從 SQS poll message 之後, 該 Message 依舊會存在於 Queue
+        - SQS 會將此 Message 設計 Visibility Timeout, 用以避免其他 Consumer 再次 poll
     - 如果 Consumer 無法在既定時間內完成的話, 可考慮調大它
         - 可調整範圍: 0 sec ~ 12 hrs
         - 可使用 `ChangeMessageVisibility API` 調整 timeout
@@ -131,6 +132,11 @@
     - SendMessage, DeleteMessage, ChangeMessageVisibility
     - 可有效減少 API call, 減少 cost
 
+
+# Metrics
+
+- ApproximateNumberOfMessagesVisible
+    - SQS 裡頭有多少個 Messages
 
 # 操作
 

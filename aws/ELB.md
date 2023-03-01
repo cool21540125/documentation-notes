@@ -70,12 +70,6 @@
     - CLB 則無此功能(需要設很多 CLB, 才能做對應流量轉發)
 - 對於 ECS 支援 dynamic port mapping (dynamic host port mapping)
     - ECS 為 EC2 launch type 時, 跑在裡頭的 Container, 不需定義 port mapping, ALB 自己能找到
-- [Troubleshoot your Application Load Balancers](https://docs.aws.amazon.com/elasticloadbalancing/latest/application/load-balancer-troubleshooting.html)
-    - 501, Not Implemented
-        - Request Header 的 `Transfer-Encoding` 不合乎要求
-    - 502, Bad Gateway
-    - 503, Service unavailable
-        - Target Groups 裡頭沒有註冊 Targets
 - 若與 Lambda 整合為 Serverless, [看這](./Lambda.md#lambda---serverless)
 
 ```mermaid
@@ -179,7 +173,7 @@ GLB -- 4 --> APP;
 
 ## With Cross Zone Load Balancing
 
-cross-zone balancing
+cross-zone balancing (此為 Default)
 
 ```mermaid
 flowchart LR
@@ -251,3 +245,15 @@ client -- "兩個 AZ 比例都 50%" --> az2;
 - 有不同的稱呼
     - 使用 CLB, 稱之為 Connection Draining
     - 使用 ALB && NLB, 稱之為 Deregistration Delay
+
+
+# [ELB troubleshoot](https://docs.aws.amazon.com/elasticloadbalancing/latest/application/load-balancer-troubleshooting.html)
+
+- 501, Not Implemented
+    - Request Header 的 `Transfer-Encoding` 不合乎要求
+- 502, Bad Gateway
+    - (背後的 Lambda) 回傳的 Response Body > 1 MiB
+    - 還有其他超級無敵多的原因...
+- 503, Service unavailable
+    - Target Groups 裡頭沒有註冊 Targets
+    - HTTP 503: Service unavailable

@@ -168,3 +168,4 @@ aws dynamodb scan \
     --max-items 2 \
     --starting-token eyJFeGNsdXNpdmVTdGFydEtleSI6IG51bGwsICJib3RvX3RydW5jYXRlX2Ftb3VudCI6IDF9 \
     --endpoint-url http://localhost:8000
+# --starting-token : aws s3 xxxx 也有這樣的概念, 可理解成從某一筆資料起算 (並無 --page=xx 的指令)

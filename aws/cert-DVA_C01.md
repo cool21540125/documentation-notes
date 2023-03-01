@@ -24,41 +24,11 @@
 
 # Container - Docker, ECS, EKS, ECR, Fargate
 
-## ECS, Elastic Container Services
-
-- [ECS](./ECS.MD)
-
-
 ## EKS, Elastic Kubernetes Services
 
 - EKS 支援
     - EC2 - to deploy worker nodes
     - Fargate - to deploy serverless containers
-
-
-## ECR, Elastic Container Registry
-
-- [clf-ECR](./cert-CLF_C01.md#ecr-elastic-container-registry)
-- [saa-ECR](./cert-SAA_C02.md#ecr-elastic-container-registry)
-- Amazon ECR 也有 Public Repository - [Amazon ECR Public Gallery](https://gallery.ecr.aws)
-- ECR 皆由 IAM 做存取訪問管控
-- ECR 背後是 S3
-
-```bash
-### login to ECR
-$# REGION=ap-northeast-1
-$# ACCOUNT_ID=
-$# aws ecr get-login-password \
-    --region ${REGION} | docker login \
-    --username AWS \
-    --password-stdin \
-    ${ACCOUNT_ID}.dkr.ecr.${REGION}.amazonaws.com
-Login Succeeded
-
-Logging in with your password grants your terminal complete access to your account. 
-For better security, log in with a limited-privilege personal access token. Learn more at https://docs.docker.com/go/access-tokens/
-$# 
-```
 
 
 # Elastic Beanstalk
@@ -69,25 +39,12 @@ $#
 
 # AWS CICD
 
+
+
+
 ## CodeCommit
 
-- private git repo, 支援 3 種協定
-    - HTTPS
-    - SSH        - 如果使用 root account 登入到 Console, 看不到這個(講師說的)
-    - HTTPS(GRC) - 似乎是 AWS 自行實作的協定
-- 權限
-    - AWS Console > IAM > Users > USER > Security Credentials > SSH Keys for AWS CodeCommit
-        - 把 Public Key 丟到這~~
-    - AWS Console > IAM > Users > USER > HTTPS Git credentials for AWS CodeCommit
-        - 要從這邊申請一組 credentials (git repo 使用的帳號密碼)
-- 可針對 repo 設定各種 events notification(比較像是一些 description 的變更之類的), 發送到:
-    - SNS
-    - AWS Chatbot (Slack)
-- 針對 git event, 可設定對應的 trigger, 目前支援:
-    - Lambda
-    - SNS
-- Charge:
-    - 5 active users free/month
+- [CodeCommit](./CICD/CodeCommit.md)
 
 
 ## AWS CodePipeline
@@ -130,6 +87,24 @@ $#
 ## AWS Cloud9
 
 - [clf-Cloud9](./cert-CLF_C01.md#aws-cloud9)
+- 用來管理 Development Activities 的 UI
+- Developer 快速建造 CI/CD 的好幫手
+- 用來整合 **CodeCommit** && **CodeBuild** && **CodePipeline**
+- 用這東西背後會一併 Create (反過來說, 如果不用 **CodeStar** 的話, 底下這些都需要自行處理):
+    - CodeCommit
+    - CodeBuild
+    - CodeDeploy
+    - CodePipeline
+    - monitoring
+    - Elastic Beanstalk
+    - EC2
+    - Cloud9
+- 若要刪除 Project 的話, 先刪除 **Cloud9**, 再來刪除 **CodeStar** Project
+- Charge:
+    - 無需針對 CodeStar 計費
+    - 不過 CodeStar Project 會開一台 EC2...
+    - 此外, 會針對額外使用的資源計費, Lambda, EBS, S3
+    - 按量計費
 
 
 ## [AWS CodeGuru](./cert-CLF_C01.md#amazon-codeguru)

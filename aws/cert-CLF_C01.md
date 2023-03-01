@@ -229,39 +229,7 @@ Networking    | -    | -    | -
 - 需 run on EC2 (非 Serverless)
 
 
-## DynamoDB
-
-- HA + Cross 3 AZ replication 的 NoSQL
-    - Key-Value
-- Serverless, Auto-Scaling 成本低
-- 可依照訪問頻率選擇底下的儲存模式的 Table Class
-    - Standard
-    - Infrequent Access, IA
-- 本身並無 Create Database 的概念
-    - 動作為 Create Table, 如下範例
-        ```
-        TableName: Products
-
-        Primary Key
-            Partition Key (needed)
-            SortKey       (optional)
-
-        Attributes
-            name
-            age
-            ...
-            (每筆資料的欄位都可不同)
-        ```
-- DynamoDB - Global Table
-    - 可作 active-active r/w replication
-- [saa-dynamodb](./cert-SAA_C02.md#dynamodb)
-
-
-### DynamoDB Accelerator, DAX
-
-- DynamoDB fully managed in-memory cache
-    - DynamoDB 專用的快取
-    - 10x performance improvement
+## [DynamoDB](./DynamoDB.md)
 
 
 ## RedShift
@@ -408,12 +376,6 @@ src["Source DB"] -- DMS --> db["AWS Target DB"];
 - 同 ECS 用來 Launch Container, 但不需要自行維護 Infra
 
 
-## ECR, Elastic Container Registry
-
-- Private Registry
-- 用來存 ECS/Fargate 所運行的 image
-
-
 ## Lambda
 
 - 最初最初, 雲服務最早的 Serverless 為 AWS Lambda, 當時是 `Serveless == FaaS`
@@ -551,26 +513,6 @@ tmpl --> CloudFormation;
 
 
 ## AWS CodeStar
-
-- 用來管理 Development Activities 的 UI
-- Developer 快速建造 CI/CD 的好幫手
-- 用來整合 **CodeCommit** && **CodeBuild** && **CodePipeline**
-- 用這東西背後會一併 Create (反過來說, 如果不用 **CodeStar** 的話, 底下這些都需要自行處理):
-    - CodeCommit
-    - CodeBuild
-    - CodeDeploy
-    - CodePipeline
-    - monitoring
-    - Elastic Beanstalk
-    - EC2
-    - Cloud9
-- 若要刪除 Project 的話, 先刪除 **Cloud9**, 再來刪除 **CodeStar** Project
-- Charge:
-    - 無需針對 CodeStar 計費
-    - 不過 CodeStar Project 會開一台 EC2...
-    - 此外, 會針對額外使用的資源計費, Lambda, EBS, S3
-    - 按量計費
-
 
 ## AWS Cloud9
 

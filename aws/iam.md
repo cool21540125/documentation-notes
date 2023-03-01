@@ -83,6 +83,24 @@ r2 -.- srv2["AWS Services \n (ex: S3)"];
 - 最終會套用給 User / Group / Role (想像成某個擬人的 Service)
 - Trust policies 定義了哪個 principal entities(accounts/users/role/federated user) can assume the role
 - AWS service-linked role
+- 如果 **IAM User, Role, Group** 要能夠 pass a Role 給特定 AWS Resources, 則此 **IAM User, Role, Group** 需具備 `PassRole` permission
+    - 此 `PassRole` permission, 無法用來授予 cross-account permission
+
+```jsonc
+// 若符合底下的 permission, 可用來授予訪問 「帳號內的 "EC2-roles-for-XYZ-" 開頭的 EC2」的權限
+{
+    "Version": "2012-10-17",
+    "Statement": [{
+        "Effect": "Allow",
+        "Action": [
+            "iam:GetRole",
+            "iam:PassRole"
+        ],
+        "Resource": "arn:aws:iam::{{ACCOUNT_ID}}:role/EC2-roles-for-XYZ-*"
+    }]
+}
+```
+
 - IAM Policy 裡頭可以使用變數, ex, 需要創建給每個 IAM Users 使用 Bucket 底下的 同(IAM)名 Dir:
 ```jsonc
 {
@@ -113,6 +131,48 @@ r2 -.- srv2["AWS Services \n (ex: S3)"];
 ```
 
 
+# Trust policy
+
+> The trust policy defines which principals can assume the role, and under which conditions. A trust policy is a specific type of resource-based policy for IAM roles.
+> 
+> Trust policies define which principal entities (accounts, users, roles, and federated users) can assume the role. An IAM role is both an identity and a resource that supports resource-based policies. For this reason, you must attach both a trust policy and an identity-based policy to an IAM role. The IAM service supports only one type of resource-based policy called a role trust policy, which is attached to an IAM role.
+
+> 我的理解: `trust policy` 是一種信任的政策, 也是一種 `Resource-based policy`
+>
+> 例如: trust policy 制定成, `all principals(所有人)` 都可以 `assume the role(申請 用來進入工地用的安全帽)` 
+> 
+> `IAM role` 既是 `identity`, 同時也是 `resource that supports resource-based policy`
+> 
+> 上面所說的 `IAM role(安全帽)`, 既是 工人 的概念, 同時也是 具備工地政策的資源(我也開始亂了= =...)
+> 
+> `IAM 服務` 僅支援唯一一種 `Resource-based policy`, 稱之為 `role trust policy`(這東西附加在 `IAM role` 上頭) 
+> 
+> 蝦小... 看完之後我居然不知道怎麼做結論....
+
+ ```jsonc
+//  像是 AWS IAM: tony, 常常需要授權給其他阿貓阿狗們幹嘛幹嘛的, 那麼就需要像是底下這樣一個 trusted policy:
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Principal": {
+        "AWS": "arn:aws:iam::111122223333:tony"
+      },
+      "Action": "sts:AssumeRole"
+      // 裡面沒有 Resource 是因為 Resource 就是 IAM Role 本身
+    }
+  ]
+}
+ ```
+
+ - [How to use trust policies with IAM roles](https://aws.amazon.com/blogs/security/how-to-use-trust-policies-with-iam-roles/)
+ 
+ > A common use case is when you need to provide access to a role in account A to assume a role in Account B. To facilitate this, you add an entry in the role in account B’s trust policy that allows authenticated principals from account A to assume the role through the sts:AssumeRole API call.
+ > 
+ > Account B 要訪問 Account A 的資源, 則 Account B 的 trust policy 需要增加一個條目, 允許 Account A 受信任的 user 藉由使用 `sts:AssumeRole API` 來 assume the role
+
+
 # IAM Statement
 
 - 白話文就是, 許可/拒絕 針對 Resource 做 Action
@@ -140,6 +200,7 @@ r2 -.- srv2["AWS Services \n (ex: S3)"];
     - 兼容 SAML 2.0 的外部 IdP 所認證過的 external user
     - OpenID Connect
     - custom-built identity broker
+- [Temporary security credentials in IAM](https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_temp.html)
 
 
 # IAM Principal
@@ -207,50 +268,6 @@ r2 -.- srv2["AWS Services \n (ex: S3)"];
     - Resource
     - NotResource
     - Condition
-
-
-# AWS STS, Security Token Service
-
-- [Welcome to the AWS Security Token Service API Reference](https://docs.aws.amazon.com/STS/latest/APIReference/welcome.html)
-    - AWS Resources 的骨幹
-- STS 為 用來申請 *temp creds* 給 *IAM users* or *federated users*
-    - temp creds : Temperory Credentials
-        - token, 有效期限落在 15~60 mins
-    - token 可能藏在 Request Header 的 cookie 或 URL 裏頭
-    - IdP, Identity Provider (本文同下)
-    - FIP, Federation Identity Provider (本文同上)
-- STS 簽發 *temp creds* 的方式, 有支援底下的這些 API:
-    - AssumeRole
-        - 帳號內, 定義一個 *IAM Role*, 來給 *AWS Users* && *Other AWS Users*
-        - 此 *IAM Role* 會限定 principals (也就是誰才可以用啦)
-        - 要 AssumeRole 的一方, 藉由 `AssumeRole API` 來取得 *temp creds*
-    - AssumeRoleWithSAML
-        - 用來給 *non AWS Users* 申請 *temp creds*
-        - user management outside of AWS
-        - 如果 Users 並非 AWS Users, 而是來自 *Identity Federation(身份聯盟)*, ex:
-            - SAML 2.0
-            - Custom Identity Broker
-            - Web Identity Federation with Amazon Cognito
-            - Web Identity Federation without Amazon Cognito
-            - SSO, Single-Sign On
-            - Non-SAML with AWs Microsoft AD
-            - 可參考底下這些範例:
-                - [SAML 2.0 Federation - Client APP](#saml-20-federation---client-app)
-                - [SAML 2.0 Federation - Browser](#saml-20-federation---browser)
-                - [SAML 2.0 Federation - ADFS, Active Directory FS](#saml-20-federation---adfs-active-directory-fs)
-        - 要 AssumeRole 的一方, 藉由 `AssumeRoleWithSAML API` 來取得 *temp creds*
-        - 如果有多個 Account 需要逐一設定
-        - 藉由 SAML 來做 Federation 是老方法, AWS 推出了 [AWS SSO](#aws-sso)
-    - AssumeRoleWithWebIdentity
-        - return creds for users logged in with an IdP(FB, Google, OIDC compatible...)
-        - AWS 建議改為使用 **Cognito**
-        - [Identity Federation](#identity-federation)
-    - GetSessionToken
-        - MFA for users or AWS root Account
-        - 如果 AWS users who use MFA && root Account, 使用此 API
-- *SAML 2.0* 與 *Active Directory FS, ADFS* 有著非常高度的整合
-    - 除了 AD 以外, 依舊有其他 directory services 可作選擇
-        - 這些 AD 統稱 *SAML 2.0 Federation*
 
 
 ### Cross AWS Account
