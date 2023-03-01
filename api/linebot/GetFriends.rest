@@ -1,0 +1,15 @@
+<!--
+NOTE: 要成為 premium account 才可使用此 API
+https://stackoverflow.com/questions/45158199/how-to-get-friends-list-and-friends-profile-on-line-api-using-php-or-shell-scr
+-->
+
+@CHANNEL_ACCESS_TOKEN={{$dotenv CHANNEL_ACCESS_TOKEN}}
+
+
+###
+GET https://api.line.me/v2/bot/followers/ids
+Authorization: Bearer {{CHANNEL_ACCESS_TOKEN}}
+Content-Type: application/json
+
+
+### 

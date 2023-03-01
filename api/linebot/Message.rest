@@ -1,7 +1,7 @@
 @URL=https://{{$dotenv DOMAIN}}
 @CHANNEL_SECRET={{$dotenv CHANNEL_SECRET}}
 @CHANNEL_ACCESS_TOKEN={{$dotenv CHANNEL_ACCESS_TOKEN}}
-@RECV_CHANNEL_ID1={{$dotenv RECV_CHANNEL_ID}}
+@RECV_CHANNEL_ID={{$dotenv RECV_CHANNEL_ID0}}
 @ReplyToken={{$dotenv ReplyToken}}
 
 
@@ -12,7 +12,7 @@ Content-Type: application/json
 Authorization: Bearer {{CHANNEL_ACCESS_TOKEN}}
 
 {
-    "to": "{{RECV_CHANNEL_ID1}}",
+    "to": "{{RECV_CHANNEL_ID}}",
     "messages":[
         {
             "type":"text",
