@@ -1,7 +1,6 @@
+# ansible-playbook THIS_YAML                      # use default
+# ansible-playbook THIS_YAML -e "demo_name=Tony2" # overwrite
 - name: demo template
-  # Usage:
-  #   ansible-playbook demo_template.yml
-  #   ansible-playbook demo_template.yml -e "demo_name=Tony2"
   hosts: localhost
   vars:
     demo_name: "Tony"

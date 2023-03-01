@@ -1,0 +1,9 @@
+---
+- name: Create users
+  hosts: ec2
+  tasks:
+    - user: name='{{ item }}' state=present
+      loop:
+        - tony
+        - tony2
+        - tony3

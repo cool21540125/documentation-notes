@@ -3,7 +3,6 @@
   hosts: localhost
   become: true
   tasks:
-    # 在各種 distribution 安裝各自 packages
     - name: install vim in Ubuntu
       apt: 
         name: vim

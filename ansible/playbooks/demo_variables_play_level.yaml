@@ -1,0 +1,19 @@
+# ansible-playbook test_ansible_playbook.yaml
+# 依照條件安裝套件+使用變數
+---
+- name: ec2 install pkgs
+  hosts: ec2
+  vars:
+    packages:
+      - name: mysql
+        required: True
+      - name: httpd
+        required: True
+  tasks:
+    - name: Install {{ item.name }} on host
+      yum:
+        name: "{{ item.name }}"
+        state: present
+      become: true
+      loop: "{{ packages }}"
+      when: item.required == True

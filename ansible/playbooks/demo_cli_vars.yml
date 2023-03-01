@@ -1,8 +1,7 @@
+# ansible-playbook THIS_YAML.yml
+# ansible-playbook THIS_YAML.yml -e "env=dev"
+# ansible-playbook THIS_YAML.yml -e "env=prod"
 - name: demo template
-  # Usage:
-  #   ansible-playbook demo_template_vars_env.yml
-  #   ansible-playbook demo_template_vars_env.yml -e "env=dev"
-  #   ansible-playbook demo_template_vars_env.yml -e "env=prod"
   hosts: localhost
   vars:
     env: dev

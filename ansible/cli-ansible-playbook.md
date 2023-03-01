@@ -20,8 +20,3 @@ $# ansible-playbook $PLAYBOOK.yml --list-hosts
 
 ### 
 ```
-
-
-```bash
-
-```

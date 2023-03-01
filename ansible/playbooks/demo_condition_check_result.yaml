@@ -1,0 +1,13 @@
+# 使用 register 註冊執行結果, 並用變數檢查
+---
+- name: Check status of a service and email if its down
+  hosts: ec2
+  tasks:
+    - command: service httpd status
+      register: result
+    - mail: 
+      to: admin@localhost
+      subject: Service Alert
+      body: Httpd Service is down
+      when: result.stdout.find('down') != -1
+      # not found 'down' -> -1 ==> Service is alive

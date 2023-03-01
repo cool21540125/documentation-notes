@@ -1,113 +1,83 @@
 
-Ansible
+# Structure
 
-- 2019/01/12
-- 這東西可以快速部署一群遠端主機(透過 ssh, 使用 PKI 認證)
-- [What is Ansible | Ansible Playbook explained | Ansible Tutorial for Beginners](https://www.youtube.com/watch?v=1id6ERvfozo&ab_channel=TechWorldwithNana)
+```sh
+### -------- Structure in system --------
+/etc/
+    /ansible/       # ansible 組態目錄
+        /ansible.cfg  # ansible 設定主檔
+        /hosts        # ansible 自己管理的 主機清單(Host Inventory)
+        /roles/       # 配置檔 roles_path 的最後搜尋 roles 的路徑
+/usr/
+    /share/           # 模組位置
+$HOME/
+    /.ansible/
+    /ansible.cfg
+        /tmp/         # remote_tmp 及 local_tmp
 
+### 設定檔順序
+# Ansible 預設組態主檔 /etc/ansible/ansible.cfg
+# 設定檔參考順序為(先找到先適用):
+# 1. ANSIBLE_CONFIG (環境變數)
+# 2. ansible.cfg (current dir)
+# 3. .ansible.cfg (home dir)
+# 4. /etc/ansible/ansible.cfg (最後才參考設定主檔)
 
-## Terms
-
-- Ansible Tower  : 針對企業用戶的收費軟體.
-- Playbook       : Ansible 指令搞的名稱 (YAML) ; 可被 Ansible 執行的 YAML file.
-- Host Inventory : 主機目錄, 主機清單, 此為設定檔
-- YAML           : YAML Ain't a Markup Language
-
-```yml
-### playbook example
----
-- hosts: web
-  remote_user: root
-  tasks:
-  - name: install httpd
-    yum: pkg=httpd state=latest
+### -------- Structure in ansible project --------
+/project_root
+    /role
+        /tasks
+        /vars
+        /defaults
+        /handlers
+        /templates
 ```
 
 
+# Ansible concepts
+
+- Control node
+    - Windows 無法作為 control node
+    - 藉由 受控節點的清單(inventory), 也稱之為 hostfile 來控制
+- Managed nodes
+    - 被操作的 受控節點/網路設備, 也稱之為 `hosts`
+    - 這些機器上面只需要有 python 即可. 不需要安裝 ansible
+- Ansible Tower
+    - 企業級框架(也有 community 版本)
+    - 可透過 UI & RESTful API 做 controlling, securing, managing, extending...
 
 
-`主機目錄` 依照用途可分為: `DB Nodes`, `Service Nodes`, ...
+# ansible.cfg
 
-### 主機目錄
+```ini
+[defaults]
+inventory = hosts
 
-> /etc/ansible/hosts
+remote_user = vagrant
+#private_key_file = ~/.ssh/id_rsa
+
+# host_key_checking
+host_key_checking = False
+
+### 如果 playbook directory structure 找不到 roles, 則會來這邊找 role
+roles_path = /etc/ansible/roles
+
+```
+
+
+# inventory hosts
 
 ```sh
-### 簡單寫法 ----------
-192.168.124.101
-www.tony.com
-mail.tony.com
+# ex: /etc/ansible/hosts
 
-### 分組寫法 ----------
-[webservers]
-app.tony.com
-www.tony.com
+[all_groups:children]
+group1
+group2
 
-[dbservers]
-mysql.tony.com
-ms.tony.com
-mongo.tony.com
-
-[test]
-node2
-
-[prod]
-node3
-node4
-
-[webservers:children]
-prod
-# 上頭的寫法表示, node3, node4 隸屬於 prod 群組, 而 prod 群組屬於 webservers 群組
-
-### 建議寫法 ----------
-# 與其寫這樣
-w14301.example.com
-w17802.example.com
-
-# 不如寫像下面這樣
 web1 ansible_host=w14301.example.com
 web2 ansible_host=w17802.example.com
-# ansible_host 也可用 ip
-# web1, web2 為到時候使用的簡稱
 ```
 
-
-## Ansible 指令
-
-### 1. Ansible CLI
-
-Ansible 的指令工具, 又稱為 `Ad-Hoc Commands`
-
-```sh
-### 指令格式
-ansible <host-pattern> [options]
-
-ansible -m <模組名稱>
-ansible -a <模組的參數>
-```
-
-
-### 2. Ansible Playbook
-
-#### 關鍵字
-
-- hosts       : 遠端主機 IP
-- remote_user : 執行身分
-- vars        : 變數
-- tasks       : Playbook 核心 ; `循序執行的 Action`, 每個 Action 呼叫一個 `Ansible Module(Ansible 的指令啦)`
-    - action 語法: `module:module_params=module_value`
-    - 常用 module : cd, ls, yum, copy, template, ...
-- handlers    : Playbook 的 事件處理方式(多次觸發只執行一次, ex: 重開機後...)
-
-#### Playbook 格式
-
-```sh
-### 執行方式
-ansible-playbook deploy.yml
-
-### Playbook 內:
-模組名稱: 模組的參數
-```
 
 #### Example:
 
@@ -116,109 +86,87 @@ ansible-playbook deploy.yml
 # 安裝 Apache && 改設定檔 && 寫 index.html && 啟動 Apache
 ---
 - hosts: web
-
+  remote_user: root
   vars:
     http_port: 80
     max_clients: 800
-
-  remote_user: root
-
   tasks:
-  # taks1
   - name: install apache in the newest version
     yum: pkg=httpd state=latest
-
-  # task2
   - name: config file
     template: src=templates/httpd.conf.j2 dest=/etc/httpd/conf/httpd.conf
     notify:
     - restart apache
-    # notify 這裡是 [] 的概念, 看下面 json 就可懂了
-
-  # task3
   - name: index file
     template: src=templates/index.html.j2 dest=/var/www/html/index.html
-
-  # task4
   - name: start apache
     service: name=httpd state=started
 
+# 事件處理方式(多次觸發只執行一次, ex: 重開機後...)
 handlers:
   - name: restart apache
     service: name=httpd state=restarted
 ```
 
-```js
-// deploy.yaml -> deploy.json
-// 上面那包, 也可改成 json
-[
-    {
-        "hosts": "web",
-        "vars": {
-            "http_port": 80,
-            "max_clients": 800
-        },
-        "remote_user": "root",
-        "tasks": [
-            {
-                "name": "install apache in the newest version",
-                "yum": "pkg=httpd state=latest"
-            }, {
-                "name": "config file",
-                "template": "src=templates/httpd.conf.j2 dest=/etc/httpd/conf/httpd.conf",
-                "notify": [             // 這邊也可了解上面為啥 yaml 要分兩行...
-                    "restart apache"
-                ]
-            }, {
-                "name": "index file",
-                "template": "src=templates/index.html.j2 dest=/var/www/html/index.html"
-            }, {
-                "name": "start apache",
-                "service": "name=httpd state=started"
-            }
-        ],
-        "handlers": [
-            {
-                "name": "restart apache",
-                "service": "name=httpd state=restarted"
-            }
-        ]
-    },
-]
+
+# [Collections](https://docs.ansible.com/ansible/latest/user_guide/collections_using.html#collections)
+
+- 包含 playbooks, roles, modules, plugins
+- 其中一種使用方式, 可藉由 [Ansible Galaxy](https://galaxy.ansible.com/?extIdCarryOver=true&sc_cid=701f2000001OH7YAAW) 來安裝
+- [Roles](https://docs.ansible.com/ansible/latest/user_guide/playbooks_reuse_roles.html)
+    - Ansible role 有個已預先定義好的資料夾結構, 包含底下 7 個 dirs, role 裡頭至少須包含其中一個:
+        - defaults  : role 裡頭的 default variables(優先性最低)
+        - files     : 此 role deploy 的 files (也可以是 deploy 後執行的腳本)
+        - handlers  : 也可被此 role 外部使用
+        - meta      : role metadata; 包含 role dependencies
+        - tasks     : 裡頭存放 role 會執行的 task list
+            ```yml
+              # tasks/main.yml
+            - name: xxx
+              import_tasks: abc.yml
+              when: ooo
+            - name: yyy
+              ansible.builtin.yum:
+                name: httpd
+                state: present
+            ```
+        - templates : 此 role deploy 的 templates
+        - vars      : other variables of the role
+        - (也可使用客製化的 modules / module_utils / plugins)
+    - ansible 會在底下的這些 locations 來尋找 roles:
+        - collections (如果有使用的話)
+        - roles/ 資料夾內
+        - `roles_path` 變數定義的位置
+            - 預設搜尋路徑為: `~/.ansible/roles:/usr/share/ansible/roles:/etc/ansible/roles`
+        - playbook 所在的位置
+        - 或是甚至在要執行的 yml 裡頭定義:
+            ```yml
+            - hosts: webservers
+              roles:
+                - role: '/path/to/roles'
+            ```
+
+
+# Ansible 替代品 (但都沒 ansible 來得容易)
+
+- Puppet
+- Chef
+- Salt
+
+
+# Other
+
+```bash
+### Udemy 課程, 講師製作的 Docker Lab (模擬 ansible hosts)
+$# docker run -it -d --name ansible-lab-1 -p 2223:22 mmumshad/ubuntu-ssh-enabled
+$# ssh -p 2223 root@localhost
+# 密碼為「Passw0rd」
+
+
+$# docker inspect ansible-lab-1 | grep '^ *"IPAddress": ' | head -n 1
+# 找出 IP, ex: 「172.17.0.2」
+
+
+### 
+$# 
 ```
-
-## 常用模組(Ansible 基本功)
-
-### 1. ping
-### 2. debug
-### 3. copy
-### 4. template
-### 5. file
-### 6. user
-### 7. yum
-### 8. service
-### 9. firewalld
-### 10. shell
-### 11. command
-
-
-
-
-## Example
-
-- 2019/01/12
-- 安裝 httpd 的 yml 寫法
-
-由 Ansible Tower 使用此腳本, 在遠端 (95) 安裝 httpd
-
-```yml
-- hosts: 192.168.124.95
-  remote_user: root
-  tasks:
-  - name: install httpd
-    yum: pkg=httpd state=latest
-
-  - name: start
-    service: name=httpd state=started
-```
-

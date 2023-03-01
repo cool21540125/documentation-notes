@@ -1,0 +1,18 @@
+# 依照 Linux Distribution 安裝
+---
+-
+  name: Install nginx by distribution
+  hosts: ec2
+  tasks:
+    - name: Install Nginx on RedHat
+      yum:
+        name: nginx
+        state: present
+      when: ansible_os_family == "RedHat" or
+            ansible_os_family == "SUSE"
+    - name: Install Nginx on Debian
+      apt:
+        name: nginx
+        state: present
+      when: ansible_os_family == "Debian" and
+            ansible_distribution_version == "16.04"

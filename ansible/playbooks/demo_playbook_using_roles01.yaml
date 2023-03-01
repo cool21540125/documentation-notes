@@ -1,0 +1,8 @@
+---
+- name: Install and Configure MySQL
+  hosts: ec2
+  roles:
+    - role: geerlingguy.mysql
+      become: yes
+      vars:
+        mysql_user_name: db-user
