@@ -174,7 +174,6 @@ Networking    | -    | -    | -
 
 ## RDS, Relational DataBase
 
-- [RDS 機器規格比較表](https://instances.vantage.sh/rds/)
 - 需 run on EC2 (非 Serverless)
 - AWS RDS, SaaS, Serverless. 有幾個常見的 DB:
     - MS SQL
@@ -186,7 +185,7 @@ Networking    | -    | -    | -
         - MySQL (5X 倍速優化)
         - PostgreSQL (3X 倍速優化)
 - 東西存放在 EBS
-- RDS 最多可配置 5 個 Read Replicas (scalability)
+- 最多可配置 5 個 Read Replicas (scalability)
     - 可 Cross AZ
         - multi-az -> HA
         - multi-region -> read-replication scalability (但仍可作為 backup)
@@ -209,9 +208,9 @@ Networking    | -    | -    | -
     - Network Security : 使用 SG
     - Access Management : 
         - 使用 IAM 做規範
-        - 若為 MySQL/PostgreSQL RDS, 也可使用 IAM-based authentication, 否則使用帳密認證
+        - 若為 MySQL/PostgreSQL, 也可使用 IAM-based authentication, 否則使用帳密認證
             - *authentication token*(15 mins) via IAM & RDS API call
-            - EC2 也可藉由 **IAM Role** 來取得 RDS *authentication token*
+            - EC2 也可藉由 **IAM Role** 來取得 *authentication token*
                 - 好處是, 流量都做 SSL 加密 && IAM(而非 DB) 管理 users
 
 
