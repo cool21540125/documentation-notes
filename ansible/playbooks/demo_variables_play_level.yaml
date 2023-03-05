@@ -17,3 +17,8 @@
       become: true
       loop: "{{ packages }}"
       when: item.required == True
+    
+    # (底下還不確定沒用過, 但忘了哪邊看來的了)
+    - name: xxx
+      import_tasks: abc.yml
+      when: ooo

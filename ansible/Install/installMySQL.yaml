@@ -1,0 +1,24 @@
+# Install MySQL 8.0
+---
+- name: Deploy MySQL
+  hosts: ec2
+  become: yes
+  tasks:
+    - name: MySQL Repo
+      yum:
+        name: "https://repo.mysql.com/mysql80-community-release-el7-5.noarch.rpm"
+        state: present
+    - name: Install MySQL 8.0
+      yum:
+        name: '{{ item }}'
+        state: present
+      loop:
+        - 'mysql-server'
+        - 'mysql-devel'
+      become: true
+    - name: Start MySQL
+      service:
+        name: mysqld
+        state: started
+        enabled: yes
+      become: true

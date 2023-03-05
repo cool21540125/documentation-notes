@@ -1,0 +1,13 @@
+# Install MySQL 8.0
+---
+- name: Install common use tools
+  hosts: ec2
+  become: yes
+  tasks:
+    - name: Install various tools
+      yum:
+        pkg: "{{ item }}"
+        state: latest
+      loop:
+        - telnet
+        - git

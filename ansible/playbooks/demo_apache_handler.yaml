@@ -1,0 +1,24 @@
+# 安裝 Apache && 改設定檔 && 寫 index.html && 啟動 Apache
+# handlers 細節待補充
+---
+- hosts: web
+  remote_user: root
+  vars:
+    http_port: 80
+    max_clients: 800
+  tasks:
+  - name: install apache in the newest version
+    yum: pkg=httpd state=latest
+  - name: config file
+    template: src=templates/httpd.conf.j2 dest=/etc/httpd/conf/httpd.conf
+    notify:
+    - restart apache
+  - name: index file
+    template: src=templates/index.html.j2 dest=/var/www/html/index.html
+  - name: start apache
+    service: name=httpd state=started
+
+  # 事件處理方式(多次觸發只執行一次, ex: 重開機後...)
+  handlers:
+    - name: restart apache
+      service: name=httpd state=restarted

@@ -34,19 +34,6 @@ $HOME/
 ```
 
 
-# Ansible concepts
-
-- Control node
-    - Windows 無法作為 control node
-    - 藉由 受控節點的清單(inventory), 也稱之為 hostfile 來控制
-- Managed nodes
-    - 被操作的 受控節點/網路設備, 也稱之為 `hosts`
-    - 這些機器上面只需要有 python 即可. 不需要安裝 ansible
-- Ansible Tower
-    - 企業級框架(也有 community 版本)
-    - 可透過 UI & RESTful API 做 controlling, securing, managing, extending...
-
-
 # ansible.cfg
 
 ```ini
@@ -61,7 +48,8 @@ host_key_checking = False
 
 ### 如果 playbook directory structure 找不到 roles, 則會來這邊找 role
 roles_path = /etc/ansible/roles
-
+# (不知能否這樣寫... 但他如同 PATH)
+# ex: ~/.ansible/roles:/usr/share/ansible/roles:/etc/ansible/roles
 ```
 
 
@@ -78,34 +66,22 @@ web1 ansible_host=w14301.example.com
 web2 ansible_host=w17802.example.com
 ```
 
+## 拆分 inventory
 
-#### Example:
+```sh
+### ------ Inventory file ------
+servers_g1
+servers_g2
+# 避免在 inventory 裡面寫一堆雜亂的 host, user, password, ...
 
-```yaml
-### deploy.yaml
-# 安裝 Apache && 改設定檔 && 寫 index.html && 啟動 Apache
----
-- hosts: web
-  remote_user: root
-  vars:
-    http_port: 80
-    max_clients: 800
-  tasks:
-  - name: install apache in the newest version
-    yum: pkg=httpd state=latest
-  - name: config file
-    template: src=templates/httpd.conf.j2 dest=/etc/httpd/conf/httpd.conf
-    notify:
-    - restart apache
-  - name: index file
-    template: src=templates/index.html.j2 dest=/var/www/html/index.html
-  - name: start apache
-    service: name=httpd state=started
 
-# 事件處理方式(多次觸發只執行一次, ex: 重開機後...)
-handlers:
-  - name: restart apache
-    service: name=httpd state=restarted
+### ------ Sample variable file - host_vars/servers_g1.yaml ------
+ansible_ssh_pass: Passw0rd
+ansible_host: 192.168.94.87
+# 總之這檔案, 要放在 inventory file 同層的 「host_vars」 資料夾底下就對了
+# 檔名要同 inventory file 裡面的 host
+
+### 同理, 也會有 「group_vars/」
 ```
 
 
@@ -119,17 +95,7 @@ handlers:
         - files     : 此 role deploy 的 files (也可以是 deploy 後執行的腳本)
         - handlers  : 也可被此 role 外部使用
         - meta      : role metadata; 包含 role dependencies
-        - tasks     : 裡頭存放 role 會執行的 task list
-            ```yml
-              # tasks/main.yml
-            - name: xxx
-              import_tasks: abc.yml
-              when: ooo
-            - name: yyy
-              ansible.builtin.yum:
-                name: httpd
-                state: present
-            ```
+        - tasks     : 裡頭存放 role 會執行的 task list. ex: 'tasks/main.yaml'
         - templates : 此 role deploy 的 templates
         - vars      : other variables of the role
         - (也可使用客製化的 modules / module_utils / plugins)
@@ -137,36 +103,4 @@ handlers:
         - collections (如果有使用的話)
         - roles/ 資料夾內
         - `roles_path` 變數定義的位置
-            - 預設搜尋路徑為: `~/.ansible/roles:/usr/share/ansible/roles:/etc/ansible/roles`
         - playbook 所在的位置
-        - 或是甚至在要執行的 yml 裡頭定義:
-            ```yml
-            - hosts: webservers
-              roles:
-                - role: '/path/to/roles'
-            ```
-
-
-# Ansible 替代品 (但都沒 ansible 來得容易)
-
-- Puppet
-- Chef
-- Salt
-
-
-# Other
-
-```bash
-### Udemy 課程, 講師製作的 Docker Lab (模擬 ansible hosts)
-$# docker run -it -d --name ansible-lab-1 -p 2223:22 mmumshad/ubuntu-ssh-enabled
-$# ssh -p 2223 root@localhost
-# 密碼為「Passw0rd」
-
-
-$# docker inspect ansible-lab-1 | grep '^ *"IPAddress": ' | head -n 1
-# 找出 IP, ex: 「172.17.0.2」
-
-
-### 
-$# 
-```
