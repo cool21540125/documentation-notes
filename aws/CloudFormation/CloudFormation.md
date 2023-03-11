@@ -88,6 +88,43 @@ set of outputs
 ```
 
 
+# Tools
+
+```bash
+
+### 可用來驗證 CloudFormation template file
+$# pip install cfn-lint
+$# cfn-lint --version
+cfn-lint 0.74.1
+
+### Usage: cfn-lint
+$# cfn-lint xxx.yaml
+# 沒問題的話不會有訊息, 有問題的話會告知錯誤
+
+
+### (還沒用過)
+$# pip install taskcat
+$# taskcat --version
+version 0.9.36
+
+
+### 可用來做 CloudFormation json <-> yaml
+$# pip install cfn-flip
+$# cfn-flip --version
+AWS Cloudformation Template Flip, Version 1.3.0
+
+# Usage: cfn-flip
+$# cfn-flip Source.json Target.yaml
+
+
+### 一堆還沒去了解能幹嘛的工具 - PASS
+$# cfn-init
+$# cfn-hup
+$# cfn-signal
+# https://catalog.workshops.aws/cfn101/en-US/basics/operations/helper-scripts
+```
+
+
 # CLI
 
 ```bash
