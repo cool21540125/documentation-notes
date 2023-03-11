@@ -54,6 +54,17 @@
         - 如上圖, *Shipping Service* 不需要客戶帳單資訊, 因此可藉由 *Message Filtering* 來把不必要的欄位過濾掉
 - 替代品
     - 相較於 [EventBridge](./CloudWatch.md#aws-eventbridge), SNS 無法整合第三方
+- Notification
+    - 可將 SNS 設定為 `notification rule` 的 target
+```mermaid
+flowchart LR
+
+subgraph tg[targets]
+    SNS
+end
+rule["Notification Rule"] -- target --> tg;
+
+```
 
 
 # Security
@@ -73,3 +84,17 @@
     SQS1 -- Receive --> f;
     SQS2 -- Receive --> s;
     ```
+
+
+# CLI
+
+```bash
+### 
+$# aws sns list-subscriptions \
+    --profile tonychoucc --region ap-northeast-1
+
+### 
+$# aws sns unsubscribe \
+    --subscription-arn arn:aws:sns:ap-northeast-1:152248006875:blog-repo-notify-topic \
+    --profile tonychoucc --region ap-northeast-1
+```

@@ -107,9 +107,6 @@
     - 按量計費
 
 
-## [AWS CodeGuru](./cert-CLF_C01.md#amazon-codeguru)
-
-
 # Monitoring & Audit : CloudWatch, X-Ray, CloudTrail
 
 - [CloudWatch](./CloudWatch.md#aws-cloudwatch)
@@ -139,6 +136,7 @@
 
 ## AWS AppSync
 
+- [What is AWS AppSync?](https://docs.aws.amazon.com/appsync/latest/devguide/what-is-appsync.html)
 - GraphQL api
 - real-time WebSocket/MQTT for WebSocket
 - 一開始需要先定義 `GraphQL schema`
@@ -147,54 +145,10 @@
     - AWS_IAM
     - OPENID_CONNECT
     - AMAZON_CONGNITO_USER_POOLS
-
-
-## AWS Amplify
-
-- 可視為用來建 mobile APP && web APP 的 beanstalk
-- serverless
-- 整合了各種 AWS serverless services
-- 專案基本指令:
-    - amplify init
-    - amplify add auth
-    - amplify add api
-    - amplify add hosting
-
----
-
-```mermaid
-flowchart LR
-
-subgraph Frontend
-    iOS
-    Flutter
-    Angular
-    misc["其他各種前端框架"]
-end
-subgraph Backend
-    DynamoDB
-    AppSync
-    Cognito
-    S3
-end
-Amplify <-- connect with frontend libs --> Frontend
-Amplify <-- build --> Backend
-```
----
-
-Amplify Hosting
-
-```mermaid
-flowchart LR
-
-subgraph code["Source Code Repo"]
-    Github
-    Gitlab
-    CodeCommit
-end
-code --> Frontend -- deploy --> CloudFront
-code --> Backend -- deploy --> Amplify
-```
+- 即時 && 跨裝置, Store && Sync data
+    - 支援了 Offline data sync (類似產品 [Cognito](./cognito.md))
+- 使用 GraphQL (mobile tech from FB)
+- 整合了 DynamoDB/Lambda
 
 
 # AWS Other Services

@@ -227,15 +227,6 @@ workers(consumer) 未限制      | 1250w subscribers & 10w topics |
 - 整合 Windows AD
 
 
-## AWS AppSync
-
-- [What is AWS AppSync?](https://docs.aws.amazon.com/appsync/latest/devguide/what-is-appsync.html)
-- 即時 && 跨裝置, Store && Sync data
-    - 支援了 Offline data sync (類似產品 [Cognito](#cognito))
-- 使用 GraphQL (mobile tech from FB)
-- 整合了 DynamoDB/Lambda
-
-
 ## Cost Explorer
 
 - Billing Service 底下其中一個小服務

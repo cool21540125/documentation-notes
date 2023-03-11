@@ -39,6 +39,7 @@
                         - APPs 可以每 1 sec 發送 metrics 到 CloudWatch
                             -  另一方面, 可以設定 CloudWatch Alarm 在不同的頻率(ex: 每 10 secs) 作為評估
         - 如果自行搜集 custom metric 時, 都會去尻 `PutMetricData API`(收費~), 假設又使用 High Resolution, 小心錢包哭哭
+            - `aws cloudwatch put-metric-daata --namespace "xxx" --metric-data file://example-metric.json`
     - Statistics (不解釋)
     - Percentiles (不解釋)
     - Alarms
@@ -53,6 +54,7 @@
 - 可 cross AWS accounts && cross Region (global)
 - Charge: 3 dashboards(up to 50 metrics) for FREE
     - 超過部分, $3/dashboard/month
+- Dashboard 該怎麼建立... 現階段先 PASS
 
 
 # CloudWatch Metrics
@@ -71,43 +73,45 @@
 # CloudWatch Logs
 
 - [What is Amazon CloudWatch Logs?](https://docs.aws.amazon.com/AmazonCloudWatch/latest/logs/WhatIsCloudWatchLogs.html)
-    - Log retention : By default, logs are kept indefinitely and never expire. 但可調整 *Log Group* 的 *retention policy*
+- 預設 CloudWatch Logs 永遠不會到期. 但可調整 *Log Group* 的 *retention policy*
+    - CloudWatch Logs 是要收錢的喔!!
 - 儲存 AWS Logs 的地方, 可把 log 彙整到 *Log groups*(通常代表一個 Application)
     - Log group 裡頭會有 *Log streams*(instance/log file/container)
     - Logs Insights, 可下查詢語法(有點類似 SQL, 但完全不同), 針對 Log group 做查詢
 - *CloudWatch Logs* 可彙整至:
     - S3
-        - 即時: 可使用 *Logs Subscriptions*
+        - 非即時
+            - CloudWatch Logs 藉由 `CreateExportTask` API, 匯出到 S3 (可能要等 12 hrs)
+        - 即時
+            - 可使用 *Logs Subscriptions*, 如下:
             ```mermaid
             flowchart LR
 
             cl["CloudWatch Logs"]
             sf["Subscription Filter"]
             kdf["Kinesis Data Firehose"]
-            awslf["Lambda \n (managed by AWS)"]
-            lf["Lambda (custom)"]
+                awslf["Lambda \n (managed by AWS)"]
+                lf["Lambda (custom)"]
             es["Amazon OpenSearch"]
             kds["Kinesis Data Streams"]
 
             cl --> sf;
             sf --> awslf;
             awslf -- Real Time --> es;
-            kdf --> es;
+            kdf -- Near Real Time --> es;
             sf --> kdf;
             kdf -- Near Real Time --> S3;
             sf --> kds;
             kds --> other["KDF, KDA, EC2, Lambda, ..."]
-            sf --> lf;
+            sf <--> lf;
             ```
-        - 非即時
-            - CloudWatch Logs -> S3, 使用 `CreateExportTask` API call, 時間可能花上 12 hrs
     - Kinesis Data Stream
     - Kinesis Data Firehose
     - AWS Lambda
     - ElasticSearch
 - *CloudWatch Logs* Sources:
     - SDK
-    - `CloudWatch Logs Agent`(OLD)
+    - DEPRECATED - `CloudWatch Logs Agent`
         - EC2 安裝此服務, 並取得對 *CloudWatch Logs* 寫入的 *IAM Role*
         - 也可安裝在 on-premise server 來蒐集 log
         - 只能把 log -> *CloudWatch Logs*
@@ -126,12 +130,12 @@
 - Define *Metric Filter* && *Insights*
     - ex: 設定 filter expression, 計算 log file 裡頭 'error' 出現次數 or 取出 log 裡頭特定 IP
     - filter 可用來 trigger **CloudWatch alarms**
-- CloudWatch Logs 支援 cross region && cross accounts
+- Cross Region 或 Cross Account 的 CloudWatch Logs, 可藉由 Kinesis Data Streams 來彙整 logs
     ```mermaid
     flowchart LR;
-    sf1["Subscription Filter"]
-    sf2["Subscription Filter"]
-    sf3["Subscription Filter"]
+    sf1["Subscription Filter-1"]
+    sf2["Subscription Filter-2"]
+    sf3["Subscription Filter-3"]
     ac1["Account A Region 1"] --> sf1;
     ac2["Account B Region 2"] --> sf2;
     ac3["Account C Region 3"] --> sf3;

@@ -354,11 +354,6 @@ src["Source DB"] -- DMS --> db["AWS Target DB"];
 - Migration 過程可離線, 但建議離線 or 避免寫入, 以確保資料一致
 
 
-## AWS Glue
-
-- [saa-Glue](./DatabaseAndStorage.md#aws-glue)
-
-
 # Other Compute Services: ECS, Lambda, Batch, Lightsail
 
 ## ECS, Elastic Container Service
