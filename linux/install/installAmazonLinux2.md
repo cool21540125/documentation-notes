@@ -122,3 +122,56 @@ $# ./install
 ### Create Control Plane
 $# 
 ```
+
+
+# Install CloudWatch Agent - DEPRECATED
+
+- 2023/03/14
+- 建議使用 CloudWatch unified agent
+
+```bash
+### 建議使用 unified agent
+yum install amazon-cloudwatch-agent -y
+
+### 啟動 CloudWatch Agent 的時候, 需要 agent config (Schema definition)
+
+## ====== 法1. 使用 wizard 來生成 agent config
+sudo /opt/aws/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent-config-wizard
+# 上述詢問後生成的檔案位置
+vim /opt/aws/amazon-cloudwatch-agent/bin/config.json
+# IMPORTANT: 若要把 config 寫入 SSM, 需要先給 CloudWatchAgentAdminPolicy
+# 若不使用 SSM, 則給 CloudWatchAgentServerPolicy
+
+### ====== 法3. 客製化配置
+vim /opt/aws/amazon-cloudwatch-agent/doc/amazon-cloudwatch-agent-schema.json
+# 暫時不鳥這個=..=
+# 很多東西都要手動自己來...
+
+### 先建出底下結構... CloudWatch agent 啟動時需要這個
+mkdir -p /usr/share/collectd/ && touch mkdir /usr/share/collectd/types.db
+
+### 啟動 CloudWatch Agent (等同於 systemctl start + enable)
+
+## ====== 法一. 使用 SSM 上的 agent config 啟動 CloudWatch Agent
+sudo /opt/aws/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent-ctl \
+    -a fetch-config \
+    -m ec2 \
+    -c ssm:${Name_of_CloudWatch_Config_in_SSM_Parameter} -s
+
+## ====== 法二. 使用 local 的 agent config 啟動 CloudWatch Agent
+sudo /opt/aws/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent-ctl \
+    -a fetch-config \
+    -m ec2 \
+    -c file:${CloudWatch_Config_LocalFileName} -s
+
+# 完成以後, CloudWatch logs && CloudWatch metrics 就能看到東西了
+```
+
+
+# Install CloudWatch Unified Agent
+
+- 2023/03/14
+
+```bash
+$# 
+```

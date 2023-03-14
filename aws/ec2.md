@@ -255,3 +255,14 @@ $# curl http://169.254.169.254/latest/meta-data/
     - AWS FSx for Lustre (Linux & Cluster)
     - AWS FSx for Windows File Server
     - AWS FSx for NetApp ONTAP
+
+
+# CLI
+
+```bash
+### 查詢 EC2 Instance 的 ImageID
+$# aws ec2 describe-instances \
+    --instance-ids $EC2_Instance_ID \
+    --region $Region \
+    --query 'Reservations[0].Instances[0].ImageId'
+```

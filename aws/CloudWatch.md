@@ -111,7 +111,7 @@
     - ElasticSearch
 - *CloudWatch Logs* Sources:
     - SDK
-    - DEPRECATED - `CloudWatch Logs Agent`
+    -  DEPRECATED `CloudWatch Logs Agent`
         - EC2 安裝此服務, 並取得對 *CloudWatch Logs* 寫入的 *IAM Role*
         - 也可安裝在 on-premise server 來蒐集 log
         - 只能把 log -> *CloudWatch Logs*
@@ -148,6 +148,16 @@
     kds --> kdf;
     kdf -- Near Real Time --> S3;
     ```
+
+
+## CloudWatch configuration
+
+- 安裝完 CloudWatch 以後, 啟動時需要給一份 JSON, 裡頭包含 3 個部分:
+    - agent   : agent configuration
+    - metrics : custom metrics
+    - logs    : additional log files
+
+
 
 
 # CloudWatch Events
