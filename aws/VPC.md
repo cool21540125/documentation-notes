@@ -4,8 +4,6 @@
 - 一個 VPC link to 一個 Region
     - VPC 內有 Subnets
     - AZ 內有 Subnets
-- VPC
-    - 裏頭可有最多 5 組 CIDR
 - Private IPv4
     - 10.0.0.0 - 10.255.255.255 (10.0.0.0/8)
     - 172.16.0.0 - 172.31.255.255 (172.16.0.0/12)
@@ -42,10 +40,17 @@
         - local zones
         - aws outposts
         - wavelength zones
+- VPC 冷知識
+    - 每個 Region 最多 5 個 VPCs(軟性限制)
+    - 每個 VPC 最多 5 組 CIDRs
+    - CIDR 的 range:
+        - min 為 `/28`(4 bits IP Addresses), 只能擁有 16 IPs
+        - max 為 `/16`(16 bits IP Addresses), 也就是能有 65536 IPs
+
 
 # Subnet
 
-- AWS 為每個 Subnet 裏頭, 保留了 5 個 IPv4 address, ex: 10.0.0.0/24
+- AWS 為每個 Subnet 裏頭, 保留了 5 個 IPv4 addresses, ex: 10.0.0.0/24
     - 10.0.0.0   : Network Address
     - 10.0.0.1   : for VPC router
     - 10.0.0.2   : for mapping to Amazon-provided DNS
