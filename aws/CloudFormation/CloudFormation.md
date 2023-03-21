@@ -113,15 +113,25 @@ $# pip install cfn-flip
 $# cfn-flip --version
 AWS Cloudformation Template Flip, Version 1.3.0
 
-# Usage: cfn-flip
+
+# Usage: cfn-flip (valid CloudFormation Template)
 $# cfn-flip Source.json Target.yaml
 
 
-### 一堆還沒去了解能幹嘛的工具 - PASS
+### 可用來在 CloudFormation 開 EC2 時, 替代 UserData (改用陳述式) 的指令工具
 $# cfn-init
-$# cfn-hup
+# 來讓 EC2 去向 CloudFormation query 初始化 EC2 的結果
+
+
+### 用來在 CloudFormation 開 EC2 時, cfn-init 以後, 向 CloudFormation 發送 signal (來表示完成的 CLI)
 $# cfn-signal
+# 需要搭配 CloudFormation 的 WaitCondition Resource. 來讓 CloudFormation 等候該 Resource 建立完成後, 再繼續後續動作(block template)
+
+
+### PASS
+$# cfn-hup
 # https://catalog.workshops.aws/cfn101/en-US/basics/operations/helper-scripts
+
 ```
 
 

@@ -16,11 +16,17 @@
 - CloudFormation 開 EC2 Instance 的時候, 如果有用到 User Data, 則須考慮下面這些:
     - WaitCondition - 機器開好了, 但仍在安裝配置某些服務, 應該要等待一段時間讓他們完成, 以利後面的 ASG 安排導流 & 監控 Check
     - 為了在 Error 時能看到 log, 需要 disable rollback on failure
-- EC2 使用 User Data, 查看 log:
+- CloudFormation EC2 的 UserData 相關:
     - `/var/log/cloud-init-output.log`
+        - 可以視為是 在 Linux 底下直接執行的 Terminal 結果
+        - EC2 的 UserData (`Fn::Base64`) 的 log
     - `/var/log/cloud-init.log`
+        - 
     - `/var/log/cfn-init.log`
+        - 可以視為是 `/var/log/cfn-init-cmd.log` 的 精簡版 log
+        - EC2 執行完 UserData 以後, 跑 `cfn-init` 來向 CloudFormation query 已取得 init data
     - `/var/log/cfn-init-cmd.log`
+        - 可以視為是 `/var/log/cfn-init.log` 的 完整版 log
 
 
 ```yaml

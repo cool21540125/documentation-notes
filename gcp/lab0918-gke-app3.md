@@ -12,7 +12,7 @@
 $# export PROJECT_ID=lab0918-gke-app3
 $# export REGION=asia-east1
 $# gcloud config set project ${PROJECT_ID}
-$# gcloud config set compute/region ${REGION}
+$# echo y | gcloud config set compute/region ${REGION}
 
 ### 建立 GCP Docker Registory
 $# gcloud artifacts repositories create hello-repo \
