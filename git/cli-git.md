@@ -101,3 +101,23 @@ $# git config --local core.sshCommand "ssh -i ~/.ssh/use_another_key_to_operate"
 # [core]
 #    sshCommand = ssh -i ~/.ssh/use_another_key_to_operate
 ```
+
+
+# submodule
+
+```bash
+### 首次設定(一個專案如果要附加 submodules 的話, 只需做過一次即可)
+git submodule init
+
+
+### 設定 子專案
+git submodule add git@github.com:cool21540125/aws-labs.git aws/aws-labs
+
+### 更新
+git submodule update
+
+
+### 將來要持續更新 submodule
+cd ${SubModule}
+git pull origin master
+```

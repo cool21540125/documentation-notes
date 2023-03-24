@@ -550,20 +550,3 @@ $ git branch -f master HEAD~3
 
 $ git checkout HEAD~1
 ```
-
-
-# submodule
-
-```bash
-### 首次設定 submodule
-git submodule init
-
-
-### 設定目前專案底下的 submodule
-vim .git/config
-git submodule update
-
-### 將來要持續更新 submodule
-cd ${SubModule}
-git pull origin master
-```
