@@ -554,21 +554,16 @@ $ git checkout HEAD~1
 
 # submodule
 
-- 2020/07/22
-- [Git Submodule 介紹與使用](https://blog.wu-boy.com/2011/09/introduction-to-git-submodule/)
-
 ```bash
-### 將來去 Clone 有 submodule 的專案時...
-$# git clone git@github.com:cool21540125/documentation-notes.git
-# 會發現裡面的 submodule 不會被 Clone 下來 (資料夾是空的)
+### 首次設定 submodule
+git submodule init
 
-### 透過底下方式來修改 .git/config
-$# git submodule init
 
-### 更新~
-$# git submodule update
+### 設定目前專案底下的 submodule
+vim .git/config
+git submodule update
 
 ### 將來要持續更新 submodule
-$# cd DesignPattern && git pull origin master
-# ex: DesignPattern 就是我的 submodule
+cd ${SubModule}
+git pull origin master
 ```
