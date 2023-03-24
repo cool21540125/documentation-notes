@@ -4,3 +4,6 @@
 [submodule "RxJS"]
 	path = RxJS
 	url = git@github.com:cool21540125/drmo_rxjs.git
+[submodule "aws-labs"]
+	path = aws-labs
+	url = git@github.com:cool21540125/aws-labs.git

@@ -105,13 +105,25 @@ $# git config --local core.sshCommand "ssh -i ~/.ssh/use_another_key_to_operate"
 
 # submodule
 
+## 假設要在 目前 GitProject 底下, 加入一個 子專案, 作法如下
+
 ```bash
-### 首次設定(一個專案如果要附加 submodules 的話, 只需做過一次即可)
+### 先進入 目前 GitProject
+
+### 首次設定(一個 GitProject 如果要附加 子專案 的話, 只需做過一次即可)
 git submodule init
 
 
 ### 設定 子專案
-git submodule add git@github.com:cool21540125/aws-labs.git aws/aws-labs
+git submodule add git@github.com:cool21540125/aws-labs.git
+# 如此一來, aws-labs 這個 GitSubmodule 就會附加到當前 GitProject 底下了
+
+
+### 如果設錯了, 需要修復底下的東西
+#  1 .git/config
+#  2 .git/modules/SubModuleDir 
+#  3 .gitmodules
+
 
 ### 更新
 git submodule update
