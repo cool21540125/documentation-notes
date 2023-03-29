@@ -13,7 +13,7 @@
         - Metrics 的 Container, 用來隔離不同的 Metrics
         - ex: EC2 使用 `AWS/EC2` 這個 namespace
     - Dimensions
-        - Metric 裡頭的一組 name/value pair
+        - Metric 裡的 Name-Value pair
         - 每個 Metric 最多能有 10 個 Dimensions
         - 好像可以理解成 OOP 裡頭的 class, attribute name, attribute value 的概念
             - ex: Instance.id, Environment.name, ...

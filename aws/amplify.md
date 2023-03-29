@@ -3,8 +3,6 @@
 
 - [Deploy a Web App on AWS Amplify 101](https://aws.amazon.com/getting-started/guides/deploy-webapp-amplify/?nc1=h_ls)
 - [Getting started](https://docs.amplify.aws/start/)
-
-
 - 可視為用來建 mobile APP && web APP 的 beanstalk
 - serverless
 - 整合了各種 AWS serverless services
