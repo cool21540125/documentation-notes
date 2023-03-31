@@ -59,6 +59,7 @@
 
 # CloudWatch Metrics
 
+- [CloudWatch Metcrics workshop](https://catalog.us-east-1.prod.workshops.aws/workshops/a8e9c6a6-0ba9-48a7-a90d-378a440ab8ba/en-US/200-cloudwatch/210-cloudwatch-metrics)
 - 預設 EC2 每 5 分鐘 會有對應 metrics
     - 可花錢... 每分鐘都有 metrics
     - EC2 Memory Usage 並沒在預設的 metrics 裡頭, 想要這個的話需要 custom
@@ -68,11 +69,13 @@
 - 可以針對 metric 超過門檻, 配置對應的 [alarm actions](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/cloudwatch_concepts.html#CloudWatchAlarms)
 - EC2 預設每 5 mins 會有一筆 metric -> CloudWatch Metric, 如果需要更頻繁的資料, 可啟用 *EC2 Detailed monitoring*(每 1 min 一筆)
     - 很容易與 CloudWatch Metric high resolution && CloudWatch Alarm high resolution 搞混!!
+- `Search Expression` 為其中一種 `Math Expression`
 
 
 # CloudWatch Logs
 
 - [What is Amazon CloudWatch Logs?](https://docs.aws.amazon.com/AmazonCloudWatch/latest/logs/WhatIsCloudWatchLogs.html)
+- [CloudWatch Logs workshop](https://catalog.us-east-1.prod.workshops.aws/workshops/a8e9c6a6-0ba9-48a7-a90d-378a440ab8ba/en-US/200-cloudwatch/220-cloudwatch-logs)
 - 預設 CloudWatch Logs 永遠不會到期. 但可調整 *Log Group* 的 *retention policy*
     - CloudWatch Logs 是要收錢的喔!!
 - 儲存 AWS Logs 的地方, 可把 log 彙整到 *Log groups*(通常代表一個 Application)
@@ -167,6 +170,7 @@
 
 # CloudWatch Alarms
 
+- [CloudWatch Alarms workshop](https://catalog.us-east-1.prod.workshops.aws/workshops/a8e9c6a6-0ba9-48a7-a90d-378a440ab8ba/en-US/200-cloudwatch/230-cloudwatch-alarms/231-cloudwatch-alarms)
 - 用來 trigger notification
     - 標的為 CloudWatch Metrics, CloudWatch Logs
 - Alarm State (Alarm Status)
