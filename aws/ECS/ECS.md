@@ -1,27 +1,35 @@
 
-- [What is Amazon Elastic Container Service?](https://docs.aws.amazon.com/AmazonECS/latest/developerguide/Welcome.html)
+# ECS 名詞定義
+
+- **Cluster**
+    - ECS Cluster 為 **tasks** 或 **services** 的 logical group
+    - 依照 Task Definition 來建立出來的 Cluster
+- **Task Definitions**
+    - 可把 `Task Definition` 理解成 k8s 的 `Pod`
+        - 建立這東西 `Task Definition(or Pod)` 以後, 裡頭再跑 Container
+    - `ECS Task` 可以理解成 k8s 的 Pod
+        - ECS Task 裡頭最多可有 10 個 Containers
+        - 其中最起碼要有一個 **Essential container** (其餘則為 sidecar container)
+    - Defines how to create ECS task (要先建這個, 才能建 ECS Service)
+    - 如果有 Service 或 Task 要跑在 ECS Cluster 裡頭, 需要先定義這個
+    - Templates for your *Tasks*, 定義 image 來源, Memory, CPU, 等
+        - 像是 版本升級, 則須改這個, 來拉新版本 image
+- **Tasks** (ECS Task)
+    - The lowest level building block of ECS - Runtimes instances
+    - 此為 ECS 運行時的最小建構單位, 同時也是運行時例
+- **Services** (ECS Service)
+    - 存在於 ECS Cluster instance 裏頭, 用來控制 tasks 的數量
+- Container(EC2 Only)
+    - Virtualized instance that run Tasks.
+    - 如果運行 Farget Mode 的話, 我們在意的只有 Task (沒有 Container 的概念)
+- Cluster (ECS Cluster)
+    - EC2 - A group of Containers which run Tasks
+    - Farget - A group of Tasks
 
 
 # ECS, Elastic Container Service
 
-- 名詞定義:
-    - Task Definition: 
-        - 可以把 `Task Definition` 理解成 k8s 的 Pod
-            - Container 會運行在 `Task Definition(or Pod)` 裏頭
-        - `ECS Task` 可視為一個在 AWS ECS 中運行 Container 的最小單元.
-            - 而 Pod 則是 k8s 中運行 Container 的最小單元
-        - Defines how to create ECS task (要先建這個, 才能建 ECS Service)
-        - 如果有 Service 或 Task 要跑在 ECS Cluster 裡頭, 需要先定義這個
-        - Templates for your *Tasks*, 定義 image 來源, Memory, CPU, 等
-            - 像是 版本升級, 則須改這個, 來拉新版本 image
-    - `Task` or `ECS Task`:
-        - The lowest level building block of ECS - Runtimes instances
-    - Container(EC2 Only)
-        - Virtualized instance that run Tasks.
-        - 如果運行 Farget Mode 的話, 我們在意的只有 Task (沒有 Container 的概念)
-    - Cluster (ECS Cluster):
-        - EC2 - A group of Containers which run Tasks
-        - Farget - A group of Tasks
+- [What is Amazon Elastic Container Service?](https://docs.aws.amazon.com/AmazonECS/latest/developerguide/Welcome.html)
 - 有 2 種的 Launch Types, 但都可用 EFS 作為儲存:
     - EC2 Launch Type
         - 需自行維護 EC2, 裡頭需要有 `ECS Agent`
@@ -44,9 +52,14 @@
             - 最少需存活多少 Nodes
         - Maximum Percent
             - 最多開到多少 Nodes
-- 如果跑 EC2 launch type, 裡頭的 Container 不需設定 port mapping, ALB 會藉由 *Dynamic Host Port Mapping* 來找到對應的 port
+- Dynamic Host Port Mapping (如果使用的是 EC2 launch type)
+    - 裡頭的 Container 不需設定對應到 Host 的 port
+    - ALB 會藉由 *Dynamic Host Port Mapping* 來找到對應的 port
     - 也因此, EC2 的 SG 需要 allow ALL from ELB
 - ECS `Sidecar container`
+    - ECS 的 `task definition JSON` 裏頭(定義 Container 的地方), 會有個 `essential` 的變數, default 為 true
+        - 則表示此為此 task definition 的主要容器
+        - 若沒聲明 or 聲明為 false, 則此 container 為 sidecar container
     - 建立 *Task Definition* 的時候, 如果裡頭定義了 multiple container, 指 *Essential Container = No* 的這些
         - 如果 Sidecar container 關掉了, 並不會讓 ECS Task 關掉
 
@@ -102,8 +115,6 @@ ALB --> Task3;
 
 ## ECS - Task Placement
 
-- 僅適用於 *EC2 Launch Type*
-- 僅適用於 *EC2 Launch Type*
 - 僅適用於 *EC2 Launch Type*
 - 用來定義, NEW ECS Task 應該要放到哪邊? 此外, OLD ECS Task 應該先死誰?
 - 相關的衍生問題有 2:
@@ -170,21 +181,35 @@ ALB --> Task3;
             - API call -> ECR to pull images
             - retrive data from [Secret Manager]
             - retrive data from [SSM Parameter Store]
-    - ECS Task Role
-        - 同時適用於 *EC2 Launch Type* && *Farget Launch Type*
+    - ECS IAM Role (此 Role 被定義在 Task Definition Level, 而非 Service Level)
+        - 同時適用於 both **EC2** && **Farget**
         - Task Role 定義在 *task definition* 裡頭
         - *ECS agent* 藉由此 Role, 用來授予不同的 *ECS task* 擁有不同的 [Task Role], ex:
+            - Task 需要訪問 S3, Task 直接 `assume role` from ECS Task Role
             - Task 需要訪問 S3, 因此讓 ECS agent 具備授權的權限, 用來給予 Container 必要的 *Task Role*
                 - 白話文就是, 老大 派你去幹掉第二把交椅, 而授予你必要權限
                     - 老大(Agent)具備 授權的 Role
                     - 你(Task) 具備 Task Role
 
 
+# Metrics
+
+- CPUUtilization
+    - cluster 或 service 使用的 CPU%
+- MemoryUtilization
+    - cluster 或 service 使用的 Memory%
+
+
 # ECS CLI
 
 ```bash
-$# aws ecs list-task-definitions \
-    --region "ap-northeast-1"
+### 使用本地的 task-definition.json 建立一個 task definitions
+aws ecs register-task-definition --cli-input-json file://${task_definition}.json
+# 這檔案長得一副就是 docker-compose 的樣子
+
+
+### 列出 task definitions
+aws ecs list-task-definitions
 
 
 ### List Tasks
@@ -198,11 +223,3 @@ $# aws ecs describe-tasks \
     --cluster ${Cluster_Name} \
     --task ${task_ID}
 ```
-
-
-# Metrics
-
-- CPUUtilization
-    - cluster 或 service 使用的 CPU%
-- MemoryUtilization
-    - cluster 或 service 使用的 Memory%

@@ -138,53 +138,46 @@ $# cfn-hup
 # CLI
 
 ```bash
-### 刪除 CloudFormation Stack
-$# CloudFormationName=
-$# Region="ap-northeast-1"
-$# aws cloudformation delete-stack \
-    --stack-name ${CloudFormationName} \
-    --region ${Region}
+### LIST CloudFormation Stacks (without Deleted)
+aws cloudformation list-stacks  --stack-status-filter CREATE_COMPLETE UPDATE_COMPLETE ROLLBACK_COMPLETE
+# 如果不加上 filter, 則會列出包含已刪除的 Stacks
+
+
+### GET CloudFormation Stack
+aws cloudformation describe-stacks  --stack-name CloudFormationStackName
+
+
+### DELETE CloudFormation Stack
+aws cloudformation delete-stack  --stack-name $CloudFormation_Stack_Name
 
 
 ### 上傳 CloudFormation Template -> S3
-$# Bucket_To_Upload=
-$# SAM_Template_YAML=
-$# aws cloudformation package \
-    --s3-bucket "${Bucket_To_Upload}" \
-    --template-file "${SAM_Template_YAML}" \
-    --output-template-file "template-out.yaml"
+aws cloudformation package --s3-bucket $Bucket_To_Upload  --template-file $SAM_Template_YAML  --output-template-file "template-out.yaml"
 # 這指令的第一行, 等同於「sam package」
 
 
 ### 拿 SAM 產出的 CF YAML, 部署到 CloudFormation
-$# aws cloudformation deploy \
-    --template-file "template-out.yaml" \
-    --stack-name "cf-0213" \
-    --capabilities CAPABILITY_IAM
-# (依舊不曉得哪時候需要給 capability)
+aws cloudformation deploy  --template-file "template-out.yaml"  --stack-name "cf-0213"  --capabilities CAPABILITY_IAM
+# 如果 CloudFormation 裡頭會動到 IAM, 則需要給 --capabilities CAPABILITY_IAM
 # 會依照 CloudFormation Template 建立相關的 AWS Resources && 它的 "AWS::IAM::Role"
 
 
 ### 驗證本地撰寫的 CloudFormation Template
-$# LOCAL_CloudFormation_YAML="example.yaml"
-$# aws cloudformation validate-template --template-body file://${LOCAL_CloudFormation_YAML}
+aws cloudformation validate-template  --template-body file://${LOCAL_CloudFormation_YAML}
 
 
 ### 使用外部 parameter file 的指令範例
-$# aws cloudformation create-stack \
-    --stack-name EXAMPLE_STACK \
-    --template-body file://template.yaml \
-    --parameters file://parameters.json
+aws cloudformation create-stack  --stack-name $EXAMPLE_STACK  --template-body file://template.yaml  --parameters file://parameters.json
 # 好像似乎只能用 json file
-[
-    {
-      "ParameterKey": "Parameters.KeyName",
-      "ParameterValue": "value"
-    }, ...
-]
+# [
+#     {
+#       "ParameterKey": "Parameters.KeyName",
+#       "ParameterValue": "value"
+#     }, ...
+# ]
 # 檔案裡面大概長這樣~
 
 
 ### 
-$# 
+
 ```

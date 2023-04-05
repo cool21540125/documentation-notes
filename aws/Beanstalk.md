@@ -169,7 +169,15 @@ option_settings:
 
 ## Traffic Splitting
 
-- 
+- https://docs.aws.amazon.com/elasticbeanstalk/latest/relnotes/release-2020-05-18-ts-deploy.html
+- Traffic-splitting deployments let you perform canary testing as part of your application deployment
+- Beanstalk 會去 launch 一組全新的 instances (同 immutable)
+    - 會在 evaluation period 期間, 將部分流量導入到 new app version
+    - 此期間內如果 new app version 都是 healthy, Beanstalk 會 forwards all traffic && terminate old ones.
+- If the new instances don't pass health checks, or if you choose to abort the deployment, Elastic Beanstalk moves traffic back to the old instances and terminates the new ones
 
 
 ## Canary Testing 金絲雀部署
+
+- App 部署期間, 將流量部分導入到 new app version, 並且評估它的 health
+- 不同於 Blue/Green, 此非 非黑即白, 又稱為 「灰度測試」

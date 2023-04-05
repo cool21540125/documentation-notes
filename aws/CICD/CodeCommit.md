@@ -4,16 +4,6 @@
 - private git repo, 支援 3 種協定
     - HTTPS
     - SSH (root account 看不到這個)
-        - 權限配置步驟:
-            - AWS Console > IAM > Users > USER > Security Credentials > SSH Keys for AWS CodeCommit
-                - 把 aws_key.pub 丟進來
-            - 將上述新增的 SSH Key ID, 大概長這樣: `APKASG4VQHDN23IKAAN4`
-                - 配置到 `~/.ssh/config`
-                ```
-                Host git-codecommit.*.amazonaws.com
-                    User          APKASG4VQHDN23IKAAN4
-                    IdentityFile  ~/.ssh/aws_key
-                ```
     - HTTPS(GRC) - 似乎是 AWS 自行實作的協定
         - AWS Console > IAM > Users > USER > HTTPS Git credentials for AWS CodeCommit
             - 要從這邊申請一組 credentials (git repo 使用的帳號密碼)
@@ -30,3 +20,38 @@
 - Charge:
     - 5 active users free/month
 
+
+# CodeCommit 使用 ssh 的配置方式
+
+> AWS Console > IAM > Users > USER > Security Credentials > SSH Keys for AWS CodeCommit
+>
+> 把 `~/.ssh/aws_key.pub` 丟進來
+
+將上述新增的 SSH Key ID, 大概長這樣: `APKASG4VQHDN23IKAAN4`, 配置到 `~/.ssh/config`, 如下:
+
+```
+Host git-codecommit.*.amazonaws.com
+    User          APKASG4VQHDN23IKAAN4
+    IdentityFile  ~/.ssh/aws_key
+```
+
+
+# CLI
+
+```bash
+### 使用 CLI 快速建立一個 AWS CodeCommit Repository, 名為 git-test101
+repo_url=$(aws codecommit create-repository --repository-name git-test101 --query repositoryMetadata.cloneUrlHttp --output text)
+echo $repo_url
+
+
+### List repos
+aws codecommit list-repositories
+
+
+### Delete repo
+aws codecommit delete-repository --repository-name git-test101
+# @@ 2023/04/02 不知為何此指令執行後, 沒有任何輸出結果 && 沒錯誤 && 但也沒刪除
+
+
+### 
+```

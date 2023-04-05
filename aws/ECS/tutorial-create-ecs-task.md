@@ -1,55 +1,54 @@
 - 2022/09/03
 - [Tutorial: Creating a cluster with an EC2 task using the AWS CLI](https://docs.aws.amazon.com/AmazonECS/latest/developerguide/ECS_AWSCLI_EC2.html)
-    - (這篇似乎是使用 EC2 Launch Type... not sure)
+    - (這篇是使用 EC2 Launch Type)
 
 
 ```bash
-$# aws ecs list-clusters
+aws ecs list-clusters
 
 ### Step 1: Create a Cluster
-$# CLUSTER_NAME=MyCluster0903
-$# aws ecs create-cluster \
-    --cluster-name ${CLUSTER_NAME}
-{
-    "cluster": {
-        "clusterArn": "arn:aws:ecs:ap-northeast-1:xxxxxxxxxxxx:cluster/MyCluster0903",
-        "clusterName": "MyCluster0903",
-        "status": "ACTIVE",
-        "registeredContainerInstancesCount": 0,
-        "runningTasksCount": 0,
-        "pendingTasksCount": 0,
-        "activeServicesCount": 0,
-        "statistics": [],
-        "tags": [],
-        "settings": [
-            {
-                "name": "containerInsights",
-                "value": "disabled"
-            }
-        ],
-        "capacityProviders": [],
-        "defaultCapacityProviderStrategy": []
-    }
-}
-# 
+aws ecs create-cluster --cluster-name $CLUSTER_NAME
+#{
+#    "cluster": {
+#        "clusterArn": "arn:aws:ecs:ap-northeast-1:xxxxxxxxxxxx:cluster/MyCluster0903",
+#        "clusterName": "MyCluster0903",
+#        "status": "ACTIVE",
+#        "registeredContainerInstancesCount": 0,
+#        "runningTasksCount": 0,
+#        "pendingTasksCount": 0,
+#        "activeServicesCount": 0,
+#        "statistics": [],
+#        "tags": [],
+#        "settings": [
+#            {
+#                "name": "containerInsights",
+#                "value": "disabled"
+#            }
+#        ],
+#        "capacityProviders": [],
+#        "defaultCapacityProviderStrategy": []
+#    }
+#}
+
 
 ### Step 2: Launch an Instance with the Amazon ECS AMI
-# run task 之前, 必須先有 「Amazon ECS container instance in your cluster」, WTF?
-# 看起來是要先建一台 EC2 耶!?
+# run task 之前, 必須先有 「Amazon ECS container instance in your cluster」
+# 先建立一台 EC2, 需要具備 ECS 必要的 Roles
+# 為了方便 lab 進展, VPC 要與 ECS Service 一樣 && Security Group 開 80
+# 
 # Tutorial: https://docs.aws.amazon.com/AmazonECS/latest/developerguide/launch_container_instance.html
 
 ### Step 3: List Container Instances
-$# aws ecs list-container-instances \
-    --cluster ${CLUSTER_NAME}
-{
-    "containerInstanceArns": []
-}
+aws ecs list-container-instances --cluster ${CLUSTER_NAME}
+#{
+#    "containerInstanceArns": []
+#}
 # 如果 Step 2 有建成功, 可看到有東西... things like:
-{
-    "containerInstanceArns": [
-        "arn:aws:ecs:us-east-1:aws_account_id:container-instance/container_instance_ID"
-    ]
-}
+#{
+#    "containerInstanceArns": [
+#        "arn:aws:ecs:us-east-1:aws_account_id:container-instance/container_instance_ID"
+#    ]
+#}
 # 
 
 

@@ -58,6 +58,7 @@ $ aws ecr create-repository --repository-name mythicalmysfits/service
 $ aws ecs create-cluster --cluster-name MythicalMysfits-Cluster
 # 在 ECS 內, 建立新 Cluster
 
-$ aws logs create-log-group --log-group-name mythicalmysfits-logs
+### 建立 CloudWatch logs 的 Log Group
+aws logs create-log-group --log-group-name mythicalmysfits-logs
 # CloudWatch logs 中建立新的日誌群組
 ```
