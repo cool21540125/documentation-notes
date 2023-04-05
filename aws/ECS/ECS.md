@@ -6,14 +6,15 @@
 
 - 名詞定義:
     - Task Definition: 
-        - 可以把這個理解成 k8s 的 Pod, 建立這東西 Task Definition(or Pod) 以後, 裡頭再跑 Container
+        - 可以把 `Task Definition` 理解成 k8s 的 Pod
+            - Container 會運行在 `Task Definition(or Pod)` 裏頭
         - `ECS Task` 可視為一個在 AWS ECS 中運行 Container 的最小單元.
             - 而 Pod 則是 k8s 中運行 Container 的最小單元
         - Defines how to create ECS task (要先建這個, 才能建 ECS Service)
         - 如果有 Service 或 Task 要跑在 ECS Cluster 裡頭, 需要先定義這個
         - Templates for your *Tasks*, 定義 image 來源, Memory, CPU, 等
             - 像是 版本升級, 則須改這個, 來拉新版本 image
-    - Task (ECS Task):
+    - `Task` or `ECS Task`:
         - The lowest level building block of ECS - Runtimes instances
     - Container(EC2 Only)
         - Virtualized instance that run Tasks.
