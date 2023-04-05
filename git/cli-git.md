@@ -16,6 +16,10 @@ git config --global color.ui true
 git config --global credential.helper 'cache --timeout=86400'  # (使用非ssh維護專案時)快取密碼 604800 一週 ; 86400 一天 (Windows 可免)
 git config --global credential.helper store                    # 慎用!! 會以明碼的方式, 儲存在 「~/.git-credentials」
 
+# from here: https://catalog.us-east-1.prod.workshops.aws/workshops/869f7eee-d3a2-490b-bf9a-ac90a8fb2d36/en-US/4-basic/lab0-codecommit/setup-codecommit
+git config --global credential.helper '!aws codecommit credential-helper $@'  # git aws 相關 (現在還不是很懂這個要幹嘛...)
+git config --global credential.UseHttpPath true                               # git aws 相關 (現在還不是很懂這個要幹嘛...)
+
 
 ### 懶人指令 (git tree)
 git config --global alias.tree "log --graph --decorate --pretty=oneline --abbrev-commit"

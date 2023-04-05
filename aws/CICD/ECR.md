@@ -11,9 +11,9 @@
 
 ```bash
 ### login to ECR
-$# REGION=ap-northeast-1
-$# ACCOUNT_ID=
-$# aws ecr get-login-password \
+REGION=ap-northeast-1
+ACCOUNT_ID=
+aws ecr get-login-password \
     --region ${REGION} | docker login \
     --username AWS \
     --password-stdin \
@@ -24,6 +24,13 @@ Logging in with your password grants your terminal complete access to your accou
 For better security, log in with a limited-privilege personal access token. Learn more at https://docs.docker.com/go/access-tokens/
 
 
+### ECR 建立一個 repo, 名為 hello-server101
+image_repo=$(aws ecr create-repository --repository-name hello-server101 --query repository.repositoryUri --output text)
+
+
+### 查看 repo
+aws ecr describe-repositories --repository-name hello-server101
+
+
 ### 
-$# 
 ```

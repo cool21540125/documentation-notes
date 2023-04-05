@@ -229,15 +229,34 @@ aws --version
 
 # Install SAM CLI (aws-sam)
 
-- 2022/07/08
+- 2023/04/04
 - [Install SAM CLI](https://aws.amazon.com/tw/serverless/sam/)
 
 ```bash
-$# brew tap aws/tap
-$# brew install aws-sam-cli
+brew tap aws/tap
+brew install aws-sam-cli
+brew upgrade aws-sam-cli
 
-$# sam --version
-SAM CLI, version 1.53.0
+sam --version
+#SAM CLI, version 1.78.0
+```
+
+
+# Install Copilot
+
+- 2023/04/03
+
+```bash
+### AWS Copilot
+brew install aws/tap/copilot-cli
+# 或
+sudo curl -Lo /usr/local/bin/copilot https://github.com/aws/copilot-cli/releases/latest/download/copilot-darwin \
+   && sudo chmod +x /usr/local/bin/copilot \
+   && copilot --help
+
+### Version
+copilot --version
+#copilot version: v1.27.0
 ```
 
 

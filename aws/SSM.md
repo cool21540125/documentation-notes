@@ -17,15 +17,14 @@
 
 ```bash
 ### 查詢特定規格 EC2 (ex: CentOS7.6) 在特定 Region 的 AMI 資訊
-aws ssm get-parameters --names /aws/service/ami-amazon-linux-latest/amzn2-ami-hvm-x86_64-gp2 --region us-east-1 
+aws ssm get-parameters --names /aws/service/ami-amazon-linux-latest/amzn2-ami-hvm-x86_64-gp2
 
 
 ### 建立 custom SSM Parameter Store 
 aws ssm put-parameter \
     --name "/golden-images/amazon-linux-2" \
     --value ami-02b9b693377a07477 \
-    --type "String" \
-    --region eu-west-2
+    --type "String"
 # output ----------------------------
 # Tier: Standard
 # Version: 1
@@ -47,4 +46,6 @@ aws ssm send-command \
 ### 查看上一步跑完的 logs (或者可直接到 Console/CloudWatch 去看)
 aws ssm get-command-invocation --command-id "${上一步驟輸出的Command.CommandId}" --instance-id "${Ec2InstanceId}" 
 
+
+### 
 ```
