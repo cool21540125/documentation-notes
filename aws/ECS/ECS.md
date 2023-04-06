@@ -3,7 +3,8 @@
 
 - **Cluster**
     - ECS Cluster 為 **tasks** 或 **services** 的 logical group
-    - 依照 Task Definition 來建立出來的 Cluster
+    - 依照 Task Definition, 在 Cluster 建立 Services 或 Tasks
+    - 如果使用的是 EC2 Launch Type, 則此 Cluster 視為是 `group of container instances`
 - **Task Definitions**
     - 可把 `Task Definition` 理解成 k8s 的 `Pod`
         - 建立這東西 `Task Definition(or Pod)` 以後, 裡頭再跑 Container
