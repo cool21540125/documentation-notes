@@ -400,20 +400,21 @@ $# brew install openldap
 
 ```zsh
 ### Install 
-$# brew install openjdk@8
-$# brew install java11
-$# brew install java17
-$# brew install java19
+brew install openjdk@8
+brew install java11
+brew install java17
+brew install java19
 # 2022/11 的現在, java8 與 java8+ 安裝方式有一些些不同, 推估 java11 將來也會像 java8 這樣安裝
 
 ### env PATH
-$# export CPPFLAGS="-I/usr/local/opt/openjdk@${VERSION}/include"
-$# export JAVA_HOME=/usr/local/opt/openjdk@{VERSION}
-$# export PATH="${JAVA_HOME}/bin:$PATH"
+VERSION=
+export CPPFLAGS="-I/usr/local/opt/openjdk@${VERSION}/include"
+export JAVA_HOME="/usr/local/opt/openjdk@${VERSION}"
+export PATH="${JAVA_HOME}/bin:$PATH"
 
 ### 
-$# java -version
-$# javac -version
+java -version
+javac -version
 ```
 
 
