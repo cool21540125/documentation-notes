@@ -64,3 +64,20 @@
         > 2023/02 的現在 <br>
         > Deployments on an Amazon ECS compute platform are not supported in the Asia Pacific (Osaka) Region.
     - [CodeDeploy to EC2/on-premise](https://docs.aws.amazon.com/codedeploy/latest/userguide/deployment-steps-server.html)
+
+
+# Deployment Settings
+
+- CodeDeploy 選擇 Deployment configuration, 如果目標是 ECS 的話, 有底下幾種選項(僅列舉)
+    - CodeDeployDefault.ECSAllAtOnce
+        - for Dev Env
+        - 部署過程服務會中斷
+    - CodeDeployDefault.ECSLinear10PercentEvery1Minutes
+        - 每隔一分鐘更新 10% 的 tasks
+        - 因此理論上要 10 mins 才會全部更新完畢
+        - 適用情境 : 大型 App || 對於版本要求較為穩定性 || 新版本需要較長時間預熱 || 流量不穩定需要逐步增加
+    - CodeDeployDefault.ECSCanary10Percent5Minutes
+        - 先處理 10%, 等待 5 mins, 確保 OK 以後再處理剩下的 ECS tasks
+        - 一開始的 10%, 稱之為 Canary 階段
+        - 若無誤後, 後面稱之為 Rollout 階段
+        - 適用情境 : 流量穩定 App (可較快交付)
