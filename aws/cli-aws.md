@@ -39,15 +39,16 @@ sudo ./aws/install
 
 ```bash
 ## AWS CLI v2 的相關環境變數
-$# export AWS_PROFILE=default
-$# export AWS_DEFAULT_REGION=ap-northeast-1
-$# export AWS_DEFAULT_OUTTPUT=yaml
-$# export AWS_MAX_ATTEMPTS=
-$# export AWS_RETRY_MODE=
+export AWS_ACCESS_KEY_ID=
+export AWS_SECRET_ACCESS_KEY=
+export AWS_REGION=
 
-$# export AWS_ACCESS_KEY_ID=
-$# export AWS_SECRET_ACCESS_KEY=
-$# export AWS_SESSION_TOKEN=
+#
+export AWS_PROFILE=default
+export AWS_DEFAULT_OUTTPUT=yaml
+export AWS_MAX_ATTEMPTS=
+export AWS_RETRY_MODE=
+export AWS_DEFAULT_REGION=
 
 
 ### AWS CLI settings
