@@ -4,12 +4,12 @@
 @key={{$dotenv key}}
 @token={{$dotenv token}}
 
-@url=https://chat.googleapis.com/v1/spaces/{{spaceId}}/messages
+@url=https://chat.googleapis.com/v1/spaces/{{spaceId}}
 # --------------------------------------------------------------
 
 ### Direct message
 # @name direct
-POST {{url}}?key={{key}}&token={{token}}
+POST {{url}}/messages?key={{key}}&token={{token}}
 Content-Type: application/json
 
 {
@@ -21,7 +21,7 @@ Content-Type: application/json
 @threadKey=ARBITRARY_STRING
 ### thread message
 # @name direct
-POST {{url}}?key={{key}}&token={{token}}&threadKey={{threadKey}}
+POST {{url}}/messages?key={{key}}&token={{token}}&threadKey={{threadKey}}
 Content-Type: application/json
 
 {
@@ -31,12 +31,13 @@ Content-Type: application/json
 
 ### Reply Message (尚未成功)
 # @reply_thread= {{ direct.response.body.result.thread.name }}
-@reply_thread=c1mEg4u1U3Q
-POST {{url}}?key={{key}}&token={{token}}&threadKey={{reply_thread}}
+@reply_thread=mepRHCE7hdo
+POST {{url}}/messages?key={{key}}&token={{token}}&threadKey={{reply_thread}}
 Content-Type: application/json
 
 {
-  "text": "Reply Message"
+  "text": "Reply Message",
+  "threadReply": true
 }
 
 

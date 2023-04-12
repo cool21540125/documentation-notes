@@ -1,0 +1,93 @@
+# https://developers.google.com/chat/api/reference/rest/v1/cards#Card
+
+@spaceId={{$dotenv spaceId}}
+@key={{$dotenv key}}
+@token={{$dotenv token}}
+
+@url=https://chat.googleapis.com/v1/spaces/{{spaceId}}/messages
+# --------------------------------------------------------------
+
+
+### Send Card
+POST {{url}}?key={{key}}&token={{token}}
+Content-Type: application/json
+
+{
+  "name": "myName",
+  "text": "Reply Message",
+  "cardsV2": [
+    {
+      "cardId": "unique-card-id",
+      "card": {
+        "header": {
+          "title": "Sasha",
+          "subtitle": "Software Engineer",
+          "imageUrl": "https://developers.google.com/chat/images/quickstart-app-avatar.png",
+          "imageType": "CIRCLE",
+          "imageAltText": "Avatar for Sasha"
+        },
+        "sections": [
+          {
+            "header": "Contact Info",
+            "collapsible": true,
+            "uncollapsibleWidgetsCount": 1,
+            "widgets": [
+              {
+                "decoratedText": {
+                  "startIcon": {
+                    "knownIcon": "EMAIL"
+                  },
+                  "text": "sasha@example.com"
+                }
+              },
+              {
+                "decoratedText": {
+                  "startIcon": {
+                    "knownIcon": "PERSON"
+                  },
+                  "text": "<font color=\"#80e27e\">Online</font>"
+                }
+              },
+              {
+                "decoratedText": {
+                  "startIcon": {
+                    "knownIcon": "PHONE"
+                  },
+                  "text": "+1 (555) 555-1234"
+                }
+              },
+              {
+                "buttonList": {
+                  "buttons": [
+                    {
+                      "text": "Share",
+                      "onClick": {
+                        "openLink": {
+                          "url": "https://example.com/share"
+                        }
+                      }
+                    },
+                    {
+                      "text": "Edit",
+                      "onClick": {
+                        "action": {
+                          "function": "goToView",
+                          "parameters": [
+                            {
+                              "key": "viewType",
+                              "value": "EDIT"
+                            }
+                          ]
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        ]
+      }
+    }
+  ]
+}
