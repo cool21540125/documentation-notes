@@ -1,0 +1,43 @@
+# https://developers.google.com/chat/how-tos/webhooks
+
+@spaceId={{$dotenv spaceId}}
+@key={{$dotenv key}}
+@token={{$dotenv token}}
+
+@url=https://chat.googleapis.com/v1/spaces/{{spaceId}}/messages
+# --------------------------------------------------------------
+
+### Direct message
+# @name direct
+POST {{url}}?key={{key}}&token={{token}}
+Content-Type: application/json
+
+{
+  "text": "Direct Message"
+}
+
+
+### Thread Message
+@threadKey=ARBITRARY_STRING
+### thread message
+# @name direct
+POST {{url}}?key={{key}}&token={{token}}&threadKey={{threadKey}}
+Content-Type: application/json
+
+{
+  "text": "Thread Message"
+}
+
+
+### Reply Message (尚未成功)
+# @reply_thread= {{ direct.response.body.result.thread.name }}
+@reply_thread=c1mEg4u1U3Q
+POST {{url}}?key={{key}}&token={{token}}&threadKey={{reply_thread}}
+Content-Type: application/json
+
+{
+  "text": "Reply Message"
+}
+
+
+### 
