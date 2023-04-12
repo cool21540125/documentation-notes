@@ -1,4 +1,5 @@
 # https://developers.google.com/chat/api/reference/rest/v1/cards#Card
+# Built-In icons: https://developers.google.com/chat/api/guides/message-formats/cards#builtinicons
 
 @spaceId={{$dotenv spaceId}}
 @key={{$dotenv key}}
@@ -14,46 +15,42 @@ Content-Type: application/json
 
 {
   "name": "myName",
-  "text": "Reply Message",
+  "text": "",
   "cardsV2": [
     {
       "cardId": "unique-card-id",
       "card": {
         "header": {
-          "title": "Sasha",
-          "subtitle": "Software Engineer",
+          "title": "Repo Name",
+          "subtitle": "Repo Group Path",
           "imageUrl": "https://developers.google.com/chat/images/quickstart-app-avatar.png",
-          "imageType": "CIRCLE",
-          "imageAltText": "Avatar for Sasha"
+          "imageType": "SQUARE",
+          "imageAltText": "Avatar for aaa"
         },
         "sections": [
           {
-            "header": "Contact Info",
-            "collapsible": true,
+            "header": "Branch: feature",
+            "collapsible": false,
             "uncollapsibleWidgetsCount": 1,
             "widgets": [
               {
                 "decoratedText": {
-                  "startIcon": {
-                    "knownIcon": "EMAIL"
-                  },
-                  "text": "sasha@example.com"
+                  "topLabel": "DATE: {{$localDatetime iso8601}}"
                 }
               },
               {
                 "decoratedText": {
-                  "startIcon": {
-                    "knownIcon": "PERSON"
-                  },
-                  "text": "<font color=\"#80e27e\">Online</font>"
+                  "topLabel": "TYPE: commit"
                 }
               },
               {
                 "decoratedText": {
-                  "startIcon": {
-                    "knownIcon": "PHONE"
-                  },
-                  "text": "+1 (555) 555-1234"
+                  "topLabel": "MESSAGE: feat: [Fix] SocketIO"
+                }
+              },
+              {
+                "decoratedText": {
+                  "topLabel": "AUTHOR: 大Boss"
                 }
               },
               {
