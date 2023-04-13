@@ -4,10 +4,12 @@
 @key={{$dotenv key}}
 @token={{$dotenv token}}
 
-@url=https://chat.googleapis.com/v1/spaces/{{spaceId}}
+@base_url=https://chat.googleapis.com/v1
+@url={{base_url}}/spaces/{{spaceId}}
 # --------------------------------------------------------------
 
-### Direct message
+### spaces.messages.create - Direct Message
+# https://developers.google.com/chat/api/reference/rest/v1/spaces.messages/create
 # @name direct
 POST {{url}}/messages?key={{key}}&token={{token}}
 Content-Type: application/json
@@ -17,28 +19,28 @@ Content-Type: application/json
 }
 
 
-### Thread Message
-@threadKey=ARBITRARY_STRING
-### thread message
-# @name direct
-POST {{url}}/messages?key={{key}}&token={{token}}&threadKey={{threadKey}}
+### spaces.messages.create - Reply to Thread
+# https://developers.google.com/chat/api/reference/rest/v1/spaces.messages/create
+@in_same_thread=0947
+POST {{url}}/messages?key={{key}}&token={{token}}&messageReplyOption=REPLY_MESSAGE_FALLBACK_TO_NEW_THREAD
 Content-Type: application/json
 
 {
-  "text": "Thread Message"
+  "text": "訊息全部在相同 thread({{in_same_thread}}) @ {{$localDatetime iso8601}}",
+  "thread": {
+    "threadKey": "{{in_same_thread}}"
+  }
 }
 
 
-### Reply Message (尚未成功)
-# @reply_thread= {{ direct.response.body.result.thread.name }}
-@reply_thread=mepRHCE7hdo
-POST {{url}}/messages?key={{key}}&token={{token}}&threadKey={{reply_thread}}
+### spaces.messages.create - Name a Message
+# https://developers.google.com/chat/api/reference/rest/v1/spaces.messages/create
+@messageId=client-{{$datetime 'YYYYMMDD-HHmm'}}
+# 需要是 'client-' 開頭 (無法用 _ : 等符號)
+POST {{url}}/messages?key={{key}}&token={{token}}&messageId={{messageId}}
 Content-Type: application/json
 
 {
-  "text": "Reply Message",
-  "threadReply": true
+  "text": "Named Message: '{{messageId}}' @ {{$localDatetime iso8601}}"
 }
 
-
-### 
