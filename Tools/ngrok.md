@@ -7,23 +7,20 @@
 
 ```bash
 ### Version
-$# ngrok --version
-ngrok version 3.0.2
+ngrok --version
+#ngrok version 3.0.2
 
 ### 配置(如果使用 anonymous, 最多九只能使用 6 hrs)
-$# ngrok config add-authtoken <Ngrok 的 authtoken>
+ngrok config add-authtoken<Ngrok 的 authtoken> 
 
 ### 使用
-$# ngrok http 80
+ngrok http 80
 ```
 
 ### Container
 
 ```bash
-docker pull wernight/ngrok
+docker pull ngrok/ngrok
 
-docker run -itd \
-    --name ngrok
-    wernight/ngrok
-    ngrok http 8889
+docker run --net=host -it ngrok/ngrok http 80
 ```
