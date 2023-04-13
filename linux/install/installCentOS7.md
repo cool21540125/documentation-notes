@@ -2506,6 +2506,32 @@ go install github.com/go-task/task/v3/cmd/task@latest
 ```
 
 
+# Install protobuf
+
+- 2023/04/13
+
+```bash
+### 使用 pkg mgr
+# 尚無
+
+### 安裝 binary
+PB_REL="https://github.com/protocolbuffers/protobuf/releases"
+# 先到這邊找想要安裝的版本~~~~
+
+# 再來填要安裝的版本
+PB_VERSION="21.12"
+
+# 底下就複製貼上吧
+curl -LO ${PB_REL}/download/v${PB_VERSION}/protoc-${PB_VERSION}-linux-x86_64.zip
+unzip protoc-${PB_VERSION}-osx-x86_64.zip -d ${HOME}/bin
+mv ${HOME}/bin/bin/protoc ${HOME}/bin && rmdir ${HOME}/bin/bin && mv ${HOME}/bin/include ${HOME}/
+# 路徑在 $HOME/bin
+
+protoc --version
+#libprotoc 3.21.12 (2023Q1)
+```
+
+
 # 語言套件
 
 - 2018/10/04
