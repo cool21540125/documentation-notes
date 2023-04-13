@@ -27,7 +27,8 @@ git config --global alias.lg "log --color --graph --pretty=format:'%Cred%h%Crese
 git config --global alias.lgg "log --pretty=format:'%C(yellow)%h%Cred%d %Creset%s%Cblue [%cn]%Creset' --decorate"
 git config --global alias.pu "push"
 git config --global alias.cm "commit -m"
-git config --global alias.co "git checkout"
+git config --global alias.co "checkout"
+git config --global alias.st "status"
 ```
 
 
