@@ -9,6 +9,11 @@
 
 # CLI
 
+- `aws ecr get-login`
+    - 此為 aws cli v1, 使用 v2 的話改用 `aws ecr get-login-password`
+- `aws ecr get-login-password`
+
+
 ```bash
 ### login to ECR
 REGION=ap-northeast-1
