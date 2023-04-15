@@ -7,6 +7,7 @@
 
 ### List Tunnels
 # https://ngrok.com/docs/api/resources/tunnels/#list-tunnels
+# 列出所有 運作中的 online tunnels
 # @name getTunnel
 GET https://api.ngrok.com/tunnels
 Authorization: Bearer {{API_KEY}}
