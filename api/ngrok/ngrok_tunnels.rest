@@ -16,14 +16,14 @@ Ngrok-Version: 2
 
 
 ### ------
-@tunnelId={{getTunnel.response.body.tunnels[0].$.id}}
+@tunnelId0={{getTunnel.response.body.tunnels[0].$.id}}
 ### ------
 
 
 
 ### GET Tunnel
 # https://ngrok.com/docs/api/resources/tunnels/#get-tunnel
-GET https://api.ngrok.com/tunnels/{{tunnelId}}
+GET https://api.ngrok.com/tunnels/{{tunnelId0}}
 Authorization: Bearer {{API_KEY}}
 Ngrok-Version: 2
 
