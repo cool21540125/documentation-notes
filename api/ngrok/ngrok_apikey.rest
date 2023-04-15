@@ -1,0 +1,31 @@
+# https://ngrok.com/docs/api/resources/api-keys/
+@API_KEY={{$dotenv API_KEY}}
+
+# ======================================
+
+
+
+### List API keys
+# https://ngrok.com/docs/api/resources/api-keys/#list-api-keys
+# @name getApiKey
+GET https://api.ngrok.com/api_keys
+Authorization: Bearer {{API_KEY}}
+Ngrok-Version: 2
+
+
+
+### ------
+@apiKey={{getApiKey.response.body.keys[0].id}}
+### ------
+
+
+
+### GET API Key
+# https://ngrok.com/docs/api/resources/api-keys/#get-api-key
+GET https://api.ngrok.com/api_keys/{{apiKey}}
+Authorization: Bearer {{API_KEY}}
+Ngrok-Version: 2
+
+
+
+### 
