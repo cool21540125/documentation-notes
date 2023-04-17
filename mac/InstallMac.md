@@ -606,3 +606,13 @@ brew install node@16
 
 brew install node@18
 ```
+
+
+# Install dotnet core
+
+- 2023/04/17
+- https://dotnet.microsoft.com/en-us/download/dotnet
+- 到上面 URL 抓吧
+
+
+# 
