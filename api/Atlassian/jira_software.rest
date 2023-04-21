@@ -1,0 +1,15 @@
+
+
+@InstanceUrl=https://{{$dotenv JiraInstanceDomain}}
+@IssueKey={{$dotenv IssueKey}}
+@user={{$dotenv user}}
+@token={{$dotenv token}}
+
+
+### 
+GET {{InstanceUrl}}/rest/api/2/issue/{{IssueKey}}
+Authorization: Basic {{user}}:{{token}}
+
+
+
+### 
