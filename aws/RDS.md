@@ -55,15 +55,20 @@
     - 
 
 
-# Backups
+# Backups 與 snapshots
 
 - Backup (自動)
+    - 支援 PITR
+    - RDS Instance 需要進入 maintenance 才能 Backup
     - Full      : 每天 
     - Transaction logs : 每 5 分鐘
         - 因此可隨時還原 5 分鐘前資料
-    - 預設保留 7 天, 但可增至 35 天
+    - RDS backup 保留天數為 0~35 天 (default 7 days, 0 day 表示不啟用 backup)
 - DB Snapshot (手動觸發)
-    - 可自行決定保留多久
+    - 可自行決定保留多久 (可永久保存)
+    - Snapshots 會進行 IO operations
+    - 也可先 stop DB 再來做 snapshot
+    - 可作 Full Backup 或是 Incremental Backup
 
 
 # Security
@@ -77,7 +82,7 @@
     - 各種 DB 的實作不同:
         - PostgreSQL : 要在 RDS Console 的 *Parameter Groups* 設定 `rds.force_ssl=1`
         - MySQL      : 要在 DB Console 初始化 user 時設定 `GRANT USAGE ON *.* TO 'DB'@'%' REQUIRE SSL;`
-- Backups/Snapshots 的 encryption
+- **Backups 與 snapshots** 的 encryption
     - 如果 RDS DB 原本是 un-encrypted, snapshot 後預設依然是 un-encrypted
     - 如果 RDS DB 原本是    encrypted, snapshot 後預設依然是    encrypted
     - 可設定將 un-encrypted, 藉由 `Copy snapshot` into encrypted
