@@ -91,6 +91,7 @@ GWF    | Great Fire Wall                             | 監控               | �
 IANA   | Internet Assigned Number Authority          | 網際網路為指指派機構 | 
 IDL    | Interface Definition Language               | 介面描述語言        | ex: SOAP, protobuf
 IPA    | Identiti, Policy and Auditing               | 集中驗證            | 提供 LDAP & Kerberos
+IRSA   | Iam Roles for Service Accounts              | 角色, 權限          | IAM
 MITM   | Man-In-The-Middle attack                    | 資安               | [MITM](https://en.wikipedia.org/wiki/Man-in-the-middle_attack)
 KDC    | Key Distribution Centers                    | 集中驗證            |
 LDAP   | Lightweight Directory Access Protocol       | 集中驗證            |

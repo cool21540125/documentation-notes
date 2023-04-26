@@ -1,6 +1,7 @@
 
 # [Build an Interactive Survey Bot for Google Chat with Node.js](https://www.cloudskillsboost.google/focuses/21000?parent=catalog)
 
+- [GoogleChat-Discovery](https://chat.googleapis.com/$discovery/rest?version=v1)
 - 2023/04/13
 
 

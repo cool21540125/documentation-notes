@@ -3,14 +3,13 @@
 
 - [Welcome to the AWS Security Token Service API Reference](https://docs.aws.amazon.com/STS/latest/APIReference/welcome.html)
     - AWS Resources 的骨幹
-- STS 用來申請 temp creds 及 limited-privilege creds 給底下這些用戶:
+- STS 用來申請 Temporary Security Credential(temp creds) 及 limited-privilege creds 給底下這些用戶:
     - AWS Identity
     - IAM
     - for users you authenticate (federated users)
+    - Contractor who don't have Iam User
 - 前面所說的 temp creds(Temperory Credentials), token 有效期限大概落在 15~60 mins
-    - token 可能藏在 Request Header 的 cookie 或 URL 裏頭
-    - IdP, Identity Provider (在本文中同 FIP)
-    - FIP, Federation Identity Provider (在本文中同 IdP)
+    - IdP, Identity Provider (在本文中同 FIP, Federation Identity Provider)
 
 
 # STS actions
