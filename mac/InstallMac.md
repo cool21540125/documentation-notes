@@ -615,4 +615,37 @@ brew install node@18
 - 到上面 URL 抓吧
 
 
+# Install nvm
+
+- 2023/04/28
+- 團隊建議使用 nvm 管理 node 版本
+
+```bash
+### install
+brew install nvm
+nvm version
+# v13.14.0  # 2023/04 版本
+
+### env
+mkdir ~/.nvm
+
+### 配置 ~/.profile 或 ~/.zshrc 或 ~/.bashrc
+# export NVM_DIR="$HOME/.nvm"
+# [ -s "/usr/local/opt/nvm/nvm.sh" ] && \. "/usr/local/opt/nvm/nvm.sh"  # This loads nvm
+# [ -s "/usr/local/opt/nvm/etc/bash_completion.d/nvm" ] && \. "/usr/local/opt/nvm/etc/bash_completion.d/nvm"  # This loads nvm bash_completion
+### 記得把原本的 nodejs 的 env 註解/移除
+
+
+### install node version
+nvm install 13
+nvm install 14
+nvm install 16
+nvm install 18
+
+
+### Switch Version
+nvm use 16
+```
+
+
 # 
