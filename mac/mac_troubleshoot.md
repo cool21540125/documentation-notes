@@ -3,26 +3,24 @@
 
 ```bash
 ### 利用 port 查出 pid
-$# netstat -anv -p tcp | grep "*.80"
-Proto Recv-Q Send-Q  Local Address          Foreign Address        (state)     rhiwat shiwat    pid   epid  state    options
-tcp46      0      0  *.80                   *.*                    LISTEN      131072 131072  92386      0 0x0080 0x0000000e
+netstat -anv -p tcp | grep "Proto\|*.80"
+#Proto Recv-Q Send-Q  Local Address          Foreign Address        (state)     rhiwat shiwat    pid   epid  state    options
+#tcp46      0      0  *.80                   *.*                    LISTEN      131072 131072  92386      0 0x0080 0x0000000e
 # pid 為 92386 的 process 監聽了 *.80 (TCP4 & TCP^)
 
 
 ### 利用 pid 查出 process 的 cmdline
-$# ps ax | grep ${PID}
-  PID   TT  STAT      TIME COMMAND
-92386   ??  S      0:00.01 /usr/sbin/httpd -D FOREGROUND
+ps ax | grep ${PID}
+#  PID   TT  STAT      TIME COMMAND
+#92386   ??  S      0:00.01 /usr/sbin/httpd -D FOREGROUND
 
 
 ### 可查詢到 該名稱服務對應到的 PID, PPID
-$# ps -ef | grep httpd
+ps -ef | grep httpd
 
 
 ###
-$# sudo kill -9 XXXX
-
-
+sudo kill -9 XXXX
 ```
 
 
