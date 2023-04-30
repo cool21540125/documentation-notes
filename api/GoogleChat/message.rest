@@ -1,0 +1,49 @@
+# https://developers.google.com/chat/how-tos/webhooks
+
+@spaceId={{$dotenv spaceId}}
+@key={{$dotenv key}}
+@token={{$dotenv token}}
+
+@base_url=https://chat.googleapis.com/v1
+@url={{base_url}}/spaces/{{spaceId}}
+# --------------------------------------------------------------
+
+### spaces.messages.create - Direct Message
+# https://developers.google.com/chat/api/reference/rest/v1/spaces.messages/create
+# @name direct
+POST {{url}}/messages?key={{key}}&token={{token}}
+Content-Type: application/json
+
+{
+  "text": "Direct Message"
+}
+
+
+### spaces.messages.create - Reply to Thread
+# https://developers.google.com/chat/api/reference/rest/v1/spaces.messages/create
+@in_same_thread=0947
+POST {{url}}/messages?key={{key}}&token={{token}}&messageReplyOption=REPLY_MESSAGE_FALLBACK_TO_NEW_THREAD
+Content-Type: application/json
+
+{
+  "text": "訊息全部在相同 thread({{in_same_thread}}) @ {{$localDatetime iso8601}}",
+  "thread": {
+    "threadKey": "{{in_same_thread}}"
+  }
+}
+
+
+### spaces.messages.create - Name a Message
+# https://developers.google.com/chat/api/reference/rest/v1/spaces.messages/create
+@messageId=client-{{$datetime 'YYYYMMDD-HHmm'}}
+# 需要是 'client-' 開頭 (無法用 _ : 等符號)
+POST {{url}}/messages?key={{key}}&token={{token}}&messageId={{messageId}}
+Content-Type: application/json
+
+{
+  "text": "Named Message: '{{messageId}}' @ {{$localDatetime iso8601}}"
+}
+
+
+
+### 

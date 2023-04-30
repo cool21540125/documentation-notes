@@ -219,8 +219,8 @@ sudo rm /etc/paths.d/go
 curl "https://awscli.amazonaws.com/AWSCLIV2.pkg" -o "AWSCLIV2.pkg"
 # 東西會安裝到 /Users/tony/aws-cli
 
-ln -s /Users/tony/aws-cli/aws ~/bin/aws
-ln -s /Users/tony/aws-cli/aws_completer ~/bin/aws_completer
+ln -s /Users/$USER/aws-cli/aws ~/bin/aws
+ln -s /Users/$USER/aws-cli/aws_completer ~/bin/aws_completer
 
 aws --version
 # aws-cli/2.7.9 Python/3.9.11 Darwin/21.5.0 exe/x86_64 prompt/off
@@ -374,7 +374,7 @@ $# tail -f /usr/local/var/log/nginx/error.log
 # Install md5sha1sum
 
 ```bash
-$# brew install md5sha1sum
+brew install md5sha1sum
 ```
 
 
@@ -400,20 +400,21 @@ $# brew install openldap
 
 ```zsh
 ### Install 
-$# brew install openjdk@8
-$# brew install java11
-$# brew install java17
-$# brew install java19
+brew install openjdk@8
+brew install java11
+brew install java17
+brew install java19
 # 2022/11 的現在, java8 與 java8+ 安裝方式有一些些不同, 推估 java11 將來也會像 java8 這樣安裝
 
 ### env PATH
-$# export CPPFLAGS="-I/usr/local/opt/openjdk@${VERSION}/include"
-$# export JAVA_HOME=/usr/local/opt/openjdk@{VERSION}
-$# export PATH="${JAVA_HOME}/bin:$PATH"
+VERSION=
+export CPPFLAGS="-I/usr/local/opt/openjdk@${VERSION}/include"
+export JAVA_HOME="/usr/local/opt/openjdk@${VERSION}"
+export PATH="${JAVA_HOME}/bin:$PATH"
 
 ### 
-$# java -version
-$# javac -version
+java -version
+javac -version
 ```
 
 
@@ -475,36 +476,36 @@ Updated property [core/project].
 # Install pstree
 
 ```sh
-$# brew install pstree
+brew install pstree
 ```
 
 
 # Install python3
 
 ```zsh
-$# brew install python@3.9
-$# which python3.9
-/usr/local/bin/python3.9
+brew install python@3.9
+which python3.9
+#/usr/local/bin/python3.9
 
-$# ls -l /usr/local/bin/python3.9
-lrwxr-xr-x  1 USER  GROUP  41 11 17 17:28 /usr/local/bin/python3.9 -> ../Cellar/python@3.9/3.9.15/bin/python3.9
+ls -l /usr/local/bin/python3.9
+#lrwxr-xr-x  1 USER  GROUP  41 11 17 17:28 /usr/local/bin/python3.9 -> ../Cellar/python@3.9/3.9.15/bin/python3.9
 ```
 
 
 # Install golang
 
 ```zsh
-$# brew install go@1.19
-$# go version
-go version go1.19.4 darwin/amd64
+brew install go@1.19
+go version
+#go version go1.19.4 darwin/amd64
 
-$# which go
-/usr/local/bin/go
+which go
+#/usr/local/bin/go
 
-$# ll /usr/local/bin/go*
-lrwxr-xr-x  1 USER  GROUP  26 12  7 16:24 /usr/local/bin/go -> ../Cellar/go/1.19.4/bin/go
-lrwxr-xr-x  1 USER  GROUP  39 11 10 14:34 /usr/local/bin/gobject-query -> ../Cellar/glib/2.74.0/bin/gobject-query
-lrwxr-xr-x  1 USER  GROUP  29 12  7 16:24 /usr/local/bin/gofmt -> ../Cellar/go/1.19.4/bin/gofmt
+ll /usr/local/bin/go*
+#lrwxr-xr-x  1 USER  GROUP  26 12  7 16:24 /usr/local/bin/go -> ../Cellar/go/1.19.4/bin/go
+#lrwxr-xr-x  1 USER  GROUP  39 11 10 14:34 /usr/local/bin/gobject-query -> ../Cellar/glib/2.74.0/bin/gobject-query
+#lrwxr-xr-x  1 USER  GROUP  29 12  7 16:24 /usr/local/bin/gofmt -> ../Cellar/go/1.19.4/bin/gofmt
 ```
 
 
@@ -547,21 +548,71 @@ $# cd /usr/local/var/log/rabbitmq
 
 # Install protoc
 
-- 
+- 2023/04/13
 
 ```zsh
-### 法1. Install using a package manager
-$# brew install protobuf
+### 法1. 使用 brew
+brew install protobuf
 
 
-### 法2. Install pre-compiled binaries
-$# PB_VERSION="21.12"
-$# PB_REL="https://github.com/protocolbuffers/protobuf/releases"
-$# curl -LO ${PB_REL}/download/v${PB_VERSION}/protoc-${PB_VERSION}-osx-x86_64.zip      # for Mac
-# $# curl -LO ${PB_REL}/download/v${PB_VERSION}/protoc-${PB_VERSION}-linux-x86_64.zip  # for Linux
-$# unzip protoc-${PB_VERSION}-osx-x86_64.zip -d ${HOME}/bin
-$# mv ${HOME}/bin/bin/protoc ${HOME}/bin && rmdir ${HOME}/bin/bin && mv ${HOME}/bin/include ${HOME}/
-$# protoc --version
-libprotoc 3.21.12
-# 2023Q1
+### 法2. 安裝 binary
+PB_VERSION="21.12"
+PB_REL="https://github.com/protocolbuffers/protobuf/releases"
+
+
+curl -LO ${PB_REL}/download/v${PB_VERSION}/protoc-${PB_VERSION}-osx-x86_64.zip
+unzip protoc-${PB_VERSION}-osx-x86_64.zip -d ${HOME}/bin
+mv ${HOME}/bin/bin/protoc ${HOME}/bin && rmdir ${HOME}/bin/bin && mv ${HOME}/bin/include ${HOME}/
+
+### 2023Q1
+protoc --version
+#libprotoc 3.21.12
 ```
+
+
+# Install MySQL
+
+- 2023/04/11
+
+```bash
+brew install mysql@8.0
+
+```
+
+
+# Install nodejs
+
+- 2023/04/11
+
+```bash
+brew install node@14
+brew install node@16
+# ---------- Output ----------
+#node@16 is keg-only, which means it was not symlinked into /usr/local,
+#because this is an alternate version of another formula.
+#
+#If you need to have node@16 first in your PATH, run:
+#  echo 'export PATH="/usr/local/opt/node@16/bin:$PATH"' >> ~/.zshrc
+#
+#For compilers to find node@16 you may need to set:
+#  export LDFLAGS="-L/usr/local/opt/node@16/lib"
+#  export CPPFLAGS="-I/usr/local/opt/node@16/include"
+#==> Summary
+#🍺  /usr/local/Cellar/node@16/16.20.0: 1,890 files, 49.4MB
+#==> Running `brew cleanup node@16`...
+#Disable this behaviour by setting HOMEBREW_NO_INSTALL_CLEANUP.
+#Hide these hints with HOMEBREW_NO_ENV_HINTS (see `man brew`).
+# ---------- Output ----------
+
+brew install node@18
+```
+
+
+# Install dotnet core
+
+- 2023/04/17
+- https://dotnet.microsoft.com/en-us/download/dotnet
+- 到上面 URL 抓吧
+
+
+# 

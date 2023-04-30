@@ -175,3 +175,41 @@ sudo /opt/aws/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent-ctl \
 ```bash
 $# 
 ```
+
+
+# Install Nginx
+
+- 2023/04/14
+
+```bash
+### Install Nginx
+amazon-linux-extras install -y nginx1
+
+systemctl start nginx
+systemctl enable nginx
+
+nginx -version
+#nginx version: nginx/1.22.1  (2023/04/14)
+```
+
+
+# Install Nodejs
+
+- https://docs.aws.amazon.com/sdk-for-javascript/v2/developer-guide/setting-up-node-on-ec2-instance.html
+- 2023/04/14
+
+```bash
+### Install
+curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.3/install.sh | bash
+. ~/.nvm/nvm.sh
+nvm install --lts
+
+
+### Install specific version
+nvm install 16
+
+
+### Show Version
+node --version
+#v16.20.0
+```

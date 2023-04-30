@@ -1,0 +1,350 @@
+# https://developers.google.com/chat/api/reference/rest/v1/cards#Card
+# Built-In icons: https://developers.google.com/chat/api/guides/message-formats/cards#builtinicons
+
+@spaceId={{$dotenv spaceId}}
+@key={{$dotenv key}}
+@token={{$dotenv token}}
+
+@url=https://chat.googleapis.com/v1/spaces/{{spaceId}}/messages
+# --------------------------------------------------------------
+
+
+### Send Card
+POST {{url}}?key={{key}}&token={{token}}
+Content-Type: application/json
+
+{
+  "name": "myName",
+  "text": "",
+  "cardsV2": [
+    {
+      "cardId": "unique-card-id",
+      "card": {
+        "header": {
+          "title": "Repo Name",
+          "subtitle": "Repo Group Path",
+          "imageUrl": "https://developers.google.com/chat/images/quickstart-app-avatar.png",
+          "imageType": "SQUARE",
+          "imageAltText": "Avatar for aaa"
+        },
+        "sections": [
+          {
+            "header": "Branch: feature",
+            "collapsible": false,
+            "uncollapsibleWidgetsCount": 1,
+            "widgets": [
+              {
+                "decoratedText": {
+                  "topLabel": "DATE: {{$localDatetime iso8601}}"
+                }
+              },
+              {
+                "decoratedText": {
+                  "topLabel": "TYPE: commit"
+                }
+              },
+              {
+                "decoratedText": {
+                  "topLabel": "MESSAGE: feat: [Fix] SocketIO"
+                }
+              },
+              {
+                "decoratedText": {
+                  "topLabel": "AUTHOR: 大Boss"
+                }
+              },
+              {
+                "buttonList": {
+                  "buttons": [
+                    {
+                      "text": "Share",
+                      "onClick": {
+                        "openLink": {
+                          "url": "https://example.com/share"
+                        }
+                      }
+                    },
+                    {
+                      "text": "Edit",
+                      "onClick": {
+                        "action": {
+                          "function": "goToView",
+                          "parameters": [
+                            {
+                              "key": "viewType",
+                              "value": "EDIT"
+                            }
+                          ]
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        ]
+      }
+    }
+  ]
+}
+
+
+### Send Card - Bitbucket commit
+POST {{url}}?key={{key}}&token={{token}}
+Content-Type: application/json
+
+{
+  "cardsV2": [
+    {
+      "cardId": "unique-card-id",
+      "card": {
+        "header": {
+          "title": "{repository.FullName}",
+          "subtitle": "{repositoryAvatarLink.Reference}",
+          "imageUrl": "https://github.com/kubernetes/kubernetes/raw/master/logo/logo.png",
+          "imageType": "SQUARE",
+          "imageAltText": "Repo"
+        },
+        "sections": [
+          {
+            "widgets": [
+              {
+                "decoratedText": {
+                  "topLabel": "BRANCH",
+                  "text": "<b>{Source.Branch}</b>"
+                }
+              }
+            ]
+          },
+          {
+            "widgets": [
+              {
+                "decoratedText": {
+                  "topLabel": "DATE",
+                  "text": "{commit.Date.ToLocalTime().ToString(\"yyyy-MM-dd HH:mm:ss\")}"
+                }
+              },
+              {
+                "decoratedText": {
+                  "topLabel": "TYPE",
+                  "text": "{commit.Type}"
+                }
+              },
+              {
+                "decoratedText": {
+                  "topLabel": "MESSAGE",
+                  "wrapText": true,
+                  "button": {
+                    "text": "View Changed",
+                    "onClick": {
+                      "openLink": {
+                        "url": "https://github.com/kubernetes/kubernetes/pull/117271"
+                      }
+                    }
+                  },
+                  "text": "{commit.Message}~~~~~~~Very~~~~Long~~~~~Commit~~~~~~String~~~~~~QQQQ"
+                }
+              },
+              {
+                "decoratedText": {
+                  "topLabel": "AUTHOR",
+                  "endIcon": {
+                    "imageType": "CIRCLE",
+                    "iconUrl": "https://developers.google.com/chat/images/quickstart-app-avatar.png"
+                  },
+                  "text": "{commit.Author.User.DisplayName}"
+                }
+              }
+            ]
+          },
+          {
+            "widgets": [
+              {
+                "buttonList": {
+                  "buttons": [
+                    {
+                      "text": "Open Repository",
+                      "icon": {
+                        "knownIcon": "STAR",
+                        "altText": "{commit.Message}"
+                      },
+                      "onClick": {
+                        "openLink": {
+                          "url": "https://github.com/kubernetes/kubernetes"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        ]
+      }
+    }
+  ]
+}
+
+
+### Send Card - 官方樣板
+POST {{url}}?key={{key}}&token={{token}}
+Content-Type: application/json
+
+{
+  "cardsV2": [
+    {
+      "cardId": "unique-card-id",
+      "card": {
+        "header": {
+          "title": "Sasha",
+          "subtitle": "Software Engineer",
+          "imageUrl":
+          "https://developers.google.com/chat/images/quickstart-app-avatar.png",
+          "imageType": "CIRCLE",
+          "imageAltText": "Avatar for Sasha",
+        },
+        "sections": [
+          {
+            "header": "Contact Info",
+            "collapsible": true,
+            "uncollapsibleWidgetsCount": 1,
+            "widgets": [
+              {
+                "decoratedText": {
+                  "startIcon": {
+                    "knownIcon": "EMAIL",
+                  },
+                  "text": "sasha@example.com",
+                }
+              },
+              {
+                "decoratedText": {
+                  "startIcon": {
+                    "knownIcon": "PERSON",
+                  },
+                  "text": "<font color=\"#80e27e\">Online</font>",
+                },
+              },
+              {
+                "decoratedText": {
+                  "startIcon": {
+                    "knownIcon": "PHONE",
+                  },
+                  "text": "+1 (555) 555-1234",
+                }
+              },
+              {
+                "buttonList": {
+                  "buttons": [
+                    {
+                      "text": "Share",
+                      "onClick": {
+                        "openLink": {
+                          "url": "https://example.com/share",
+                        }
+                      }
+                    },
+                    {
+                      "text": "Edit",
+                      "onClick": {
+                        "action": {
+                          "function": "goToView",
+                          "parameters": [
+                            {
+                              "key": "viewType",
+                              "value": "EDIT",
+                            }
+                          ],
+                        }
+                      }
+                    },
+                  ],
+                }
+              },
+            ],
+          },
+        ],
+      },
+    }
+  ],
+}
+
+
+### Send Card - 投票樣板
+POST {{url}}?key={{key}}&token={{token}}
+Content-Type: application/json
+
+{
+  "cardsV2": [
+    {
+      "cardId": "unique-card-id",
+      "card": {
+        "sections": [
+          {
+            "widgets": [
+              {
+                "textParagraph": {
+                  "text": "Enter the poll topic and up to 5 choices in the poll. Blank options will be omitted."
+                }
+              },
+              {
+                "textInput": {
+                  "label": "Topic",
+                  "type": "MULTIPLE_LINE",
+                  "name": "topic",
+                  "value": ""
+                }
+              },
+              {
+                "textInput": {
+                  "label": "Option 1",
+                  "type": "SINGLE_LINE",
+                  "name": "option0",
+                  "value": ""
+                }
+              },
+              {
+                "textInput": {
+                  "label": "Option 2",
+                  "type": "SINGLE_LINE",
+                  "name": "option1",
+                  "value": ""
+                }
+              },
+              {
+                "textInput": {
+                  "label": "Option 3",
+                  "type": "SINGLE_LINE",
+                  "name": "option2",
+                  "value": ""
+                }
+              },
+              {
+                "buttonList": {
+                  "buttons": [
+                    {
+                      "text": "Submit",
+                      "onClick": {
+                        "action": {
+                          "function": "start_poll"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        ],
+        "displayStyle": "DISPLAY_STYLE_UNSPECIFIED",
+        "header": {
+          "title": "Card header",
+          "subtitle": "Subheader",
+          "imageUrl": "https://source.unsplash.com/featured/320x180?nature&sig=8",
+          "imageType": "CIRCLE"
+        },
+      },
+    }
+  ],
+}

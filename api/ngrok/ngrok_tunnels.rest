@@ -1,0 +1,32 @@
+# https://ngrok.com/docs/api/resources/tunnels/
+@API_KEY={{$dotenv API_KEY}}
+
+# ======================================
+
+
+
+### List Tunnels
+# https://ngrok.com/docs/api/resources/tunnels/#list-tunnels
+# 列出所有 運作中的 online tunnels
+# @name getTunnel
+GET https://api.ngrok.com/tunnels
+Authorization: Bearer {{API_KEY}}
+Ngrok-Version: 2
+
+
+
+### ------
+@tunnelId0={{getTunnel.response.body.tunnels[0].$.id}}
+### ------
+
+
+
+### GET Tunnel
+# https://ngrok.com/docs/api/resources/tunnels/#get-tunnel
+GET https://api.ngrok.com/tunnels/{{tunnelId0}}
+Authorization: Bearer {{API_KEY}}
+Ngrok-Version: 2
+
+
+
+### 

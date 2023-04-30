@@ -1,0 +1,24 @@
+# https://support.atlassian.com/atlassian-account/docs/manage-api-tokens-for-your-atlassian-account/
+
+@InstanceUrl=https://{{$dotenv JiraInstanceDomain}}
+@v2=/rest/api/2
+@url={{InstanceUrl}}{{v2}}
+@IssueKey={{$dotenv IssueKey}}
+@user={{$dotenv user}}
+@token={{$dotenv token}}
+
+
+### Get Issue
+# https://developer.atlassian.com/cloud/jira/platform/rest/v2/api-group-issues/#api-rest-api-2-issue-issueidorkey-get
+GET {{url}}/issue/{{IssueKey}}
+Authorization: Basic {{user}}:{{token}}
+
+
+
+# https://tonychou.atlassian.net/rest/api/2/issue/10025
+
+
+
+### 
+
+

@@ -1,0 +1,56 @@
+# https://ngrok.com/docs/secure-tunnels/agent_ingress/
+# https://ngrok.com/docs/api/resources/agent-ingresses/
+@API_KEY={{$dotenv API_KEY}}
+
+# ======================================
+
+
+
+### List Agent Ingresses
+# https://ngrok.com/docs/api/resources/agent-ingresses/#list-agent-ingresses
+# @name getAgentIngressId
+GET https://api.ngrok.com/agent_ingresses
+Authorization: Bearer {{API_KEY}}
+Ngrok-Version: 2
+
+
+
+### ------
+@ingressId0={{getAgentIngressId.response.body.ingresses[0].id}}
+### ------
+
+
+
+### Get Agent Ingress
+# https://ngrok.com/docs/api/resources/agent-ingresses/#get-agent-ingress
+GET https://api.ngrok.com/agent_ingresses/{{ingressId0}}
+Authorization: Bearer {{API_KEY}}
+Ngrok-Version: 2
+
+
+
+
+### Create Agent Ingress
+# https://ngrok.com/docs/api/resources/agent-ingresses/#create-agent-ingress
+# @name newAgentIngressId
+POST https://api.ngrok.com/agent_ingresses
+Authorization: Bearer {{API_KEY}}
+Ngrok-Version: 2
+Content-Type: application/json
+
+{
+    "description": "Test Agent Ingress",
+    "domain": "ngrok.tonychoucc.com"
+}
+
+
+
+### Delete Agent Ingress
+# https://ngrok.com/docs/api/resources/agent-ingresses/#delete-agent-ingress
+DELETE https://api.ngrok.com/agent_ingresses/agin_2OStklWAL7I6bHc2ny57BHiaKWM
+Authorization: Bearer {{API_KEY}}
+Ngrok-Version: 2
+
+
+
+### 

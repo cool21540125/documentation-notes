@@ -27,6 +27,8 @@ git config --global alias.lg "log --color --graph --pretty=format:'%Cred%h%Crese
 git config --global alias.lgg "log --pretty=format:'%C(yellow)%h%Cred%d %Creset%s%Cblue [%cn]%Creset' --decorate"
 git config --global alias.pu "push"
 git config --global alias.cm "commit -m"
+git config --global alias.co "checkout"
+git config --global alias.st "status"
 ```
 
 
@@ -93,17 +95,17 @@ git diff $COMMIT
 
 ```bash
 ### (不動設定) 手動指定 Key path
-$# GIT_SSH_COMMAND='ssh -i ~/.ssh/use_another_key_to_operate' git clone ${Git_Url}
+GIT_SSH_COMMAND='ssh -i ~/.ssh/PrivateKeyName' git clone ${Git_Url}
 # ex: 在 Public Gitlab 裡頭有自己帳號塞一把 key && 公司帳號也塞一把 key
 # 在做 git 操作時, 預設都會使用 `~/.ssh/id_rsa` 這把做金鑰認證
 
 # 或
 
 ### 一次性設定
-$# git config --local core.sshCommand "ssh -i ~/.ssh/use_another_key_to_operate"
+git config --local core.sshCommand "ssh -i ~/.ssh/PrivateKeyName"
 # 上述配置會記錄在 ./.git/config 裡頭的
 # [core]
-#    sshCommand = ssh -i ~/.ssh/use_another_key_to_operate
+#    sshCommand = ssh -i ~/.ssh/PrivateKeyName
 ```
 
 

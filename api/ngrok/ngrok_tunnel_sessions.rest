@@ -1,0 +1,64 @@
+# https://ngrok.com/docs/api/resources/tunnel-sessions/
+@API_KEY={{$dotenv API_KEY}}
+
+# ======================================
+
+
+
+### List Tunnel Sessions
+# https://ngrok.com/docs/api/resources/tunnel-sessions/#list-tunnel-sessions
+# @name getTunnelSession
+GET https://api.ngrok.com/tunnel_sessions
+Authorization: Bearer {{API_KEY}}
+Ngrok-Version: 2
+
+
+
+### ------
+@session_id0={{getTunnelSession.response.body.tunnel_sessions[0].id}}
+### ------
+
+
+
+### Get Tunnel Session
+# https://ngrok.com/docs/api/resources/tunnel-sessions/#get-tunnel-session
+GET https://api.ngrok.com/tunnel_sessions/{{session_id0}}
+Authorization: Bearer {{API_KEY}}
+Ngrok-Version: 2
+
+
+
+### Restart Tunnel Agent : Ngrok 會重啟一個 Secret Tunnel(Terminal 自行更新)
+# https://ngrok.com/docs/api/resources/tunnel-sessions/#restart-tunnel-agent
+POST https://api.ngrok.com/tunnel_sessions/{{session_id0}}/restart
+Authorization: Bearer {{API_KEY}}
+Ngrok-Version: 2
+Content-Type: application/json
+
+{}
+
+
+
+### Stop Tunnel Agent : exit 目前已作用中的 Tunnel Session
+# https://ngrok.com/docs/api/resources/tunnel-sessions/#stop-tunnel-agent
+POST https://api.ngrok.com/tunnel_sessions/{{session_id0}}/stop
+Authorization: Bearer {{API_KEY}}
+Ngrok-Version: 2
+Content-Type: application/json
+
+{}
+
+
+
+### Update Tunnel Agent : (Enterprise Account Only)
+# https://ngrok.com/docs/api/resources/tunnel-sessions/#update-tunnel-agent
+POST https://api.ngrok.com/tunnel_sessions/{{session_id0}}/update
+Authorization: Bearer {{API_KEY}}
+Ngrok-Version: 2
+Content-Type: application/json
+
+{}
+
+
+
+### 

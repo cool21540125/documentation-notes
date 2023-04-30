@@ -9,6 +9,11 @@
 
 # CLI
 
+- `aws ecr get-login`
+    - 此為 aws cli v1, 使用 v2 的話改用 `aws ecr get-login-password`
+- `aws ecr get-login-password`
+
+
 ```bash
 ### login to ECR
 REGION=ap-northeast-1
@@ -18,14 +23,15 @@ aws ecr get-login-password \
     --username AWS \
     --password-stdin \
     ${ACCOUNT_ID}.dkr.ecr.${REGION}.amazonaws.com
-Login Succeeded
+#Login Succeeded
 
-Logging in with your password grants your terminal complete access to your account. 
-For better security, log in with a limited-privilege personal access token. Learn more at https://docs.docker.com/go/access-tokens/
+#Logging in with your password grants your terminal complete access to your account. 
+#For better security, log in with a limited-privilege personal access token. Learn more at https://docs.docker.com/go/access-tokens/
 
 
 ### ECR 建立一個 repo, 名為 hello-server101
 image_repo=$(aws ecr create-repository --repository-name hello-server101 --query repository.repositoryUri --output text)
+echo $image_repo
 
 
 ### 查看 repo
@@ -33,4 +39,5 @@ aws ecr describe-repositories --repository-name hello-server101
 
 
 ### 
+
 ```

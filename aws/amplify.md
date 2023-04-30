@@ -48,26 +48,26 @@ code --> Backend -- deploy --> Amplify
 
 ```bash
 ### init Amplify project
-$# amplify init
+amplify init
 
 
 ### (尚未知)
-$# amplify add hosting
+amplify add hosting
 
 
 ### 新增 Auth
-$# amplify add auth
+amplify add auth
     
 ### 新增 REST/GraphQL API
-$# amplify add api
+amplify add api
 
 
 ### Deploy API
-$# amplify push
+amplify push
 
 
 ### Check Amplify's status
-$# amplify status
+amplify status
 ##    Current Environment: dev
 ##    
 ##┌──────────┬───────────────┬───────────┬─────────────────┐
@@ -77,5 +77,5 @@ $# amplify status
 
 
 ### 
-$# amplify console api
+amplify console api
 ```

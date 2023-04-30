@@ -26,4 +26,11 @@ dotnet --list-sdks
 
 ### list all runtime
 dotnet --list-runtimes
+
+
+### 如果電腦有多個不同的 sdk version
+dotnet new globaljson
+# 編輯新生的 global.json 修改裡面的 version
+#   版本可參考 dotnet --list-sdks
+
 ```
