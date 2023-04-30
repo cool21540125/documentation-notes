@@ -42,6 +42,7 @@
 - overlap : 交疊
 - passphrase : 密語; 嚴格來講, 此非密碼 (Not a password)
 - payload (body)
+- peripheral : 外圍設備
 - perimeter network : (同 DMZ)
 - permission : 許可
 - poller : 輪循器
@@ -56,6 +57,7 @@
 - slirp4netns : User-mode networking for unprivileged network namespaces
 - snippets : 片段
 - sponsor : 發起人
+- spooling : send (data that is intended for printing or processing on a peripheral device) to an intermediate store
 - starting from scratch : 從零開始
 - strike a balance : 沖帳
 - stub : 存根
