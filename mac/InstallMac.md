@@ -615,4 +615,21 @@ brew install node@18
 - 到上面 URL 抓吧
 
 
-# 
+# Install nvm
+
+```bash
+brew install nvm
+
+### Setting
+### nvm
+export NVM_DIR="$HOME/.nvm"
+[ -s "/usr/local/opt/nvm/nvm.sh" ] && \. "/usr/local/opt/nvm/nvm.sh"  # This loads nvm
+[ -s "/usr/local/opt/nvm/etc/bash_completion.d/nvm" ] && \. "/usr/local/opt/nvm/etc/bash_completion.d/nvm"  # This loads nvm bash_completion
+
+mkdir ~/.nvm
+
+nvm install 14
+nvm install 16
+
+nvm use 16
+```
