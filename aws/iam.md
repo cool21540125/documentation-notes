@@ -201,6 +201,12 @@ r2 -.- srv2["AWS Services \n (ex: S3)"];
     - OpenID Connect
     - custom-built identity broker
 - [Temporary security credentials in IAM](https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_temp.html)
+- [The difference between an AWS role and an instance profile](https://medium.com/devops-dudes/the-difference-between-an-aws-role-and-an-instance-profile-ae81abd700d)
+    - Instance Profile : 定義 EC2 可以 assume a role (扮演成為哪個角色). 僅止於取得某個 Role 的地位
+    - IAM Role         : 定義 取得這個 Role 的人(不管是不是真的人啦), 能具備這個 Role 裡頭所 Allow 的 credentials
+    - Web Console 操作上, 我們會去 create EC2 Instance Profile, 其實是 2 個動作:
+        - 建立 Instance Profile, 用途僅僅是, 讓 EC2 可以扮演某個角色 (assume a role)
+        - 建立一個 Role (裡面有必要的 permissions), 然後讓 EC2 可以扮演這個 Role
 
 
 # IAM Principal
@@ -591,6 +597,19 @@ users -- auth --> aws["AWS Simple AD"];
     - License Manager Configurations
 
 
+# IAM Security & Compliance
+
+compare                | Scope         | Description
+---------------------- | ------------- | --------------
+IAM Credential Report  | Account Level | 可查看 Account 底下所有的 IAM Users 的狀態
+IAM Access Advisor     | User Level    | 可查看 IAM User 使用了哪些 Services 的最近時間 (用來審視是否授權了不需使用到的 Services)
+IAM Access Analyzer    | Account Level | 可查看有哪些 AWS Resources 授權了 External Services 來訪問
+
+- IAM Access Analyzer
+    - 可以依照 *AWS Account* 或 *AWS Organization* 來設定一個 **Zone of Trust**
+    - 若不在 Zone of Trust 裡頭的, 則會被視為 External Services, 因此可以被 Access Analyzer 偵測到
+
+
 # Useful Example
 
 ## 1. 僅針對特定 Bucket 開放 access 的權限
@@ -606,17 +625,6 @@ users -- auth --> aws["AWS Simple AD"];
 需要留意的是, 權限賦予的過程, 需考慮到 Role 僅需要 CLI/API access? 還是也需要 console access?
 
 如果是後者, 則需要額外給權限
-
-
-# TIPs
-
-- 定期到 IAM 底下去檢查 *Credential Report* && *Access Advisor* 來整理權限, 避免開了一堆不明權限
-- [The difference between an AWS role and an instance profile](https://medium.com/devops-dudes/the-difference-between-an-aws-role-and-an-instance-profile-ae81abd700d)
-    - Instance Profile : 定義 EC2 可以 assume a role (扮演成為哪個角色). 僅止於取得某個 Role 的地位
-    - IAM Role         : 定義 取得這個 Role 的人(不管是不是真的人啦), 能具備這個 Role 裡頭所 Allow 的 credentials
-    - Web Console 操作上, 我們會去 create EC2 Instance Profile, 其實是 2 個動作:
-        - 建立 Instance Profile, 用途僅僅是, 讓 EC2 可以扮演某個角色 (assume a role)
-        - 建立一個 Role (裡面有必要的 permissions), 然後讓 EC2 可以扮演這個 Role
 
 
 # CLI - assume an IAM role using AWS CLI

@@ -10,19 +10,17 @@ netstat -anv -p tcp | grep "Proto\|*.80"
 
 
 ### 利用 pid 查出 process 的 cmdline
-$# ps ax | grep ${PID}
-  PID   TT  STAT      TIME COMMAND
-92386   ??  S      0:00.01 /usr/sbin/httpd -D FOREGROUND
+ps ax | grep ${PID}
+#  PID   TT  STAT      TIME COMMAND
+#92386   ??  S      0:00.01 /usr/sbin/httpd -D FOREGROUND
 
 
 ### 可查詢到 該名稱服務對應到的 PID, PPID
-$# ps -ef | grep httpd
+ps -ef | grep httpd
 
 
 ###
-$# sudo kill -9 XXXX
-
-
+sudo kill -9 XXXX
 ```
 
 
