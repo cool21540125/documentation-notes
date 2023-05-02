@@ -13,13 +13,12 @@ services:
     command:
       - --api.insecure=true
       - --providers.docker
-      #- "--configfile=/etc/traefik/traefik.yml"
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
-      #- ./traefik:/etc/traefik/
-    networks:
-      - net_reverse_proxy
+      - ./traefik.yml:/etc/traefik/traefik.yml
+#     networks:
+#       - net_reverse_proxy
 
-networks:
-  net_reverse_proxy:
-    name: net_traefik
+# networks:
+#   net_reverse_proxy:
+#     name: net_traefik

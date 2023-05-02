@@ -1,0 +1,30 @@
+# https://doc.traefik.io/traefik/reference/static-configuration/file/
+### traefik.yaml
+log:
+  level: info
+
+### Docker backend
+providers:
+  docker:
+    endpoint: "unix:///var/run/docker.sock"
+    # defaultRule: ""
+    # domain: traefik.tonychoucc.com
+
+  # file:
+  #   directory: /etc/traefik/conf.d/
+  #   watch: true
+
+### 
+entryPoints:
+  web:
+    address: ":80"
+  
+  websecure:
+    address: ":443"
+
+### API and dashboard configuration
+api:
+  insecure: true
+  # dashboard: true
+  # debug: true
+
