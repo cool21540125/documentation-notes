@@ -3,9 +3,9 @@
 
 ```bash
 ### 利用 port 查出 pid
-$# netstat -anv -p tcp | grep "*.80"
-Proto Recv-Q Send-Q  Local Address          Foreign Address        (state)     rhiwat shiwat    pid   epid  state    options
-tcp46      0      0  *.80                   *.*                    LISTEN      131072 131072  92386      0 0x0080 0x0000000e
+netstat -anv -p tcp | grep "Proto\|*.80"
+#Proto Recv-Q Send-Q  Local Address          Foreign Address        (state)     rhiwat shiwat    pid   epid  state    options
+#tcp46      0      0  *.80                   *.*                    LISTEN      131072 131072  92386      0 0x0080 0x0000000e
 # pid 為 92386 的 process 監聽了 *.80 (TCP4 & TCP^)
 
 
