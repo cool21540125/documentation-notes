@@ -26,3 +26,4 @@ keyfile
 .kube/
 **/.DS_Store
 **/demo.rest
+*ignoreme*
