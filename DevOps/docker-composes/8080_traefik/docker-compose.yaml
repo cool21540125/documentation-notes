@@ -1,0 +1,24 @@
+version: '3'
+
+services:
+  reverse-proxy:
+    container_name: traefik
+    image: traefik:v2.10
+    # Enables the web UI and tells Traefik to listen to docker
+    command:
+      # 公開 Api 及 Dashboard
+      - --api.insecure=true 
+      - --providers.docker
+    ports:
+      # The HTTP port
+      - "80:80"
+      # The Web UI (enabled by --api.insecure=true)
+      - "8080:8080"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    networks:
+      - net_reverse_proxy
+
+networks:
+  net_reverse_proxy:
+    name: net_traefik

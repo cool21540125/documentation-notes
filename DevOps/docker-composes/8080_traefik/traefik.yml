@@ -1,0 +1,54 @@
+
+
+
+
+
+
+
+
+providers:
+  docker:
+    exposeByDefault: false
+    # defaultRule: ""
+
+  file:
+    directory: /traefic-configs/
+    watch: true
+
+entryPoints:
+  web:
+    address: ":80"
+  websecure:
+    address: ":443"
+
+
+
+
+
+
+
+
+certificatesResolvers:
+  letsencrypt:
+    acme:
+      email: 
+      storage: "acme.json"
+
+      caServer: "https://acme-v02.api.letsencrypt.org/directory"
+      # Challenges
+      tlsChallenge: true
+
+      # httpChallenge:
+      #   # used during the challenge
+      # entryPoint: http
+      # 
+      # dnsChallenge:
+      #  # provider: route53
+      #  # delayBeforeCheck: 0
+      #  # resolvers:
+      #  #   - "1.1.1.1:53"
+      #  #   - "8.8.8.8:53"
+
+# API and dashboard configuration
+api:
+  debug: true
