@@ -6,19 +6,29 @@ services:
     image: traefik:v2.10
     restart: always
     ports:
-      # The HTTP port
       - "80:80"
-      # The Web UI (enabled by --api.insecure=true)
       - "8080:8080"
-    command:
-      - --api.insecure=true
-      - --providers.docker
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
-      - ./traefik.yml:/etc/traefik/traefik.yml
-#     networks:
-#       - net_reverse_proxy
+    networks:
+      - net_traefik
+    command:
+      - --api.debug=true
+      - --api.dashboard=true
+      - --api.insecure=true
+      - --ping=true
+      - --serversTransport.insecureSkipVerify=true
+      - --log.level=DEBUG
+      # - --log.filePath=/tmp/traefik.log
+      # - --accesslog=true
+      # - --accesslog.filepath=/tmp/access_traefik.log
+      # - --accesslogbufferingsize=100
+      - --providers.docker
+      # - --providers.docker.endpoint=unix:///var/run/docker.sock
+      - --providers.docker.exposedbydefault=false
+      - --entrypoints.web.address=:80
+      - --entrypoints.websecure.address=:443
 
-# networks:
-#   net_reverse_proxy:
-#     name: net_traefik
+networks:
+  net_traefik:
+    external: true
