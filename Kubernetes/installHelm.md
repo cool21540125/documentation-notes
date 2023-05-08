@@ -53,3 +53,31 @@ $# ls -l /opt/bitnami/rabbitmq/etc/rabbitmq/
 $# cd /opt/bitnami/rabbitmq/.rabbitmq
 # 裡頭有 .erlang.cookie
 ```
+
+
+# Install traefik
+
+- 2023/05/04
+
+```bash
+### install
+helm repo add traefik https://traefik.github.io/charts
+helm repo update
+helm list
+
+TRAEFIK_NS="traefik_ns"
+
+kubectl create ns $TRAEFIK_NS
+
+### Install traefik
+helm install -n "$TRAEFIK_NS" --set="additionalArguments={--log.level=DEBUG}" traefik traefik/traefik
+
+
+kubectl expose deployment traefik --type=NodePort --port=8080
+
+kubectl port-forward $(kubectl get pods --selector "app.kubernetes.io/name=traefik" -n $TRAEFIK_NS --output=name) -n $TRAEFIK_NS 9000:9000
+
+```
+
+
+### 

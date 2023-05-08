@@ -283,6 +283,12 @@ on darwin_amd64
 ```
 
 
+# Install helm
+
+- 2023/05/04
+- [直接來抓 binary](https://github.com/helm/helm/releases)
+
+
 # Install kubectx
 
 - 2022/09/21
@@ -392,6 +398,7 @@ $# brew install socat
 ```bash
 $# brew install openldap
 ```
+
 
 # Install java (install OpenJDK)
 
