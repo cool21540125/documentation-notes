@@ -352,27 +352,27 @@ $# cd /usr/local/var/log
 
 ```bash
 ### install
-$# brew install nginx
+brew install nginx
 
 
 ### config
-$# cd /usr/local/etc/nginx
-$# vim nginx.conf
+cd /usr/local/etc/nginx
+vim nginx.conf
 
 
 ### start
-$# brew services start nginx
+brew services start nginx
 
 
 ### 修改 Dir owner
 # ex: 要反代 Jenkins 等請求, nginx process 會對此 Dir 裡頭做 filesystem 操作, 因而需要 rwx 權限(預設為 700 nobody admin)
-$# cd /usr/local/var/run/nginx/
-$# chown -R ${USER} *
+cd /usr/local/var/run/nginx/
+chown -R ${USER} *
 
 
 ### log
-$# tail -f /usr/local/var/log/nginx/access.log
-$# tail -f /usr/local/var/log/nginx/error.log
+tail -f /usr/local/var/log/nginx/access.log
+tail -f /usr/local/var/log/nginx/error.log
 ```
 
 
@@ -556,6 +556,7 @@ $# cd /usr/local/var/log/rabbitmq
 # Install protoc
 
 - 2023/04/13
+- [到這邊找要安裝的版本](https://github.com/protocolbuffers/protobuf/releases)
 
 ```zsh
 ### 法1. 使用 brew

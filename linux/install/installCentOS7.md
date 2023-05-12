@@ -536,10 +536,24 @@ docker version
 
 # Install Docker-compose
 
+
+- 2023/05/11
+- [docker-compose v2](https://docs.docker.com/compose/install/linux/#install-using-the-repository)
+
+```bash
+### 好像.... 安裝完 Docker 就幫我把 `docker compose` 裝起來了....
+docker compose version
+#Docker Compose version v2.17.3
+```
+
+----------------------------------------------------------------------
+
 - 2021/02/04
 - [Install Docker Compose](https://docs.docker.com/compose/install/)
+- IMPORTANT: 此為 v1, 從 2023/06 開始的版本不再支援 docker-compose v1, 考慮使用 v2 吧!!
 
 ```sh
+### 2023/06 以後, 不要再用這個了~~~~~~~~
 VERSION=1.29.2
 curl -L "https://github.com/docker/compose/releases/download/$VERSION/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
 
@@ -1027,13 +1041,16 @@ $ sudo systemctl start redis
 
 
 # Install Git (CentOS7 default repo -> git v-1.8 太舊了~~)
+
 - 2022/04/06
 - [install_git2.x_on_centos.md](https://gist.github.com/nhahv/7077a638b57f7d91ebe9a3c6caebbe4f)
 - [How To Install Git on CentOS 7](https://blacksaildivision.com/git-latest-version-centos)
 - [Choose a version](https://github.com/git/git/releases) ( 以2.14.3版為例 )
 - [Choose a version 有時候Github會掛掉...](https://mirrors.edge.kernel.org/pub/software/scm/git/)
 
+
 ### I. 預設 repo yum install (只會安裝舊版-v1.8)
+
 ```sh
 # 所需套件
 $# yum install -y autoconf libcurl-devel expat-devel gcc kernel-headers openssl-devel perl-devel zlib-devel gettext-devel
@@ -1048,6 +1065,12 @@ $# yum install -y autoconf libcurl-devel expat-devel gcc kernel-headers openssl-
 yum install -y http://opensource.wandisco.com/centos/7/git/x86_64/wandisco-git-release-7-1.noarch.rpm
 yum install git
 git --version
+
+### 2023/05
+yum -y install https://packages.endpointdev.com/rhel/7/os/x86_64/endpoint-repo.x86_64.rpm
+yum -y install git
+git --version
+# git version 2.39.2
 ```
 
 
@@ -1415,22 +1438,19 @@ $# which scala
 - [How to Install OpenJDK 11 on CentOS 7](https://sysadminxpert.com/install-openjdk-11-on-centos-7/)
 
 ```bash
-### 安裝 JRE
-$# yum install -y java-11-openjdk
+### 安裝 JRE & JDK
+yum install -y java-11-openjdk java-11-openjdk-devel
 
-$# which java
-/bin/java
+which java
+#/bin/java
 
-$# java --version
-openjdk 11.0.13 2021-10-19 LTS
-OpenJDK Runtime Environment 18.9 (build 11.0.13+8-LTS)
-OpenJDK 64-Bit Server VM 18.9 (build 11.0.13+8-LTS, mixed mode, sharing)
+java --version
+#openjdk 11.0.13 2021-10-19 LTS
+#OpenJDK Runtime Environment 18.9 (build 11.0.13+8-LTS)
+#OpenJDK 64-Bit Server VM 18.9 (build 11.0.13+8-LTS, mixed mode, sharing)
 
-### 安裝 JDK
-$# yum install -y java-11-openjdk-devel
-
-$# javac --version
-javac 11.0.13
+javac --version
+#javac 11.0.13
 ```
 
 
@@ -1440,108 +1460,17 @@ javac 11.0.13
 - https://www.server-world.info/en/note?os=CentOS_7&p=jdk8&f=2
 
 ```bash
-$# yum install java-1.8.0-openjdk java-1.8.0-openjdk-devel -y
-
-$# java -version
-openjdk version "1.8.0_302"
-OpenJDK Runtime Environment (build 1.8.0_302-b08)
-OpenJDK 64-Bit Server VM (build 25.302-b08, mixed mode)
-
-$# javac -version
-javac 1.8.0_302
-```
+yum install -y java-1.8.0-openjdk java-1.8.0-openjdk-devel
 
 
-# Install SpringBoot
-
-- 2021/10/04
-
-```bash
-
-```
+java -version
+#openjdk version "1.8.0_302"
+#OpenJDK Runtime Environment (build 1.8.0_302-b08)
+#OpenJDK 64-Bit Server VM (build 25.302-b08, mixed mode)
 
 
-# Install jdk1.8
-
-- 2018/03/21
-- [Official Orical jdk](http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html)
-
-兩種方法:
-
-1. 拔掉 OpenJDK => OracleJRE,JDK
-2. 純安裝(用環境變數來抓)
-
-## 1. 連同 openjdk-JRE 一起拔掉, 換成 Oracle jdk
-
-- [How to remove OpenJDK and install Oracle JDK](https://support.cafex.com/hc/en-us/articles/200874471-How-to-remove-OpenJDK-and-install-Oracle-JDK)
-
-```sh
-### rpm ================================
-$# rpm -qa | grep jdk
-# ↑ 慢慢移掉...
-
-### 下載 rpm
-$# wget --no-check-certificate --no-cookies --header "Cookie: oraclelicense=accept-securebackup-cookie" https://download.oracle.com/otn-pub/java/jdk/8u201-b09/42970487e3af4f5aa5bca3f542482c60/jdk-8u201-linux-x64.rpm
-# ↑ 到官方網址, 勾選同意 license 之後, 取代要下載的網址(版本更新的話)
-
-### 安裝
-$# rpm -ivh jdk-8u201-linux-x64.rpm
-
-### tar ball ===========================
-#下載 tarball
-$# wget --no-check-certificate --no-cookies --header "Cookie: oraclelicense=accept-securebackup-cookie" https://download.oracle.com/otn-pub/java/jdk/8u201-b09/42970487e3af4f5aa5bca3f542482c60/jdk-8u201-linux-x64.tar.gz
-# ↑ 到官方網址, 勾選同意 license 之後, 取代要下載的網址(版本更新的話)
-
-$# tar -zxf jdk-8u201-linux-x64.tar.gz
-$# mv jdk1.8.0_201/ ~/.
-$# echo 'export JAVA_HOME=/root/jdk1.8.0_201' >> /etc/bashrc
-$# echo 'export PATH=${JAVA_HOME}/bin:${PATH}' >> /etc/bashrc
-
-$# java -version
-java version "1.8.0_191"
-Java(TM) SE Runtime Environment (build 1.8.0_191-b12)
-Java HotSpot(TM) 64-Bit Server VM (build 25.191-b12, mixed mode)
-
-$# javac -version
-javac 1.8.0_191
-```
-
-
-## 2. 單純安裝其他版本(不動 JRE)
-
-```sh
-$ echo $PATH
-/usr/local/bin:/usr/bin:/usr/local/sbin:/usr/sbin:/home/tony/.local/bin:/home/tony/bin
-
-$ java -version
-openjdk version "1.8.0_161"
-OpenJDK Runtime Environment (build 1.8.0_161-b14)
-OpenJDK 64-Bit Server VM (build 25.161-b14, mixed mode)
-# 安裝之前~
-
-$ wget https://download.oracle.com/otn-pub/java/jdk/8u191-b12/2787e4a523244c269598db4e85c51e0c/jdk-8u191-linux-x64.tar.gz
-# ↑ 無法直接使用... 網頁上需要點選 Accept License 才能下載XD 發Q~
-
-$ mkdir ~/bin
-$ tar -zxf jdk-8u191-linux-x64.tar.gz
-$ mv jdk1.8.0_191/ ~/bin
-$ echo 'export jdk_HOME="$HOME/bin/jdk1.8.0_191"' >> ~/.bashrc
-$ echo 'export PATH=$jdk_HOME/bin:$PATH' >> ~/.bashrc
-
-# 重起 terminal後
-$ which java
-~/bin/jdk1.8.0_191/bin/java
-
-$ which javac
-~/bin/jdk1.8.0_191/bin/javac
-
-$ java -version
-java version "1.8.0_191"
-Java(TM) SE Runtime Environment (build 1.8.0_191-b12)
-Java HotSpot(TM) 64-Bit Server VM (build 25.191-b12, mixed mode)
-
-$ javac -version
-javac 1.8.0_191
+javac -version
+#javac 1.8.0_302
 ```
 
 
@@ -1569,7 +1498,6 @@ $ sudo systemctl start libvirtd
 # 開始使用^O^
 $ sudo virt-manager
 ```
-
 
 
 # Install VirtualBox
