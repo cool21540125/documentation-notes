@@ -9,7 +9,7 @@
     // ↑ 此為預設
     "data-root": "/data/docker",
     "features": {
-        "buildkit": true
+        "buildkit": true  // 優化 Docker build 的流程
     },
     // 解除 container 與 docker daemon 的耦合
     "live-restore": true,
