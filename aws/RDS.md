@@ -172,7 +172,7 @@ flowchart BT;
 aurora["Amazon Aurora"];
 
 subgraph ml
-    sm["Amazon SegaMaker"];
+    sm["Amazon SageMaker"];
     ac["Amazon Comprehend"];
 end
 
