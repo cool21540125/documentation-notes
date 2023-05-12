@@ -14,7 +14,12 @@
 - [Container Runtimes Part 4: Kubernetes Container Runtimes & CRI](https://www.ianlewis.org/en/container-runtimes-part-4-kubernetes-container-run)
     - Part 4: Kubernetes Runtimes and the CRI
 
-此一系列文件要探討 `Container Runtime`
+-------------------------------------------
+
+- OCI 用來規範 imagespec 及 runtimespec
+    - imagespec 規範 **image 應該如何 build** && **image 的格式**
+    - runtimespec 規範 **container runtime 應該如何 develop** && **container runtime 的標準**
+- OCI 旨在實現容器格式和運行時的標準化，從而促進容器技術的發展和推廣
 
 
 ### 造就 Container Runtime 如此令人混淆的主因
