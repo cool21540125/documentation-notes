@@ -113,6 +113,18 @@ server {
 IMPORTANT: 上述加入到 HSTS preload 的作法, 是一條通往 HTTPS 的不歸路!!!!! 只能單向通行.
 
 
+# HTTP Header
+
+- [Http Header 快取(初學)](https://blog.techbridge.cc/2017/06/17/cache-introduction/)
+   - Cache-Control
+   - Expires
+   - max-age
+   - Las-Modified
+   - If-Modified-Since
+   - Etag
+   - If-Non-Match
+
+
 # X-Forwarded-For
 
 - [What is the difference between X-Forwarded-For and X-Forwarded-IP?](https://stackoverflow.com/questions/19366090/what-is-the-difference-between-x-forwarded-for-and-x-forwarded-ip)
