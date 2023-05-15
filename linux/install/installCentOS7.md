@@ -1990,9 +1990,9 @@ systemctl start squid
 # Install snapd
 
 - 2022/01/04
-- https://snapcraft.io/install/jsonnet/rhel
 
 ```bashrc
+yum install -y epel-release
 yum install -y snapd
 
 systemctl start snapd
@@ -2002,22 +2002,6 @@ systemctl status snapd
 # To enable classic snap support, enter the following to create a symbolic link between /var/lib/snapd/snap and /snap:
 ln -s /var/lib/snapd/snap /snap
 # ↑ 不知道這在幹嘛的...
-```
-
-
-# Install jsonnet
-
-- 2022/01/04
-- https://snapcraft.io/install/jsonnet/rhel
-
-```bashrc
-### 先安裝好 snapd
-$# snap install jsonnet
-# ↑ 沒辦法帶 -y... QAQ
-
-### logout && login
-$# which jsonnet
-/var/lib/snapd/snap/bin/jsonnet
 ```
 
 
@@ -2225,7 +2209,7 @@ $ curl https://get.acme.sh | sh -s email=${MAIL}
 # Install socat
 
 ```bash
-yum install socat
+yum install -y socat
 ```
 
 # Install sysstat
@@ -2341,11 +2325,11 @@ $# systemctl status rabbitmq-server
 ```
 
 
-# Install jq
+# Install jq && Install yq
 
 ```bash
 yum install -y epel-release
-yum install -y jq
+yum install -y jq yq
 ```
 
 
@@ -2374,8 +2358,11 @@ warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 # Install jsonnet
 
+- 2022/01/04
+- https://snapcraft.io/install/jsonnet/rhel
 
 ```bash
+###### ======================== 法1 - 編譯安裝 ========================
 ### 目前沒找到已經編譯好的 jsonnet, 所以自行到 github 來處理了 ~_~
 cd /usr/local/src
 git clone https://github.com/google/jsonnet.git
@@ -2405,6 +2392,15 @@ local Flavor(spicy) = {
 }
 EOF
 jsonnet /tmp/demo.jsonnet
+
+###### ======================== 法2 - via snap ========================
+### 先安裝好 snapd
+$# snap install jsonnet
+# ↑ 沒辦法帶 -y... QAQ
+
+### logout && login
+$# which jsonnet
+/var/lib/snapd/snap/bin/jsonnet
 ```
 
 
@@ -2414,21 +2410,19 @@ jsonnet /tmp/demo.jsonnet
 - [Install Taskfile](https://taskfile.dev/#/installation?id=installation)
 - [Github release binary](https://github.com/go-task/task/releases)
 
+
 ### 法1 - 腳本安裝最新版
 
 ```bash
-### 此方式預設安裝到 ./bin
+###### ============ 法1 直接安裝 binary ============
 sh -c "$(curl --location https://taskfile.dev/install.sh)" -- -d
+# 預設安裝到 ./bin
 
-# (需要 sudo 權限) 安裝到 /usr/local/bin
-sh -c "$(curl --location https://taskfile.dev/install.sh)" -- -d -b /usr/local/bin
-```
+sudo sh -c "$(curl --location https://taskfile.dev/install.sh)" -- -d -b /usr/local/bin
+# 安裝到 /usr/local/bin
 
-### 法2 - 使用 go build
 
-> 必須先安裝好 golang
-
-```bash
+###### ============ 法2 Golang required ============
 ### 適用於 golang 1.15+ (早期版本 golang 參考官網)
 go install github.com/go-task/task/v3/cmd/task@latest
 ```
@@ -2463,7 +2457,6 @@ protoc --version
 # 語言套件
 
 - 2018/10/04
-
 
 ```sh
 # 想要輸入中文的話, 裝這些吧

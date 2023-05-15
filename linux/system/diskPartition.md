@@ -172,6 +172,7 @@ $ du [-ahskm] <檔案 or 目錄>
 # S : 不包含子目錄下的統計
 # s : 只列出總容量
 # h : 人看得懂的 kb, mb, gb, ...
+# c : 
 
 $ du -a | head -3
 0	./.mozilla/extensions/{ec8030f7-c20a-464f-9b0e-13a3a9e97384}/langpack-zh-TW@firefox.mozilla.org.xpi
