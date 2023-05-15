@@ -14,6 +14,25 @@
         - Helm v3 只剩下 helm binary (無 Tiller)
 
 
+# helm CLI
+
+```bash
+### 本地不安裝 helm CLI 的情況下, 使用 helm docker container 來操作 k8s
+
+### 宿主機執行
+docker run -it --rm \
+    --net host \
+    -v "$PWD/.kube:/root/.kube" \
+    -v "$PWD:/config" \
+    dtzar/helm-kubectl
+
+### ------- 進入 Container ------
+export KUBECONFIG="/root/.kube/XXX.yaml"
+```
+
+
+# misc
+
 ```bash
 ### 新建一個 Chart (可理解成 git init NewGitProjectFromScratch)
 $# helm create ${NewChartFromScratch}

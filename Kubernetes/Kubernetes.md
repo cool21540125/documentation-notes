@@ -5,23 +5,6 @@
 - [raft演算法(去中心化)-超簡明解說](http://thesecretlivesofdata.com/raft/)
 
 
-# 縮寫
-
-```sh
-alias k=kubectl
-k get svc           # service
-k get cj            # cronjob
-k get po            # pods
-k get ns            # namespace
-k get deploy        # deployment
-k get no            # nodes
-k get cm            # configmap
-k get rs            # replicaset
-k get sts           # statefulset
-k get storageclass  # storageclass
-```
-
-
 # K8s Interface
 
 k8s 只有制定了 3 個介面
@@ -73,10 +56,10 @@ K8s 平台的選擇:
   - kube-proxy
     - 對外提供 service
 
----
+------------------------------------------------------------
 
 
-### Container Runtime Interface(CRI)
+## Container Runtime Interface(CRI)
 
 - k8s 用來與 Container 溝通的介面. 預設會依照底下去尋找 (這知識可能過期了):
   - Docker: /var/run/docker.sock  (Docker 內建的 CRI 實作為 `dockershim`, 與 kubelet 於 18.09 整合起來了)
@@ -89,6 +72,8 @@ So far, 2021/10/30, k8s 以使用 CRI-O 來實作 CRI
 配置 control-plane node 上面 kubelet 需要使用的 cgroup driver
 
 若使用的是 Docker, kubelet 會自動偵測 cgroup driver, 並於 Runtime 期間設定於 `/var/lib/kubelet/config.yaml`
+
+------------------------------------------------------------
 
 
 # kubernetes CRI 架構演進圖
@@ -117,12 +102,15 @@ kubelet -> CRI-O                                                                
     - Image Specification(image-spec)
       - 
 
+------------------------------------------------------------
+
 
 # k3s
 
 - 內建 Ingress
 - 內建 Dynamic Volume Provision
 
+------------------------------------------------------------
 
 
 # 未整理
@@ -149,14 +137,3 @@ kubelet -> CRI-O                                                                
     - 目前有 2 個版本
       - `autoscaling/v1`, 僅支援 CPU metrics
       - `autoscaling/v2`, 額外增加 Memory, custom, external metrics, 並且可使用多指標 (直接用這個就對了?)
-
-
-# Helm
-
-```yaml
-mychart/       # 資料夾名稱(Helm Chart 名稱)
-  Chart.yaml   # chart 的 meta info (name, version, dependencies, ...)
-  values.yaml  # template files 的 values (通常為 default values)
-  charts/      # Chart dependencies (ex: 依賴其他 Charts, ...)
-  templates/   # template files (裡頭的變數會來自 values.yaml)
-```

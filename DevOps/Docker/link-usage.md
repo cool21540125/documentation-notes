@@ -1,4 +1,6 @@
-## 使用 --link 來連結各個 Container
+# 使用 --link 來連結各個 Container
+
+- NOTE: 2023 的現在, 不要再用 `--link` 了啦~~~
 - Docker Cookbook - 3.3 Linking Containers in Docker
 - [Dockerfile (Windows寫法)](https://blog.yowko.com/2017/09/windows-dockerfile-volume.html)
 - 2018/05/22
