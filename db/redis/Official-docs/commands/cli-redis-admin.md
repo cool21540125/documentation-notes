@@ -226,10 +226,38 @@ cmdstat_client:calls=3,usec=8,usec_per_call=2.67
 
 > info cluster
 ```bash
+
+
+### (這比較詳細)
+$# redis-cli cluster info
+# 很神奇的是, 這兩個指令看起來 87% 相似
+```
+
+
+# [CLUSTER INFO](https://redis.io/commands/cluster-info)
+
+> 3.0.0+
+
+```bash
+$# redis-cli cluster info
+cluster_state:ok  ## ok: 表示該節點可接受 query; fail: 表示有 slot 未被綁定到 node, 處於錯誤狀態、多數 masters 無法訪問此 node
+cluster_slots_assigned:16384  ## 
+cluster_slots_ok:16384  ## Slot 非為 FAIL 或 PFAIL 的數量
+cluster_slots_pfail:0
+cluster_slots_fail:0
+cluster_known_nodes:6  ## 已加入 Cluster 的數量(包含 HANDSHAKE 的狀態)
+cluster_size:3
+cluster_current_epoch:6  ## The local Current Epoch variable. This is used in order to create unique increasing version numbers during fail overs.
+cluster_my_epoch:2  ## The Config Epoch of the node we are talking with. This is the current configuration version assigned to this node.
+cluster_stats_messages_sent:1483972
+cluster_stats_messages_received:1483968
+
+# 或 底下 CLI 可看簡要資訊
 $# redis-cli -c info cluster
 # Cluster
 cluster_enabled:1
 ```
+
 
 > info modules
 ```bash
@@ -257,4 +285,97 @@ $# redis-cli info modules
 $# redis-cli -c info errorstats
 errorstat_ERR:count=13951
 errorstat_WRONGTYPE:count=4422
+```
+
+
+
+# [Client List](https://redis.io/commands/client-list)
+
+> 2.4.0+
+> 
+> `client list [TYPE normal|master|replica|pubsub]`
+
+```bash
+$# redis-cli -c client list
+id=4 addr=172.16.30.13:42061 fd=17 name= age=126690 idle=0 flags=S db=0 sub=0 psub=0 multi=-1 qbuf=0 qbuf-free=0 argv-mem=0 obl=0 oll=0 omem=0 tot-mem=20512 events=r cmd=replconf user=default
+id=12 addr=172.16.30.8:41692 fd=21 name= age=25373 idle=22708 flags=N db=0 sub=0 psub=0 multi=-1 qbuf=0 qbuf-free=0 argv-mem=0 obl=0 oll=0 omem=0 tot-mem=20504 events=r cmd=del user=default
+id=14 addr=172.16.30.9:53376 fd=22 name= age=25283 idle=25283 flags=N db=0 sub=0 psub=0 multi=-1 qbuf=0 qbuf-free=0 argv-mem=0 obl=0 oll=0 omem=0 tot-mem=20512 events=r cmd=set user=default
+id=53 addr=127.0.0.1:47476 fd=23 name= age=0 idle=0 flags=N db=0 sub=0 psub=0 multi=-1 qbuf=26 qbuf-free=32742 argv-mem=10 obl=0 oll=0 omem=0 tot-mem=61466 events=r cmd=client user=default
+# addr: Redis Client 的 host:port
+# age: 此連線的 total duration (秒)
+# idle: 此連線的 idle time (秒)
+# qbuf: query buffer length (0 表示 「無 pending」 的查詢)
+# qbuf-free: free space of the query buffer (0 表示 buffer 已滿)
+# cmd: 最近一次執行的動作
+```
+
+
+# [CLUSTER NODES](https://redis.io/commands/cluster-nodes)
+
+> Since 3.0.0
+> 
+> 時間複雜度為 `O(N)`, N 為 Cluster Nodes 數量
+> cluster nodes
+
+```bash
+$# redis-cli -c cluster nodes
+9fa29418d431174b8a8531ad2adc1a6b69dba418 172.16.30.14:6379@16379 myself,slave 56990b4007de9f22a5b8351f8728d9d27bff1a61 0 1622628972000 7 connected
+98f79553015ff3eae2d1cc8051b4c8a4370c1d5f 172.16.30.14:6380@16380 master - 0 1622628973000 8 connected 5461-10922
+1b9a7af82e4c5229d98582ec1cae89eaa1661833 172.16.30.13:6380@16380 slave b1b855a130e32787e881fdd3a72ded4a18aa1f76 0 1622628973000 1 connected
+b1b855a130e32787e881fdd3a72ded4a18aa1f76 172.16.30.12:6379@16379 master - 0 1622628974393 1 connected 0-5460
+56990b4007de9f22a5b8351f8728d9d27bff1a61 172.16.30.12:6380@16380 master - 0 1622628973590 7 connected 10923-16383
+f00ece239d8607fac3ff63cded338e12d3c57cf7 172.16.30.13:6379@16379 slave 98f79553015ff3eae2d1cc8051b4c8a4370c1d5f 0 1622628973388 8 connected
+##                                                                flags
+## 每一行的組成方式為:
+## <id> <ip:port@cport> <flags> <master> <ping-sent> <pong-recv> <config-epoch> <link-state> <slot> <slot> ... <slot>
+## <flags> 使用「,」分隔的 list, 可能是這些: myself, master, slave, fail?, fail, handshake, noaddr, noflags
+##   - fail?: 節點處於 PFAIL 狀態(並非 FAIL), 無法 contacting 該 Node, 但邏輯上可 reachable
+##   - fail:  節點處於 FAIL  狀態. 由於多個節點無法訪問, 因而從 PAFIL 提升為 FAIL
+##   - handshake: Untrusted node, we are handshaking.
+##   - noaddr: No address known for this node.
+```
+
+
+# [CONFIG GET parameter](https://redis.io/commands/config-get)
+
+> Since 2.0.0+
+
+- 可使用 `CONFIG GET` 來取得 RedisServer running config.
+    - 直到 v2.6+, 才支援用此指令獲取全部配置(舊版本會有些配置無法用此方式取得)
+    - 相對的, 可使用 `CONFIG SET` 來作動態配置
+- CONFIG GET takes a single argument, which is a glob-style pattern.
+- 
+
+```bash
+### config get 用起來像這樣
+redis> config get *max-*-entries*
+1) "hash-max-zipmap-entries"
+2) "512"
+3) "list-max-ziplist-entries"
+4) "512"
+5) "set-max-intset-entries"
+6) "512"
+```
+
+而如果像是:
+
+```conf
+save 900 1
+save 300 10
+# dataset 變更 1 次,  900 秒後作 save
+#   &&
+# dataset 變更 10 次, 300 秒後作 save
+```
+
+則, `config get save` 會得到 **"900 1 300 10"**
+
+
+## Security 方面
+
+WARNING: redis 官方建議, 禁止遠端使用 config 命令, [參考這邊](https://redis.io/topics/security#disabling-of-specific-commands)
+
+可在配置檔裡頭, 顯示的將此指令 DISABLE
+
+```conf
+rename-command CONFIG ""
 ```

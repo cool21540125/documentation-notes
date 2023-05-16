@@ -100,19 +100,18 @@ services:
 
 networks:
   net_rediscluster:
-    name: net_rediscluster
     driver: bridge
 
 volumes:
   data_6001:
-    name: data_6001
+    external: true
   data_6002:
-    name: data_6002
+    external: true
   data_6003:
-    name: data_6003
+    external: true
   data_6004:
-    name: data_6004
+    external: true
   data_6005:
-    name: data_6005
+    external: true
   data_6006:
-    name: data_6006
+    external: true

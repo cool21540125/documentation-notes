@@ -52,10 +52,6 @@ appendonly yes
 
 # Scaling
 
-- **scale in**: 水平縮減
-- **scale out**: 水平擴增
-- **scale up**: 垂直擴增
-
 ```bash
 ### 加入一個新的 Master Node 到 Cluster
 ./redis-cli --cluster add-node 127.0.0.1:6007 127.0.0.1:6001

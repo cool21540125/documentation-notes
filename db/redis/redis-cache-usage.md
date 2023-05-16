@@ -1,5 +1,6 @@
 
 # `List個別元素` 設定到期時間, 而非整個 key 到期
+
 - 2018/06/26
 - [expire an element in an array](https://stackoverflow.com/questions/7577923/redis-possible-to-expire-an-element-in-an-array-or-sorted-set)
 - [Pattern for expiring set members](https://groups.google.com/forum/#!topic/redis-db/rXXMCLNkNSs)
@@ -10,6 +11,7 @@
 
 
 # 實作方向1
+
 ```sh
 # 增加 3 個 field -> salary 這個 key
 > ZADD salary 2500 jack                        # 測試資料
@@ -48,6 +50,7 @@
 1) "peter"
 ```
 
+
 # 實作方向2
 
 ```sh
@@ -69,6 +72,7 @@ $ SMEMBERS alarm
 ```
 
 再搭配程式端去控制時間流程
+
 ```py
 import threading
 import time
