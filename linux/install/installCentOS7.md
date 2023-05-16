@@ -1,113 +1,106 @@
 
-# CentOS7 安裝備註
+# CentOS7 release
 
-我的使用環境如下
-
-```sh
-$# uname -a
-Linux tonynb 3.10.0-514.el7.x86_64 \#1 SMP Tue Nov 22 16:42:41 UTC 2016 x86_64 x86_64 x86_64 GNU/Linux
-
-$# hostnamectl
-   Static hostname: tonynb
-         Icon name: computer-laptop
-           Chassis: laptop
-        Machine ID: 6e935c5d22124158bd0a6ebf9e086b24
-           Boot ID: 3262e51d23a9478dbc268f562556a74c
-  Operating System: CentOS Linux 7 (Core)
-       CPE OS Name: cpe:/o:centos:centos:7
-            Kernel: Linux 3.10.0-514.el7.x86_64
-      Architecture: x86-64
-
-$# cat /etc/centos-release
-CentOS Linux release 7.9.2009 (Core)
-
-$# rpm --query centos-release
-centos-release-7-9.2009.0.el7.centos.x86_64
-```
-
+- 即將於 2023/06 EOL
 - RHEL (RedHat Enterprise Linux) :
 - EPEL (Extra Packages for Enterprise Linux) : 幾乎都是 RedHat 的實驗品... 正式 Server 別裝這些...
 
+```bash
+uname -a
+#Linux tonynb 3.10.0-514.el7.x86_64 \#1 SMP Tue Nov 22 16:42:41 UTC 2016 x86_64 x86_64 x86_64 GNU/Linux
 
+#hostnamectl
+#   Static hostname: tonynb
+#         Icon name: computer-laptop
+#           Chassis: laptop
+#        Machine ID: 6e935c5d22124158bd0a6ebf9e086b24
+#           Boot ID: 3262e51d23a9478dbc268f562556a74c
+#  Operating System: CentOS Linux 7 (Core)
+#       CPE OS Name: cpe:/o:centos:centos:7
+#            Kernel: Linux 3.10.0-514.el7.x86_64
+#      Architecture: x86-64
 
-## Linux的軟體管理員 - yum
+cat /etc/centos-release
+#CentOS Linux release 7.9.2009 (Core)
 
-> 解決 rpm安裝時, 套件相依性的問題
+rpm --query centos-release
+#centos-release-7-9.2009.0.el7.centos.x86_64
 
-```sh
+# ----------------------------------- yum && rpm -----------------------------------
+
 ### 由 /etc/yum.repo.d/*.conf 裏頭的 [XXX] 區塊之中來 enable 或 disable 此倉庫
 yum-config-manager --enable XXX
 
-# 查本地已經安裝的 Linex Kernels
-$ yum list kernel
+### 查本地已經安裝的 Linex Kernels
+yum list kernel
 
-# 移除本地已安裝的套件 && Dependcies
-$# yum remove httpd
 
-# 查線上可安裝的群組套件
-$ yum group list # 或 yum grouplist
+### 移除本地已安裝的套件 && Dependcies
+yum remove httpd
 
-# 可用關鍵字來查詢線上 群組套件名稱, 群組套件說明
-$ yum groups info "Server with GUI"
 
-# 增加 「yum repo 檔」 到 /etc/yum.repo.d/xxx.repo
-$# sudo yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
+### 查線上可安裝的群組套件
+yum group list # 或 yum grouplist
 
-## 列出 系統可用的 yum套件庫
-$ yum repolist
-Loaded plugins: fastestmirror, langpacks
-Loading mirror speeds from cached hostfile
- * base: ftp.isu.edu.tw
- * elrepo: dfw.mirror.rackspace.com
- * epel: ftp.cuhk.edu.hk
- * extras: ftp.isu.edu.tw
- * updates: ftp.isu.edu.tw
-repo id                         repo name                                        status
-base/7/x86_64                   CentOS-7 - Base                                   9,591
-code                            Visual Studio Code                                   29
-docker-ce-stable/x86_64         Docker CE Stable - x86_64                            13
-epel/x86_64                     Extra Packages for Enterprise Linux 7 - x86_64   12,382
-extras/7/x86_64                 CentOS-7 - Extras                                   392
-google-chrome                   google-chrome                                         3
-mysql-tools-community/x86_64    MySQL Tools Community                                59
-mysql57-community/x86_64        MySQL 5.7 Community Server                          247
-updates/7/x86_64                CentOS-7 - Updates                                1,962
-repolist: 24,950
+
+### 可用關鍵字來查詢線上 群組套件名稱, 群組套件說明
+yum groups info "Server with GUI"
+
+
+### 增加 「yum repo 檔」 到 /etc/yum.repo.d/xxx.repo
+sudo yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
+
+
+### 列出 系統可用的 yum套件庫
+yum repolist
+#Loaded plugins: fastestmirror, langpacks
+#Loading mirror speeds from cached hostfile
+# * base: ftp.isu.edu.tw
+# * elrepo: dfw.mirror.rackspace.com
+# * epel: ftp.cuhk.edu.hk
+# * extras: ftp.isu.edu.tw
+# * updates: ftp.isu.edu.tw
+#repo id                         repo name                                        status
+#base/7/x86_64                   CentOS-7 - Base                                   9,591
+#code                            Visual Studio Code                                   29
+#docker-ce-stable/x86_64         Docker CE Stable - x86_64                            13
+#epel/x86_64                     Extra Packages for Enterprise Linux 7 - x86_64   12,382
+#extras/7/x86_64                 CentOS-7 - Extras                                   392
+#google-chrome                   google-chrome                                         3
+#mysql-tools-community/x86_64    MySQL Tools Community                                59
+#mysql57-community/x86_64        MySQL 5.7 Community Server                          247
+#updates/7/x86_64                CentOS-7 - Updates                                1,962
+#repolist: 24,950
 # -------------------------------------------------------------------------------------
 
 ### yum list - 列出 (遠端)YUM Server 上的「所有」套件資訊, 套件名稱, 版本...
 # 列出 YUM Server 的 packages
-$# yum list available 
-$# yum list
-$# yum list 'http*'
+yum list available 
+yum list
+yum list 'http*'
 # 可查有哪些東西(但是得給完全相同的名字才能查(可用regex))
 
 
 ### yum search - 可用關鍵字來查詢 (套件名稱, 套件說明) (比 yum list 好用)
-$# yum search all 'web server'
+yum search all 'web server'
 
 
 ### yum info - 查線上套件安裝資訊 (必須是完整名稱)
-$# yum info httpd
+yum info httpd
 
 
 ### yum provides - 
 # 到 YUM Server 查 安裝在哪個位置的工具叫啥 or 該工具相關的套件
-$ yum provides /var/www/html
-$ yum provides semanage
+yum provides /var/www/html
+yum provides semanage
 
 
-
-$# yum --disablerepo="*" --enablerepo="rsawaroha" list available
-
-$ yum install <套件名稱>
-
-$ yum update <套件名稱>
-
-$ yum remove <套件名稱>
-
-$ yum searcn <套件名稱>
-# 搜尋 YUM Server上的特定套件
+###
+# yum --disablerepo="*" --enablerepo="rsawaroha" list available
+# yum install <套件名稱>
+# yum update <套件名稱>
+# yum remove <套件名稱>
+# yum searcn <套件名稱>  # 搜尋 YUM Server上的特定套件
 ```
 
 
@@ -124,15 +117,6 @@ $ yum searcn <套件名稱>
 4. 編譯與安裝
   - 使用 `make`進行編譯
   - 無誤後, 使用 `sudo make install`開始安裝
-
-
-## EPEL(Extra Packages for Enterprise Linux)
-> Linux在安裝許多軟體的時候(ex: yum install ...), 會有軟體相依性的問題, 若發現相依軟體尚未被安裝, yum會自己去`本地 repository`裡頭找有記載的`遠端 repository`去下載相依套件. 而 EPEL就是專門 for CentOS的套件庫, 裡頭有許多CentOS的核心套件. <br>查看補充說明:
-[What is EPEL](https://www.tecmint.com/how-to-enable-epel-repository-for-rhel-centos-6-5/)
-```sh
-$ sudo yum install -y epel
-```
-
 
 
 ## Linux的軟體管理員 - rpm
@@ -206,6 +190,7 @@ options     | description
 
 - 2022/01/11
 - [How to install and configure a Kafka cluster with ZooKeeper](https://sleeplessbeastie.eu/2021/10/25/how-to-install-and-configure-a-kafka-cluster-with-zookeeper/)
+- [Kafka](/other/kafka.md)
 
 ```bash
 ### 建置 kafka 專用用戶
@@ -241,20 +226,20 @@ EOF
 ### 配置 - kafka - server.properties
 sudo -u kafka cat <<EOF | sudo -u kafka tee /data/kafka/config/server.properties
 ############################# Server Basics #############################
-                                                                                                                                         
+
 # The id of the broker. This must be set to a unique integer for each broker.                                 
 broker.id=$(hostname -s | sed "s/.*\([^0-9]\)//g")                                                                                                                              
-                                                                    
+
 ############################# Socket Server Settings #############################
-                                                                    
+
 # The address the socket server listens on. It will get the value returned from                                                          
-# java.net.InetAddress.getCanonicalHostName() if not configured.                                                                         
+# java.net.InetAddress.getCanonicalHostName() if not configured.     
 #   FORMAT:                                                                                                                              
 #     listeners = listener_name://host_name:port                                                                                                                                                                                                                                  
 #   EXAMPLE:                                                                                                                             
 #     listeners = PLAINTEXT://your.host.name:9092                                                                                        
 listeners=PLAINTEXT://:9092                                                                                                                                                                                                                                                      
-                                                                                                                                         
+
 # Hostname and port the broker will advertise to producers and consumers. If not set,                                           
 # it uses the value for "listeners" if configured.  Otherwise, it will use the value
 # returned from java.net.InetAddress.getCanonicalHostName().
@@ -277,7 +262,8 @@ socket.receive.buffer.bytes=102400
 
 # The maximum size of a request that the socket server will accept (protection against OOM)
 socket.request.max.bytes=104857600
-                                                                                                                                                                                                                                                                         
+
+
 
 ############################# Log Basics #############################
 
@@ -408,12 +394,6 @@ EOF
 ```
 
 
-↓ Old
-
-- [看這邊](../../other/kafka.md)
-
-
-
 # Install DotNet Core
 
 - 2019/01/03
@@ -521,32 +501,25 @@ sudo yum -y install google-chrome-stable
 
 
 ```sh
-### root
-# 安裝
+### install
 yum install -y yum-utils device-mapper-persistent-data lvm2
 yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
 yum install -y docker-ce
 systemctl start docker
 systemctl enable docker
 
-# 完成
+
+### version check
 docker version
-```
-
-
-# Install Docker-compose
-
-
-- 2023/05/11
-- [docker-compose v2](https://docs.docker.com/compose/install/linux/#install-using-the-repository)
-
-```bash
-### 好像.... 安裝完 Docker 就幫我把 `docker compose` 裝起來了....
 docker compose version
-#Docker Compose version v2.17.3
+
+
+### normal user usage
+sudo usermod -aG docker $USER
 ```
 
-----------------------------------------------------------------------
+
+# Install Docker-compose (DEPRECATED)
 
 - 2021/02/04
 - [Install Docker Compose](https://docs.docker.com/compose/install/)

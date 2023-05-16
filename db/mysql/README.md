@@ -46,12 +46,18 @@ Data integrity for accuracy and consistancy | DB Constraints
 
 建議設定 `lock_wait_timeout` 設定超時時間, 避免長時間的 metadata鎖.
 
+```sql
+--;# 用來查詢 lock_wait_timeout
+show variables like 'innodb_lock_wait_timeout';
+```
+
 
 #### 指令
 
 ```sh
-# ↓ 其實是 SELECT * FROM INFORMATION_SCHEMA.PROCESSLIST;
-> SHOW PROCESSLIST;
+> SHOW PROCESSLIST;                              # Info 欄位只取前幾個字, 有排序, 好閱讀
+# 等同於 
+> SELECT * FROM INFORMATION_SCHEMA.PROCESSLIST;  # 完整資訊
 +-------+-------------+-----------------+-------+-------------+--------+-------+------+
 | Id    | User        | Host            | db    | Command     | Time   | State | Info |
 +-------+-------------+-----------------+-------+-------------+--------+-------+------+
@@ -172,22 +178,22 @@ ERROR 1682 (HY000): Native table 'performance_schema'.'session_status' has the w
 --------------
 /usr/local/mysql/bin/mysql  Ver 14.14 Distrib 5.7.26, for linux-glibc2.12 (x86_64) using  EditLine wrapper
 
-Connection id:		5
-Current database:
-Current user:		root@localhost
-SSL:			Not in use
-Current pager:		stdout
-Using outfile:		''
-Using delimiter:	;
-Server version:		5.7.26-log MySQL Community Server (GPL)
-Protocol version:	10
-Connection:		Localhost via UNIX socket
+Connection id:		    5
+Current database:       
+Current user:		    root@localhost
+SSL:			        Not in use
+Current pager:		    stdout
+Using outfile:		    ''
+Using delimiter:	    ;
+Server version:		    5.7.26-log MySQL Community Server (GPL)
+Protocol version:	    10
+Connection:		        Localhost via UNIX socket
 Server characterset:	utf8
 Db     characterset:	utf8
 Client characterset:	utf8
 Conn.  characterset:	utf8
-UNIX socket:		/data/db/mysql/mysql.sock
-Uptime:			13 days 22 hours 56 min 59 sec
+UNIX socket:		    /data/db/mysql/mysql.sock
+Uptime:			        13 days 22 hours 56 min 59 sec
 --#; ↑ 服務時間
 
 Threads: 2  Questions: 28  Slow queries: 0  Opens: 109  Flush tables: 1  Open tables: 102  Queries per second avg: 0.000

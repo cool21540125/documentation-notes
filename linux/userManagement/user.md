@@ -69,22 +69,6 @@ $ chmod g+s,o+t test; ls -l test
 - `chgrp` : 改變檔案 Group Owner
 
 
-
-## 常用
-
-```sh
-# 建立 User && 設定密碼
-$# uu=student
-$# useradd ${uu} ; echo ${uu} | passwd --stdin <new password>
-
-# 讓此 User 成為 admin
-$# usermod -aG wheel ${uu}
-
-#
-$#
-```
-
-
 ## 備註
 
 ```sh
