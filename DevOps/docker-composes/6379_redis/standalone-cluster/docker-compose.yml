@@ -1,8 +1,28 @@
 version: "3"
 
 services:
+
+  cluster_mgr:
+    image: redis
+    container_name: cluster_mgr
+    hostname: cluster_mgr
+    networks:
+      net_rediscluster:
+        ipv4_address: "${CLUSTER_MGR_IP}"
+    volumes:
+      - "vol_cluster_mgr:/data/"
+    depends_on:
+      - redis01
+      - redis02
+      - redis03
+      - redis04
+      - redis05
+      - redis06
+    command: redis-cli -a $REDISCLI_AUTH --cluster create redis01:6001 redis02:6002 redis03:6003 redis04:6004 redis05:6005 redis06:6006 --cluster-replicas 1 --cluster-yes
+    # command: redis-cli -a $REDISCLI_AUTH --cluster create redis01:6001 redis02:6002 redis03:6003 redis04:6004 redis05:6005 redis06:6006 --cluster-replicas 0 --cluster-yes
+
   redis01:
-    image: redis:6
+    image: redis
     container_name: redis01
     hostname: redis01
     restart: always
@@ -16,10 +36,11 @@ services:
       REDISCLI_AUTH: ${REDISCLI_AUTH}
     networks:
       net_rediscluster:
-        ipv4_address: 172.72.72.61
-    command: ["redis-server", "/etc/redis/redis.conf"]
+        ipv4_address: "${REDIS01}"
+    command: redis-server /etc/redis/redis.conf
+  
   redis02:
-    image: redis:6
+    image: redis
     container_name: redis02
     hostname: redis02
     restart: always
@@ -33,10 +54,11 @@ services:
       REDISCLI_AUTH: ${REDISCLI_AUTH}
     networks:
       net_rediscluster:
-        ipv4_address: 
-    command: ["redis-server", "/etc/redis/redis.conf"]
+        ipv4_address: "${REDIS02}"
+    command: redis-server /etc/redis/redis.conf
+  
   redis03:
-    image: redis:6
+    image: redis
     container_name: redis03
     hostname: redis03
     restart: always
@@ -50,10 +72,11 @@ services:
       REDISCLI_AUTH: ${REDISCLI_AUTH}
     networks:
       net_rediscluster:
-        ipv4_address: 172.72.72.63
-    command: ["redis-server", "/etc/redis/redis.conf"]
+        ipv4_address: "${REDIS03}"
+    command: redis-server /etc/redis/redis.conf
+
   redis04:
-    image: redis:6
+    image: redis
     container_name: redis04
     hostname: redis04
     restart: always
@@ -67,10 +90,11 @@ services:
       REDISCLI_AUTH: ${REDISCLI_AUTH}
     networks:
       net_rediscluster:
-        ipv4_address: 172.72.72.64
-    command: ["redis-server", "/etc/redis/redis.conf"]
+        ipv4_address: "${REDIS04}"
+    command: redis-server /etc/redis/redis.conf
+
   redis05:
-    image: redis:6
+    image: redis
     container_name: redis05
     hostname: redis05
     restart: always
@@ -84,10 +108,11 @@ services:
       REDISCLI_AUTH: ${REDISCLI_AUTH}
     networks:
       net_rediscluster:
-        ipv4_address: 172.72.72.65
-    command: ["redis-server", "/etc/redis/redis.conf"]
+        ipv4_address: "${REDIS05}"
+    command: redis-server /etc/redis/redis.conf
+
   redis06:
-    image: redis:6
+    image: redis
     container_name: redis06
     hostname: redis06
     restart: always
@@ -101,8 +126,8 @@ services:
       REDISCLI_AUTH: ${REDISCLI_AUTH}
     networks:
       net_rediscluster:
-        ipv4_address: 172.72.72.66
-    command: ["redis-server", "/etc/redis/redis.conf"]
+        ipv4_address: "${REDIS06}"
+    command: redis-server /etc/redis/redis.conf
 
 networks:
   net_rediscluster:
@@ -121,3 +146,5 @@ volumes:
     name: vol_redis05
   vol_redis06:
     name: vol_redis06
+  vol_cluster_mgr:
+    name: vol_cluster_mgr

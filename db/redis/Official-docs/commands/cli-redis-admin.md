@@ -251,11 +251,6 @@ cluster_current_epoch:6  ## The local Current Epoch variable. This is used in or
 cluster_my_epoch:2  ## The Config Epoch of the node we are talking with. This is the current configuration version assigned to this node.
 cluster_stats_messages_sent:1483972
 cluster_stats_messages_received:1483968
-
-# 或 底下 CLI 可看簡要資訊
-$# redis-cli -c info cluster
-# Cluster
-cluster_enabled:1
 ```
 
 

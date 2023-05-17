@@ -61,5 +61,12 @@ AUTH 883K6Ec@N=pkbD9k
 cluster nodes
 
 cluster info
+
+
+### create cluster
+redis-cli --cluster create redis01:6001 redis02:6002 redis03:6003 redis04:6004 redis05:6005 redis06:6006 --cluster-replicas 1
+
+### 建立 cluster 以後的檢查
+redis-cli -h redis01 -p 6001 cluster nodes
 ```
 
