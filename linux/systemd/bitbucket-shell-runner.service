@@ -1,0 +1,15 @@
+[Unit]
+Description=ShellRunner
+After=network.target
+
+[Service]
+RestartSec=2s
+Type=simple
+User=runner
+Group=runner
+Restart=always
+WorkingDirectory=/runner/shell/bin
+ExecStart=/runner/shell/bin/start.sh --accountUuid {xxxx} --repositoryUuid {xxx} --runnerUuid {xxx} --OAuthClientId xxx --OAuthClientSecret xxx --runtime linux-shell --workingDirectory /runner/shell/temp
+
+[Install]
+WantedBy=multi-user.target

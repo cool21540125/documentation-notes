@@ -656,4 +656,16 @@ nvm use 16
 ```
 
 
+# Install jsonnet
+
+- 2023/05/17
+
+```zsh
+brew install jsonnet
+
+jsonnet --version
+#Jsonnet commandline interpreter v0.20.0
+```
+
+
 # 

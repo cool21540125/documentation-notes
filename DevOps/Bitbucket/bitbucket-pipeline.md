@@ -66,6 +66,7 @@ pipelines:
   branches:
     main:
       - step:
+          image: alpine
           script:
             - echo "This script runs only on commit to the main branch."
     hotfix/*:
