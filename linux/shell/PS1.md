@@ -8,17 +8,17 @@
 CYAN="\[\e[01;36m\]"
 WHITE="\[\e[01;37m\]"
 BLUE="\[\e[01;34m\]"
+ORANGE="\[\e[01;33m\]"
 RED="\[\e[01;31m\]"
 TEXT_RESET="\[\e[00m\]"
 TIME="\t"
+CURRENT_HOST="\u@\h"
 CURRENT_PATH="\W"
 ROOT_OR_NOT="\$"
 
-### 「[time pwd]$ 」
-export PS1="${CYAN}[${RED}${TIME}${WHITE} ${CURRENT_PATH}${CYAN}]${ROOT_OR_NOT}${TEXT_RESET} "
-
-### 「[pwd]$ 」
 export PS1="${CYAN}[${BLUE}\W${CYAN}]\$${TEXT_RESET} "
+export PS1="${CYAN}[${RED}${TIME}${WHITE} ${CURRENT_PATH}${CYAN}]${ROOT_OR_NOT}${TEXT_RESET} "
+export PS1="${CYAN}[${BLUE}${TIME}${WHITE} ${CURRENT_HOST} ${ORANGE}${CURRENT_PATH}${CYAN}]${ROOT_OR_NOT}${TEXT_RESET} "
 ```
 
 
@@ -39,8 +39,8 @@ export PS1=$'[\033[32;1m%1d\033[m %D{%L:%M:%S}\]$ '
 ### ======================== 懶人指令 ========================
 alias d='docker'
 alias dis='docker images'
-alias dps='docker ps --format "table {{.ID}}\t{{.Image}}\t{{.Status}}\t{{.Ports}}\t{{.Names}}"'
-alias dpsa='docker ps -a --format "table {{.ID}}\t{{.Image}}\t{{.Status}}\t{{.Ports}}\t{{.Names}}"'
+alias dps='docker ps --format "table {{.Image}}\t{{.Names}}\t{{.Status}}\t{{.Ports}}"'
+alias dpsa='docker ps -a --format "table {{.Image}}\t{{.Names}}\t{{.Status}}\t{{.Ports}}"'
 alias dn='docker network'
 alias dv='docker volume'
 alias dex='docker exec -it'
