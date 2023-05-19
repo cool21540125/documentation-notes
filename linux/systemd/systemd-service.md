@@ -7,11 +7,11 @@
 
 
 ```bash
-vim /usr/lib/systemd/system/bitbucket-shell-runner.service
+vim /usr/lib/systemd/system/runner.service
 
-systemctl daemon-reload && systemctl stop bitbucket-shell-runner && systemctl start bitbucket-shell-runner
+systemctl daemon-reload && systemctl stop runner && systemctl start runner
 
 ### status && logs
-systemctl status bitbucket-shell-runner
-journalctl -u bitbucket-shell-runner -f
+systemctl status runner
+journalctl -u runner -f
 ```
