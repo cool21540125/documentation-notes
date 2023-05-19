@@ -2401,6 +2401,16 @@ go install github.com/go-task/task/v3/cmd/task@latest
 ```
 
 
+# Install pstree
+
+- 2023/05/19
+
+```bash
+### pstree command not found
+yum install psmisc
+```
+
+
 # Install protobuf
 
 - 2023/04/13

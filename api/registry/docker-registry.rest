@@ -1,30 +1,39 @@
 # HTTP API V2 - Docker Registry HTTP API v2
 #    https://docs.docker.com/registry/spec/api/
+#    https://docs.docker.com/registry/spec/api/#detail
+#    https://docs.docker.com/registry/spec/auth/token/
 
-@registryUrl=https://index.docker.io
+@url={{$dotenv registry_domain}}
 @token={{$dotenv token}}
+@image=
+@tag=
 
 # ---------------------------------------
 
 
-### 拿到 401
-GET {{registryUrl}}/v2/_catalog
-
-
-
-### https://docs.docker.com/registry/spec/auth/token/ 範例 - 拿到 token
-GET https://auth.docker.io/token?service=registry.docker.io&scope=repository:samalba/my-app:pull,push
-
-
-
-### 列出 Images
-GET {{registryUrl}}/v2/_catalog
+### list images
+GET {{url}}/v2/_catalog
 Authorization: Basic {{token}}
 
 
 
+### Example get token (其實這在幹嘛我還不清楚, 僅記錄用...)
+GET https://auth.docker.io/token?service=registry.docker.io&scope=repository:samalba/my-app:pull,push
+
+
+
 ### 可查 image 的 tags
-GET {{registryUrl}}/v2/<name>/tags/list?n=<int>
+GET {{url}}/v2/<name>/tags/list?n=<int>
+
+
+
+### show image details
+GET {{url}}/v2/{{image}}/manifests/{{tag}}
+
+
+
+### list tags for image
+GET {{url}}/v2/{{image}}/tags/list
 
 
 

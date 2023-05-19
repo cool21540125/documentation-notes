@@ -1,8 +1,8 @@
-version: '3.9'
+version: "3"
 
 services:
   registry:
-    image: registry:2.7.1
+    image: registry:2.8
     container_name: registry
     hostname: registry
     restart: always
@@ -10,15 +10,14 @@ services:
       - "5000:5000"
     volumes:
       - "/etc/localtime:/etc/localtime:ro"
-      - "./data_registry:/var/lib/registry"
+      - "vol_registry:/var/lib/registry"
     networks:
       - net_registry
-    logging:
-      driver: "json-file"
-      options:
-        max-size: "20m"
-        max-file: "3"
 
 networks:
   net_registry:
     name: net_registry
+
+volumes:
+  vol_registry:
+    external: vol_registry

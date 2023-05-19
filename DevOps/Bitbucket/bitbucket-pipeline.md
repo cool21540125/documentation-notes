@@ -1,9 +1,8 @@
 # bitbucket-pipeline.yml 結構
-* 2023/05/16
+
+- 2023/05/16
 
 ```yaml
-
-
 ### https://support.atlassian.com/bitbucket-cloud/docs/docker-image-options/
 # default
 image: atlassian/default-image:latest
