@@ -1,0 +1,26 @@
+version: "3"
+
+services:
+  runner:
+    image: docker-public.packages.atlassian.com/sox/atlassian/bitbucket-pipelines-runner:1
+    container_name: runner
+    hostname: runner
+    restart: always
+    environment:
+      - "ACCOUNT_UUID=$ACCOUNT_UUID"
+      - "REPOSITORY_UUID=$REPOSITORY_UUID"
+      - "RUNNER_UUID=$RUNNER_UUID"
+      - "OAUTH_CLIENT_ID=$OAUTH_CLIENT_ID"
+      - "OAUTH_CLIENT_SECRET=$OAUTH_CLIENT_SECRET"
+      - "RUNTIME_PREREQUISITES_ENABLED=true"
+      - "WORKING_DIRECTORY=/tmp"
+    volumes:
+      - "/tmp:/tmp"
+      - "/var/run/docker.sock:/var/run/docker.sock"
+      - "/var/lib/docker/containers:/var/lib/docker/containers:ro"
+    networks:
+      - net_docker_runner
+
+networks:
+  net_docker_runner:
+    external: true
