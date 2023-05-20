@@ -36,26 +36,6 @@ export PS1=$'[\033[32;1m%1d\033[m\]$ '
 export PS1=$'[\033[32;1m%1d\033[m %D{%L:%M:%S}\]$ '
 
 
-### ======================== 懶人指令 ========================
-alias d='docker'
-alias dis='docker images'
-alias dps='docker ps --format "table {{.Image}}\t{{.Names}}\t{{.Status}}\t{{.Ports}}"'
-alias dpsa='docker ps -a --format "table {{.Image}}\t{{.Names}}\t{{.Status}}\t{{.Ports}}"'
-alias dn='docker network'
-alias dv='docker volume'
-alias dex='docker exec -it'
-alias di='docker inspect'
-alias dc='docker-compose'
-alias dl='docker logs -f'
-alias dip4='docker inspect --format="{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}"'
-alias dienv='docker inspect --format="{{json .Config.Env}}"'
-alias k='kubectl'
-alias ls='ls -G'
-alias la='ls -aG'
-alias ll='ls -lG'
-alias lla='ls -alG'
-
-
 ### ======================== PATH ========================
 
 ```

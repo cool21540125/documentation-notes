@@ -1,22 +1,17 @@
-version: '3.7'
+version: "3"
 
 services:
   flask:
     image: simple-flask-app
     container_name: flask
-    expose:
-      - "5000"
     networks:
-      - net_traefik
-      - net_flask
+      - net_app
     labels:
       - traefik.enable=true
-      - traefik.http.routers.flask.rule=Host(`flask.tonychoucc.com`)
+      - traefik.http.routers.flask.rule=Host(`$APP_DOMAIN`)
       - traefik.http.routers.flask.entrypoints=web
       - traefik.http.services.flask.loadbalancer.server.port=5000
 
 networks:
-  net_traefik:
-    external: true
-  net_flask:
+  net_app:
     external: true

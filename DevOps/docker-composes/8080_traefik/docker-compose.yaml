@@ -1,34 +1,36 @@
 version: '3'
 
 services:
-  reverse-proxy:
+  traefik:
     container_name: traefik
+    hostname: traefik
     image: traefik:v2.10
     restart: always
     ports:
       - "80:80"
+      # - "443:443"
       - "8080:8080"
     volumes:
       - "/var/run/docker.sock:/var/run/docker.sock"
+      - "./conf/traefik.yml:/etc/traefik/traefik.yml"
+      # - "./conf/dynamic_conf.yml:/etc/traefik/dynamic_conf.yml"
+      # - "./log:/log"
     networks:
-      - net_traefik
-    command:
-      - --api.debug=true
-      - --api.dashboard=true
-      - --api.insecure=true
-      - --ping=true
-      - --serversTransport.insecureSkipVerify=true
-      - --log.level=DEBUG
-      # - --log.filePath=/tmp/traefik.log
-      # - --accesslog=true
-      # - --accesslog.filepath=/tmp/access_traefik.log
-      # - --accesslogbufferingsize=100
-      - --providers.docker
-      # - --providers.docker.endpoint=unix:///var/run/docker.sock
-      - --providers.docker.exposedbydefault=false
-      - --entrypoints.web.address=:80
-      - --entrypoints.websecure.address=:443
+      net_devops:
+        ipv4_address: 10.80.90.249
+      net_app:
+        ipv4_address: 10.80.80.249
+
+    labels:
+      - traefik.http.routers.traefik.rule=Host(`$TRAEFIK_DOMAIN`)
+      - traefik.http.routers.traefik.service=dashboard@internal
+      # - traefik.http.routers.api.rule=Host(`$TRAEFIK_DOMAIN`)
+      # - traefik.http.routers.api.service=api@internal
+      # - traefik.docker.network=net_devops
+      # - traefik.docker.network=net_app
 
 networks:
-  net_traefik:
+  net_devops:
+    external: true
+  net_app:
     external: true

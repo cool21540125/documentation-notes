@@ -1,0 +1,66 @@
+# https://doc.traefik.io/traefik/reference/static-configuration/file/
+# https://github.com/traefik/traefik
+# 
+# --------------------------------------------------------
+# 
+################################################################
+global:
+  checkNewVersion: true
+  sendAnonymousUsage: false
+
+
+################################################################
+entryPoints:
+  web:
+    address: ":80"
+  websecure:
+    address: ":443"
+  # ssh:
+  #   address: ":2222"
+  # streaming:
+  #   address: ":12345/udp"
+
+
+################################################################
+log:
+  ## (Optional) Default: "ERROR"
+  level: INFO
+
+  ## (Optional) Default: os.Stdout
+  # filePath: /log/traefik.log
+
+  ## (Optional) Default: "common"
+  # format: json
+
+################################################################
+accessLog:
+  ## (Optional) Default: os.Stdout
+  # filePath:  /log/access-traefik.log
+
+  ## (Optional) Default: "common"
+  # format: json
+
+
+################################################################
+api:
+  ## (Optional) Default: false
+  insecure: true
+  # Enabled Dashboard, default: 8080
+
+  # debug: true
+
+
+################################################################
+# ping:
+#   entryPoint: traefik
+
+
+################################################################
+providers:
+  docker: 
+    exposedByDefault: true    # if traefik expose container
+  
+  
+  ##
+  # file:
+  #   filename: /etc/traefik/dynamic_conf.yml
