@@ -15,6 +15,11 @@ docker system df
 #Build Cache     0         0         0B        0B
 
 
-### 
+### 查看所有 docker image 的 Size 總和 (MBs)
+expr $(docker image inspect $(docker image ls -aq) --format {{.Size}} | awk '{totalSizeInBytes += $0} END {print totalSizeInBytes}') / 1024 / 1024
+#4116  # images 佔了 4GB 左右
 
+
+### 列出 <none> 的 images
+docker images -f 'dangling=true' -q
 ```

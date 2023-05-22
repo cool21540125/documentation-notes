@@ -668,4 +668,14 @@ jsonnet --version
 ```
 
 
+# Install rar
+
+直接到 App Store 抓 Unarchiver
+
+```zsh
+### 別用這個~~
+#brew install rar 
+```
+
+
 # 
