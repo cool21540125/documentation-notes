@@ -1,0 +1,7 @@
+
+http:
+  routers:
+    whoami:
+      rule: "Path(`/foo`)"
+      service: whoami
+  
