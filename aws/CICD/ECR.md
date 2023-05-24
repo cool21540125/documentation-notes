@@ -1,7 +1,6 @@
 
 # ECR, Elastic Container Registry
 
-- [saa-ECR](../cert-SAA_C02.md#ecr-elastic-container-registry)
 - Amazon ECR 也有 Public Repository - [Amazon ECR Public Gallery](https://gallery.ecr.aws)
 - ECR 皆由 IAM 做存取訪問管控
 - ECR 背後是 S3
@@ -9,9 +8,8 @@
 
 # CLI
 
-- `aws ecr get-login`
-    - 此為 aws cli v1, 使用 v2 的話改用 `aws ecr get-login-password`
-- `aws ecr get-login-password`
+- Login, v1 : `aws ecr get-login`
+- Login, v2 : `aws ecr get-login-password`
 
 
 ```bash
@@ -21,8 +19,7 @@ ACCOUNT_ID=
 aws ecr get-login-password \
     --region ${REGION} | docker login \
     --username AWS \
-    --password-stdin \
-    ${ACCOUNT_ID}.dkr.ecr.${REGION}.amazonaws.com
+    --password-stdin ${ACCOUNT_ID}.dkr.ecr.${REGION}.amazonaws.com
 #Login Succeeded
 
 #Logging in with your password grants your terminal complete access to your account. 
