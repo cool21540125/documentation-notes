@@ -103,15 +103,22 @@ $# vmstat
 procs -----------memory---------- ---swap-- -----io---- -system-- ------cpu-----
  r  b   swpd   free   buff  cache   si   so    bi    bo   in   cs us sy id wa st
  0  0      0 3023704   5236 3368340    0    0     1     9   37   39  0  0 100  0  0
-# us: non-kernel code 耗費的時間(包含 user time, nice time)
-# sy: kernel code 耗費的時間(也就是 system time)
-# id: Time spent idle
-# wa: 等候 I/O 的時間
-# st: Time stolen from a virtual machine.
+# 
+# --- system ---
+#     in : interrupts 次數(含 clock) / sec
+#     cs : context switches 次數 / sec
+# --- cpu --- (加總起來為 100%)
+#     us : non-kernel code 耗費的時間(包含 user time, nice time)
+#     sy : kernel code 耗費的時間(也就是 system time)
+#     id : Time spent idle
+#     wa : 等候 I/O 的時間    (Kernel < 2.5.41, 沒有 wa 這東西, 納入在 id 裡面)
+#     st : Time stolen from a virtual machine.
 
 
-### 每隔 2 秒執行一次 vmstat, 並重複 3 次
-$# vmstat 2 3
+### 每隔 2 秒執行一次 vmstat, 並重複 600 次 (每隔 2 秒的區間, 追蹤 20 分鐘)
+$# vmstat -t -S M 2 600
+# -t   : 列出 time
+# -S M : MiB 為單位
 ```
 
 

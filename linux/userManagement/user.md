@@ -353,17 +353,6 @@ CentOS7 開始, 任何具備 `wheel` 群組的使用者, 都可以使用 `sudo` 
 
 CentOS6 以前, 無法這麼做, 權限設定在 `/etc/sudoers`
 
-```sh
-### 不要這麼做!!
-vim /etc/sudoers
-# 改壞了的話, sudo 指令會出問題
-tony ALL=(ALL) NOPASSWD: ALL
-
-### 改用這樣做!!
-visudo
-# 會存檔離開時, 會做語法檢查
-```
-
 
 
 # 其他

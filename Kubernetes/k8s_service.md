@@ -28,8 +28,11 @@ Kubernetes 有底下 4 種常見的 Service Types:
 
 - 可將 Cluster Port 映射到 宿主機的 port (宿主機防火牆開了以後, 可對外提供服務)
 - 會對所有的 Nodes 都對外提供服務
-- Port 可用範圍為 30000-32767
-- Exposes the service on each Node’s IP at a static port (the NodePort). A ClusterIP service, to which the NodePort service will route, is automatically created. You’ll be able to contact the NodePort service, from outside the cluster, by requesting <NodeIP>:<NodePort>.
+- 沒給 port, 預設等同於 targetPort
+- 沒給 nodePort, 會使用 NodePort 的隨機一個可用範圍 30000-32767
+- 而下圖的 `type: NodePort`, 如果用雲服務, 可改成 `type: LoadBalancer`
+
+![k8s_service_port](./img/k8s_service_port.jpg)
 
 
 ## type: LoadBalancer

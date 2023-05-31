@@ -125,7 +125,6 @@ VOLUME /myvol
 - `ADD [--chown=<user>:<group>] <src>... <dest>`
 - `ADD [--chown=<user>:<group>] ["<src>", ..., "<dest>"]`
     - path 如果包含 " ", 則需要使用這種方式
-
 - src 可使用 pattern, pattern 須符合 Golang rule
     - 因此, 像是遇到 "[" 這類的名稱, 需要 escape
 - dest 的相對路徑是相對於 `WORKDIR`

@@ -36,6 +36,7 @@ $# sudo cat /etc/sudoers | grep wheel
 
 %wheel	ALL=(ALL)	ALL
 # %wheel	ALL=(ALL)	NOPASSWD: ALL
+tony ALL=(ALL) NOPASSWD: ALL
 
 # %wheel	     ALL              =  (ALL)	                ALL
 # %wheel           Hostname          = (UserAccount)          Command
