@@ -159,23 +159,17 @@ echo ${DEMO/b=2,}  # ${xxx/yyy} 裡頭的 /yyy  會把這部分捨去掉
 
 # ------------------------------------------
 NAME=tony
-AGE=30;unset AGE
-echo ${NAME}
-#tony
+AGE=
 
-### 如果存在則印出 ; 若不存在則印出 後者
+echo ${NAME:-nobody}  # NAME 存在, 印出 tony
+echo ${NAME:+nobody}  # NAME 存在, 印出 nobody
+echo ${AGE:-30}       # AGE 不存在, 印出 30
+echo ${AGE:+30}       # AGE 不存在, 印出    (不存在的東西)
+
 echo ${NAME-nobody}
-#tony
-
-echo ${NAME:-nobody}
-#tony
-
-### 會把 不存在 or "" 當成一樣
-echo ${AGE-DoesntKnow}
-#DoesntKnow
-
-echo ${AGE:-DoesntKnow}
-#DoesntKnow
+echo ${NAME+nobody}
+echo ${AGE-30}
+echo ${AGE+30}
 ```
 
 

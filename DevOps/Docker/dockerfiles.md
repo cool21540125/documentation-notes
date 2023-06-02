@@ -280,6 +280,7 @@ healthcheck:
 #### [ARG](https://docs.docker.com/engine/reference/builder/#arg)
 
 - 基本用法: `ARG <name>[=<default value>]`
+- build-time 階段, `docker build --build-arg KK=VV` 
 - Docker Image 建置階段可用來設置變數的方式, 若用 CLI, 可用 `--build-arg NAME=VALUE` 來代替
 - WARNING: 不要把私密變數在 build time 的時候設置(任何人都可看到 via `docker history`)
 - `ARG` 參數的生效, 從 Dockerfile 裡面宣告後的下一行便存在, 而非在使用 CLI 的時候才存在
