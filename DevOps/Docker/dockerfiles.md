@@ -4,8 +4,8 @@ Dockerfile 那些該死的小細節
 Dockerfile 內部的像是 `RUN`, `CMD`, `ENV`, `FROM`, ..., 都稱之為 instruction
 
 
-
-#### [RUN](https://docs.docker.com/engine/reference/builder/#run)
+----------------------------------------------------------
+# [RUN](https://docs.docker.com/engine/reference/builder/#run)
 
 RUN 用在 Image 的 Build time (用來 Commit Intermediate Layer), 於 Container runtime 並不會執行
 
@@ -21,11 +21,10 @@ RUN 有兩種格式:
 - *shell form*: `RUN <command>`
     - 此命令會在一個 shell 中執行
         - 預設的 shell 為 `/bin/sh -c`(Linux) 或 `cmd /S /C`(Win)
-        - 存取環境變數, 是由 docker 所處理
+        - 存取環境變數, 由 docker 處理
 
-------
 
-關於 `RUN xxx --no-cache`
+## 關於 `RUN --no-cache` 及 `RUN --mount type=cache`
 
 依照 Docker Image, 每一個指令都會創建一個 Intermediate Layer(或稱之為 cache)
 
@@ -35,8 +34,13 @@ RUN 有兩種格式:
 
 此外, 可透過 `ADD` 及 `COPY`, 來讓 `RUN` 產生出來的 cache 無效
 
+```dockerfile
+RUN --mount=type=cache,target=/var/cache/apt \
+    apt-get update && apt-get install -y git
+```
 
-#### [CMD](https://docs.docker.com/engine/reference/builder/#cmd)
+----------------------------------------------------------
+# [CMD](https://docs.docker.com/engine/reference/builder/#cmd)
 
 CMD 用於 Container runtime 的預設動作, 於 Image Build time 並不會執行
 
@@ -61,7 +65,9 @@ CMD 用於 Container runtime 的預設動作, 於 Image Build time 並不會執�
     - 預設以 `/bin/sh -c` 執行. docker 直接處理 shell, 因此可 直接取得環境變數 當作參數傳入
     - 此形式將無法搭配 `ENTRYPOINT`
 
-#### [ENTRYPOINT](https://docs.docker.com/engine/reference/builder/#entrypoint)
+
+----------------------------------------------------------
+# [ENTRYPOINT](https://docs.docker.com/engine/reference/builder/#entrypoint)
 
 - [Dockerfile中的ENTRYPOINT](https://medium.com/@xyz030206/dockerfile-%E4%B8%AD%E7%9A%84-entrypoint-9653c3b2d2f8)
 - [Running Custom Scripts In Docker With Arguments – ENTRYPOINT Vs CMD](https://devopscube.com/run-scripts-docker-arguments/)
@@ -103,7 +109,8 @@ docker run --rm demo -v https://tw.yahoo.com/
 ```
 
 
-#### [VOLUME](https://docs.docker.com/engine/reference/builder/#volume)
+----------------------------------------------------------
+# [VOLUME](https://docs.docker.com/engine/reference/builder/#volume)
 
 用來提供 Container 運行起來以後, Container 內部的掛載點
 
@@ -119,7 +126,8 @@ VOLUME /myvol
 ```
 
 
-#### [ADD](https://docs.docker.com/engine/reference/builder/#add)
+----------------------------------------------------------
+# [ADD](https://docs.docker.com/engine/reference/builder/#add)
 
 有兩種格式:
 - `ADD [--chown=<user>:<group>] <src>... <dest>`
@@ -144,7 +152,8 @@ CMD ["/bin/bash"]
 ```
 
 
-#### [COPY](https://docs.docker.com/engine/reference/builder/#copy)
+----------------------------------------------------------
+# [COPY](https://docs.docker.com/engine/reference/builder/#copy)
 
 - 基本上許多地方與 `ADD` 差不多, 但無法使用 URL 作為 src
 - src 只能是相對於 context 底下的路徑
@@ -157,7 +166,8 @@ CMD ["/bin/bash"]
 - 關於 COPY, 也有 cache 的問題, 遇到再說
 
 
-#### [FROM](https://docs.docker.com/engine/reference/builder/#from)
+----------------------------------------------------------
+# [FROM](https://docs.docker.com/engine/reference/builder/#from)
 
 - ARG 這個階段, 是唯一能夠放在 FROM 以前
 - 一個 Dockerfile 裡面可以有多個 FROM 階段
@@ -189,7 +199,9 @@ RUN echo $VERSION > image_version
 # ^ 就可以使用了
 ```
 
-#### [ENV](https://docs.docker.com/engine/reference/builder/#env)
+
+----------------------------------------------------------
+# [ENV](https://docs.docker.com/engine/reference/builder/#env)
 
 - 定義 `ENV` 以後, 此變數存活於 **Image Building Time** &&  **Container Runtime**
 - 相對的, 定義 `ARG` 以後, 此變數只存活於 **Image Building Time**
@@ -213,7 +225,8 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get update && apt-get install -y ...
 ```
 
 
-#### [STOPSIGNAL](https://docs.docker.com/engine/reference/builder/#stopsignal)
+----------------------------------------------------------
+# [STOPSIGNAL](https://docs.docker.com/engine/reference/builder/#stopsignal)
 
 ```dockerfile
 STOPSIGNAL signal
@@ -226,7 +239,8 @@ STOPSIGNAL signal
 - 9: SIGKILL
 
 
-#### [Healthcheck](https://docs.docker.com/engine/reference/builder/#healthcheck)
+----------------------------------------------------------
+# [Healthcheck](https://docs.docker.com/engine/reference/builder/#healthcheck)
 
 用來檢測 Container 是否還 working. 啟用後, 會多了個 status 為 `starting`. 後續看狀況會變成 `healthy` or `unhealthy`
 
@@ -277,7 +291,8 @@ healthcheck:
     - `CMD-SHELL` 使用的是 `/bin/sh`
 
 
-#### [ARG](https://docs.docker.com/engine/reference/builder/#arg)
+----------------------------------------------------------
+# [ARG](https://docs.docker.com/engine/reference/builder/#arg)
 
 - 基本用法: `ARG <name>[=<default value>]`
 - build-time 階段, `docker build --build-arg KK=VV` 
@@ -303,12 +318,14 @@ docker run --rm demo_arg whoami
     - ![Env_overwrite_ARG](../img/env_overwrite_arg.png)
 
 
-#### [Shell](https://docs.docker.com/engine/reference/builder/#shell)
+----------------------------------------------------------
+# [Shell](https://docs.docker.com/engine/reference/builder/#shell)
 
 似乎是用來給 win 用的, 遇到再說
 
 
-#### [Environment replacement](https://docs.docker.com/engine/reference/builder/#environment-replacement)
+----------------------------------------------------------
+# [Environment replacement](https://docs.docker.com/engine/reference/builder/#environment-replacement)
 
 ENV 與 ARG 複合變化:
 
@@ -339,19 +356,21 @@ ENV ghi=$abc
 ------
 
 
-#### [EXPOSE](https://docs.docker.com/engine/reference/builder/#expose)
+----------------------------------------------------------
+# [EXPOSE](https://docs.docker.com/engine/reference/builder/#expose)
 
 這東西, 可視為 建構 Image 與 運行 Container 兩者之間的文件
 
 可透過 `docker run -p` 來複寫 dockerfile 內部定義的 `EXPOSE`
 
 
-#### [LABEL](https://docs.docker.com/engine/reference/builder/#label)
+----------------------------------------------------------
+# [LABEL](https://docs.docker.com/engine/reference/builder/#label)
 
 我覺得這很無聊... 遇到要用再來看了
 
 
-#### [MAINTAINER](https://docs.docker.com/engine/reference/builder/#maintainer-deprecated)
+----------------------------------------------------------
+# [MAINTAINER](https://docs.docker.com/engine/reference/builder/#maintainer-deprecated)
 
 這個更無聊, 已經被 deprecated. 使用 `LABEL` 來代替
-
