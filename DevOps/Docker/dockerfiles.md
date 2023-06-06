@@ -1,8 +1,6 @@
-Dockerfile 那些該死的小細節
 
-
-Dockerfile 內部的像是 `RUN`, `CMD`, `ENV`, `FROM`, ..., 都稱之為 instruction
-
+- Dockerfile 內部的像是 `RUN`, `CMD`, `ENV`, `FROM`, ..., 都稱之為 instruction
+- Dockerfile Shebang Line: `# syntax=docker/dockerfile:1`
 
 ----------------------------------------------------------
 # [RUN](https://docs.docker.com/engine/reference/builder/#run)
