@@ -5,7 +5,7 @@ k8s 的 Pods 都有它自己的 IP (ephemeral), Pod 隨時死給你看, IP 隨�
     - User 不用鳥 Pods 死活, Service 會幫忙通訊就對了
     - ReplicaSet 會協助幫掛掉的 Pods 抓交替
 - Service 的域名表示方法為: `<servicename>.<namespace>.svc.<clusterdomain>`
-    - clusterdomain: 為 k8s cluster 設置的 域名尾碼
+    - clusterdomain: 為 k8s cluster 設置的 域名尾碼, 預設為 `cluster.local`
 
 
 # k8s service

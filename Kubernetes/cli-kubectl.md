@@ -204,6 +204,150 @@ kubectl top pods -n kube-system
 ```
 
 
+## ConfigMap 及 Secret
+
+- IMPORTANT: Secrets 並非 Encrypted, 僅 encoded
+  - k8s 的 Secret 真的是誤導!! 一點都不 Secret
+  - 不要將 Secrets 推到 Git Repo
+
+```bash
+### impariative - CLI 方式建立 Key-Value ConfigMap - 傻傻的直接一個個宣告
+#kubectl create secret ${SecretName} \
+kubectl create configmap ${ConfigMapName} \
+  --from-literal=Key1=Value2 \
+  --from-literal=Key2=Value2
+
+
+### impariative - CLI 方式建立 Key-Value ConfigMap - Use File
+#kubectl create secret ${SecretName} \
+kubectl create configmap ${ConfigMapName} \
+  --from-file=${ConfigFileName}
+```
+
+
+### Use ConfigMap Example
+
+```yaml
+### ConfigMap Example
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: nginx-config
+data:
+  APP_COLOR: blue
+  APP_MODE: prd
+```
+
+```yaml
+### Use ConfigMap
+# ...
+spec:
+  containers:
+  - env:
+    - name: ENV_NAME_FOR_POD_USAGE
+      valueFrom:
+        configMapKeyRef:
+          name: nginx-config
+          key: special.how
+    - name: LOG_LEVEL
+      valueFrom:
+        configMapKeyRef:
+          name: env-config
+          key: log_level
+```
+
+```yaml
+### 各種 ConfigMaps 使用方式
+---
+spec:
+  containers:
+  - image: xxx
+    envFrom:
+    - configMapRef:
+        name: app-config
+    # ...
+---
+spec:
+  containers:
+  - image: xxx
+    env:
+    - name: APP_COLOR
+      valueFrom:
+        configMapKeyRef:
+          name: app-config
+          key: APP_COLOR
+    # ...
+---
+spec:
+  containers:
+  - image: xxx
+    volumes:
+    - name: app-config-volume
+      configMap:
+        name: app-config
+```
+
+
+### Use Secret Example
+
+```bash
+### 產出 base64 以後的 Secret
+echo -n 'localhost' | base64  # bG9jYWxob3N0
+echo -n 'root' | base64       # cm9vdA==
+echo -n 'password1' | base64  # cGFzc3dvcmQx
+
+echo -n 'bG9jYWxob3N0' | base64 --decode  # localhost
+echo -n 'cm9vdA==' | base64 --decode      # root
+echo -n 'cGFzc3dvcmQx' | base64 --decode  # password1
+```
+
+```yaml
+### Secret Example
+apiVersion: v1
+kind: Secret
+metadata:
+  name: app-secret
+data:
+  DB_HOST: bG9jYWxob3N0
+  DB_USER: cm9vdA==
+  DB_PASSWORD: cGFzc3dvcmQx
+  # 會被 Encoded
+```
+
+```yaml
+### 各種 Secrets 使用方式
+---
+spec:
+  containers:
+  - image: xxx
+    envFrom:
+    - secretRef:
+        name: app-config
+  # ...
+---
+spec:
+  containers:
+  - image: xxx
+    env:
+    - name: DB_PASSWORD
+      valueFrom:
+        secretKeyRef:
+          name: app-secret
+          key: DB_PASSWORD
+  # ...
+---
+spec:
+  containers:
+  - image: xxx
+    volumes:
+    - name: app-secret-volume
+      secret:
+        secretName: app-secret
+    # ...
+```
+
+
+
 # Metrics API
 
 需要安裝好 Metrics Server: `kubectl apply -f https://github.com/kubernetes-sigs/metrics-server/releases/latest/download/components.yaml`
