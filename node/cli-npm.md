@@ -16,3 +16,8 @@ npm ci
 # 會搭配使用 package.json 來做安裝驗證, 如果有 mismatched versions, 則會噴錯
 # 適合用來做 CI/CD, testing 等等
 ```
+
+- npm 不管是哪種安裝方式, 都依照 `package-lock.json` 來做安裝
+    - `npm update`  : 　更新 `package.json`, 　更新 `package-lock.json`, 安裝套件
+    - `npm install` : 不更動 `package.json`, 　更新 `package-lock.json`, 安裝套件
+    - `npm ci`      : 不更動 `package.json`, 不更新 `package-lock.json`, 安裝套件

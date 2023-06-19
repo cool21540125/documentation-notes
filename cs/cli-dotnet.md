@@ -1,23 +1,20 @@
 
 - 2023/05/05
 
-## CLI
+## 起手式 & 查詢
 
 ```sh
+### 如果電腦有多個不同的 sdk version
+dotnet --list-sdks
+dotnet new globaljson --sdk-version 3.1.426  # 生成 global.json (裡頭約束使用 3.1.426 版的 sdk)
+
+
 ### 查看CLI可建立那些APP
 dotnet new -l
 
 
 ### 建立 APP && rename
 dotnet new console -o myApp
-
-
-### 執行
-dotnet run
-
-
-### version
-dotnet --version
 
 
 ### 系統資訊
@@ -32,10 +29,21 @@ dotnet --list-sdks
 dotnet --list-runtimes
 
 
-### 如果電腦有多個不同的 sdk version
-dotnet new globaljson
-# 編輯新生的 global.json 修改裡面的 version
-#   版本可參考 dotnet --list-sdks
+### 
+
+```
+
+
+# 運行
+
+```bash
+
+### 執行
+dotnet run
+
+
+### version
+dotnet --version
 
 
 ### 
