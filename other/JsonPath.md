@@ -25,12 +25,25 @@ kubectl get nodes -o jsonpath='{.items[*].metadata.name}{"\n"}{.items[*].status.
 
 ### 
 kubectl get nodes -o jsonpath='{range .items[*]}{.metadata.name}{"\t"}{.status.capacity.cpu}{"\n"}{end}'
+# FOR EACH NODE
+#    PRINT NODE NAME \t PRINT CPU COUNT \n
+# END FOR
 
 
 ### 
 kubectl get nodes -o custom-columns=NODE:.metadata.name,CPU:.status.capacity.cpu
 
 
-### 
+### 排序
 kubectl get nodes --sort-by .status.capacity.cpu
+
+
+
+### 其他
+kubectl config view --kubeconfig=/root/my-kube-config -o jsonpath='{.users.*.name}'
+kubectl get nodes -o jsonpath='{range .items[*]}{.status}'
+
+# get all pv & sort by size
+kubectl get pv -o custom-columns=NAME:.metadata.name,CAPACITY:.spec.capacity.storage  --sort-by .spec.capacity.storage
+
 ```

@@ -192,16 +192,36 @@ version:
 ```
 
 
-# Uninstall golang
+# Uninstall golang (using gvm)
 
-- 2022/05/05
-- [How to uninstall Go?](https://stackoverflow.com/questions/42186003/how-to-uninstall-go)
+- 2023/06/22
+- [Github/moovweb/gvm](https://github.com/moovweb/gvm)
 
 ```zsh
-which go
+xcode-select --install
+brew update
+brew install mercurial
 
-sudo rm -rf /usr/local/go
-sudo rm /etc/paths.d/go
+
+### zsh install gvm
+zsh < <(curl -s -S -L https://raw.githubusercontent.com/moovweb/gvm/master/binscripts/gvm-installer)
+source $HOME/.gvm/scripts/gvm
+
+
+### gvm version
+gvm version
+# Go Version Manager v1.0.22 installed at /Users/tony/.gvm
+
+
+### 列出可安裝
+gvm listall
+
+### 列出已安裝
+gvm list
+
+
+### Install
+gvm install go1.20.5
 ```
 
 
