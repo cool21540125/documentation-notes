@@ -323,28 +323,38 @@ $# eksctl version
 
 ```bash
 ### install
-$# brew install jenkins-lts
+brew install jenkins-lts
+
+
+### War & Cli
+cd /usr/local/opt/jenkins-lts/libexec
 
 
 ### 設定檔
-$# cd /usr/local/opt/jenkins-lts/
-$# vim homebrew.jenkins-lts.service
-$# vim homebrew.mxcl.jenkins-lts.plist
+cd /usr/local/opt/jenkins-lts/
+vim /usr/local/opt/jenkins-lts/homebrew.jenkins-lts.service
+vim /usr/local/opt/jenkins-lts/homebrew.mxcl.jenkins-lts.plist
 
 # 如果要自訂 JENKINS_HOME, 可修改 homebrew.jenkins-lts.service
 # <string>-DJENKINS_HOME=/Users/cicd/.jenkins-lts/</string>
 
 
 ### start
-$# brew services start jenkins-lts
+brew services start jenkins-lts
 
 
 ### init 密碼位置
-$# cat ~/.jenkins/secrets/initialAdminPassword
+cat ~/.jenkins/secrets/initialAdminPassword
 # 初始化完成後, 會自動移除
 
 ### log
-$# cd /usr/local/var/log
+cd /usr/local/var/log
+
+
+### 用途不明(僅紀錄留存)
+cd /Library/LaunchDaemons
+ls homebrew.mxcl.jenkins-lts.plist
+
 ```
 
 
@@ -406,18 +416,22 @@ $# brew install openldap
 - 要安裝 Oracle Java 的話請另尋其他文件...
 
 ```zsh
+VERSION=8
+VERSION=11
+VERSION=17
+
+
 ### Install 
-brew install openjdk@8
-brew install java11
-brew install java17
-brew install java19
-# 2022/11 的現在, java8 與 java8+ 安裝方式有一些些不同, 推估 java11 將來也會像 java8 這樣安裝
+brew install openjdk@$VERSION  # (似乎是 macOS 12  以前的安裝方式)
+brew install java$VERSION      # (似乎是 macOS 13+ 以後的安裝方式)
+
 
 ### env PATH
 VERSION=
 export CPPFLAGS="-I/usr/local/opt/openjdk@${VERSION}/include"
 export JAVA_HOME="/usr/local/opt/openjdk@${VERSION}"
 export PATH="${JAVA_HOME}/bin:$PATH"
+
 
 ### 
 java -version
