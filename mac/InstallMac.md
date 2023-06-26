@@ -347,7 +347,7 @@ brew install jenkins-lts
 
 
 ### War & Cli
-cd /usr/local/opt/jenkins-lts/libexec
+cd /usr/local/opt/jenkins-lts/
 
 
 ### 設定檔
@@ -372,8 +372,8 @@ cd /usr/local/var/log
 
 
 ### 用途不明(僅紀錄留存)
-cd /Library/LaunchDaemons
-ls homebrew.mxcl.jenkins-lts.plist
+ls -l --color /Library/LaunchDaemons
+ls -l --color ~/Library/LaunchAgents
 
 ```
 

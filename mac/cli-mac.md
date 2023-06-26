@@ -1,4 +1,12 @@
 
+# System 相關
+
+```zsh
+### 查詢 Mac 系統資訊
+system_profiler SPSoftwareDataType SPHardwareDataType
+
+```
+
 
 ```zsh
 ### TIMEFMT 設定 time 評估資源好用的輸出
@@ -15,6 +23,25 @@ time xxx
 du -hd0 .
 du -hd1 .
 du -hd2 .  # (應該是不會用到啦....)
+```
+
+
+# 設定 login shell
+
+```sh
+### 查詢 login shell
+dscl . -read /Users/$USER UserShell
+#UserShell: /bin/sh
+
+
+### 設定 login shell
+dscl . -change /Users/$USER UserShell /bin/sh /bin/bash
+# (使用 sh 呼叫 bash 的概念)
+
+
+### 查詢 login shell (again)
+dscl . -read /Users/$USER UserShell
+#UserShell: /bin/bash
 ```
 
 
