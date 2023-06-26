@@ -90,7 +90,7 @@ variable | /var/mail <br> /var/spool/news | /var/run <br> /var/lock
             /private/                       # CA Server 的 Private Keys
         /ca-trust/                      #
             /source/anchours/               # 自己信任的 CA Authority 所發放的憑證, 都放到這邊
-        /rpm-gpg/*                      # rpm Repository 公鑰存放區
+        /rpm-gpg/*                      # rpm Repository 公鑰存放區 (rpm 檢核用的 public key)
             /RPM-GPG-KEY-CentOS-7           # CentOS7 的 原廠GPG數位簽章公鑰檔
         /tls/                           # APP Server 存放 公私鑰的 建議存放位置
             /certs/                         # APP Server 的 Certificates

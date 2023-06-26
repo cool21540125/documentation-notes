@@ -1,128 +1,44 @@
 
+# 常見系統環境變數
+
+ env variables  | description
+ -------------- | -----------------
+ $HOSTNAME      | tonynb
+ $HOME          | /home/tony
+ $PWD           | 目前位置
+ $PATH          | ...(一大堆)...
+ $USER          | tony
+ $UID           | 1000
+ $LANG          | en_US.UTF-8
+ $RANDOM        | 0~32767整數亂數
+ $?             | 上次指令結束後的狀態碼 (0:true, 1:false)
+ $EUID          | 系統決定用戶對系統資源的訪問權限, 通常等同於 RUID
+ $RUID          | 系統用來辨識用戶是誰. 用戶登入到 Unix 以後, 就確定了目前的 RUID
 
 
-# CLI
-
-```bash
-### 取得 CentOS7 OS 內頁單個內存緩衝區大小
-$# getconf PAGE_SIZE
-4096
-```
-
-
-# Linux檔案時間
-
-- 2018/07/08
-- 檔按時間有分成3種, 會因為各種因素, 電腦上可能會有`未來檔案`
-
-在 Linux 理頭, 會有 3 個主要的變動時間
-- modification time (mtime) : `檔案內容` 最後變動時間
-- status time (ctime) : `檔案狀態` 最後變動時間 (ex: 權限, 屬性)
-- access time (atime) : `檔案內容` 最近讀取時間... 被看了!... 害羞(>///<)
+# Linux 時間
 
 ```sh
+### Linux 檔案時間
 $ ll /etc/man_db.conf; ll --time=atime /etc/man_db.conf ; ll --time=ctime /etc/man_db.conf
 -rw-r--r--. 1 root root 5171  6月 10  2014 /etc/man_db.conf     # 內容最後變動時間 (預設使用 mtime)
 -rw-r--r--. 1 root root 5171  7月  8 19:33 /etc/man_db.conf     # 狀態最後變動時間
 -rw-r--r--. 1 root root 5171  2月 27 14:05 /etc/man_db.conf     # 內容最近讀取時間
+
+
+### date 用法
+touch bck_`date +\%H\%M`.sql
+#bck_1608.sql
+
+
+### timestamp 轉 datetime
+date "+%Y-%m-%d %H:%M:%S" --date=@1565596800
+#2019-08-12 16:00:00
 ```
-
-
-
-# cp, mkdir
-
-```sh
-# 遞迴複製
-$ cp -r dir1 dir2
-# 把 dir1 內所有東西, 都複製到 dir2
-
-# 遞迴建立
-$ mkdir -r d1/d2/d3/d4/f1
-# 建立目錄結構
-```
-
-
-
-# touch 這東西
-
-- 新增 檔案
-- 修改 檔案時間 (mtime, atime), ctime 無法被修改
-
-```sh
-$ touch [-acdmt] <filename>
-# -a : 僅改 access time   (參考 Linux檔案時間)
-# -c : 僅修改檔案的時間 (若不存在則不建立)
-# -d : 可以自己設定 修改時間... 「--date="日期or時間"」 或 「-d "2 days ago"」
-# -m : 僅改 mtime
-# -t : 依照 YYYYMMDDhhmm 設定想修改的時間
-
-$ touch f1
-$ ll f1
--rw-rw-r--. 1 tony tony 0  7月  8 22:05 f1
-```
-
-
-
-# 解除 yum lock
-
-```sh
-$ sudo yum install -y mongodb-org
-Loaded plugins: fastestmirror, langpacks
-Existing lock /var/run/yum.pid: another copy is running as pid 7629.    # <-- 殺~~
-Another app is currently holding the yum lock; waiting for it to exit...
-  The other application is: PackageKit
-    Memory : 300 M RSS (1.7 GB VSZ)
-    Started: Sun Nov 26 13:05:36 2017 - 00:19 ago
-    State  : Running, pid: 7629
-
-$ sudo kill -9 7629
-```
-
-
-
-# - 設定terminal的熱鍵
-
-
-    畫面右上角功能表 > 設定 > 鍵盤 > 快捷鍵 > 自訂捷徑列 > +
-    Name: Terminal Shortcut
-    Command: gnome-terminal
-    再點選所要設定的熱鍵
-
-
-
-
-# - shebang on Linux
-
-- [run python script directly from command line](https://stackoverflow.com/questions/20318158/run-python-script-directly-from-command-line)
-
-> Linux系統底下, 可在任何.py檔的第一行使用 `#!/usr/bin/python` ( 依照使用的 python位置而定 ), 執行此腳本時, 可以藉由下列方式來執行.<br>
-> windows系統下, 若要使用同 shebang的功能, 再去google `cygwin`.
-
-```sh
-$ python pp.py
-$ ./pp.py
-```
-
-
-
-# 常見系統環境變數
-
-env variables  | description
--------------- | -----------------
-$HOSTNAME      | tonynb
-$HOME          | /home/tony
-$PWD           | 目前位置
-$PATH          | ...(一大堆)...
-$USER          | tony
-$UID           | 1000
-$LANG          | en_US.UTF-8
-$RANDOM        | 0~32767整數亂數
-$?             | 上次指令結束後的狀態碼(0:true, 1:false)
-$EUID          | 系統決定用戶對系統資源的訪問權限, 通常等同於 RUID
-$RUID          | 系統用來辨識用戶是誰. 用戶登入到 Unix 以後, 就確定了目前的 RUID
 
 
 # shell內
+
 hotkey | description
 ------ | -----------
 Ctrl+C | 中斷目前工作 ; 終止目前命令
@@ -130,9 +46,8 @@ Ctrl+D | 送出eof or 輸入結束特殊字元
 Ctrl+Z | 暫停目前工作, 利用 `fg` 指令, 可以取得暫停的工作
 
 
+## 測試硬碟讀取效能
 
----
-## - 測試硬碟讀取效能
 ```sh
 # 檢測硬碟讀取效能
 $ sudo hdparm -Tt /dev/sda
@@ -143,37 +58,6 @@ $ sudo hdparm -Tt /dev/sda
  Timing buffered disk reads: 344 MB in  3.01 seconds = 114.20 MB/sec
 # 至於, 這數字實際代表意義是啥... 我目前沒概念= =
 ```
-
-
-
-
-## date
-
-```sh
-$ date
-公曆 20十八年 三月 六日 週二 十一時39分廿四秒
-
-$ date +%Y%m%d
-20180306
-
-# 依照時間來命名檔案
-$ touch bck_`date +\%H\%M`.sql
-$ ls
-bck_1608.sql
-
-### timestamp 轉 datetime
-$# date "+%Y-%m-%d %H:%M:%S" --date=@1565596800
-2019-08-12 16:00:00
-```
-
-script | desc
------- | ----
-%Y     | 年
-%m     | 月
-%d     | 日
-%H     | 時
-%M     | 分
-%S     | 秒
 
 
 
@@ -216,18 +100,6 @@ Su Mo Tu We Th Fr Sa   Su Mo Tu We Th Fr Sa   Su Mo Tu We Th Fr Sa
 25 26 27 28 29 30 31   29 30                  27 28 29 30 31
 
 $#
-```
-
-
-## 查看 CPU數
-
-```sh
-$  grep 'processor' /proc/cpuinfo
-processor       : 0
-processor       : 1
-processor       : 2
-processor       : 3
-# 我有一顆 4 核心的 CPU
 ```
 
 
@@ -293,14 +165,11 @@ $ sudo updatedb &
 $ locate ifconf # 要查詢的東西, 檔名可以不完整
 ```
 
----
-
-
-
 
 # su 這東西
+
 - 2018/07/08
-- [換人做做看--sudo 和 su](http://kezeodsnx.pixnet.net/blog/post/25810396-%E6%8F%9B%E4%BA%BA%E5%81%9A%E5%81%9A%E7%9C%8B--sudo-%E5%92%8C-su)
+- [換人做做看 --sudo 和 su](http://kezeodsnx.pixnet.net/blog/post/25810396-%E6%8F%9B%E4%BA%BA%E5%81%9A%E5%81%9A%E7%9C%8B--sudo-%E5%92%8C-su)
 
 ```sh
 # 使用 「sudo su」
@@ -1138,28 +1007,6 @@ $ locale -a | wc
 
 
 ```sh
-# 取得檔名
-$ basename /etc/nginx/nginx.conf
-nginx.conf
-
-# 取得目錄名
-$ dirname /etc/nginx/nginx.conf
-/etc/nginx
-
-# 列出內容(包含行號)
-$ nl /etc/nginx/nginx.conf
-     1  user  nginx;
-     2  worker_processes  1;
-...(略)...
-
-# 列出檔案內容(用來查看二進制檔案)
-$ sudo od /usr/bin/passwd
-
-$
-```
-
-
-```sh
 # umask : 讓目前使用者 建立 檔案 or 目錄 時的權限設定值
 # 預設上, 檔案 最多應為 666
 # 預設上, 目錄 最多可為 777
@@ -1175,115 +1022,16 @@ u=rwx,g=rwx,o=rx
 ```
 
 
-
-# 觀察檔案類型: file
-
-```sh
-# 一般 ASCII 文檔
-$ file /etc/passwd
-/etc/passwd: ASCII text
-
-# 二進位編碼過後的執行檔
-$ file /usr/bin/passwd
-/usr/bin/passwd: setuid ELF 64-bit LSB shared object, x86-64, version 1 (SYSV), dynamically linked (uses shared libs), for GNU/Linux 2.6.32, BuildID[sha1]=1e5735bf7b317e60bcb907f1989951f6abd50e8d, stripped
-
-# data檔
-$ sudo file /var/lib/mlocate/mlocate.db
-/var/lib/mlocate/mlocate.db: data
-```
-
-
-
-# 檢查檔案細項屬性
-
-```sh
-# 不知道怎麼解釋 =口=...
-$ stat /etc/passwd
-  File: ‘/etc/passwd’
-  Size: 2541        Blocks: 8          IO Block: 4096   regular file
-Device: fd00h/64768d    Inode: 201385622   Links: 1
-Access: (0644/-rw-r--r--)  Uid: (    0/    root)   Gid: (    0/    root)
-Context: system_u:object_r:passwd_file_t:s0
-Access: 2018-07-23 09:01:28.195275508 +0800
-Modify: 2018-07-20 16:11:33.755081384 +0800
-Change: 2018-07-20 16:11:33.818081653 +0800
- Birth: -
-
-$ stat /bin/passwd
-  File: ‘/bin/passwd’
-  Size: 27832       Blocks: 56         IO Block: 4096   regular file
-Device: fd00h/64768d    Inode: 201780015   Links: 1
-Access: (4755/-rwsr-xr-x)  Uid: (    0/    root)   Gid: (    0/    root)
-Context: system_u:object_r:passwd_exec_t:s0
-Access: 2018-07-23 21:37:58.500276830 +0800
-Modify: 2014-06-10 14:27:56.000000000 +0800
-Change: 2018-02-27 13:54:29.234444218 +0800
- Birth: -
-```
-
-
-# 光碟寫入工具
-- 光碟製作成 iso 鳥哥`mkisofs`
-- 燒光碟 鳥哥`cdrecord`
-
-
-# 網路 verify
-$ ip link show
-$ ip addr show
-$ ip route show
-$ cat /etc/resolv.conf
-$ ss
-
-
-```sh
-# CentOS7 rpm 檢核用的 public key
-$ ll /etc/pki/rpm-gpg/
-```
-
-
-# 交談
-- 2018/10/30
-- 鳥哥 13.6.2
-
-指令:
-* `wall`
-* `write`
-
-```sh
-### Terminal : tony pts/0
-$ w
-USER     TTY      FROM             LOGIN@   IDLE   JCPU   PCPU WHAT
-tony     pts/0    192.168.124.101  12:27    1.00s  0.18s  0.02s w                   # 目前的 Terminal
-tony     pts/2    192.168.124.101  14:25    1:53   0.06s  0.14s sshd: tony [priv]   # 要交談的目標
-# ↑僅節錄部分資訊
-
-$ write tony pts/2
-DAMN U!
-# Ctrl + D 結束
-```
-
-```sh
-### Terminal : tony pts/2
-$
-Message from tony@gitserver on pts/0 at 14:32 ...
-DAMN U!
-EOF
-# 不管原本在幹嘛... 都會被騷擾
-
-# 可用 mesg [yn] 來啟用或關閉即時對話
-$ mesg n
-# 但是此封鎖對 root 無效
-```
-
-```sh
-### 發送廣播(所有人都會報掃到XD)
-$ wall 'Hello~~~ every body~~~'
-$
-Broadcast message from tony@gitserver (pts/2) (Tue Oct 30 14:39:47 2018):
-
-Hello~~~ every body~~~
-
-$
+```bash
+### /etc/resolv.conf 用途
+$# cat /etc/resolv.conf
+nameserver   local_DNS_ip
+search       tonychoucc.local
+# 後面的 search 可用來做懶人的搜尋方式, 可 exclude search domain
+#   可用「ping web」
+#   取代「ping web.tonychoucc.local」
+# search Domain 可以同時有多個, ex:
+search       tonychoucc.com  tony123.com  tony456.cc
 ```
 
 
@@ -1306,25 +1054,16 @@ $ ls -al ~ | mail -s "主題3" tony
 ```
 
 
-```sh
-# 找出組態檔內有意義的文字字段
-grep -n -v  -e '^[#;]' /etc/samba/smb.conf.example | grep -v ':$' -
-# 找特定檔案, 列出行號
-# 非 #; 開頭
-# 非 空白行
-# pipeline 給 非 : 結尾(因有行號:)
-```
+# 其他
 
-
-# tree
+- 光碟寫入工具
+  - 光碟製作成 iso 鳥哥 `mkisofs`
+  - 燒光碟 鳥哥很推薦這個哥 `cdrecord`
 
 ```bash
-$# yum install -y tree
-$# python3 -m venv /tmp/tmpvenv
-
 ### 看目錄結構
-$# tree -dL 4 /tmp/tmpvenv
-/tmp/tmpvenv
+$# tree -dL 4 venv
+./venv
 ├── bin
 ├── include
 ├── lib
@@ -1337,16 +1076,60 @@ $# tree -dL 4 /tmp/tmpvenv
 │           ├── setuptools
 │           └── setuptools-40.8.0.dist-info
 └── lib64 -> lib
+
+
+### 找出組態檔內有意義的文字字段
+grep -n -v  -e '^[#;]' /etc/samba/smb.conf.example | grep -v ':$' -
+# 找特定檔案, 列出行號
+# 非 #; 開頭
+# 非 空白行
+# pipeline 給 非 : 結尾(因有行號:)
+
+
+### stat 檢查檔案細項屬性
+stat /etc/passwd
+
+
+
+### Linux Terminal 交談 - 發送給 User 的 TTY
+write tony pts/2
+# 輸入完訊息後「Ctrl+D」發送
+
+
+### Linux Terminal 交談 - 廣播
+wall '這是廣播訊息~~'
+
+
+### Linux Terminal 交談 - 設定是否接受交談
+mesg n
+mesg y
+# 但此設定對 root 無效 (一樣會收到 root 發送的 message)
+
+
+### 取得檔名
+basename /etc/nginx/nginx.conf
+
+### 取得目錄名
+dirname /etc/nginx/nginx.conf
+
+### 列出內容(包含行號)
+nl /etc/nginx/nginx.conf
+
+
+### 取得 CentOS7 OS 內頁單個內存緩衝區大小
+getconf PAGE_SIZE
+4096
+
+
+### 查看 CPU 數量
+grep 'processor' /proc/cpuinfo
+#processor       : 0
+#processor       : 1
+#processor       : 2
+#processor       : 3
+# 我有一顆 4 核心的 CPU
+
+
+### 
+
 ```
-
-# 6 vs 7 版
-
-```sh
-systemctl start named
-/etc/init.d/named start
-service named start
-
-systemctl enable named
-chkconfig named on
-```
-

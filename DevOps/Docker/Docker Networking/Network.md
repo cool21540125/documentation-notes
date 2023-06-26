@@ -136,27 +136,35 @@ NETWORK ID      NAME      DRIVER    SCOPE
 5bdb7fd05ba8    bridge    bridge    local
 ```
 
+
 ## Default bridge network
-> `bridge` 預設無法讓 Container 傳遞資訊到 外界(outside world), 例如: 不同 Docker Host 之間的 Container 要相互溝通的話, 有2種解法:
+
+> `bridge` 預設無法讓 Container 傳遞資訊到 外界(outside world)
+> 
+> 預設 Linux 不會幫忙做 forward packat from interface -> another
+> 
+> ex: 不同 Docker Host 之間的 Container 要相互溝通的話, 有2種解法:
+
 
 ### 法一: 
+
 作底下 2 個設定
 
-```sh
-# 1. 在 `OS Level` 設定 routing
-$# sysctl net.ipv4.conf.all.forwarding=1
-# ex: 讓 Linux kernel 允許 IP routing
-# 需要寫入到 /etc/sysctl.conf
+```bash
+### 1. 在 `OS Level` 設定 routing
+sysctl net.ipv4.conf.all.forwarding=1
+# 此指令會寫入　   `/proc/sys/net/ipv4/ip_forward` (當前生效)
+# (永久適用需寫入) `/etc/sysctl.conf`              (永久生效)
 
-# 2. 設定「iptables FORWARD policy」為 ACCEPT (原為 DROP)
-$# iptables -P FORWARD ACCEPT
-# (如果有啟用 iptables 的話再作)
+### 2. 設定「iptables FORWARD policy」為 ACCEPT (原為 DROP)
+iptables -P FORWARD ACCEPT
+# 上述僅　　　　                                   (當前生效)
+# 　　　　　　　                                   (永久生效)
 ```
 
-NOTE: 上述 2 個動作, 僅目前採用, 重啟後套用則須額外處理
 
+### 法二:
 
-### 法二: 
 改用 `overlay network` 
 
 ```sh
@@ -170,6 +178,7 @@ $ docker create --name my-nginx --network my-net --publish 8080:80 nginx:latest
 ```
 
 要使用 IPv6 的話, [看這邊](https://docs.docker.com/network/bridge/#use-ipv6), 筆記略...
+
 
 ## [User-defined bridge network 使用者自訂網卡](https://docs.docker.com/network/network-tutorial-standalone/#use-user-defined-bridge-networks)
 
