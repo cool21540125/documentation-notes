@@ -192,7 +192,7 @@ version:
 ```
 
 
-# Uninstall golang (using gvm)
+# Install golang (using gvm)
 
 - 2023/06/22
 - [Github/moovweb/gvm](https://github.com/moovweb/gvm)
