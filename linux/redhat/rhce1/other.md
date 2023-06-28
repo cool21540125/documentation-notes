@@ -140,10 +140,13 @@ $ echo -n xxx
 
 
 ## 送訊號
+
 - kill    : 殺 job or ps
 - killall : 殺 job or ps or command
 - pkill   : 殺 job or ps or command && 可用額外指令
-- pgrep   : (忘了)
+- pgrep
+  - 使用細節忘了
+  - 列出所有與 user 相關的程序ID `pgrep -l -u user`
 
 
 ## systemctl

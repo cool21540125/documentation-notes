@@ -197,12 +197,6 @@ tony     pts/1    192.168.124.101  22:31   11:53   0.10s  0.10s -bash
 # 或把 太耗資源的 Terminal 砍掉... (JCPU)
 ```
 
-其餘指另還有...
-
-* 列出所有與 user 相關的程序ID `pgrep -l -u user`
-* `pstree -p PID`
-* `pstree -P Parent PID`
-
 
 ## 4.top
 

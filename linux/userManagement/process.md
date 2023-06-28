@@ -55,10 +55,6 @@ ex: 使用者登入後, 取得的就是個 bash 這個工作環境, 這也是個
 $ ps aux        # u : 看到 user name
 $ ps alx        # l : 列出更詳細的 PID 資訊
 $ ps afx
-
-$ pstree -p
-# -p: 顯示 PIDs
-
 $ ps au --sort=...      # 指定排序欄位
 
 # 只能查閱自己的 bash程序 -----------------------------------------
@@ -124,43 +120,60 @@ xxx xxx  xxxxxx  ..... xxx <defunct>
 
 
 ## - 行程狀態 相關指令
+
 ```sh
-# 僅列出與自己相關的bash相關程序
+### 僅列出與自己相關的bash相關程序
 $ ps
   PID TTY          TIME CMD
  9342 pts/2    00:00:00 bash
 11937 pts/2    00:00:00 ps
 
-# 詳細資訊
+
+### 詳細資訊
 $ ps -f
 UID        PID  PPID  C STIME TTY          TIME CMD
 tony     24634 24626  0 13:58 pts/0    00:00:00 bash
 tony     32620 24634  0 20:58 pts/0    00:00:00 ps -f
 
-# 更多詳細資訊
+
+### 更多詳細資訊
 $ ps -l
 F S   UID   PID  PPID  C PRI  NI ADDR SZ WCHAN  TTY          TIME CMD
 0 S  1000  9342  7534  0  80   0 - 29176 wait   pts/2    00:00:00 bash
 0 R  1000 11944  9342  0  80   0 - 37232 -      pts/2    00:00:00 ps
 # PPID: Parent Process ID
 
-# 列出系統運作的程序
+
+### 列出系統運作的程序
 $ ps aux | grep mysqld
 USER       PID %CPU %MEM    VSZ   RSS TTY      STAT START   TIME COMMAND
 tony       919  0.0  0.0 112668   964 pts/0    S+   21:36   0:00 grep --color=auto mysqld
 mysql     2941  0.1  4.9 1248528 186788 ?      Sl    3月01   1:52 /usr/sbin/mysqld --daemonize --pid-file=/var/run/mysqld/mysqld.pid
 
-# 樹狀結構列出 System Procss
-$ pstree
-systemd─┬─ModemManager───2*[{ModemManager}]
-        ├─NetworkManager───2*[{NetworkManager}]
-        ├─2*[abrt-watch-log]
-        ├─abrtd
-        ├─accounts-daemon───2*[{accounts-daemon}]
-        ├─alsactl
-        ...(略)
 
-# 背景睡覺 60秒
+### 樹狀結構列出 System Procss
+# -A : 使用 ASCII 字元渲染 tree
+# -a : 顯示 command line arguments
+# -p : 顯示 PIDs
+# -h : 強調目前所在程序
+pstree -Aaph
+#systemd,1 --switched-root --system --deserialize 22
+#  ├─NetworkManager,813 --no-daemon
+#  │   ├─{NetworkManager},830
+#  │   └─{NetworkManager},836
+#  ├─agent,4683 run -p /opt/datadog-agent/run/agent.pid
+#..(略)...
+#  ├─sshd,1109 -D
+#  │   └─sshd,29012
+#  │       └─sshd,29014
+#  │           └─bash,29015
+#  │               └─pstree,1376 -aph
+#..(略)...
+# ----------------------------
+
+
+
+### 背景睡覺 60秒
 $ sleep 60 &        # sleep 60 seconds
 $ ps -f
 UID        PID  PPID  C STIME TTY          TIME CMD
@@ -168,7 +181,8 @@ tony      1559 24634  0 21:59 pts/0    00:00:00 sleep 60
 tony      1563 24634  0 21:59 pts/0    00:00:00 ps -f
 tony     24634 24626  0 13:58 pts/0    00:00:00 bash
 
-# 前景作業改背景作業, 使用 Ctrl+z中斷, 再用 bg指令, 將上一個被停止的行程放入背景中執行.
+
+### 前景作業改背景作業, 使用 Ctrl+z中斷, 再用 bg指令, 將上一個被停止的行程放入背景中執行.
 $ sleep 60
 ^Z
 [1]+  Stopped                 sleep 60
@@ -180,7 +194,8 @@ tony      1713  1705  0 22:01 pts/2    00:00:00 bash
 tony      1763  1713  0 22:01 pts/2    00:00:00 sleep 60
 tony      1770  1713  0 22:02 pts/2    00:00:00 ps -f
 
-# 將背景取回前景 fg
+
+### 將背景取回前景 fg
 $ jobs
 $ sleep 50 &
 [1] 2138
@@ -196,7 +211,8 @@ $ fg 2          # 取出第二個背景行程
 sleep 40
 ^C              # 中斷
 
-# nice value NI value, 行程優先權(priority)
+
+### nice value NI value, 行程優先權(priority)
 $ ps l
 F   UID   PID  PPID PRI  NI    VSZ   RSS WCHAN  STAT TTY        TIME COMMAND
 0  1000  1959  1951  20   0 116568  3232 wait   Ss   pts/0      0:00 bash
@@ -208,9 +224,8 @@ F   UID   PID  PPID PRI  NI    VSZ   RSS WCHAN  STAT TTY        TIME COMMAND
 ```
 
 
-
-
 ## - top(類似Windows的工作管理員)
+
 [使用 top](http://linux.vbird.org/linux_basic/0440processcontrol/0440processcontrol-fc4.php#top)
 
 內容大致如下（上半部：Resource資訊,下半部：Process資訊)
