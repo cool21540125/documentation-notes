@@ -1040,17 +1040,6 @@ end
     - 監控成本計畫, 可使用 **Billing Ararms** && **Budgets**
 
 
-## AWS Trusted Advisor
-
-- [saa-TrustedAdvisor](./cert-SAA_C02.md#whitepaper-section-introduction)
-- 依照底下的 5 個分類, 以 high level AWS Account assessment 來做建議
-    - Cost optimization
-    - Performance
-    - Security
-    - Fault tolerance
-    - Service limits
-
-
 ## AWS Support Plans
 
 - Pricing
