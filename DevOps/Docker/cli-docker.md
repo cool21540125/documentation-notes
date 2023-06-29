@@ -22,4 +22,8 @@ expr $(docker image inspect $(docker image ls -aq) --format {{.Size}} | awk '{to
 
 ### 列出 <none> 的 images
 docker images -f 'dangling=true' -q
+
+
+### 
+docker images | sort -k1 -h
 ```

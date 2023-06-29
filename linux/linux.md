@@ -866,7 +866,8 @@ $ ls --time={atime, ctime}  # 列出 {access時間 , 改變權限屬性時間 }
 正常的 rm -rf 方式已經砍不到東西, 因此改砍 inode
 
 ```bash
-find . -inum 328993 -exec rm -rfi {} \;
+iNODEFILE=
+find . -inum $iNODEFILE -exec rm -rfi {} \;
 ```
 
 
