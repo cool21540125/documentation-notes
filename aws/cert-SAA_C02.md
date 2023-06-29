@@ -747,7 +747,12 @@ rr -- "Auto backup" --> S3;
     - Free tool to review architecture
     - 建立一份 Workload 以後, 開始回答一堆問題... AWS 會提出相關的 risk 以及 improvment plan
 - [AWS Trusted Advisor](https://docs.aws.amazon.com/awssupport/latest/user/trusted-advisor.html)
-    - [clf-TrustedAdvisor](./cert-CLF_C01.md#aws-trusted-advisor)
+    - 依照底下的 5 個分類, 以 high level AWS Account assessment 來做建議
+        - Cost optimization
+        - Performance
+        - Security
+        - Fault tolerance
+        - Service limits
     - [AWS Trusted Advisor](https://docs.aws.amazon.com/awssupport/latest/user/trusted-advisor.html)
         > Trusted Advisor draws upon best practices learned from serving hundreds of thousands of AWS customers.
         > 
