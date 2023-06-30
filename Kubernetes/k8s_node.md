@@ -9,8 +9,8 @@
     - Master Nodes 上頭有 `node-role.kubernetes.io/master:NoSchedule` 這個 Taint
 
 ```bash
-### 把 NODE_NAME 貼上 TAINT 的 Key Value 標籤, 並標記 TAINT_EFFECT
-kubectl taint nodes $NODE_NAME $TAINT_KEY=$TAINT_VALUE:$TAINT_EFFECT
+### 把 NODE 貼上 TAINT 的 Key Value 標籤, 並標記 TAINT_EFFECT
+kubectl taint nodes $NODE $TAINT_KEY=$TAINT_VALUE:$TAINT_EFFECT
 # TAINT_EFFECT
 #    NoSchedule       : new Pod 別來,    old Pod 不影響
 #    PreferNoSchedule : new Pod 盡量別來, old Pod 不影響
@@ -23,7 +23,7 @@ kubectl taint nodes node1 app=myapp:NoSchedule-    # 移除標籤
 
 
 ### 查詢 Node 具有的 Taints
-kubectl describe node $NODE_NAME | grep Taint
+kubectl describe node $NODE | grep Taint
 ```
 
 ```yaml
@@ -63,7 +63,7 @@ spec:
 
 ```bash
 ### 
-kubectl label nodes $NODE_NAME $LABEL_KEY=$LABEL_VALUE
+kubectl label nodes $NODE $LABEL_KEY=$LABEL_VALUE
 
 
 ### 指示 node-1 增加標籤
