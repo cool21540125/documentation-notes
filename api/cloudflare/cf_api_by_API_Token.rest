@@ -1,7 +1,7 @@
 ### Cloudflare API Documentation - https://api.cloudflare.com/#zone-settings-get-always-online-setting
 
 @api=https://api.cloudflare.com/client/v4
-@token={{Cloudflare_API_Token}}
+@token={{$dotenv Cloudflare_API_Token}}
 @status = active
 
 @domain={{$dotenv domain}}
