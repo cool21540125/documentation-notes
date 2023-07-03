@@ -3,6 +3,7 @@
     - The container total memory usage
 - container.memory.rss
     - The container RSS usage
+- system.mem.used
 
 
 # Metrics Note

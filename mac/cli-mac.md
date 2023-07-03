@@ -42,6 +42,10 @@ dscl . -change /Users/$USER UserShell /bin/sh /bin/bash
 ### 查詢 login shell (again)
 dscl . -read /Users/$USER UserShell
 #UserShell: /bin/bash
+
+
+### dscl 等同於 usermod
+
 ```
 
 

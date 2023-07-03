@@ -22,13 +22,14 @@ git config --global credential.UseHttpPath true                               # 
 
 
 ### 懶人指令 (git tree)
-git config --global alias.tree "log --graph --decorate --pretty=oneline --abbrev-commit"
+git config --global alias.br "branch"
+git config --global alias.cm "commit -m"
+git config --global alias.co "checkout"
 git config --global alias.lg "log --color --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset'"
 git config --global alias.lgg "log --pretty=format:'%C(yellow)%h%Cred%d %Creset%s%Cblue [%cn]%Creset' --decorate"
 git config --global alias.pu "push"
-git config --global alias.cm "commit -m"
-git config --global alias.co "checkout"
 git config --global alias.st "status"
+git config --global alias.tree "log --graph --decorate --pretty=oneline --abbrev-commit"
 ```
 
 
