@@ -421,3 +421,17 @@ kubectl get apiservices
 
 ###
 ```
+
+
+# System Operating
+
+```bash
+### Node 升級/維護的相關操作
+kubectl drain $NODE                      # 對 NODE 上的 Pods 進行排水 + 設立警戒
+kubectl cordon $NODE                     # 對 NODE 設立警戒 (Pod 舊的不去新的不來)
+kubectl uncordon $NODE                   # 拔除 NODE 的警戒
+
+
+
+kubectl drain $NODE --ignore-daemonsets  # 排水(DaemonSet 一樣滾~) + 警戒
+```
