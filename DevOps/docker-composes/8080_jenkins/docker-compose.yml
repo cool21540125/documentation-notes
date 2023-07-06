@@ -7,7 +7,7 @@ services:
     hostname: jenkins
     restart: always
     networks:
-      net_jenkins:
+      net_devops:
     ports:
       - "8080:8080"
       - "50000:50000"
@@ -16,10 +16,12 @@ services:
       - "jenkins-data:/var/jenkins_home"
       - "jenkins-docker-certs:/certs/client:ro"
       - "/etc/localtime:/etc/localtime:ro"
+      - "dind-bin:/usr/local/dindbin"
     environment:
-      - DOCKER_HOST=tcp://dind:2376
-      - DOCKER_CERT_PATH=/certs/client
-      - DOCKER_TLS_VERIFY=1
+      - "DOCKER_HOST=tcp://dind:2376"
+      - "DOCKER_CERT_PATH=/certs/client"
+      - "DOCKER_TLS_VERIFY=1"
+      - "PATH=/usr/local/dindbin:/opt/java/openjdk/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
   dind:
     image: docker:dind
     container_name: dind
@@ -27,26 +29,27 @@ services:
     restart: always
     privileged: true
     networks:
-      net_jenkins:
+      net_devops:
     tty: true
     volumes:
       - "jenkins-data:/var/jenkins_home"
       - "jenkins-docker-certs:/certs/client"
       - "jenkins-docker-root:/var/lib/docker"
+      - "dind-bin:/usr/local/bin"
     environment:
       - DOCKER_TLS_CERTDIR=/certs
 
 volumes:
   jenkins-data:
     name: jenkins-data
-    external: true
   jenkins-docker-certs:
     name: jenkins-docker-certs
-    external: true
   jenkins-docker-root:
     name: jenkins-docker-root
-    external: true
+  dind-bin:
+    name: dind-bin
 
 networks:
-  net_jenkins:
-    name: net_jenkins
+  net_devops:
+    name: net_devops
+    external: true
