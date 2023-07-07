@@ -30,6 +30,7 @@ git config --global alias.lgg "log --pretty=format:'%C(yellow)%h%Cred%d %Creset%
 git config --global alias.pu "push"
 git config --global alias.st "status"
 git config --global alias.tree "log --graph --decorate --pretty=oneline --abbrev-commit"
+git config --global alias.sm "submodule"
 ```
 
 
