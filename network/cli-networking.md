@@ -136,3 +136,11 @@ www.pchome.com.tw.      300     IN      A       210.59.230.39   # 查詢到的�
 ;; WHEN: Mon Dec 24 14:06:44 CST 2018
 ;; MSG SIZE  rcvd: 62
 ```
+
+
+# socat
+
+```bash
+### 
+socat TCP-LISTEN:2375,reuseaddr,fork UNIX-CONNECT:/var/run/docker.sock
+```

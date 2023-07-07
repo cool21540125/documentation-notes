@@ -26,4 +26,11 @@ docker images -f 'dangling=true' -q
 
 ### 
 docker images | sort -k1 -h
+
+
+### 連到不同的 docker daemon
+docker -H tcp://127.0.0.1:2375 info
+
+
+### 
 ```

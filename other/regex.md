@@ -36,30 +36,9 @@ Option    | Function
 -s        | 比對任何空白字元
 
 ```sh
-# 找出 nginx.conf 非為 註解的部分
-$ grep -v '^ *#' /etc/nginx/nginx.conf
-user                                    root;
-worker_processes                auto;
-pid                                     /var/run/nginx.pid;
+### 列出 FILE 「非空白行」「非註解」, 外加行號
+grep -v "^ *#\|^ *$" -n $FILE
 
-error_log                       /var/log/nginx/error.log;
-
-events {
-    worker_connections  512;
-}
-
-http {
-    include                     /etc/nginx/mime.types;
-    default_type                application/octet-stream;
-
-    access_log                  /var/log/nginx/access.log ;
-
-    sendfile            on;
-
-    keepalive_timeout   65;
-
-    include /etc/nginx/sites-enabled/*;
-}
 
 # 找出 linux.words 以 dog 或 cat 開頭的部分
 $ grep -e '^dog' -e '^cat' /usr/share/dict/linux.words
