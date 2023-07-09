@@ -129,24 +129,24 @@ EC2 選購時, 有底下這一大堆的 purchasing options:
 
 ## EC2 - Enhance Networking
 
-- EC2 Enhanced Networking (SR-IOV)
-    - 僅適用於 newer generation EC2 Instances
-- higher bandwidth && higher PPS(packet per second), lower latency
-- 可使用底下的方法
-    - Elastic Network Adapter, ENA - up to 100 Gbps
-    - Inter 82599 VF (legacy, OLD ENA) - up to 10 Gbps
-    - Elastic Fabric Adapter, EFA - Improved ENA for HPC, Linux ONLY
-        - 很適合 distributed computation
-        - 因藉助 Message Passing Interface(MPI) standard, 可 bypass underlying Linux OS 來 lower latency
+- ENA, EC2 Enhanced Networking, (SR-IOV)
+    - Networking 支援較高的 bandwidth 及 PPS(packet per second) && lower latency
+    - 僅適用於 newer generation EC2 Instances:
+        - Elastic Network Adapter, ENA - up to 100 Gbps
+        - Inter 82599 VF (legacy, OLD ENA) - up to 10 Gbps (Legacy)
+- EFA, Improved ENA for HPC, Elastic Fabric Adapter - (Linux Only)
+    - 很適合 distributed computation (相同 Cluster 的 Internal communication)
+    - 因藉助 Message Passing Interface(MPI) standard, 可 bypass underlying Linux OS 來 lower latency
 
 ```bash
-### 查詢 ENA mod 是否已安裝(預設 EC2 Instances 都有安裝)
+### 查詢 ENA mod 是否已安裝(預設 new generation EC2 Instances 都有安裝)
 modinfo ena
 
 
 ### 查看 ENI 使用的 driver
 ethtool -i eth0
 #driver: xxx  <-- 如果以啟用 Enhanced Networking, 應該看到 ena
+# Amazon Linux 2023, 使用 enX0 取代原有的 eth0
 ```
 
 
