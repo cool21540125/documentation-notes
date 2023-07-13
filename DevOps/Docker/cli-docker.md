@@ -32,5 +32,6 @@ docker images | sort -k1 -h
 docker -H tcp://127.0.0.1:2375 info
 
 
-### 
+### 清除 <none> images && 無用 container, networking, cache
+docker system prune
 ```

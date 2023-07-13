@@ -66,10 +66,3 @@ trap "" INT
 trap "echo YO" EXIT
 # ↑ 若腳本執行完後, 會執行的動作
 ```
-
-
-# 
-
-- bash
-- zsh
-    - `~/.zprofile` 優先於 `~/.zshrc`

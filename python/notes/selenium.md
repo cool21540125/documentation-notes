@@ -48,7 +48,3 @@ web.get('https://google.com.tw')
 # selenium操作~~
 web.close()
 ```
-
----
-更新日期 2017/09/23, TonyCC
-

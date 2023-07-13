@@ -69,18 +69,6 @@ $# system-config-network-tui
 ```
 
 
-
-安裝selenium
-http://seleniumhq.github.io/selenium/docs/api/py/index.html
-https://github.com/mozilla/geckodriver/releases
-
-
-geckodriver
-http://seleniumhq.github.io/selenium/docs/api/py/index.html
-selenium for python用, 建立軟連結到 /usr/local/bin
-
-
-
 # 安裝中文字型
 
 ```sh

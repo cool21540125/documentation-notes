@@ -712,4 +712,14 @@ jsonnet --version
 ```
 
 
+# Install swagger-codegen
+
+```zsh
+brew install swagger-codegen
+
+swagger-codegen version
+# 3.0.46
+```
+
+
 # 
