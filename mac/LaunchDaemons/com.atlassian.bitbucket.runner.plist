@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+  <dict>
+    <key>Label</key>
+    <string>com.atlassian.bitbucket.runner</string>
+    <key>WorkingDirectory</key>
+    <string>/xxxx/atlassian-bitbucket-pipelines-runner/bin</string>
+    <key>ProgramArguments</key>
+    <array>
+      <string>/xxxx/atlassian-bitbucket-pipelines-runner/bin/start.sh</string>
+      <string>--accountUuid</string>
+      <string>{xxxx}</string>
+      <string>--runnerUuid</string>
+      <string>{xxxx}</string>
+      <string>--OAuthClientId</string>
+      <string>xxxx</string>
+      <string>--OAuthClientSecret</string>
+      <string>xxxx</string>
+      <string>--runtime</string>
+      <string>macos-bash</string>
+      <string>--workingDirectory</string>
+      <string>/xxxx/atlassian-bitbucket-pipelines-runner/temp</string>
+    </array>
+    <key>RunAtLoad</key><true/>
+    <key>EnvironmentVariables</key>
+    <dict>
+        <key>JAVA_HOME</key><string>/usr/local/opt/openjdk@11</string>
+        <key>PATH</key><string>$JAVA_HOME/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin</string>
+    </dict>
+    <key>UserName</key><string>xxxx</string>
+    <key>GroupName</key><string>xxxx</string>
+    <key>StandardOutPath</key><string>/xxxx/xxxx.log</string>
+    <key>StandardErrorPath</key><string>/xxxx/xxxx.log</string>
+  </dict>
+</plist>

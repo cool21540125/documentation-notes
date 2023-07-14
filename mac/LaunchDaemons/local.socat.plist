@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple Computer//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>Label</key>
+    <string>local.socat</string>
+    <key>ProgramArguments</key>
+    <array>
+        <string>/usr/local/bin/socat</string>
+        <string>TCP-LISTEN:2375,reuseaddr,fork</string>
+        <string>UNIX-CONNECT:/xxxx/docker.sock</string>
+    </array>
+    <key>RunAtLoad</key><true/>
+    <key>UserName</key><string>xxxx</string>
+    <key>GroupName</key><string>xxxx</string>
+</dict>
+</plist>
