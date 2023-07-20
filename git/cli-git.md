@@ -1,5 +1,5 @@
 
-# 設定
+# Setting
 
 ```bash
 ### 常用配置
@@ -31,47 +31,56 @@ git config --global alias.pu "push"
 git config --global alias.st "status"
 git config --global alias.tree "log --graph --decorate --pretty=oneline --abbrev-commit"
 git config --global alias.sm "submodule"
-```
 
 
-# 測試
-
-```bash
-### 測試能否與 Git Server 連線
-$# ssh -vT git@${GIT_SERVER_DOMAIN} -p ${PORT}
-# 若 PORT 為預設的 22, -p PORT 可略
-# GIT_SERVER_DOMAIN, ex: gitlab.com
-# 永遠使用 git user 來測
-```
-
-
-# 使用
-
-```bash
 ### 強制 Golang 使用 ssh(而非 http) 從 private repo 拉資料
 # https://matthung0807.blogspot.com/2021/07/go-unable-to-get-modules-from-private-gitlab-repository.html
 # Golang 從私有的GitLab取得依賴module Unable to get modules from private gitlab repository
 git config --global url."git@gitlab.com:".insteadOf "https://gitlab.com/"
 
 
+### 
+
+```
+
+
+# Test Connection
+
+```bash
+### 測試能否與 Git Server 連線
+ssh -vT git@${GIT_SERVER_DOMAIN} -p ${PORT}
+# 若 PORT 為預設的 22, -p PORT 可略
+# GIT_SERVER_DOMAIN, ex: gitlab.com
+# 永遠使用 git user 來測
+```
+
+
+# Usage
+
+```bash
 ### 重新 Commit
 git commit --amend -m "<Commit String>"
 
+
 ### 改變追蹤 URL
 git remote set-url origin git@github.com:cool21540125/documentation-notes.git
+
 
 ### 設定追蹤遠端分支
 BRANCH=dev
 git branch --set-upstream-to=origin/${BRANCH} ${BRANCH}
 
+
 ### 手動推送到遠端分支
 BRANCH=feature
 git push --set-upstream origin ${BRANCH}
+
 
 ### 改變追蹤 URL
 REPOSITORY=origin
 GIT_URL=git@github.com:cool21540125/documentation-notes.git
 git remote set-url ${REPOSITORY} ${GIT_URL}
+
 
 ### push tag
 TAG_NAME=1.0.0
@@ -81,11 +90,18 @@ git push origin ${TAG_NAME}
 ### 比對兩次 commit 所有差異
 git diff $OLD_COMMIT $NEW_COMMIT
 
+
 ### 比對兩次 commit 特定檔案的差異
 git diff $OLD_COMMIT $NEW_COMMIT -- $FILE
 
+
 ### 比對目前 commit 與特定 commit 差異
 git diff $COMMIT
+
+
+### 清除 .gitignore 宣告的檔案們
+git clean -ffdx  # 全部直接刪除
+git clean -idx   # 互動式詢問
 ```
 
 
@@ -133,8 +149,8 @@ git submodule add git@github.com:cool21540125/aws-labs.git
 #  3 .gitmodules
 
 
-### 更新
-git submodule update
+### 更新 submodules
+git submodule update --init --recursive
 
 
 ### 將來要持續更新 submodule
