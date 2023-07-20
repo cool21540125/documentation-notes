@@ -157,6 +157,10 @@ journalctl -b -1
 ### 4-1 timedatectl
 
 ```sh
+export TZ=Asia/Taipei
+export TZ=UTC
+
+
 $# timedatectl
       Local time: Sun 2018-10-07 04:47:09 CST
   Universal time: Sat 2018-10-06 20:47:09 UTC
