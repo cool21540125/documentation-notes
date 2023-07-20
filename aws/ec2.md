@@ -117,7 +117,10 @@ EC2 選購時, 有底下這一大堆的 purchasing options:
     - 加速將來 Instance start 的時間
         - 直接從 *root EBS Volume* 來做 init
 - cross OS
-- hibernation period < 60 days (無法長久 hybernate)
+- 使用限制:
+    - 適用於: **On-Demand**, **Reserved**, **Spot**
+    - RAM 必須要 < 150 GiB
+    - hibernation period < 60 days (無法長久 hybernate)
 
 
 ## EC2 Nitro

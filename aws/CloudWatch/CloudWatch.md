@@ -23,19 +23,18 @@
                 - 很貴
                 - 使用 [collected plugin](https://github.com/awslabs/collectd-cloudwatch) 來搜集 metrics
                 - 儲存後, 查看 metrics 時, 可再自行選擇資料頻率 1/5/10/30/60 甚至更長的資料頻率
-                - WARNING: 很容易與 EC2 detailed monitoring && CloudWatch Alarm high resolution 搞混!!
+                - WARNING: 很容易把 EC2 detailed monitoring && CloudWatch Alarm high resolution metrics 搞混!!
                     - EC2 detailed monitoring
                         - Enabled  : 每 1 min 發送 metrics 到 CloudWatch (需課金)
                             - 如果是底下的操作, 預設是 Detailed Monitoring:
                                 - 使用 AWS CLI 建立 Launch Configuration
-                                - 使用 SDK 建立 Launch Configuration
+                                - 使用 SDK 建立 Launch Configuration (New)
                         - Disabled : 每 5 min 發送 metrics 到 CloudWatch
                             - 如果是底下的操作, 預設是 Basic Monitoring:
-                                - 使用 Launch Template
+                                - 使用 Launch Template (Old)
                                 - 使用 AWS Management Console 建立 Launch Configuration
                             - `aws ec2 monitor-instances --instance-ids ${Instance_ID}` 可用來啟動 EC2 的 detailed monitoring
-                    - 
-                    - High-Resolution Metrics (需要課金, 而且很貴)
+                    - High Resolution Metrics (需要課金, 而且很貴)
                         - APPs 可以每 1 sec 發送 metrics 到 CloudWatch
                             -  另一方面, 可以設定 CloudWatch Alarm 在不同的頻率(ex: 每 10 secs) 作為評估
         - 如果自行搜集 custom metric 時, 都會去尻 `PutMetricData API`(收費~), 假設又使用 High Resolution, 小心錢包哭哭
@@ -120,17 +119,6 @@ subgraph cw["CloudWatch"]
 end
 
 cwa -- Alert --> sns["SNS"]
-```
-
-```bash
-### 使用 CLI 方式來 trigger ALARM (測試用, 可用來觀察後續動作是否正常運作)
-### https://awscli.amazonaws.com/v2/documentation/api/latest/reference/cloudwatch/set-alarm-state.html
-$# ALARM_REASON=testing
-$# ALARM_NAME=XXX
-$# aws cloudwatch set-alarm-state \
-    --alarm-name ${ALARM_NAME} \
-    --state-value ALARM \
-    --state-reason ${ALARM_REASON}
 ```
 
 
