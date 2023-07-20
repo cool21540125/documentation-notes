@@ -1,16 +1,20 @@
 // Linux 的話放在 /etc/docker/daemon.json
 {
-    "registry-mirrors": [],
-    "insecure-registries": [],
-    "debug": false,
-    "experimental": false,
-    // logging-driver - https://docs.docker.com/config/containers/logging/configure/
-    // "log-driver": "json-file",  
-    // ↑ 此為預設
-    "data-root": "/data/docker",
-    "features": {
-        "buildkit": true  // 優化 Docker build 的流程
-    },
-    // 解除 container 與 docker daemon 的耦合
-    "live-restore": true,
+  "builder": {
+    "gc": {
+      "defaultKeepStorage": "20GB",
+      "enabled": true
+    }
+  },
+  "data-root": "/data/docker",
+  "debug": false,
+  "experimental": false,
+  "features": {
+    "buildkit": true // 優化 Docker build 的流程
+  },
+  "insecure-registries": [],
+  "ipv6": false,
+  "live-restore": true, // 解除 container 與 docker daemon 的耦合
+  "log-driver": "json-file", // logging-driver - https://docs.docker.com/config/containers/logging/configure/
+  "registry-mirrors": []
 }
