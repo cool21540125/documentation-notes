@@ -10,12 +10,15 @@
 
 
 ### Send Card
-POST {{url}}?key={{key}}&token={{token}}
+POST {{url}}?key={{key}}&token={{token}}&messageReplyOption=REPLY_MESSAGE_FALLBACK_TO_NEW_THREAD
 Content-Type: application/json
 
 {
   "name": "myName",
   "text": "",
+  "thread": {
+    "threadKey": "t230720"
+  },
   "cardsV2": [
     {
       "cardId": "unique-card-id",
