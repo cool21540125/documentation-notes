@@ -1,0 +1,62 @@
+
+@TOKEN={{$dotenv TOKEN}}
+@TeamId={{$dotenv TeamId}}
+@URL=https://api.vercel.com
+
+
+### List all teams
+# @name TeamList
+# https://vercel.com/docs/rest-api/endpoints#list-all-teams
+GET {{URL}}/v2/teams
+Authorization: Bearer {{TOKEN}}
+
+
+
+# 
+@TeamId={{TeamList.response.body.teams[0].id}}
+# 
+
+
+
+### Create Team
+# https://vercel.com/docs/rest-api/endpoints#create-a-team
+POST {{URL}}/v1/teams
+Authorization: Bearer {{TOKEN}}
+Content-Type: application/json
+
+{
+    "slug": "abcdefghijklmnopqrstuv",
+    "name": "demo-team-A"
+}
+
+
+
+### Get Team
+# https://vercel.com/docs/rest-api/endpoints#get-a-team
+GET {{URL}}/v2/teams/{{TeamId}}
+Authorization: Bearer {{TOKEN}}
+
+
+
+### List team members
+# https://vercel.com/docs/rest-api/endpoints#list-team-members
+GET {{URL}}/v2/teams/{{TeamId}}/members
+Authorization: Bearer {{TOKEN}}
+
+
+
+### Get the User
+# https://vercel.com/docs/rest-api/endpoints#get-the-user
+GET {{URL}}/v2/user
+Authorization: Bearer {{TOKEN}}
+
+
+
+### List User Events
+# https://vercel.com/docs/rest-api/endpoints#list-user-events
+GET {{URL}}/v3/events
+Authorization: Bearer {{TOKEN}}
+
+
+
+### 
