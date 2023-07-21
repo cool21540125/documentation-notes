@@ -1,0 +1,17 @@
+
+@TOKEN={{$dotenv TOKEN}}
+@TeamId={{$dotenv TeamId}}
+@URL=https://api.vercel.com
+
+
+
+
+### List Edge Config
+# https://vercel.com/docs/rest-api/endpoints#get-edge-configs
+GET {{URL}}/v1/edge-config
+Authorization: Bearer {{TOKEN}}
+Content-Type: application/json
+
+
+
+### 

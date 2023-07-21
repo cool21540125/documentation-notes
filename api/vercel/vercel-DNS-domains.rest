@@ -1,0 +1,44 @@
+
+@TOKEN={{$dotenv TOKEN}}
+@URL=https://api.vercel.com
+@ProjectId=
+@TeamId=
+
+
+
+### List Domains
+# @name DomainList
+# https://vercel.com/docs/rest-api/endpoints#list-all-the-domains
+GET {{URL}}/v5/domains
+Authorization: Bearer {{TOKEN}}
+
+
+
+#
+@DomainName={{DomainList.response.body.domains[0].name}}
+#
+
+
+
+### Get Domain information
+# https://vercel.com/docs/rest-api/endpoints#get-information-for-a-single-domain
+GET {{URL}}/v5/domains/{{DomainName}}
+Authorization: Bearer {{TOKEN}}
+
+
+
+### Get Domain configuration
+# https://vercel.com/docs/rest-api/endpoints#get-a-domain-s-configuration
+GET {{URL}}/v6/domains/{{DomainName}}/config
+Authorization: Bearer {{TOKEN}}
+
+
+
+### Check domain availability
+# https://vercel.com/docs/rest-api/endpoints#check-a-domain-availability
+GET {{URL}}/v4/domains/status?name={{DomainName}}
+Authorization: Bearer {{TOKEN}}
+
+
+
+### 

@@ -1,0 +1,76 @@
+
+@TOKEN={{$dotenv TOKEN}}
+@URL=https://api.vercel.com
+@ProjectId=
+@TeamId=
+# https://vercel.com/docs/rest-api/endpoints#deployments
+# ----------------------------------------------------------------
+
+
+
+### List deployments
+# @name DeploymentList
+# https://vercel.com/docs/rest-api/endpoints#list-deployments
+GET {{URL}}/v6/deployments
+Authorization: Bearer {{TOKEN}}
+
+
+
+#
+@DeploymentName={{DeploymentList.response.body.deployments[0].name}}
+@DeploymentId={{DeploymentList.response.body.deployments[0].uid}}
+@DeploymentUrl={{DeploymentList.response.body.deployments[0].url}}
+#
+
+
+
+### Get deployment
+# https://vercel.com/docs/rest-api/endpoints#get-a-deployment-by-id-or-url
+GET {{URL}}/v13/deployments/{{DeploymentId}}
+Authorization: Bearer {{TOKEN}}
+
+
+
+### Get deployment events
+# https://vercel.com/docs/rest-api/endpoints#get-deployment-events
+GET {{URL}}/v2/deployments/{{DeploymentId}}/events
+Authorization: Bearer {{TOKEN}}
+
+
+
+### List deployment files
+# https://vercel.com/docs/rest-api/endpoints#list-deployment-files
+GET {{URL}}/v6/deployments
+Authorization: Bearer {{TOKEN}}
+
+
+
+### Create deployment
+# https://vercel.com/docs/rest-api/endpoints#create-a-new-deployment
+#POST {{URL}}/v13/deployments
+#Authorization: Bearer {{TOKEN}}
+#Content-Type: application/json
+#
+#{
+#    // 很複雜... 略
+#}
+
+
+
+@DeployingId=
+### Cancel a deployment
+# https://vercel.com/docs/rest-api/endpoints#cancel-a-deployment
+PATCH {{URL}}/v12/deployments/{{DeploymentId}}/cancel/{{DeployingId}}/cancel
+Authorization: Basic {{TOKEN}}
+
+
+
+### List checks
+# @name CheckList
+# https://vercel.com/docs/rest-api/endpoints#retrieve-a-list-of-all-checks
+GET {{URL}}/v1/deployments/{{DeploymentId}}/checks
+Authorization: Bearer {{TOKEN}}
+
+
+
+### 
