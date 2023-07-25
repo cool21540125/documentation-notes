@@ -927,26 +927,73 @@ $ echo ${a:2:3}
 
 
 ### 測試 - test
-> 測試, 語法: `test <option> <filename>`<br>
-```sh
-$ touch file1
-
-$ test -d file1 # 是否為 dir
-$ echo $?
-1
-
-$ test -e file1 # 是否存在
-$ echo $?
-0
-
-$ test -r file1 # readable
-$ echo $?
-0
-
-$ test -s xxx  # 檔名 是否存在 && 為非空白檔案
-```
 
 ```bash
+### 是否為目錄
+test -d /tmp
+
+
+### 是否為檔案
+test -e /etc/profile
+
+
+### 字串是否有長度(並非空字串)
+test -n TonyChou
+# 0 : 並非空字串
+# 1 : 空字串, 也就是 ""
+# NOTE: -n 可以省略
+
+
+### 是否為 Block Device (ls -l 第一個字母為 b)
+test -b /dev/disk0
+
+
+### 是否為 character device (ls -l 第一個字母為 c)
+test -c /dev/zero
+
+
+### 是否為 Socket File
+test -S /var/run/docker.sock
+
+
+### 是否為 FIFO File
+test -p $FIFO
+# 找不到範例....
+
+
+### 是否為 Link File (ls -l 第一個字母為 l) (不確定有沒有分 軟硬連結)
+test -L /dev/stdin
+
+
+### 是否可 read
+test -r /etc/profile
+
+
+### 是否可 write
+test -w /etc/profile
+
+
+### 是否可執行
+test -x /bin/ls
+
+
+### 是否具有 SUID 屬性
+test -u $SUID
+
+### 是否具有 SGID 屬性
+test -g $SGID
+
+### 是否具有 Sticky bit 屬性
+test -k $StickyBit
+
+
+### 是否為「非空白檔案」
+test -s /etc/profile
+
+
+### 判斷字符串是否為 0 (空字串)
+test -z ""
+test -z $NonExistingVariable
 ### test -z 變數的字串長度若為0, 返回 true(也就是 0)
 name=Tony; test -z $name; echo $?
 1
