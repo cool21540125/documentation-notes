@@ -2432,7 +2432,8 @@ protoc --version
 - [Download Apache Maven](https://maven.apache.org/download.cgi)
 
 ```bash
-### Step1. mkdir -p $HOME/pkgs
+mkdir -p $HOME/pkgs
+
 ### Step2. 下載完 maven 以後解壓縮到上述路徑
 export M2_HOME="$HOME/pkgs/apache-maven-3.9.3"
 export JAVA_HOME="xxx"

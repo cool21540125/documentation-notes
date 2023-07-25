@@ -1,5 +1,3 @@
-
-cat <<EOF >> ~/.bashrc
 ### 常用懶人指令 ------------
 alias l='ls --color'
 alias ls='ls --color'
@@ -23,6 +21,3 @@ alias dienv='docker inspect --format="{{json .Config.Env}}"'
 
 ### k8s 懶人指令 ------------
 alias k='kubectl'
-EOF
-
-source ~/.bashrc

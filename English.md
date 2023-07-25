@@ -110,7 +110,6 @@ RADOS  | Reliable Autonomic Distributed Object Store | Storage            |
 RBD    | RADOS Block Device                          | Storage            | 
 RMI    | Remote Method Invocation                    | 遠端程序呼叫         | Java 版本的 RPC (for EJB usage)
 SEO    | Search Engine Optimization                  | FrontEnd           |
-SLA    | Service Level Agreement                     | 服務層級協定        | 
 SPF    | Single Point of Failure                     | 單點失效            | SPoF
 SRPP   | Secure Remote Password Protocol             | 安全遠端密碼協議     | 
 SSG    | Static Site Generator                       | FrontEnd           | 前端框架產生器, ex: Hugo, Hexo, MkDocs
