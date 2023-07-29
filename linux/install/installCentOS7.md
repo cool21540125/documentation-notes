@@ -2435,9 +2435,9 @@ protoc --version
 mkdir -p $HOME/pkgs
 
 ### Step2. 下載完 maven 以後解壓縮到上述路徑
-export M2_HOME="$HOME/pkgs/apache-maven-3.9.3"
+export MAVEN_HOME="$HOME/pkgs/apache-maven-3.9.3"
 export JAVA_HOME="xxx"
-export PATH="$PATH:$M2_HOME/bin:$JAVA_HOME/bin"
+export PATH="$PATH:$MAVEN_HOME/bin:$JAVA_HOME/bin"
 
 mvn version
 #Apache Maven 3.9.3 (僅節錄)
