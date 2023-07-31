@@ -1,6 +1,6 @@
 
-@TOKEN={{$dotenv TOKEN}}
-@TeamId={{$dotenv TeamId}}
+@TOKEN={{$dotenv VERCEL_TOKEN}}
+@TeamId={{$dotenv VERCEL_TEAM_ID}}
 @URL=https://api.vercel.com
 
 

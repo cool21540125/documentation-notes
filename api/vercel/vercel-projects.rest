@@ -1,8 +1,8 @@
 
-@TOKEN={{$dotenv TOKEN}}
+@TOKEN={{$dotenv VERCEL_TOKEN}}
 @URL=https://api.vercel.com
-@ProjectId=
-@TeamId=
+# @ProjectId={{$dotenv VERCEL_PROJECT_ID}}
+@TeamId={{$dotenv TeamId}}
 
 # -------------------------------------------------------------------------
 # https://vercel.com/docs/rest-api/endpoints#projects
@@ -11,7 +11,7 @@
 ### Retrieve a list of projects
 # https://vercel.com/docs/rest-api/endpoints#retrieve-a-list-of-projects
 # @name ProjectList
-GET {{URL}}/v9/projects/
+GET {{URL}}/v9/projects?teamId={{TeamId}}
 Authorization: Bearer {{TOKEN}}
 
 

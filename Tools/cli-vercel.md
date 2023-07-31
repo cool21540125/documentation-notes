@@ -1,4 +1,5 @@
 
+# Install & Login
 
 ```bash
 ### Install
@@ -12,10 +13,31 @@ vercel --version
 
 ### 
 vercel login
+vercel logout
+```
 
+
+# vercel CLI
+
+```bash
+export VERCEL_TOKEN=
+export VERCEL_TEAM_ID=
+export VERCEL_PROJECT=
+
+
+### 列出目前有哪些 Projects
+vercel --scope $VERCEL_TEAM_ID --token=$VERCEL_TOKEN project ls
+
+
+### link
+vercel link --yes --scope $VERCEL_TEAM_ID --token $VERCEL_TOKEN --project $VERCEL_PROJECT
+
+### pull
+vercel pull --yes --token $VERCEL_TOKEN
+
+### build
+vercel build --prod --token $VERCEL_TOKEN
 
 ### 
-vercel pull --yes --environment=production --token=$VERCEL_TOKEN
-vercel build --prod --token=$VERCEL_TOKEN
-vercel deploy --prebuilt --prod --token=$VERCEL_TOKEN 
+vercel deploy --prebuilt --prod --token=$VERCEL_TOKEN
 ```
