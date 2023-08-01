@@ -1,23 +1,13 @@
 
 - [Using high-level (s3) commands with the AWS CLI](https://docs.aws.amazon.com/cli/latest/userguide/cli-services-s3-commands.html#using-s3-commands-managing-objects-param)
 
-## Install awscli
 
-需先確保電腦上能使用 `unzip` 這個指令工具
+# Install awscli
 
-```bash
-curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
-unzip awscliv2.zip
-sudo ./aws/install
-```
-
-↑ 直接安裝最新穩定版的 awscli
-
-- 第一版, 稱之為 `awscli`
-- 第二版, 稱之為 `aws`, 但為了方便辨識, 這邊都會以 awscli 來做稱呼
+- https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html
 
 
-## CLI/SDK - credentials chain
+# CLI/SDK - credentials chain
 
 權限順序
 
@@ -28,33 +18,40 @@ sudo ./aws/install
 5. ECS task credentials
 6. EC2 Instance Profiles
 
-實際範例像是, 已在 EC2 配置 Instance Profile, 對於 S3 有最小必要權限
+- 需要留意安全性的範例:
+    - 已配置 Instance Profile (具備最小必要權限)
+    - 但有使用環境變數, 取得另一個權限身份 (具備完整權限)
+    - 因此依照順位, 使用 CLI/SDK 是具備完整權限
+    - 需要特別留意
 
-不過卻有人配置了 credentials environemnt variable (具備 S3 所有權限)
 
-因此依照順位, 使用 CLI/SDK 是具備 S3 full access 的權限的, 這個需要留意!!
-
-
-## Configure awscli
+# aws CLI - Environment variables
 
 ```bash
-## AWS CLI v2 的相關環境變數
-export AWS_ACCESS_KEY_ID=
-export AWS_SECRET_ACCESS_KEY=
-export AWS_REGION=
-
-#
-export AWS_PROFILE=default
-export AWS_DEFAULT_OUTTPUT=yaml
-export AWS_MAX_ATTEMPTS=
-export AWS_RETRY_MODE=
-export AWS_DEFAULT_REGION=
+### AWS CLI v2 的相關環境變數
+export AWS_ACCESS_KEY_ID
+export AWS_SECRET_ACCESS_KEY
 
 
-### AWS CLI settings
-# S3 concurrent 上傳(default: 10)
-aws configure set default.s3.max_concurrent_requests 100
+### AWS_REGION 優先於 AWS_DEFAULT_REGION
+export AWS_REGION
+export AWS_DEFAULT_REGION
+
+
+### 
+export AWS_PROFILE
+export AWS_DEFAULT_OUTTPUT
+export AWS_MAX_ATTEMPTS
+export AWS_RETRY_MODE
+
+
+### 
+
+
 ```
+
+
+# Config aws CLI v2
 
 ```bash
 # =================== 首次配置 ===================
@@ -102,6 +99,15 @@ $# aws configure --profile ${Temp_Profile_Name}
 
 ### 可用來查詢 目前正在下 aws xxx 指令的 User 是誰 (查看自己啦)
 $# aws sts get-caller-identity
+
+
+### AWS CLI settings
+aws configure set default.s3.max_concurrent_requests 100
+# S3 concurrent 上傳(default: 10)
+
+
+### 
+
 ```
 
 

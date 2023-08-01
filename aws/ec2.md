@@ -163,6 +163,7 @@ ethtool -i eth0
 
 ## EC2 Image Builder
 
+- 可能會跑上 30+ mins
 - 用來自動化 create/maintain/validate/test
 - AMI(Amazon Machine Image), container for EC2 instance
 - Charge: 只對 Resource 收費(本身免費)
@@ -190,35 +191,13 @@ ethtool -i eth0
 
 # 額外補充
 
-
-
-
 ```bash
 ### 讓 EC2 找到自身的 meta-data, 但只能在 *Web Console* && *CLI*, 這動作本身不需要權限
-$# curl http://169.254.169.254/latest/meta-data
+curl http://169.254.169.254/latest/meta-data
 # https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/instancedata-data-retrieval.html
 
 ### CLI 找機器的 meta-data
-$# aws ec2 describe-instances
-```
-
-
-# CLI
-
-```bash
-
-### start EC2
-$# AWS_REGION=ap-northeast-1         # IMAGE 會綁定 Region, 可用這個來做切換
-$# IMAGE_ID=ami-0b7546e839d7ace12    # ap-northeast-1 的 Amazon Linux 2 AMI x86-64
-$# aws ec2 run-instances \
-    --image-id ${IMAGE_ID} \
-    --instance-type t2.micro \
-    --dry-run
-
-An error occurred (DryRunOperation) when calling the RunInstances operation: Request would have succeeded, but DryRun flag is set.
-# 如果看到這樣, 表示指令可成功下達. 但因家了 --dry-run, 所以沒實際跑下去
-
-$# 
+aws ec2 describe-instances
 ```
 
 

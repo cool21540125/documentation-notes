@@ -8,6 +8,8 @@
         - Document 又有點像 ansible playbook 那樣, 可參考 [這個](https://docs.aws.amazon.com/systems-manager/latest/userguide/document-schemas-features.html)
     - 如果針對 EC2 Instance 來執行的話, 需要確保 EC2 已完成底下任務:
         - 已安裝 && 啟動 *SSM Agent*
+            - `sudo yum install -y https://s3.amazonaws.com/ec2-downloads-windows/SSMAgent/latest/linux_amd64/amazon-ssm-agent.rpm`
+            - `systemctl status amazon-ssm-agent`
         - Instance Roles:
             - 如果要整合 CloudWatch, 那就給這個 *CloudWatchFullAccess* Policy
             - 如果要讓 SSM 訪問 EC2, 那就給這個 *AmazonSSMManagedInstanceCore* Policy

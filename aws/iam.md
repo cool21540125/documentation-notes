@@ -201,12 +201,16 @@ r2 -.- srv2["AWS Services \n (ex: S3)"];
     - OpenID Connect
     - custom-built identity broker
 - [Temporary security credentials in IAM](https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_temp.html)
-- [The difference between an AWS role and an instance profile](https://medium.com/devops-dudes/the-difference-between-an-aws-role-and-an-instance-profile-ae81abd700d)
-    - Instance Profile : 定義 EC2 可以 assume a role (扮演成為哪個角色). 僅止於取得某個 Role 的地位
-    - IAM Role         : 定義 取得這個 Role 的人(不管是不是真的人啦), 能具備這個 Role 裡頭所 Allow 的 credentials
+- `IAM Role` 與 `Instance Profile` 的差異
+    - https://medium.com/devops-dudes/the-difference-between-an-aws-role-and-an-instance-profile-ae81abd700d)
+    - `IAM Role`         : 不管誰(不管是不是真的人啦), assume 這個 Role 的話, 就能做這個 Role 被賦予的 (policies & permissions) Credentials
+    - `Instance Profile` : 用來聲明 EC2 具備這個身份. 而這身份唯一的用途就是用來 **assume a role**. 僅止於取得某個 Role 的地位
     - Web Console 操作上, 我們會去 create EC2 Instance Profile, 其實是 2 個動作:
-        - 建立 Instance Profile, 用途僅僅是, 讓 EC2 可以扮演某個角色 (assume a role)
         - 建立一個 Role (裡面有必要的 permissions), 然後讓 EC2 可以扮演這個 Role
+        - 建立 Instance Profile, 用途僅僅是, 讓 EC2 可以扮演某個角色 (assume a role)
+    - 白話範例:
+        - 有個 Role 是總統
+        - 然後你被賦予了 assume 總統這個 Role 的 Instance Profile, 你就能幹總統能幹的事情(販賣芒果乾, 買很多免稅菸等等)
 
 
 # IAM Principal

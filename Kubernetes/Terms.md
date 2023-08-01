@@ -44,8 +44,12 @@
   - 內有 4 個元件:
     - Etcd : 存放所有叢集相關的資料
     - kube-apiserver : 使用 kubectl 所下的指令, 都會跑到這裡; Workers 之間溝通的橋樑; k8s 內的身分認證&&授權
+        - 6443 port
+        - HA : 可運行 A/A 模式
     - kube-scheduler : 對資源的調度, 負責分配任務到到 Nodes 上頭的 Pod 來執行
     - kube-controller-manager : 負責監控 Cluster 內的一個 Process(對於各個資源的管理器)
+        - HA : 僅能運行 A/S 模式
+            - 藉由 leader election process 選出 Active 
     - DNS: 紀錄啟動 Pods 的位址
 - API Server
     - 所有 REST commands 訪問的 Entrypoint, 用來控制整個 cluster
