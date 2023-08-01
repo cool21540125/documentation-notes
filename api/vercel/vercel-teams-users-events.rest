@@ -5,8 +5,8 @@
 
 
 ### List all teams
-# @name TeamList
 # https://vercel.com/docs/rest-api/endpoints#list-all-teams
+# @name TeamList
 GET {{URL}}/v2/teams
 Authorization: Bearer {{TOKEN}}
 

@@ -2,7 +2,7 @@
 @TOKEN={{$dotenv VERCEL_TOKEN}}
 @URL=https://api.vercel.com
 @ProjectId={{$dotenv VERCEL_PROJECT_ID}}
-@TeamId=
+@TeamId={{$dotenv VERCEL_TEAM_ID}}
 
 # https://vercel.com/docs/rest-api/endpoints#webhooks
 
@@ -11,10 +11,8 @@
 
 ### List Webhooks
 # https://vercel.com/docs/rest-api/endpoints#get-a-list-of-webhooks
-# NOTE: unauthorized - Only teams can access to webhooks
-# 已經 User 加入 Team, 但仍無法使用
 # @name WebhookList
-GET {{URL}}/v1/webhooks
+GET {{URL}}/v1/webhooks?teamId={{TeamId}}
 Authorization: Bearer {{TOKEN}}
 
 
