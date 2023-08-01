@@ -2,7 +2,7 @@
 @TOKEN={{$dotenv VERCEL_TOKEN}}
 @URL=https://api.vercel.com
 # @ProjectId={{$dotenv VERCEL_PROJECT_ID}}
-@TeamId={{$dotenv TeamId}}
+@TeamId={{$dotenv VERCEL_TEAM_ID}}
 
 # -------------------------------------------------------------------------
 # https://vercel.com/docs/rest-api/endpoints#projects
