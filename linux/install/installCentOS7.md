@@ -1991,81 +1991,14 @@ $# chronyc sources -v
 ```
 
 
-# Install k8s
+# Install k8s / install kubernetes
 
-- 2022/10/14
-- [Installing kubeadm](https://kubernetes.io/docs/setup/production-environment/tools/kubeadm/install-kubeadm/)
+- 2023/08
+- ![Install Kubernetes](./installK8s.md)
 - [CRI-O Installation Instructions](https://github.com/cri-o/cri-o/blob/main/install.md)
 
 
-## I. Install && config
-
-```bash
-cat <<EOF | sudo tee /etc/yum.repos.d/kubernetes.repo
-[kubernetes]
-name=Kubernetes
-baseurl=https://packages.cloud.google.com/yum/repos/kubernetes-el7-\$basearch
-enabled=1
-gpgcheck=1
-gpgkey=https://packages.cloud.google.com/yum/doc/rpm-package-key.gpg
-exclude=kubelet kubeadm kubectl
-EOF
-
-### SELinux 問題... 為了開發方便...... 斟酌使用
-setenforce 0
-sed -i 's/^SELINUX=enforcing$/SELINUX=permissive/' /etc/selinux/config
-
-# 不懂 --disableexcludes 在幹嘛
-VERSION="-1.24.6"
-yum install -y kubelet${VERSION} kubeadm${VERSION} kubectl${VERSION} --disableexcludes=kubernetes
-systemctl enable --now kubelet
-# 2022/10 的當下, 最新版為 1.25.3 (但是 cri-o 並沒有這版本... 因此才指定較舊版本)
-
-### 必須關閉 swap, 不然 kubelet 可能會發生無法預期的狀況
-swapoff -a
-
-kubelet --version
-kubeadm version
-kubectl version
-
-### 需要啟用 br_netfilter 模組, 檢查看看是否已啟用
-$# lsmod | grep br_netfilter
-
-# 啟用 br_netfilter
-$# modprobe br_netfilter
-
-# 再次檢查, 應該就能看到了
-$# lsmod | grep br_netfilter
-br_netfilter           22256  0 
-bridge                151336  1 br_netfilter
-# --- 如上 ---
-
-### 接著需要讓 Linux 的 iptables 能夠正確識別 bridged traffic, 因此需要配置 sysctl
-cat <<EOF | sudo tee /etc/modules-load.d/k8s.conf
-overlay
-br_netfilter
-EOF
-
-modprobe overlay
-modprobe br_netfilter
-
-### 確保 iptables 能夠正常處理 filtering && forwarding 的 packets
-cat <<EOF | sudo tee /etc/sysctl.d/k8s.conf
-net.bridge.bridge-nf-call-iptables  = 1
-net.bridge.bridge-nf-call-ip6tables = 1
-net.ipv4.ip_forward                 = 1
-EOF
-sudo sysctl --system
-
-```
-
-## II. 選擇 CRI
-
-- CRI 實作有底下一堆...
-  - cri-o (用這個就對了! )
-  - containerd
-  - docker
-  - ...
+## 1. Install container runtime (未完整)
 
 ```bash
 ### Install cri-o
@@ -2081,7 +2014,87 @@ yum install cri-o
 # (找不到東西安裝QQ)
 ```
 
-### III. cgroup drivers 的選擇及配置
+
+## 2. Install && config
+
+```bash
+### Repo
+cat <<EOF | sudo tee /etc/yum.repos.d/kubernetes.repo
+[kubernetes]
+name=Kubernetes
+baseurl=https://packages.cloud.google.com/yum/repos/kubernetes-el7-\$basearch
+enabled=1
+gpgcheck=1
+gpgkey=https://packages.cloud.google.com/yum/doc/rpm-package-key.gpg
+exclude=kubelet kubeadm kubectl
+EOF
+# 時日至今, basearch 可能早已無法被辨識
+# 將「\$basearch」取代為 `uname -m` 查得的結果, ex:
+#     https://packages.cloud.google.com/yum/repos/kubernetes-el7-x86_64
+
+
+### SELinux
+setenforce 0
+sed -i 's/^SELINUX=enforcing$/SELINUX=permissive/' /etc/selinux/config
+
+
+### install (latest stable || 指定版本)
+yum install -y kubelet kubeadm kubectl --disableexcludes=kubernetes
+VERSION="1.24.6" yum install -y kubelet-${VERSION} kubeadm-${VERSION} kubectl-${VERSION} --disableexcludes=kubernetes
+# 不懂 --disableexcludes 在幹嘛
+
+
+systemctl enable --now kubelet
+```
+
+
+## 3. config
+
+```bash
+### 關閉 swap (否則 kubelet 可能出問題)
+swapoff -a
+# 記得做永久關閉
+
+
+### 需要啟用 br_netfilter 模組, 檢查看看是否已啟用
+lsmod | grep br_netfilter
+
+
+# 啟用 br_netfilter
+modprobe br_netfilter
+
+
+# 再次檢查, 應該就能看到了
+lsmod | grep br_netfilter
+#br_netfilter           22256  0 
+#bridge                151336  1 br_netfilter
+# --- 如上 ---
+
+
+### 接著需要讓 Linux 的 iptables 能夠正確識別 bridged traffic, 因此需要配置 sysctl
+cat <<EOF | sudo tee /etc/modules-load.d/k8s.conf
+overlay
+br_netfilter
+EOF
+
+
+modprobe overlay
+modprobe br_netfilter
+
+
+### 確保 iptables 能夠正常處理 filtering && forwarding 的 packets
+cat <<EOF | sudo tee /etc/sysctl.d/k8s.conf
+net.bridge.bridge-nf-call-iptables  = 1
+net.bridge.bridge-nf-call-ip6tables = 1
+net.ipv4.ip_forward                 = 1
+EOF
+
+
+sudo sysctl --system
+```
+
+
+## 4. cgroup drivers 的選擇及配置 (未完整)
 
 - k8s 可選擇使用下列其中一種方式來管理容器資源:
   - cgroupfs (預設)
@@ -2100,13 +2113,6 @@ yum install cri-o
       - 修改 container runtime 的 cgroup driver 為 systemd
       - 修改 KubeletConfiguration 配置黨裡頭的 `cgroupDriver` 為 systemd
  
-
-### IV. Create k8s cluster
-
-
-
-
----
 
 # Install iptables
 

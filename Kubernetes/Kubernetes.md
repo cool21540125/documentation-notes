@@ -59,23 +59,6 @@ K8s 平台的選擇:
 ------------------------------------------------------------
 
 
-## Container Runtime Interface(CRI)
-
-- k8s 用來與 Container 溝通的介面. 預設會依照底下去尋找 (這知識可能過期了):
-  - Docker: /var/run/docker.sock  (Docker 內建的 CRI 實作為 `dockershim`, 與 kubelet 於 18.09 整合起來了)
-  - containerd: /run/containerd/containerd.sock
-  - CRI-O: /var/run/crio/crio.sock
-
-
-So far, 2021/10/30, k8s 以使用 CRI-O 來實作 CRI
-
-配置 control-plane node 上面 kubelet 需要使用的 cgroup driver
-
-若使用的是 Docker, kubelet 會自動偵測 cgroup driver, 並於 Runtime 期間設定於 `/var/lib/kubelet/config.yaml`
-
-------------------------------------------------------------
-
-
 # kubernetes CRI 架構演進圖
 
 ```
