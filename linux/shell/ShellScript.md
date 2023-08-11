@@ -19,12 +19,13 @@ echo -e "\033[32m [INFO]: hi \033[0m"
 
 # if
 
+- if -a : (等同於 and)
 - if -d : 為 dir
 - if -e : 檔名是否存在
 - if -f : 檔名是否存在 && 為 file
 - if -L : 為連結
 - if -n : 長度 > 0
-- if -o : 多重條件 or
+- if -o : (等同於 or)
 - if -r : readable
 - if -s : 大小 >0
 - if -w : writable
@@ -39,6 +40,10 @@ echo -e "\033[32m [INFO]: hi \033[0m"
 if [ "${1:0:1}" = '-' ]; then
 	set -- mongod "$@"
 fi
+
+
+### string like , string contains
+[[ "$var" = *"ABC"* ]]
 ```
 
 
