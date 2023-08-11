@@ -402,7 +402,7 @@ kubectl config get-contexts
 #          str-demo-k8s-str01    str-demo-k8s-str01    str
 
 
-### 
+### 查詢 KUBECONFIG 配置是否正確配置 && 指向了哪個 k8s cluster
 kubectl cluster-info
 #Kubernetes control plane is running at https://127.0.0.1:60229
 #CoreDNS is running at https://127.0.0.1:60229/api/v1/namespaces/kube-system/services/kube-dns:dns/proxy

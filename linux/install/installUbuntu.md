@@ -129,3 +129,39 @@ $# sudo apt-get install docker-ce docker-ce-cli containerd.io docker-compose-plu
 $# systemctl start docker
 $# systemctl enable docker
 ```
+
+
+# Install kubectl
+
+```bash
+### download && check
+apt-get install -y curl
+
+curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
+curl -LO "https://dl.k8s.io/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl.sha256"
+echo "$(cat kubectl.sha256) kubectl" | sha256sum --check
+#kubectl: OK
+```
+
+
+# Install k8s / Install kubernetes
+
+- 2023/08
+- ![Install Kubernetes](./installK8s.md)
+
+```bash
+apt-get update
+apt-get install -y apt-transport-https ca-certificates curl
+
+
+### Google Cloud public signkey && k8s repo
+curl -fsSL https://dl.k8s.io/apt/doc/apt-key.gpg | sudo gpg --dearmor -o /etc/apt/keyrings/kubernetes-archive-keyring.gpg
+echo "deb [signed-by=/etc/apt/keyrings/kubernetes-archive-keyring.gpg] https://apt.kubernetes.io/ kubernetes-xenial main" | sudo tee /etc/apt/sources.list.d/kubernetes.list
+
+mkdir -p /etc/apt/keyrings
+sudo apt-get install -y kubeadm kubectl
+sudo apt-mark hold kubeadm kubectl
+```
+
+
+# 
