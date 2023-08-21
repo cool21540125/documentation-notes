@@ -64,27 +64,19 @@ git commit --amend -m "<Commit String>"
 
 ### 改變追蹤 URL
 git remote set-url origin git@github.com:cool21540125/documentation-notes.git
+#                   repo   git_url
 
 
 ### 設定追蹤遠端分支
-BRANCH=dev
 git branch --set-upstream-to=origin/${BRANCH} ${BRANCH}
 
 
 ### 手動推送到遠端分支
-BRANCH=feature
 git push --set-upstream origin ${BRANCH}
 
 
-### 改變追蹤 URL
-REPOSITORY=origin
-GIT_URL=git@github.com:cool21540125/documentation-notes.git
-git remote set-url ${REPOSITORY} ${GIT_URL}
-
-
-### push tag
-TAG_NAME=1.0.0
-git push origin ${TAG_NAME}
+### git push tag
+git push origin ${TAG}
 
 
 ### 比對兩次 commit 所有差異
@@ -127,7 +119,7 @@ git config --local core.sshCommand "ssh -i ~/.ssh/PrivateKeyName"
 ```
 
 
-# submodule
+# 加入 submodule
 
 ## 假設要在 目前 GitProject 底下, 加入一個 子專案, 作法如下
 
@@ -143,17 +135,24 @@ git submodule add git@github.com:cool21540125/aws-labs.git
 # 如此一來, aws-labs 這個 GitSubmodule 就會附加到當前 GitProject 底下了
 
 
-### 如果設錯了, 需要修復底下的東西
-#  1 .git/config
-#  2 .git/modules/SubModuleDir 
-#  3 .gitmodules
-
-
 ### 更新 submodules
 git submodule update --init --recursive
 
 
 ### 將來要持續更新 submodule
 cd ${SubModule}
-git pull origin master
+git pull
+```
+
+
+# 移除 submodule
+
+```bash
+SM=xxx
+git submodule deinit -f $SM
+rm -rf .git/modules/$SM
+git config -f .gitmodules --remove-section submodule.$SM
+git config -f .git/config --remove-section submodule.$SM
+git rm --cached $SM
+rm -rf $SM
 ```
