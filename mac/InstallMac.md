@@ -229,7 +229,7 @@ gvm install go1.20.5
 
 - [Installing or updating the latest version of the AWS CLI](https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html)
 
-```bash
+```zsh
 ### Install or update the AWS CLI
 #   Command line - Current user
 
@@ -252,7 +252,7 @@ aws --version
 - 2023/04/04
 - [Install SAM CLI](https://aws.amazon.com/tw/serverless/sam/)
 
-```bash
+```zsh
 brew tap aws/tap
 brew install aws-sam-cli
 brew upgrade aws-sam-cli
@@ -266,7 +266,7 @@ sam --version
 
 - 2023/04/03
 
-```bash
+```zsh
 ### AWS Copilot
 brew install aws/tap/copilot-cli
 # 或
@@ -285,7 +285,7 @@ copilot --version
 - 2022/12/30
 - [Install Terraform](https://developer.hashicorp.com/terraform/tutorials/gcp-get-started/install-cli)
 
-```bash
+```zsh
 ### 法1. (放棄使用 brew 吧!!) (需要依賴噁爛到爆的 xcode) -----------------
 # install the HashiCorp tap, a repository of all our Homebrew packages.
 $# brew tap hashicorp/tap
@@ -313,7 +313,7 @@ on darwin_amd64
 
 - 2022/09/21
 
-```bash
+```zsh
 ### k8s 的額外 CLI
 $# brew install kubectx
 # 對他還很不熟, 不過他其中一個功能可以修改 default namespace
@@ -326,7 +326,7 @@ $#
 
 - 2022/09/24
 
-```bash
+```zsh
 $# aws --version
 aws-cli/2.7.9 Python/3.9.11 Darwin/21.6.0 exe/x86_64 prompt/off
 
@@ -341,7 +341,7 @@ $# eksctl version
 
 # Install Jenkins-lts
 
-```bash
+```zsh
 ### install
 brew install jenkins-lts
 
@@ -380,7 +380,7 @@ ls -l --color ~/Library/LaunchAgents
 
 # Install nginx
 
-```bash
+```zsh
 ### install
 brew install nginx
 
@@ -409,7 +409,7 @@ tail -f /usr/local/var/log/nginx/error.log
 
 # Install md5sha1sum
 
-```bash
+```zsh
 brew install md5sha1sum
 ```
 
@@ -418,14 +418,14 @@ brew install md5sha1sum
 
 安裝 `acme.sh` 之前的依賴套件
 
-```bash
+```zsh
 $# brew install socat
 ```
 
 
 # Install openldap
 
-```bash
+```zsh
 $# brew install openldap
 ```
 
@@ -616,7 +616,7 @@ protoc --version
 
 - 2023/04/11
 
-```bash
+```zsh
 brew install mysql@8.0
 
 ```
@@ -626,7 +626,7 @@ brew install mysql@8.0
 
 - 2023/04/11
 
-```bash
+```zsh
 brew install node@14
 brew install node@16
 # ---------- Output ----------
@@ -662,7 +662,7 @@ brew install node@18
 - 2023/04/28
 - 團隊建議使用 nvm 管理 node 版本
 
-```bash
+```zsh
 ### install
 brew install nvm
 nvm version
@@ -722,4 +722,48 @@ swagger-codegen version
 ```
 
 
-# 
+# Install ruby
+
+- 2023/08 第一次接觸 ruby 這東西=..=
+- mac 一開始已經內建 ruby 2.6
+
+```zsh
+brew install ruby@3.1
+
+export GEM_HOME=$HOME/.gem
+export PATH="/usr/local/opt/ruby@3.1/bin:$GEM_HOME/bin:$PATH"
+
+ruby -v
+#ruby 3.1.4p223
+
+gem -v
+#3.4.10
+
+### 會安裝到 $GEM_HOME
+gem install ${PKGS}
+```
+
+
+# Install fastlane
+
+- build & release mobile apps
+
+# 法1. by homebrew
+
+```zsh
+
+```
+
+
+# 法2. by gem
+
+```zsh
+### (option) 切換成 local gem
+export GEM_HOME=$HOME/.gem
+export PATH="/usr/local/opt/ruby@3.1/bin:$GEM_HOME/bin:$PATH"
+gem install fastlane
+
+
+### Usage
+$HOME/.gem/bin/fastlane -v
+```
