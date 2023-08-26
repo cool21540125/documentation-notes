@@ -75,6 +75,20 @@ stress -c 4
 
 ### 配置 250M
 stress --vm 1 --vm-bytes 250M --vm-hang 1
+
+
+### ------ 使用原始方式來標 CPU ------
+# 計算圓周率, 計算到小數點以下8000位 (另一個 Terminal 再 htop)
+echo "scale=8000; 4*a(1)" | bc -l -q >> /dev/null
+
+# 模擬 CPU 飆升 (5,000,000 大概跑 10 secs)
+head -n 5000000 /dev/urandom | md5sum
+
+# 讓 CPU 飆高
+for i in `seq 1 $(cat /proc/cpuinfo |grep "physical id" |wc -l)`; do dd if=/dev/zero of=/dev/null & done
+
+# 讓 CPU 飆高
+dd if=/dev/zero of=/dev/null
 ```
 
 

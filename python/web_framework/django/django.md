@@ -1,57 +1,35 @@
-# Django v1.11
-- 2018/07
+# Django
 
-```sh
-### 「-m django」使用 django 模組, 執行後面指令
-$ python -m django --version
-1.11.4
-
-$ django-admin startproject <Project Name>
-
-$ python manage.py startapp <App Name>  # 建立 App
-```
+```bash
+### Django Version
+python -m django --version
 
 
-``` sh
-# Windows底下首次執行時 (若安裝 Anaconda 才不會有相依套件的問題), 參考 dbapi 那篇
-$ pip install mysqlclient
-
-# CentOS7
-$ sudo yum install -y python-devel
-$ pip install mysqlclient
-
-# Ubuntu16.04
-$ sudo apt -y install libmysqlclient-dev
-$ pip install mysqlclient
-```
-
-```sh
-$ python manage.py runserver
-$ python manage.py runserver 0:8000     # 開放對外
-
-$ python manage.py shell
-```
-
-# Migrate (其實我不是很懂)
-
-```sh
-$ python manage.py migrate
+### Django Start Project
+django-admin startproject $ProjectName
 
 
-$
-```
+### Creat Django App
+python manage.py startapp $AppName
 
-# Models
 
-```sh
-$ python manage.py inspectdb
 
-# 將資料庫schema寫入「blogapp」裡面的 Model.py
-$ python manage.py inspectdb > m.py
-```
+### Django Shell
+python manage.py shell
 
-# Superuser
 
-```sh
-$ python manage.py createsuperuser
+### Create migrate
+python manage.py migrate
+
+
+### show DB schema
+python manage.py inspectdb
+
+
+### Sync DB to model
+python manage.py inspectdb > m.py
+
+
+### Create Django Admin
+python manage.py createsuperuser
 ```
