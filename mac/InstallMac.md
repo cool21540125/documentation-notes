@@ -288,18 +288,24 @@ copilot --version
 ```zsh
 ### 法1. (放棄使用 brew 吧!!) (需要依賴噁爛到爆的 xcode) -----------------
 # install the HashiCorp tap, a repository of all our Homebrew packages.
-$# brew tap hashicorp/tap
-
-# install Terraform with hashicorp/tap/terraform
-$# brew install hashicorp/tap/terraform
-# 此方法安裝後, 會自動更新
+brew tap hashicorp/tap
+brew install hashicorp/tap/terraform
 
 
-### 法2. 尊重生命, 選離 xcode, 所以我選擇直接抓 binary -----------------
-$# terraform version
+### 法2. 尊重生命, 選離 xcode -- 直接抓 binary -----------------
+terraform version
 Terraform v1.3.6
 on darwin_amd64
 
+
+### 法3. from source (golang required!!) -----------------
+git clone https://github.com/hashicorp/terraform.git
+cd terraform
+go install
+mv ~/go/bin/terraform ~/bin/
+
+### Terraform tab completion
+terraform -install-autocomplete
 ```
 
 

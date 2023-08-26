@@ -55,22 +55,26 @@ ELB -- "traffic" --> ASG;
 
 # Auto Scaling Mechanism
 
-- 2 種 Scaling 的機制
+- Scaling 的機制:
     - Dynamic Scaling Policies, 又分為 3 種:
         - Target Tracking scaling
-            - 最簡單. 只需設定個 baseline
-            - ex: 直接設定 average ASG CPU 都維持在 50%
-        - Simple Scaling / Step Scaling
+            - 最簡單. 只需設定個 baseline. ex: 直接設定 average ASG CPU 都維持在 50%
+            - 盯住 baseline 來增減 Resources 數量
+        - Simple Scaling
             - 藉由 **CloudWatch Alarm** 來做 trigger
-            - 需要分別定義 scale in 以及 scale out 的規則, ex: 
-                - ASG CPU < 40% 執行 scale in
-                - ASG CPU > 70% 執行 scale out
-            - Step Scaling 會依據 Alarm 的大小來做 scaling(感覺比較厲害!?)
-        - Scheduled Actions
-            - 設定特定時段來做 scaling out && scaling in
+            - 如果達到 baseline 時, 增減 Resources 數量
+            - 還不錯的 Scaline 指標:
+                - `CPUUtilization`
+                - `RequestCountPerTarget`
+                - `Average Network In/Out`
+        - Step Scaling
+            - Step Scaling 會依據 Alarm 的大小來做 scaling
     - Predictive Scaling
         - auto-scaling service 會持續監控 loading, 預測趨勢來做 scaling
         - 背後借助 ML, 因此可免人工配置相關準則...
+    - Scheduled Actions
+        - 設定特定時段來做 scaling out && scaling in
+        - 很適合上下班時候使用的 Development Environment
 - Scaling Policy 還有個叫做 *Cooldown* 的機制, 預設 300 secs. 避免 scaling 機制接連被觸發
 - ASG 的 Default Termination Policy(最單純)
     - 會找出不同 AZ 之間, 裡頭最多 instance 的地方, 對裡頭最舊的 instance 做 terminate
