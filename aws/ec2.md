@@ -55,7 +55,7 @@ EC2 選購時, 有底下這一大堆的 purchasing options:
         - Regional: When you purchase a Reserved Instance for a Region, it's referred to as a regional Reserved Instance.
         - Zonal: When you purchase a Reserved Instance for a specific Availability Zone, it's referred to as a zonal Reserved Instance.
         - 至於 Regional 與 Zonal, 有需要再去研究 [Differences between regional and zonal Reserved Instances](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/reserved-instances-scope.html)
-- Savings Plans
+- [Savings Plans](https://aws.amazon.com/savingsplans/)
     - 1 or 3 年, 預付省更多
     - 可省錢達 72%
     - (保證消費/承諾消費) 一定期間花費一定金額, 目的是為了長期使用 & 彈性省錢

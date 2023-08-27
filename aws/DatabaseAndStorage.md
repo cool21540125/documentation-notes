@@ -392,11 +392,6 @@ Athena -- Report/Dashboard --> QuickSight;
         - Use Case : long-term processing, sensitive data
 
 
-# Storage Gateway
-
-- [StorageGateway](./StorageGateway.md)
-
-
 # AWS Transfer Family
 
 - transfer file <--> S3 或 EFS, via FTP

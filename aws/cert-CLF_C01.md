@@ -160,16 +160,6 @@ Networking    | -    | -    | -
         - 早期只有 CLI
 
 
-## Storage Gateway
-
-- [saa-StorageGateway](./StorageGateway.md)
-- 若要使用 Hybrid Cloud, 本地要 access cloud data, 需使用此服務
-- 可針對 Block Storage && File && Object, 藉由 **AWS Storage Gateway** 做 bridge, 讓 On-premise client 使用
-    - Block Storage : EBS, EC2 storage
-    - File          : EFS
-    - Object        : S3, Glacier
-
-
 # Database & Analytics
 
 ## RDS, Relational DataBase
