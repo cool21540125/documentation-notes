@@ -10,3 +10,6 @@
 [submodule "everything_api"]
 	path = everything_api
 	url = git@github.com:cool21540125/everything_api.git
+[submodule "api"]
+	path = api
+	url = git@github.com:cool21540125/api.git
