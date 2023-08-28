@@ -1,24 +1,23 @@
 
-- [AWS Storage Gateway Documentation](https://docs.aws.amazon.com/en_us/storagegateway/?id=docs_gateway)
-- [AWS Storage Gateway FAQs](https://aws.amazon.com/storagegateway/faqs/?nc=sn&loc=6)
+# [AWS Storage Gateway](https://docs.aws.amazon.com/storagegateway/)
 
 > AWS Storage Gateway is a service that connects an on-premises software appliance with cloud-based storage to provide seamless and secure integration between your on-premises IT environment and the AWS storage infrastructure in the AWS Cloud.
 
-- [clf-StorageGateway](./cert-CLF_C01.md#storage-gateway)
-- 有各種不同的 Storage Gateway
-    - [Amazon S3 File Gateway](https://docs.aws.amazon.com/filegateway/latest/files3/what-is-file-s3.html)
-    - [Volume Gateway](https://docs.aws.amazon.com/storagegateway/latest/vgw/WhatIsStorageGateway.html)
+- **AWS Storage Gateway** 用來將 本地軟體設備 (local IT environment) 與 雲端儲存設備(Cloud infra) 做一個無縫串接的服務 ((**把兩邊資料即時同步啦**))
+    - 實現了 安全傳輸
+    - 資料同步, 降低 Disaster Recovery 的時間
+    - 減少資料存取時, 重覆取得的成本
+- 對於 各種儲存類型, 會有不同的 Storage Gateway
+    - [Amazon S3 File Gateway](#amazon-s3-file-gateway)
+    - [Volume Gateway](#volume-gateway)
     - [Tape Gateway](https://docs.aws.amazon.com/storagegateway/latest/tgw/WhatIsStorageGateway.html)
     - [Amazon FSx File Gateway](https://docs.aws.amazon.com/filegateway/latest/filefsxw/what-is-file-fsxw.html)
 - 上述的這些 Gateway, 都需要安裝在 DataCenter
     - 另一種方式是, 跟 AWS 下訂 `Storage Gateway-Hardware appliance` (硬體裝置)
         - 此為運行 Storage Gateway 的實體裝置, 可與上述的 gateway 整合
         - 適用於 DataCenter 做 daily backup to NFS
-- exam 的關鍵字
-    - File access/NFS - user auth with AD => File Gateway (backed by S3)
-    - Volumes/Block Storage/iSCSI => Volume Gateway (backed by S3 with EBS snapshots)
-    - VTL Tape solution/Backup with iSCSI => Tape Gateway (backed by S3 and Glacier)
-    - No on-premises virtualization => Hardware Appliance          
+
+---
 
 ```mermaid
 flowchart TB
@@ -44,16 +43,31 @@ sg <--> client;
 ```
 
 
-# File Gateway
+# [Amazon S3 File Gateway](https://docs.aws.amazon.com/filegateway/latest/files3/what-is-file-s3.html)
 
-- via NFS && SMB, access S3 bucket
-- 支援: S3 standard && S3 IA && S3 one-zone IA && S3 Glacier
-- 使用 IAM Role 管控 access
-- 可使用 on-premise AD 來做 user auth
-- 最近使用的檔案會被 cache
-- Charge:
+- 能透過 NFS / SMB 標準, 藉由統一的檔案介面來存取 S3
+- 需要在 on-premise 環境的 VM 部署 gateway
+    - 關於前述 VM, ex:
+        - VMware ESXi
+        - Microsoft Hyper-V
+        - Linux Kernel-based Virtual Machine (KVM)
+        - 跟廠商買的 gateway 相關的 hardware appliance
+        - VMWare Cloud on AWS
+        - Amazon EC2
+    - 如此一來, Gateway 提供了 access to objects in S3 as files or file share mount points
+- 支援的 S3 種類: 
+    - S3 standard
+    - S3 IA
+    - S3 one-zone IA
+    - S3 Glacier
+- 權限:
+    - 使用 IAM Role 管控 access
+    - 可使用 on-premise AD 來做 user auth
+- 收費:
     - Storege: 儲存費用等同於 S3
     - Traffic: 由 gateway 寫入的資料, 每 GB 計費
+- 效率:
+    - 最近使用的檔案會被 cache
 
 ```mermaid
 flowchart LR
@@ -76,25 +90,20 @@ fg <-- HTTPS --> Region;
 ```
 
 
-# Volume Gateway
+# [Volume Gateway](https://docs.aws.amazon.com/storagegateway/latest/vgw/WhatIsStorageGateway.html)
 
-- [How Volume Gateway works (architecture)](https://docs.aws.amazon.com/storagegateway/latest/vgw/StorageGatewayConcepts.html)
-- [What is Volume Gateway?](https://docs.aws.amazon.com/storagegateway/latest/vgw/WhatIsStorageGateway.html)
-    - A Volume Gateway provides cloud-backed storage volumes that you can mount as Internet Small Computer System Interface (iSCSI) devices from your on-premises application servers.
-    - Volume Gateway 是個 storage volume, 可從本地資料中心 mount, 當作是 iSCSI 來使用 
-    - 只不過這個 Volume Gateway, 需要跑在下列 2 者之一:
-        - on-premises VM as a hardware applianceas
-        - EC2 instance
-    - iSCSI protocol 到 S3
-- Volume Gateway 支援下列的 volume configurations:
-    - Cached Volumes : cache 最近使用的 data, 降低 latency
-    - Stored Volumes : 對整個 dataset, schedule backups 到 S3
-        - 最主要功能之一就是 backup, 背後有 EBS snapshot
+- 將 Cloud Storage 視為 **Internet Small Computer System Interface (iSCSI) devices** mount 在 on-premise servers
+    - 感覺有點像是, Servers 藉由 iscsi 協定, 直接存取 AWS Storage Volume
 - Charge:
     - Storege: 針對 Volume Storage 每 GB 計費
     - Traffic: 由 gateway 寫入的資料, 每 GB 計費
+- Volume Gateway 提供了 2 種主要的使用方式:
+    - I. Cache Volume : 將經常訪問的 S3 data Cache 在本地
+        - 既可降低 latency, 也可有效減少 從 S3 取出資料的流量成本
+    - II. Stored Volume : 如果需要 低延遲 訪問整個 Dataset, 則可用此方式存存到 On-Premise
+        - 由此降低 latency, 後續資料若有異動, 會藉由 PITR, async backup 到 S3
 
-## I. Volume Gateway - Cached volumes architecture
+## I. Cached volumes architecture
 
 - ![Cached volumes architecture](./img/Cached%20volumes%20architecture.png)
     - iSCSI 裡頭的 Volume, 最多可擴增之 32 volumes
@@ -102,7 +111,7 @@ fg <-- HTTPS --> Region;
     - 因此最多可擴增之 1 PB 的 cached volume
 
 
-## II. Volume Gateway - Stored volumes architecture
+## II. Stored volumes architecture
 
 - ![Stored volumes architecture](./img/Stored%20volumes%20architecture.png)
 

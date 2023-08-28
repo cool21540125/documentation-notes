@@ -160,16 +160,6 @@ Networking    | -    | -    | -
         - 早期只有 CLI
 
 
-## Storage Gateway
-
-- [saa-StorageGateway](./StorageGateway.md)
-- 若要使用 Hybrid Cloud, 本地要 access cloud data, 需使用此服務
-- 可針對 Block Storage && File && Object, 藉由 **AWS Storage Gateway** 做 bridge, 讓 On-premise client 使用
-    - Block Storage : EBS, EC2 storage
-    - File          : EFS
-    - Object        : S3, Glacier
-
-
 # Database & Analytics
 
 ## RDS, Relational DataBase
@@ -1020,6 +1010,7 @@ end
 - Service Control Policy, SCP
     - 在 Organization 底下, 用來管控 IAM actions *群組劃分* 的權限控管
         - 群組劃分, ex: by 服務, Business Unit, 環境, ... 
+        - 操作限制, ex: 對所有 S3 Buckets 設定 `s3:DeleteBucket action` 避免被刪除
 - Organization 的 logging 管控
     - all accounts 都使用 CloudTrail 來將 logs 發送到 *central S3 account*
     - all CloudWatch Logs 都集中到 Logging Account

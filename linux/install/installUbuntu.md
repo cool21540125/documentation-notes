@@ -164,4 +164,15 @@ sudo apt-mark hold kubeadm kubectl
 ```
 
 
-# 
+# Install sshd
+
+Install ssh server
+
+```bash
+### Ubuntu18.04 沒有內建 ssh-server
+apt install openssh-server -y
+
+systemctl start sshd
+systemctl enable sshd
+systemctl status sshd
+```

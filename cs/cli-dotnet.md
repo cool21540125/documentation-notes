@@ -13,8 +13,9 @@ dotnet new globaljson --sdk-version 3.1.426  # 生成 global.json (裡頭約束�
 dotnet new -l
 
 
-### 建立 APP && rename
+### 建立新專案
 dotnet new console -o myApp
+dotnet new xxx --sdk-version $dotnet_sdk_version
 
 
 ### 系統資訊

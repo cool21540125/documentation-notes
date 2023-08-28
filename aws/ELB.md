@@ -230,12 +230,12 @@ client -- "兩個 AZ 比例都 50%" --> az2;
 
 - 解決了 loading multiple SSL Certs onto one web server (也就是一台主機提供多個站點啦)
 - 此為新一代的 protocol, 客戶需告知 hostname of the target server in the initial SSL handshake
-    - AWS 僅 ALB && NLB && CloudFront 支援
+    - 支援的服務有: ALB, NLB, CloudFront
 - LB 上頭使用 SNI 的話, 可以對應不同 TG, 使用不同的 SSL
     - 相對來說, 一個 CLB 只能使用一個 SSL
 
 
-# ELB - Connection Draining
+# ELB - 連線排水 & 啟動
 
 - Service 即將進入維護狀態時, 對於殘餘 client 的處理機制
 - 對於即將進行 maintenance 或 scale down 的 instance, 在此狀態下, 可避免立即下線 && 避免新流量進入此 instance
@@ -244,7 +244,11 @@ client -- "兩個 AZ 比例都 50%" --> az2;
         - if set to 0 sec, 表示無 draining (直接斷線?)
 - 有不同的稱呼
     - 使用 CLB, 稱之為 Connection Draining
-    - 使用 ALB && NLB, 稱之為 Deregistration Delay
+    - 使用 ALB && NLB, 稱之為 Deregisteration Delay
+- 可針對 TG 內的 target 設定 **slow start mode**
+    - 讓 target instance 具備像是新手保護期的概念
+    - 請求會慢慢的 *linearly increase* 進入到此 target
+    - 如果想要 Disable, 則將 **slow start duration** 調整為 0
 
 
 # [ELB troubleshoot](https://docs.aws.amazon.com/elasticloadbalancing/latest/application/load-balancer-troubleshooting.html)

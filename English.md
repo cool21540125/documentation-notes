@@ -36,6 +36,7 @@
 - mandate : 授權
 - marshal : 整頓
 - masquerade : 偽裝
+- monitor framework, MOF : 監控探針
 - one-off : 一次性
 - on the fly : 動態產生
 - orchestrate : 編排

@@ -82,6 +82,10 @@
     - 如果架構如上, 全部使用 https, *Field Level Encryption* 主要功能是, 能針對 Request 裡頭特定欄位
     - Edge Location 使用 public key 加密特定欄位, 最後由 APP 上頭的 private key 解密
 - 清除緩存, purge cache, CloudFront Invalidation
+- logs
+    - 可以啟用並記錄所有向 CloudFront 發出的 Request, 此稱為 Standard logs / Access logs
+    - https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/AccessLogs.html
+
 
 
 # details
