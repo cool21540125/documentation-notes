@@ -1,0 +1,21 @@
+
+@URL=https://rest.nexmo.com/sms/json
+@VONAGE_API_KEY={{$dotenv API_KEY}}
+@VONAGE_API_SECRET={{$dotenv API_SECRET}}
+@PHONE_NUMBER={{$dotenv PHONE_NUMBER}}
+
+
+### Send SMS
+POST {{URL}}/
+Content-Type: application/json
+
+{
+    "from": "Vonage APIs",
+    "text": "A text message sent using the Vonage SMS API...123123123123123",
+    "to": "0928900335",
+    "api_key": "{{VONAGE_API_KEY}}",
+    "api_secret": "{{VONAGE_API_SECRET}}"
+}
+
+
+### 

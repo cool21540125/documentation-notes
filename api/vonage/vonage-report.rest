@@ -1,0 +1,16 @@
+
+@URL=https://api.nexmo.com/v2
+@VONAGE_API_KEY={{$dotenv API_KEY}}
+@VONAGE_API_SECRET={{$dotenv API_SECRET}}
+@PHONE_NUMBER={{$dotenv PHONE_NUMBER}}
+@B64_API_KEY_AND_SECRET={{$dotenv B64_API_KEY_AND_SECRET}}
+
+
+### List reports
+# https://developer.vonage.com/en/api/reports#list-reports
+GET {{URL}}/reports?account_id={{VONAGE_API_KEY}}
+Authorization: Basic {{B64_API_KEY_AND_SECRET}}
+
+
+
+### 

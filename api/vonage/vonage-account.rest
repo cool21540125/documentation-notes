@@ -1,0 +1,12 @@
+
+@URL=https://rest.nexmo.com/account
+@VONAGE_API_KEY={{$dotenv API_KEY}}
+@VONAGE_API_SECRET={{$dotenv API_SECRET}}
+
+
+### Get billing
+GET {{URL}}/get-balance?api_key={{VONAGE_API_KEY}}&api_secret={{VONAGE_API_SECRET}}
+
+
+
+### 

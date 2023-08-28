@@ -1,0 +1,30 @@
+HTTP/1.1 200 OK
+Date: Mon, 28 Aug 2023 08:11:14 GMT
+Content-Type: application/json
+Content-Length: 201
+Connection: close
+Server: envoy
+X-Vonage-Sms-Bundle-Id: 2c22baca-f6c3-422f-af6c-5947aa5cb159
+X-Nexmo-Statuscode: 0
+X-Envoy-Upstream-Service-Time: 45
+X-Frame-Options: deny
+X-Xss-Protection: 1; mode=block
+Strict-Transport-Security: max-age=31536000; includeSubdomains
+X-Content-Type-Options: nosniff
+X-Ratelimit-Limit: 30, 30;w=1;name="crd|account_id|account_id_band^30|api^sms-fe|generic_key^nexmo-sms.sms|generic_key^solo.setDescriptor.uniqueValue"
+X-Ratelimit-Remaining: 29
+X-Ratelimit-Reset: 1
+
+{
+    "messages": [
+        {
+            "to": "xxxxxxxxxxxx",
+            "message-id": "0d247bf8-471b-47ec-aa09-b8457fcb36d0",
+            "status": "0",
+            "remaining-balance": "1.95560000",
+            "message-price": "0.04440000",
+            "network": "46692"
+        }
+    ],
+    "message-count": "1"
+}

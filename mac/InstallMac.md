@@ -57,6 +57,13 @@ $#
 ```
 
 
+# Install xcode command
+
+```zsh
+xcode-select --install
+```
+
+
 # Install Postgresql 11
 
 - 2020/01/27
