@@ -929,21 +929,6 @@ $ echo ${a:2:3}
 ### 測試 - test
 
 ```bash
-### 是否為目錄
-test -d /tmp
-
-
-### 是否為檔案
-test -e /etc/profile
-
-
-### 字串是否有長度(並非空字串)
-test -n TonyChou
-# 0 : 並非空字串
-# 1 : 空字串, 也就是 ""
-# NOTE: -n 可以省略
-
-
 ### 是否為 Block Device (ls -l 第一個字母為 b)
 test -b /dev/disk0
 
@@ -952,8 +937,31 @@ test -b /dev/disk0
 test -c /dev/zero
 
 
-### 是否為 Socket File
-test -S /var/run/docker.sock
+### 是否為目錄
+test -d /tmp
+
+
+### 是否為檔案
+test -e /etc/profile
+
+
+### 是否具有 SGID 屬性
+test -g $SGID
+
+
+### 是否具有 Sticky bit 屬性
+test -k $StickyBit
+
+
+### 是否為 Link File (ls -l 第一個字母為 l) (不確定有沒有分 軟硬連結)
+test -L /dev/stdin
+
+
+### 字串是否有長度(並非空字串)
+#  test -n 可直接寫成 test (-n 可省略)
+test -n TonyChou
+# 0 : 並非空字串
+# 1 : 空字串, 也就是 ""
 
 
 ### 是否為 FIFO File
@@ -961,12 +969,20 @@ test -p $FIFO
 # 找不到範例....
 
 
-### 是否為 Link File (ls -l 第一個字母為 l) (不確定有沒有分 軟硬連結)
-test -L /dev/stdin
-
-
 ### 是否可 read
 test -r /etc/profile
+
+
+### 是否為「非空白檔案」
+test -s /etc/profile
+
+
+### 是否為 Socket File
+test -S /var/run/docker.sock
+
+
+### 是否具有 SUID 屬性
+test -u $SUID
 
 
 ### 是否可 write
@@ -977,31 +993,13 @@ test -w /etc/profile
 test -x /bin/ls
 
 
-### 是否具有 SUID 屬性
-test -u $SUID
-
-### 是否具有 SGID 屬性
-test -g $SGID
-
-### 是否具有 Sticky bit 屬性
-test -k $StickyBit
-
-
-### 是否為「非空白檔案」
-test -s /etc/profile
-
-
 ### 判斷字符串是否為 0 (空字串)
+#     變數的字串長度若為0, 返回 true(也就是 0)
 test -z ""
-test -z $NonExistingVariable
-### test -z 變數的字串長度若為0, 返回 true(也就是 0)
-name=Tony; test -z $name; echo $?
-1
-# 可解讀成, 變數 name 有東西, 因此為 1
-
-name=; test -z $name; echo $?
-0
-# 可解讀成, 變數 name 為空字串, 因此為 0
+test -z "$NonExistingVariable"
+# example:
+# 回傳 1 : name=Tony; test -z $name; echo $?
+# 回傳 0 : name=; test -z $name; echo $?
 
 # 上述的 「test -z $name」 也可用 「[[ -z $name ]]」 來代替
 ```

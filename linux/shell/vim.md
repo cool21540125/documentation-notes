@@ -2,6 +2,15 @@
 - [Vim Tips Wiki - All the right moves](http://vim.wikia.com/wiki/All_the_right_moves)
 
 
+## VIM Ui 操作
+
+```bash
+### 進入 vim 以後
+:Ve
+# 可看到外層資料夾結構
+
+```
+
 ## Vim 基本操作
 
 ```sh
