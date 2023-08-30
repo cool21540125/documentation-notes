@@ -96,6 +96,38 @@ kubelet -> CRI-O                                                                
 ------------------------------------------------------------
 
 
+# k8s - monitoring
+
+- 早期(v1.11 前) - **Heapster**
+  - 使用 Heapster 元件來搜集 (k8s 的監控外掛程序)
+  - v1.11 以後改用 `Metrics Server` 來搜集 Pods 的性能指標
+  - 由 cAdvisor 提供 metrics
+    - 內建在 kubelet 之中
+    - cAdvisor 會定期取得 Node 及 Node Pods 的 metrics
+    - 再由 Heapster 透過 kubelet Api 取得 metrics
+    - 最後送入後端的 DB
+      - InfluxDB
+      - OpenTSDB
+      - Kafka
+      - ElasticSearch
+  - 除了 Heapster 以外, 還可額外使用 `kube-state-metrics` 來擷取額外 metrics
+    - 主要關注於 Cluster 的中繼資料, ex:
+      - Deployment 排程了多少 Pod 備份
+      - 多少 Pod 是 running, stopped, terminated
+      - Pod 重啟了多少次
+- v1.11版發布以後 - **metrics-server**
+  - 主要關注於 Resource 度量 Api 的實現, ex:
+    - CPU, File Descriptor, Memory, Request Delay ms, ...
+  - `Metrics-Server` 使用 *Metrics API* 來將 metrics expose 給 APIServer
+    - 像是使用 `kubectl top`, 就是去尻 Metrics API
+    - Metric Server 適合用於 Horizontal Pod Autoscaler and Vertical Pod Autoscaler.
+    - 此指標 不適合用於 non-autoscaling purposes. 不建議用來作為監控使用!!
+      - 取而代之, 可使用 kubelet 上頭的 `/metrics/resource` Endpoint
+  - 藉由 Aggregated API, ex: metrics.k8s.io, custom.metrics.k8s.io, external.metrics.k8s.io
+
+
+------------------------------------------------------------
+
 # 未整理
 
 - k8s service 的 CLUSTER-IP 不會變動; 而 pod IP 可能會變動
@@ -110,13 +142,6 @@ kubelet -> CRI-O                                                                
     - HPA, 可在 **kube-controller-manager**
       - `--horizontal-pod-autoscaler-sync-period` 來調整探測週期
       - `--horizontal-pod-autoscaler-tolerance` 調整 autoscaling 指標的容忍(不作變動)區間
-    - 早期使用 Heapster 元件來搜集, v1.11 以後改用 Metrics Server 來搜集 Pods 的性能指標
-      - Metrics-Server 使用 *Metrics API* 來將 metrics expose 給 APIServer
-        - 像是使用 `kubectl top`, 就是去尻 Metrics API
-        - Metric Server 適合用於 Horizontal Pod Autoscaler and Vertical Pod Autoscaler.
-        - 此指標 不適合用於 non-autoscaling purposes. 不建議用來作為監控使用!!
-          - 取而代之, 可使用 kubelet 上頭的 `/metrics/resource` Endpoint
-      - 藉由 Aggregated API, ex: metrics.k8s.io, custom.metrics.k8s.io, external.metrics.k8s.io
     - 目前有 2 個版本
       - `autoscaling/v1`, 僅支援 CPU metrics
       - `autoscaling/v2`, 額外增加 Memory, custom, external metrics, 並且可使用多指標 (直接用這個就對了?)
