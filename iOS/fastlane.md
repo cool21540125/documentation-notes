@@ -54,3 +54,27 @@
     - [ ] Sale Apps
         - 自己想辦法
 - fastlane 可用來結合上述的這些 tools 到 Script, 稱之為 lanes
+
+
+# cli-fastlane
+
+```zsh
+### basic usage
+fastlane $platform $lane
+
+
+### 傳送 options
+fastlane $lane opt1:val1 opt2:val2
+
+
+### 
+```
+
+
+# dotenv
+
+- 會在 runtime 期間 load 不同的 environemnt variable
+    - `.env`        : 自動被 fastlane 載入
+    - `.env.secret` : loaded in before_all
+    - `.env.ios`    : loaded in before_all in `platform :ios`
+    - `.env.mac`    : loaded in before_all in `platform :mac`

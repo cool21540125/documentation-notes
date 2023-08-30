@@ -6,4 +6,22 @@
     - `gem install bundler`
 - gem
     - ruby 的 pkg manager
-- 
+
+
+
+```bash
+### Create Gemfile
+bundle init
+
+
+### Install gems
+bundle install
+
+
+### 
+bundle exec pod install
+# run the same CocoaPods gem version installed in the Gemfile
+
+
+### 
+```
