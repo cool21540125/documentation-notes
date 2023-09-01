@@ -31,6 +31,9 @@
                             - submits a new signing request, 並且 obtains and installs a new Certificate
                 - `sigh` : valid provisioning profile 安裝在 local, 配置是否有效
                     - 建立 provisioning profile for App (如果認證過程成功的話)
+                    - xcode 使用 `codesign` command-line tool 來簽署 App
+                    - fastlane 則是使用 sigh 這個 sub-command 來做處理
+                    - NOTE: CI/CD system 不需要安裝 xcode 也可處理 code signing
             - `match` : share one code signing identity across development team 來簡化 code signing setup, 並避免 code signing issue
                 - 這東西會做 git 操作
     - [ ] capabilities
@@ -40,7 +43,9 @@
         - 此外也需要 create/update **code-signed ipa file** && manage testers for your app
             - fastlane 提供的功能:
                 - `scan`  : 可在 simulator 或 connected device 做 Testing
-                - `gym`   : 用來做 builds and packages iOS apps, 並可輕鬆的 generate a signed ipa 或 App file
+                - `gym`
+                    - build(建置) && package(打包) iOS App, 生成 **Signed IPA** 或 App File
+                    - 用來取代 `shenzhen`
                 - `pilot` : 用來方便管理 **Apple's TestFlight**
     - [x] Distribution
         - submit App 到 App Store, 仍有一堆繁瑣任務需要處理...
