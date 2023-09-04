@@ -1,6 +1,8 @@
 
 # [Getting started with GitLab CI/CD](https://gitlab.com/help/ci/quick_start/README)
 
+![GitLab workflow](../img/gitlab_workflow_20190518.png)
+
 - 2018/10/30
 
 1. 專案根目錄放置 `.gitlab-ci.yml`

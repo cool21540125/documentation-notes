@@ -744,9 +744,8 @@ se -- Default EventBus \n Custom EventBus \n SaaS EventBus --> tt;
 ```
 
 
-## AWS CloudTrail
+## [AWS CloudTrail](./CloudWatch.md#aws-cloudtrail)
 
-- [CloudTrail](./CloudWatch.md#aws-cloudtrail)
 - CloudTrail is a way to get governance, compliance and audit for your AWS Account.
 - 可取得 AWS Events & API call 的 history & log
     - 因此可將 log -> CloudWatch Logs 或 S3
@@ -758,12 +757,8 @@ se -- Default EventBus \n Custom EventBus \n SaaS EventBus --> tt;
 flowchart LR
 
 subgraph aws
-direction LR;
-    SDK
-    CLI
-    Console
-    user["IAM Users"]
-    role["IAM Roles"]
+    direction LR;
+    Resources["SDK\nCLI\nConsole\nIAM Users\nIAM Roles"]
 end
 
 aws -- "call" --> CloudTrail;

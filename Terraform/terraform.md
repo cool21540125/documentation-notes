@@ -20,3 +20,8 @@
         - 也是用來作 upgrade providers 的依據
     - `.terraform/`
         - 像是 `terraform init` 會在裡頭安裝相關的 provider plugin
+- 命名
+    - terraform.tfvars
+    - terraform-provider.tf
+    - terraform-provider.tf.json
+    - terraform-instances.tf
