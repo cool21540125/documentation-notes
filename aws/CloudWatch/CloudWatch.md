@@ -159,105 +159,34 @@ cwa -- Alert --> sns["SNS"]
     ```
 
 
-# AWS EventBridge
-
-- [What Is Amazon EventBridge?](https://docs.aws.amazon.com/eventbridge/latest/userguide/eb-what-is.html)
-    - 下圖的 *event*, 其實就是 *stream of real-time data*
-        ```mermaid
-        flowchart LR
-
-        subgraph Sources
-            as["AWS Services"]
-            cs["Custom Services"]
-            saas["SaaS APPs"]
-        end
-
-        subgraph eb["EventBridge"]
-            deb["Default Event Bus"] --> Rules;
-            ceb["Custom Event Bus"] --> Rules;
-            seb["SaaS Event Bus"] --> Rules;
-            es["Event Source"]
-        end
-
-        es --> seb;
-        as -- event --> deb;
-        cs -- event --> ceb;
-        saas -- event --> es;
-
-        subgraph Targets
-            direction LR;
-            Lambda; Kinesis; ad["Additional Services"];
-            api["API Endpoints"]
-            other["其他 AWS Account 的 event bus"]
-        end
-        Rules --> Targets;
-        ```
-- [clf-cloudwatch events](./cert-CLF_C01.md#cloudwatch-events)
-- (前身為 *CloudWatch Events*)
-- EventBridge 核心名詞:
-    - Message Bus : (等同於 SNS 的 Topic) Container of event
-    - Event : (等同於 SNS 的 Message) 除了可以被 APP 觸發, 也可能是 AWS Resource 來觸發特定 event
-    - Rule : 將 incoming events 做規則配對, 並送到對應的 Targets 做後續處理
-        - 特定一個 Rule, 可以有 5 個 Targets (致命缺陷)
-        - Rules 會依照 event 的 *Event Pattern* 來配發到不同的 Target
-    - Target : (等同於 SNS 的 subscriber) 針對 Events 做對應處理
-- EventBridge(EB) vs CloudWatch Events(CWE)
-    - 基本上 EB 是架構在 CWE 上頭, 使用相同的底層 API
-    - EB 可完全取代 CWE, 不過 EB 更加強大.
-    - 如今的 CWE, 已等同於 EB 了
-    - EventBridge 具備 *Schema Registry* capability
-- EventBridge 相較於 SNS
-    - 可與 3rd services(for FREE) && your APP 整合
-        - ex: Zendesk, DataDog, Segment, Auth0, ...
-- EventBridge 可以是 Schedule 或 Cron
-- 可在 Event Bus 上頭制定 **Resource-based Policy**, 來讓 cross region 或 cross account 使用
-    - 每個 EventBus 可配置 300 個 Rules
-        - Rule 定義了如何 process event && 要將 event redirect 到哪個 Service
-    - 可將發送到 Event Bus 的 events 做 archive, 並作適當的 長期/永久 保存
-    - Default Event Bus : 接收來自 AWS Services 的 events
-        - 幾乎等同於舊版的 CloudWatch Events
-    - Partner Event Bus : 接收來自 SaaS Services or APPs, ex:
-    - Custom Event Bus
-        - 可針對裡頭的 events 做 Archive (可自行配置保存期限 or 永久保存)
-- Event Bridge 會自行分析發送到他身上的 events 的 schema
-- *Schema Registry* 會在 APP 裡頭 generate code, 
-    - 來讓 APP 可事先得知 how data is structured in the event bus
-    - 而這些 Schema 可版控
-- 假設 AccountA 想把 event 發送到 AccountB, 則:
-    - AccountA 需設定 [partner event source](https://docs.aws.amazon.com/eventbridge/latest/userguide/eb-saas.html)
-    - AccountB 需把 event 關聯到上述的 *partner event source*
-
-
 # AWS CloudTrail
 
 ```mermaid
 flowchart LR
 
 ct["CloudTrail Console \n (追蹤 AWS Resources 操作紀錄)"]
-SDK --> ct
-CLI --> ct
-Console --> ct
-iam["IAM Users \n IAM Roles"] --> ct
+
+aws["SDK \nCLI \n Console \n AIM Users \nIAM Roles"] --> ct;
 
 ct --> cwl["CloudWatch Logs"]
 ct --> S3
 ```
-- governance / compliance / operational auditing / risk auditing of AWS account
-- [clf-CloudTrail](./cert-CLF_C01.md#aws-cloudtrail)
-- 常用來排查:
+
+- 追蹤操作記錄, ex:
     - trace API call
         - 紀錄 SDK/CLI/Console/Users/Roles 的操作
     - Audit changes to AWS Resources by users
         - 哪個小白把 AWS Resources 砍了
-- 3 種 CloudTrail Events:
-    1. Management Events
+- governance / compliance / operational auditing / risk auditing of AWS account
+- 有底下這些 CloudTrail Events:
+    - Management Events
         - 預設啟用
         - 針對 AWS Resources 的增刪改, 都會被記錄
             - ex: EC2 的 Start, Stop ; Create IAM Role, ...
         - Events 區分為:
             - Read Events
             - Write Events (需要留意這個是否也被搞破壞, 就無法追查了)
-    2. Data Events
+    - Data Events
         - 預設不啟用 (因為資料量龐大)
         - 針對 AWS Account 裡頭資源的調用
             - Event Source 目前僅能為:
@@ -267,7 +196,7 @@ ct --> S3
         - Events 一樣區分為:
             - Read Events
             - Write Events
-    3. CloudTrail Insights Events
+    - CloudTrail Insights Events
         - Charge: 要課金 (預設不啟用)
         - 紀錄 AWS Account 裡頭 「非常規活動」
             - ex: 資源配置不正確, 資源使用達到 limits, user behavior, ...

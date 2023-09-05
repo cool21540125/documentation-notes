@@ -95,20 +95,6 @@ Networking    | -    | -    | -
 - 配置 ELB, 後面必須要有 **Target Groups** & 對此設定他的 **Security Group** 來 allow traffic
 
 
-## ASG, Auto Scaling Group
-
-- 可手動調整規模 OR 配置相關參數, 來做 auto scaling
-    - Minimum Size
-    - Actual Size/Desired Capacity
-    - Maximum Size
-- 調整的策略可以是 by CPU 或 by Network in/out 或 ...
-- 而這些 scaling 的 strategy, 可以是 manual, 或是 dynamic:
-    - Simple/Step Scaling - ex: CPU > 70%, then +1 台機器 && CPU < 30%, then -1 台機器 (這樣則是兩條策略規則 )
-    - Target Tracking Scaling - ex: 設定  ASG CPU
-    - Scheduled Scaling
-    - Predictive Scaling
-
-
 # S3, Simple Storage Service
 
 - 物件儲存, 本身 Cross Region
@@ -482,12 +468,6 @@ tmpl --> CloudFormation;
     ```
 
 
-## AWS CodeDeploy
-
-## AWS CodeBuild
-
-## AWS Pipeline
-
 ## AWS CodeArtifact
 
 - 用來管理 Code 依賴. code dependencies, artifact management, ...
@@ -495,8 +475,6 @@ tmpl --> CloudFormation;
     - CodeBuild 可到 CodeArtifact 拉 dependencies
 - Work with: Maven, pip, yum, npm, NuGet, Gradle, yarn, twine, ...
 
-
-## AWS CodeStar
 
 ## AWS Cloud9
 
@@ -707,43 +685,6 @@ ww --> region;
         - 用 CloudWatch Event 來監控 root account 是否被登入
 
 
-## Amazon EventBridge
-
-- 基本上可以把它視為 **CloudWatch Event** 的新一代產品
-- 有個 Default Event Bus
-    - AWS Services && CloudWatch Events 產生的 events
-- 可建立 *Parent Event Bus*, 也可為 APP 建立 *Custom Event Bus*
-    - Parent Event Bus, 從 SaaS Service 或 Application 收到 Events
-- EventBridge 附帶(come with) *Schema Registry*, 此為 *user model event schema*
-- 可用來做 Event-Driven App at scale
-    - 由 Developer 開發的 APP 丟出 Event
-- Serverless, *Serverless Application Model, SAM* (不知為何講師突然冒出這句話)
-    - 也就是背後的東西, 基本上都是 Serverless 搞出來的架構
-    - 似乎在說背後是 API Gateway, Lambda, DynamoDB
-
-```mermaid
-flowchart LR
-
-subgraph se["Event Source"]
-direction LR;
-    srv["AWS Services"];
-    ce["Custom Events"];
-    saas["SaaS Apps"];
-end
-
-subgraph tt["Trigger Targets"]
-direction LR;
-    lambda["AWS Lambda"];
-    Kinesis;
-    asf["AWS Step Functions"];
-    apigw["API Gateway"];
-    bus["Buses in other accounts"];
-end
-
-se -- Default EventBus \n Custom EventBus \n SaaS EventBus --> tt;
-```
-
-
 ## [AWS CloudTrail](./CloudWatch.md#aws-cloudtrail)
 
 - CloudTrail is a way to get governance, compliance and audit for your AWS Account.
@@ -789,9 +730,9 @@ Athena -- analyze --> S3
 
 ### CloudTrail Insights
 
-- 用來在大量 log 中找出 unusual activities
-    - ex: 達到某種 limit, Resource 配置不正確, 違反 AWS IAM action, ...
-- 可對日常維運建立 baseline.
+- 用來在大量 log 中找出 unusual activities, ex:
+    - 達到某種 limit / Resource 配置不正確 / 違反 AWS IAM action, ...
+- 可對日常維運建立 baseline
     - *Management Events* 會被 CloudTrail Insights 分析
 
 ```mermaid
@@ -1085,21 +1026,6 @@ S3 --> Web;
     - wifi
     - bluetooth
 - 用作 Dev && Test
-
-
-## AWS Backup
-
-- [saa-backup](./cert-SAA_C02.md#aws-backup)
-
-```mermaid
-flowchart LR;
-
-bb["AWS \n Backup"];
-rr["AWS Region"];
-
-bb -- "Backup Plan" --> rr;
-rr -- restore --> S3;
-```
 
 
 ## Disaster Recovery Strategy

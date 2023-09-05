@@ -52,10 +52,16 @@ ELB -- "traffic" --> ASG;
 - ex: 機器關機之前, 要把裡頭的配置取出來 OR 機器建置時, 要再額外安裝東西...
 - ![Lifecycle Hook](./img/ASG-LifecycleHook.png)
 
+- ASG 需要給 3 個參數:
+    - Minimum Size
+    - Actual Size/Desired Capacity
+    - Maximum Size
+- 調整的策略可以是 by CPU 或 by Network in/out 或 ...
+
 
 # Auto Scaling Mechanism
 
-- Scaling 的機制:
+- Scaling Strategy(機制):
     - Dynamic Scaling Policies, 又分為 3 種:
         - Target Tracking scaling
             - 最簡單. 只需設定個 baseline. ex: 直接設定 average ASG CPU 都維持在 50%

@@ -82,7 +82,6 @@ r2 -.- srv2["AWS Services \n (ex: S3)"];
 - 每個 Policy 裏頭, 會有很 1~N 個 Statements
 - 最終會套用給 User / Group / Role (想像成某個擬人的 Service)
 - Trust policies 定義了哪個 principal entities(accounts/users/role/federated user) can assume the role
-- AWS service-linked role
 - 如果 **IAM User, Role, Group** 要能夠 pass a Role 給特定 AWS Resources, 則此 **IAM User, Role, Group** 需具備 `PassRole` permission
     - 此 `PassRole` permission, 無法用來授予 cross-account permission
 
@@ -754,3 +753,13 @@ aws iam get-role --role-name "AWSServiceRoleForECS" || aws iam create-service-li
 ### 
 
 ```
+
+
+# Service Role v.s. Service-Linked Role
+
+- Service-Linked Role
+    - A unique type of IAM role that is linked directly to an AWS service.
+    - An IAM administrator can view, but not edit the permissions for this.
+- Service Role
+    - A role that an AWS service assumes to perform actions on your behalf.
+    - An IAM administrator can create, modify, and delete a service role from within IAM.

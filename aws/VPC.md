@@ -46,7 +46,9 @@
     - CIDR 的 range:
         - min 為 `/28`(4 bits IP Addresses), 只能擁有 16 IPs
         - max 為 `/16`(16 bits IP Addresses), 也就是能有 65536 IPs
-
+- 常見 Issue:
+    - 如果 access 機器, 發生 timeout,            必定是 Security Group Issue!!
+    - 如果 access 機器, 發生 connection refused, 可能是 APP Error 或 機器沒開
 
 # Subnet
 
@@ -192,7 +194,6 @@ ec23 --> natgw;
 ec24 --> IGW;
 natgw --> IGW;
 IGW --> Internet;
-
 ```
 
 ```mermaid
@@ -277,60 +278,6 @@ Stateful           | Stateless
 - 放在 Public Subnet 的 堡壘機/跳板機
 
 
-# VPC Peering
-
-- Privately connect two VPCs using AWS' network
-    - 利用 AWS network privately connect 2 VPC (連結不同 VPC 啦)
-    - 讓 VPCs 之間就像是在同樣的 network 裡頭包含了
-        - cross region, cross account
-        - 不能有 operlapping CIDRs
-    - 配置完以後, 還需要自行配置 Route Table (兩邊都需要配置)
-- 可讓不同的 VPC, 搞得就像是個 LAN
-- 如果要 expose service 給其他 VPC, 這是個比開 public 還要好的做法
-    - 不過更好的做法, 可使用 [PrivateLink](#vpc-endpoint-services-aws-privatelink)
-- 重要範例:
-    - 若 A 及 B 做好了 peering && B 及 C 做好了 peering
-        - A 與 C 依然無法 connect (朋友的朋友, 未必是我朋友)
-        - VPC Peering connection is NOT transitive
-
-
-# VPC Endpoint Services (AWS PrivateLink)
-
-- 可用來 expose service 給成百上千個 VPC (Secure && Scalable)
-    - 此做法可完全取代 [VPC Peering](#vpc-peering)
-    - 無需依賴於 *VPC Peering*, IGW, NATGW, Route Table
-- 可讓 private subnet 內的 Resources, 藉由 *VPC Endpoint Gateway* 來連接外部 Resources
-    - ex: S3, DynamoDB
-- VPC EndPoint Gateway (或 Gateway Endpoint) 有 2 種 Endpoint type:
-    - Gateway Endpoint : 只能連 DynamoDB && S3
-    - Interface Endpoint : 能連 any AWS Resources
-        - provision an ENI(private IP) as an entry point (也須 attach SG)
-- ![AWS PrivateLink](./img/AWS_PrivateLink.drawio.png)
-    - 要分享服務的位置, 必須配置 NLB 或 GLB
-    - 要使用服務的 AWS Service, 需配置 ENI
-    - 要使用服務的 On-Premise, 需藉由 VGW
-- ![AWS PrivateLink](./img/PrivateLink.png)
-
-```mermaid
-flowchart TB
-subgraph VPC
-    subgraph Private Subnet
-        ec2["EC2"]
-        vei["VPC EndPoint Interface"]
-    end
-    veg["VPC EndPoint Gateway"]
-end
-
-ec2 <--> vei;
-ec2 <--> veg;
-
-veg <-- only --> limited["S3, DynamoDB"]
-vei <-- all --> aws["AWS Resources"]
-```
-
-- VPC EndPoint Interface, 它其實是個 ENI
-
-
 # EC2-Classic && AWS ClassicLink
 
 - 2022/08/15 廢除服務
@@ -371,216 +318,6 @@ vei <-- all --> aws["AWS Resources"]
 - 想要分析這些 Flow Logs 的話, 可藉由 Athena(on s3) 或 *CloudWatch Logs Insights*(on stream)
 
 
-# AWS Site-to-Site VPN
-
-- [What is AWS Site-to-Site VPN?](https://docs.aws.amazon.com/vpn/latest/s2svpn/VPC_VPN.html)
-    - 此處的 VPN 指的是 On-Premise network 與 VPC 之間的 network connection
-- *Site-to-Site VPN* 支援了 *Internet Protocol security (IPsec) VPN connections*
-    - 需要留意的是, 即使連線過程皆為 encrypted, 但仍會有 Security Issue!!
-- Virtual Private Gateway, VPG 或 VGW
-    - AWS 對於 VPN connection 需要有個 VPN concentrator
-    - 在想建立 Site-to-Site VPN 的 VPC 上頭 create && attach VPG
-    - UNKNOWN 弄個 ASN(Autonomous System Number)
-- Customer Gateway, CGW
-    - Data Center 上頭, 弄個 (軟體 or 硬體) customer gateway (用來做 VPN connection)
-- 實作上需注意, AWS 那邊需要 enable *Route Propagation* for VPG
-    - 如此一來, Virtual Private Gateway 與 subnet 之間才會有 route table
-- 目前不支援 IPv6 && 不支援 *Path MTU Discovery*
-- Charge: 依照 VPN connection per hour 以及 EC2 network traffic out 來收費
-- AWS VPN CloudHub
-    - 概念上是指, 如果咱們企業有很多個 customer network, 則彼此之間連線到 VGW 以後
-    - 則企業端點之間可藉助 Site-to-Site VPN, 來當作 **VPN CloudHub** 使用
-        - 白話文就是, 企業端點之間也能使用 VPN connection 了
-    - 設定 CGW 與 VGW 時, 需要 enable *Dynamic Routing* && 配置 *Route Table* 就可以了~
-- 實際配置
-    - Create/Config 企業端的 *Customer Gateways*
-    - Create/Config AWS 上頭的 *Virtual Private Gateways*
-    - 使用 *Site-to-Site VPN Connections*, 並將上面兩者 connect
-        - 可選擇 *Virtual Private Gateway* 或 *Transit Gateway*
-        - 配置 Routing && IPv4(CIDR)
-        - 最後再 Create VPN connection
-
-```mermaid
-flowchart LR
-cg["Customer Gateway"]
-vpg["Virtual Private Gateway"]
-
-subgraph IDC
-    machine <--> cg
-end
-subgraph VPC
-    vpg <--> ps["Private Subnet"]
-end
-cg <--> vpg
-```
-
-
-# Direct Connect, DX
-
-- [What is AWS Direct Connect?](https://docs.aws.amazon.com/directconnect/latest/UserGuide/Welcome.html)
-    - dd
-    - ![AWS Direct Connect](./img/AWSDirectConnect.png)
-- [Direct Connect v.s. Site-to-site VPN](https://www.stormit.cloud/blog/comparison-aws-direct-connect-vs-vpn/)
-    - 這兩者超級容易混淆...
-- (上下圖相同) 
-    ```mermaid
-    flowchart TB
-  
-    subgraph dcl["Direct Connect Location, DCL"]
-        cr["customer/partner router"]
-        dce["Direct Connect Endpoint, DCE"]
-  
-        dce <--> cr;
-    end
-  
-    dc["On-Premise DC"] <-- connection --> cr;
-  
-    subgraph Region
-      subgraph VPC
-          subgraph Subnet
-              ec2["EC2"]
-          end
-          vpg["Virtual Private Gateway, VPG"]
-      end  
-      S3;
-    end
-  
-    dce <-- Private Virtual Interface --> vpg;
-    dce <-- Public Virtual Interface --> S3;
-    ```
-
-    - 服務的核心有 2 個元件:
-        - ISP 端用戶過來的 **Connections**
-        - AWS 一端的 **Virtual Interface**
-    - 建立後
-        - 可藉由 `Private virtual interface` 連入 VPC (接入 `Virtual private gateway`)
-        - 可藉由 `Public virtual interface` 連入 S3, Glacier, ...
-- Networking:
-    - 接入 DX 的流量, 都是在 AWS global network backbone (無論 cross AWS Services 或 cross Regions)
-        - 流量費, 僅針對 data 從 Region 流出的一端計費 (Region A -> Region B, 則向 A 收費)
-- AWS Direct Connect 的 Connection Types 可選擇下列:
-    - Dedicated Connections:
-        - 可選擇 1 Gbps 或 10 Gbps
-        - 可有實體的專用裝置
-    - Hosted Connections:
-        - 可選擇 50 Mbps, 500 Mbps, 最高可達 10 Gpbs
-        - 可按需求來增減
-- Charge: Direct Connect 租約最低為 1 個月
-    - 若有需求, send request to *AWS Direct Connect Partners*
-    - 若需要使用的預估期限遠小於 1 個月... 可考慮其他方式了, 因為這個很貴~
-- DX 因為是 private, 傳輸過程預設 「沒有 encrypt」, 但可自行搭配 VPN 來實踐 IPSec
-    - 不過這過程會比較複雜...
-- 底下的流程圖, 全部都是走 Private Virtual Interface, PVI
-
-```mermaid
-flowchart RL
-
-vgw["Virtual Private Gateway"]
-cgw["Customer Gateway"]
-adce["AWS Direct Connect Endpoint \n (AWS Cage)"]
-
-subgraph VPC
-    vgw
-    s3["S3, Glacier"]
-end
-
-subgraph adc["AWS Direct Connect Location"]
-    adce
-    cc["Customer \n or \n partner router \n (Customer or partner cage)"]
-end
-
-subgraph on-premise DC
-    cgw
-end
-
-cgw <--> cc
-cc <-- "VLAN" --> adce
-adce <--> vgw
-adce <--> s3
-```
-
-- 除了上圖, 也可直接在 *AWS Direct Connect Endpoint* 上頭, 直接連到 VPC 裡頭的 S3/Glacier
-    - 此為 Public Virtual Interface
-- *Direct Connect gateway* 可與下列的 gateway 做連線 
-    - A transit gateway when you have multiple VPCs in the same Region(tgw)
-    - A virtual private gateway(vpg)
-        - 可用來 extend *local zone*
-- 如果想一口氣設定可連入到 multiple VPC(same account), 則需使用 *Direct Connect Gateway*
-    - 一樣本地端連入到 *AWS Direct Connect*, 之後藉由 *Direct Connect Gateway* 的 *Private Virtual Interface* 來連線到 VPG
-
-```mermaid
-flowchart RL
-
-subgraph r1["Region"]
-    subgraph vpc1["VPC"]
-        vpg1["Virtual Private Gateway, VPG"]
-    end
-end
-subgraph r2["Region"]
-    subgraph vpc2["VPC"]
-        vpg2["Virtual Private Gateway, VPG"]
-    end
-end
-
-dcg["Direct Connect Gateway(DCG) \n Private Virtual Interface(PVI)"]
-adc["AWS Direct Connect"]
-
-On-Premise <--> adc;
-adc <--> dcg;
-dcg <--> vpg1;
-dcg <--> vpg2;
-```
-
-
-# Transit Gateway
-
-- [What is a transit gateway?](https://docs.aws.amazon.com/vpc/latest/tgw/what-is-transit-gateway.html)
-- 可將複雜的 cross VPC 的網路問題, 簡化成一個 *hub-and-spoke(star)* connection
-    - 將 Transit Gateway 置於中心, 連結各種的 networking
-    - 可再藉由 [Resource Access Manager, RAM](./iam.md#aws-resource-access-manager-ram) 來做 cross account sharing
-    - 藉由 *Route Table* 來做訪問的存取控制
-    - 可同時連上成百上千個 VPC (只需要一個 Transit Gateway)
-    - 流量會跑在 *AWS Global Infrastructure*, 傳輸過程為 encrypted, 且不會跑到 public internet (較安全)
-- Transit Gateway 有幾個 key concepts:
-    - Attachments. 可以 attach 一堆元件到 Transit Gateway
-        - VPCs
-        - VPN connections
-        - AWS Direct Connect Gateway, DCG
-        - Transit Gateway Connect attachments
-        - Transit Gateway peering connections
-        - A Connect SD-WAN/third-party network appliance
-        - A peering connection with another transit gateway
-    - Transit gateway MTU
-    - Transit gateway route table
-    - Associations
-    - Route propagation
-- Transit gateway 行為如同 Regional router, 用來轉發 VPCs && on-premise 的流量
-- IP Multicast
-- Charge:
-    - 基本上, 每個 attach 到 transit gateway 的元件, 依小時計費. 此外還會依照總流量來收費
-
-```mermaid
-flowchart TB
-tg["Transit Gateway"]
-tg <--> v1["VPC"]
-tg <--> v2["VPC"]
-
-tg <-- VPN connection --> cg["Customer Gateway"]
-```
-
-- 使用 transit gateway 的另一種情境是, by using ECMP to increase the bandwidth of your site-to-site VPN connection
-    - ECMP, equal-cost multi-path. 此為 允許 forward packet over multiple best path 的一種 Routing Strategy
-- 比較:
-    - VPN to virtual private gateway, VPG(VGW)
-        - 與 VPC 連線後, 建立一條 connection, 1.25 Gbps
-            - 而此 connection 使用了 2 tunnels (upload / download)
-    - VPN to transit gateway
-        - 與 transit gateway 連線後, 會與後面的 VPC, 各自建立自己的 *site-to-site VPN*
-            - 而每個 *site-to-site VPN* connection 2.5 Gbps (by ECMP)
-        - 如果想要更高流量, 可增加更多的 *site-to-site VPN connections*
-            - 每個 *site-to-site VPN connection* 一樣有 2 tunnels
-
-
 # VPC - Traffic Mirroring
 
 - used to capture && inspect network traffic in VPC (non-intrusive manner)
@@ -600,7 +337,7 @@ tg <-- VPN connection --> cg["Customer Gateway"]
     - EC2 - assign new IPv6 address
 - 如果想建立一個只能允許 outbound (無 inbound) 的環境, 可參考 [Enable outbound IPv6 traffic using an egress-only internet gateway](https://docs.aws.amazon.com/vpc/latest/userguide/egress-only-internet-gateway.html)
 - Egress-only Internet Gateway, 只能使用 IPv6. 如果是 IPv4 也想打造一樣的環境, 需使用 *NAT Gateway*
-    - 地位等同於 IPv4 的 [NAT Gateway](#nat-gateway-network-address-translation-gateway)
+    - 地位等同於 IPv4 的 **NAT Gateway** + **IGW**
     - 為了達成此需求, 記得要手動修改 Route Table
 
 ```mermaid
@@ -610,8 +347,8 @@ ii["Internet"]
 
 subgraph VPC
     direction LR
-    nat["NAT Gateway"]
     subgraph Public Subnet
+        nat["NAT Gateway"]
         srv1["Server"]
     end
     subgraph Private Subnet
@@ -667,9 +404,3 @@ ec2pu <-- Route Table --> Router;
 Router <--> igw;
 igw <--> Internet;
 ```
-
-
-# TIPs
-
-- 如果 access 機器, 發生 timeout,            必定是 Security Group Issue!!
-- 如果 access 機器, 發生 connection refused, 可能是 APP Error 或 機器沒開

@@ -4,50 +4,56 @@
 - [What is AWS Lambda?](https://docs.aws.amazon.com/lambda/latest/dg/welcome.html)
 - [AWS Lambda FAQs](https://aws.amazon.com/lambda/faqs/?nc1=h_ls)
 - [Operator - Lambda](https://docs.aws.amazon.com/lambda/latest/operatorguide/intro.html)
-- execution role
-    - 使用 Lambda 建立 *Lambda Funciton* 時, 會連帶建立授予此 FN 的 *execution role*
-        - 此 Role grants permission to upload logs
-    - 每當調用 FN 時, 會藉此 *execution role* 取得 creds for AWS SDK 並可 read data from source
+- Lambda Execution Role (IAM Role)
+  - 執行 Lambda Function 的時候, 每個 Lambda Function 都會有它自己的 **Execution Role**
+    - 預設, 這個 Execution Role 是用來授予 Lambda Function 寫入 Logs
+  - 常見的 **Lambda Execution Role** 範例:
+    - AWSLambdaBasicExecutionRole - 上傳 logs 到 CloudWatch
+    - AWSLambdaDynamoDBExecutionRole - read from DynameDB Streams
+    - AWSLambdaKinesisExecutionRole - read from Kinesis
+    - AWSLambdaSQSQueueExecutionRole - read from SQS
+    - AWSLambdaVPCAccessExecutionRole - deploy Lambda function in VPC
+    - AWSXRayDaemonWriteAccess - 上傳 trace data 到 X-Ray
 - [Configuring provisioned concurrency](https://docs.aws.amazon.com/lambda/latest/dg/provisioned-concurrency.html)
-    - concurrency 指的是, 同一時間, Lambda 能夠同時處理的數量, 有底下 2 個控制變數:
-        - Reserved concurrency
-            - Reserved concurrency 用來保證 Lambda FN 高併發的最高數量
-            - 配置此變數不收費
-        - Provisioned concurrency
-            - Provisioned concurrency 用來初始化 execution environments 的數量, 也就是說, 若有請求可立即回覆
-            - 需要課金
+- concurrency 指的是, 同一時間, Lambda 能夠同時處理的數量, 有底下 2 個控制變數:
+  - Reserved concurrency
+    - Reserved concurrency 用來保證 Lambda FN 高併發的最高數量
+    - 配置此變數不收費
+  - Provisioned concurrency
+    - Provisioned concurrency 用來初始化 execution environments 的數量, 也就是說, 若有請求可立即回覆
+    - 需要課金
 - Lambda Destionation
-    - 類似 SQS DLQ (用來存放 SQS 調用 failure 的 Message), 此方式可用來存放 Lambda Execution Result
-        - 包含 success & failure
-        - AWS 官方建議改使用 Lambda Destination 取代 SQS DLQ
-    - 可用來作為 Destination 的 Services:
-        - SQS
-        - SNS
-        - Lambda
-        - EventBridge bus
+- 類似 SQS DLQ (用來存放 SQS 調用 failure 的 Message), 此方式可用來存放 Lambda Execution Result
+  - 包含 success & failure
+  - AWS 官方建議改使用 Lambda Destination 取代 SQS DLQ
+- 可用來作為 Destination 的 Services:
+  - SQS
+  - SNS
+  - Lambda
+  - EventBridge bus
 - invoke Lambda Function 有底下 3 種 patterns:
-    - [sync invoke](#sync-invoke)
-        - retry 機制: 無
-    - [async invoke](#async-invoke)
-        - retry 機制: Built in, retries twice
-    - [polling invoke](#polling-invoke)
-        - retry 機制: Depends on event source
+- [sync invoke](#sync-invoke)
+  - retry 機制: 無
+- [async invoke](#async-invoke)
+  - retry 機制: Built in, retries twice
+- [polling invoke](#polling-invoke)
+  - retry 機制: Depends on event source
 - Lambda Execution environment lifecycle (Lambda 運行階段):
-    - init 階段, 包含了 Lambda Function 運行前的 main function 以外的 Codes
+- init 階段, 包含了 Lambda Function 運行前的 main function 以外的 Codes
 - 效能
-    - 跑 Lambda FN 只能調整 memory. 
-        - ex: Memory=1792 MiB, 可獲得完整一顆 CPU. 隨著 Memory 增加, CPU 也會跟著增加
+- 跑 Lambda FN 只能調整 memory. 
+  - ex: Memory=1792 MiB, 可獲得完整一顆 CPU. 隨著 Memory 增加, CPU 也會跟著增加
 
 ```mermaid
 flowchart LR
 subgraph init
-    ext0["Extension init"] --> run["Runtime init"] --> fn["Function init"]
+  ext0["Extension init"] --> run["Runtime init"] --> fn["Function init"]
 end
 subgraph invoke
-    invk1["invoke FN1"] --> invk2["invoke FN2"]
+  invk1["invoke FN1"] --> invk2["invoke FN2"]
 end
 subgraph shutdown
-    rt["Runtime shutdown"] --> ext1["Extension shutdown"]
+  rt["Runtime shutdown"] --> ext1["Extension shutdown"]
 end
 init --> invoke --> shutdown
 ```
@@ -62,11 +68,11 @@ Client <--> lambda[Lambda Function]
 ```
 
 - 適用的 AWS Services:
-    - API Gateway
-    - CloudFormation
-    - CloudFront
-    - Alexa
-    - Lex
+  - API Gateway
+  - CloudFormation
+  - CloudFront
+  - Alexa
+  - Lex
 
 
 ### [async invoke](https://docs.aws.amazon.com/lambda/latest/dg/invocation-async.html)
@@ -80,9 +86,9 @@ lambda --> Destination
 ```
 
 - 適用的 AWS Services:
-    - SNS
-    - S3
-    - EventBridge
+  - SNS
+  - S3
+  - EventBridge
 
 
 ### [polling invoke](https://docs.aws.amazon.com/lambda/latest/dg/invocation-eventsourcemapping.html)
@@ -95,52 +101,54 @@ lambda -- result --> Destination
 ```
 
 - The configuration of services as event triggers is known as event source mapping.
-    - 觸發 event 的配置, 稱之為 `event source mapping`
+  - 觸發 event 的配置, 稱之為 `event source mapping`
 - 需要使用 Lambda Function 的 execution role, 授予權限可至 Event Source 取得資料
 - polling invoke pattern 比較適用於 streaming 或 queuing based services
 - 特殊情況: 由於 *distributed nature of its pollers*, Lambda 極少數情況下會收到重複事件
 - Event Source Services:
-    - Kinesis
-    - SQS
-    - Amazon MQ
-    - Kafka
-    - DynamoDB
-        ```bash
-        ### Example
-        aws lambda create-event-source-mapping \
-            --function-name my-function \
-            --batch-size 500 \
-            --maximum-batching-window-in-seconds 5 \
-            --starting-position LATEST \
-            --event-source-arn ${DynamoDB_Stream_ARN}
-        ```
+  - Kinesis
+  - SQS
+  - Amazon MQ
+  - Kafka
+  - DynamoDB
+
+```bash
+### Example
+aws lambda create-event-source-mapping \
+    --function-name my-function \
+    --batch-size 500 \
+    --maximum-batching-window-in-seconds 5 \
+    --starting-position LATEST \
+    --event-source-arn ${DynamoDB_Stream_ARN}
+```
 
 
 # Lambda - Serverless
 
 - 若與 ALB 整合為 Serverless, 則會要求 Lambda 回傳 規範格式, 才能正常顯示 JSON 給 Browser (否則 Browser 會把 Response 下載)
-    - [Using AWS Lambda with an Application Load Balancer](https://docs.aws.amazon.com/lambda/latest/dg/services-alb.html)
+  - [Using AWS Lambda with an Application Load Balancer](https://docs.aws.amazon.com/lambda/latest/dg/services-alb.html)
 - ALB 可以啟用 `Multi-Header`
-    - Web Console > EC2 > Target Groups > YOUR_TARGET_GROUP > Attributes > enable~
-    - Request: *http://demo.com/path?name=tony&name=chou*
-    - Server 接收到的資訊則為 `"queryStringParameters": {"name": ["tony", "chou"]}`
-    - 如果啟用這個的話, 又要與 Lambda 結合, 建議再次調整 [Lambda functions as targets](https://docs.aws.amazon.com/elasticloadbalancing/latest/application/lambda-functions.html#enable-multi-value-headers)
-        - 如果不這麼做, Browser 接收 Response 以後, 一樣只會把它 Download...
-        - Response Header 需要加上:
-            ```json
-            {
-                "multiValueHeaders": {
-                    "Set-cookie": ["cookie-name=cookie-value;Domain=myweb.com;Secure;HttpOnly","cookie-name=cookie-value;Expires=May 8, 2019"],
-                    "Content-Type": ["application/json"]
-                },
-            }
-            ```
+  - Web Console > EC2 > Target Groups > YOUR_TARGET_GROUP > Attributes > enable~
+  - Request: *http://demo.com/path?name=tony&name=chou*
+  - Server 接收到的資訊則為 `"queryStringParameters": {"name": ["tony", "chou"]}`
+  - 如果啟用這個的話, 又要與 Lambda 結合, 建議再次調整 [Lambda functions as targets](https://docs.aws.amazon.com/elasticloadbalancing/latest/application/lambda-functions.html#enable-multi-value-headers)
+    - 如果不這麼做, Browser 接收 Response 以後, 一樣只會把它 Download...
+    - Response Header 需要加上:
+
+```json
+{
+    "multiValueHeaders": {
+        "Set-cookie": ["cookie-name=cookie-value;Domain=myweb.com;Secure;HttpOnly","cookie-name=cookie-value;Expires=May 8, 2019"],
+        "Content-Type": ["application/json"]
+    },
+}
+```
 
 ```mermaid
 flowchart LR
 
 subgraph Lambda
-    tg["Target Group"]
+  tg["Target Group"]
 end
 client <--> ALB <--> Lambda
 ```
@@ -149,36 +157,37 @@ client <--> ALB <--> Lambda
 # Lambda Integrations
 
 - 可以與底下一系列的 Serverless 整合
-    - API Gateway
-    - Kinesis
-    - DynameDB
-    - S3
-    - CloudFront
-    - EventBridge
-    - CloudWatch Logs
-    - SNS
-    - SQS
-    - Cognito
-- 使用範例
-    1. 結合 S3 event, 用戶上傳 img 以後, 藉由 Lambda 將圖片做縮圖, 另存到另一個 S3 Bucket
-    2. 結合 EventBridge, 藉由 serverless cron, 定期 trigger Lambda 做事情, 省掉一台 EC2 的費用
-    3. 結合 ALB, 作為 Serverless API Server
+  - API Gateway
+  - Kinesis
+  - DynameDB
+  - S3
+  - CloudFront
+  - EventBridge
+  - CloudWatch Logs
+  - SNSs
+  - SQS
+  - Cognito
+- Example:
+  - 結合 S3 event, 用戶上傳 img 以後, 藉由 Lambda 將圖片做縮圖, 另存到另一個 S3 Bucket
+  - 結合 EventBridge, 藉由 serverless cron, 定期 trigger Lambda 做事情, 省掉一台 EC2 的費用
+  - 結合 ALB, 作為 Serverless API Server
 - Handling Errors
-    - API Gateway 與 Lambda 整合後, 發生錯誤時, Lambda 需附加必要的 Error Type
-        - Lambda 可回應的 Error types 分成 2 種:
-            - standard errors
-            - custom errors (如下範例)
-                ```jsonc
-                {
-                    "isBase64Encoded" : "boolean",
-                    "statusCode": "number",
-                    "headers": { 
-                        "X-Amzn-ErrorType":"InvalidParameterException",
-                        "(note)": "(上面是假設發生 Lambda Type Error)"
-                    },
-                    "body": "JSON string"
-                }
-                ```
+  - API Gateway 與 Lambda 整合後, 發生錯誤時, Lambda 需附加必要的 Error Type
+    - Lambda 可回應的 Error types 分成 2 種:
+      - standard errors
+      - custom errors (如下範例)
+
+```jsonc
+{
+    "isBase64Encoded" : "boolean",
+    "statusCode": "number",
+    "headers": { 
+        "X-Amzn-ErrorType":"InvalidParameterException",
+        "(note)": "(上面是假設發生 Lambda Type Error)"
+    },
+    "body": "JSON string"
+}
+```
 
 
 # Lambda@Edge
@@ -206,17 +215,17 @@ lambda <-- Query --> DynamoDB["DynamoDB Global Table"]
 
 - [Lambda event source mappings](https://docs.aws.amazon.com/lambda/latest/dg/invocation-eventsourcemapping.html)
 - 相較於 AWS Services 直接調用 Lambda, 有另一種方式稱之為 *event source mapping*
-    - Lambda Event Source Mapping 會定期去 event sources 拉資料 (而非直接 invoke lambda)
-    - Event Source 可能是:
-        - stream
-        - service queue
-    - Event Source 可能是:
-        - [KDS](./Kinesis.md#kinesis-data-streams-kds)
-        - [SQS](./SQS.md)
-        - [SNS](./SNS.md)
-        - [DynamoDB Streams](./DynamoDB.md#dynamodb-streams)
-        - MQ
-        - Apache Kafka
+  - Lambda Event Source Mapping 會定期去 event sources 拉資料 (而非直接 invoke lambda)
+  - Event Source 可能是:
+    - stream
+    - service queue
+  - Event Source 可能是:
+    - [KDS](./Kinesis.md#kinesis-data-streams-kds)
+    - [SQS](./SQS.md)
+    - [SNS](./SNS.md)
+    - [DynamoDB Streams](./DynamoDB.md#dynamodb-streams)
+    - MQ
+    - Apache Kafka
 
 
 # cli Lambda

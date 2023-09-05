@@ -131,11 +131,6 @@ workers(consumer) 未限制      | 1250w subscribers & 10w topics |
 - [CloudWatch](./CloudWatch.md)
 
 
-## CloudTrail
-
-- [CloudTrail](./CloudWatch.md#aws-cloudtrail)
-
-
 ## AWS Config
 
 - ![AWS Config Overview](./img/AWS%20Config%20Overview.png)
@@ -408,9 +403,9 @@ ssmps <-- Eecryption API --> kms;
 - AWS Firewall Manager
     - 用來管理 AWS Organization 所有 accounts 的 access rules
 
-    > AWS Firewall Manager is a security management service that allows you to centrally configure and manage firewall rules across your accounts and applications in AWS Organizations.
-    > 
-    > It is integrated with AWS Organizations so you can enable AWS WAF rules, AWS Shield Advanced protection, security groups, AWS Network Firewall rules, and Amazon Route 53 Resolver DNS Firewall rules.
+> AWS Firewall Manager is a security management service that allows you to centrally configure and manage firewall rules across your accounts and applications in AWS Organizations.
+> 
+> It is integrated with AWS Organizations so you can enable AWS WAF rules, AWS Shield Advanced protection, security groups, AWS Network Firewall rules, and Amazon Route 53 Resolver DNS Firewall rules.
 
 ```mermaid
 flowchart LR
@@ -687,10 +682,7 @@ dms -- insert/update/delete --> rds;
         - [DataSync](#datasync)
 
 
-## AWS Backup
-
-- [What is AWS Backup?](https://docs.aws.amazon.com/aws-backup/latest/devguide/whatisbackup.html)
-- [clf-backup](./cert-CLF_C01.md#aws-backup)
+## [AWS Backup](https://docs.aws.amazon.com/aws-backup/latest/devguide/whatisbackup.html)
 - SaaS, 統一管理 && auto backup across AWS Services
 - 無需 custom Scripts, 無需 manual processes
 - 支援一堆 AWS Services:
@@ -700,10 +692,14 @@ dms -- insert/update/delete --> rds;
     - DocumentDB / Neptune
     - EFS / FSx
     - Storage Gateway (Volume Gateway)
-- 支援 cross-region && cross-account
-- 支援 point-in-time recovery, PITR
-- 支援 on-demand && scheduled backups
-- 支援 tag-based backup policy
+- 支援 
+    - cross-region && cross-account
+    - Continuous backup and point-in-time restore (PITR)
+        - 若使用 **Continuous backup**, 要先建立 Full Backup, 之後持續備份 Transaction log
+        - 若使用 **Snapshot backup**, 可設定定期(例如每小時), 資料最多可以儲存 100 years,
+            - Snapshots can by copied for full or incremental backups(快照可以透過複製方式進行完整或增量備份)
+    - on-demand && scheduled backups
+    - tag-based backup policy
 - backup plans:
     - frequency
     - Backup window
@@ -715,12 +711,12 @@ dms -- insert/update/delete --> rds;
 flowchart LR
 
 backup["AWS Backup"]
-plan["AWS Backup Plan"]
+plan["Backup Plan"]
 rr["AWS Resources, ex: \n EC2 / EBS / EFS / \n RDS / Aurora / \n DynamoDB / DocumentDB / \n S3 / FSx / \n Neptune / \n Storage Gateway"]
 
 backup --> plan;
 plan --> rr;
-rr -- "Auto backup" --> S3;
+rr -- "store" --> S3;
 ```
 
 
