@@ -28,7 +28,8 @@ Since sqa 1.4+, sql 分成 2 類的 API: `Core` & `ORM`
                                       --------------------------
 ```
 
-- ORM : 架構在 Core 之上, 提供了一個額外的 configuration layer 用來作 py class model 與 DB table 的 mapping && 物件永久性機制(Session)
+- ORM, Object Related Model
+    - 架構在 Core 之上, 提供了一個額外的 configuration layer 用來作 py class model 與 DB table 的 mapping && 物件永久性機制(Session)
     - 主要互動物件為 `Session`
     - 使用 ORM 時, Engine 由 Session 來管理. Session 基本上與 Engine 的 Connection 幾乎相同
         - 但 Session 與 Connection 的 execution pattern(執行模式) 不相同

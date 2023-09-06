@@ -823,3 +823,31 @@ $# git clone --recursive https://github.com/uglide/RedisDesktopManager.git -b $V
 
 $# 
 ```
+
+
+# Install kotlin
+
+```zsh
+# TMD 不知道為啥, 扯到 kotlin 這關鍵字, Markdown 顏色會失效
+
+### 法1. by brew
+$ brew install kotlin
+
+
+$ kotlin -version
+Kotlin version 1.9.10-release-459 (JRE 11.0.20.1+0)
+
+$ kotlinc -version
+info: kotlinc-jvm 1.9.10 (JRE 11.0.20.1+0)
+
+
+### 可進入 REPL 介面
+$ kotlinc
+```
+
+
+# ...
+
+```zsh
+### 
+```

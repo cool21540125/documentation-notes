@@ -6,21 +6,23 @@
 - 有超過 200+ 個 Edge Locations
     - file cached for TTL
 - 結合了 DDoS protection && Shield, Web Application Firewall
-- CloudFront 回源到 S3, 有 2 種授權機制:
-    - OAC, Origin Access Control
-        - 相較於 OAI 的額外優點:
-            - 支援 all Region S3 buckets
-            - 支援 SSE-KMS
-            - 支援 Dynamic request(PUT, DELETE) to S3
-    - OAI, Origin Access Identity (legacy)
-        - Enhanced security with CloudFront Origin Access Identity, OAI
-        - OAI 是用來給 CloudFront access S3 的 IAM Role
+- CloudFron Origin:
+    - 回源到 S3 有底下的驗證機制:
+        - OAC, Origin Access Control
+            - 相較於 OAI 的額外優點:
+                - 支援 all Region S3 buckets
+                - 支援 SSE-KMS
+                - 支援 Dynamic request(PUT, DELETE) to S3
+        - OAI, Origin Access Identity (legacy)
+            - Enhanced security with CloudFront Origin Access Identity, OAI
+            - OAI 是用來給 CloudFront access S3 的 IAM Role
     - Custom Origin(HTTP)
         - ALB && EC2 instance
             - 必須要是 public && SG 要允許 AWS CloudFront IPs 來訪問
                 - https://d7uri8nf7uskq.cloudfront.net/tools/list-cloudfront-ips
-        - S3 Website
+        - S3 Website (必須確保 S3 Bucket 為 static S3 Website)
         - any HTTP backend
+- CloudFront 也可用來作為上傳 file 到 S3, 作為 Ingress 使用
 - CDN 也可設定 黑白名單 來做訪問許可
     - country 則使用 3rd Geo-IP database
 - paid shared content(付費共享內容)
@@ -59,7 +61,7 @@
 - CloudFront - Multiple Origin
     - CloudFront 可配置 *Cache Behaviors*, 來針對不同的 URL location, 配置不同的 Origin
         - ex: `/api/*` 丟到 ALB ; 其餘 `/*` 丟到 S3
-- CloufFront - Origin Groups
+- CloudFront - Origin Groups
     - 用來因應 HA && failover
     - 1 Primary && 1 Secondary origin (稱之為一組 Origin Group)
     - CloudFront 後面可以有 active-standby 的後端 Resource

@@ -28,6 +28,10 @@
 # aws CLI - Environment variables
 
 ```bash
+### 使用不同的 profile 設定檔
+export AWS_PROFILE=xxx
+
+
 ### AWS CLI v2 的相關環境變數
 export AWS_ACCESS_KEY_ID
 export AWS_SECRET_ACCESS_KEY
@@ -39,7 +43,6 @@ export AWS_DEFAULT_REGION
 
 
 ### 
-export AWS_PROFILE
 export AWS_DEFAULT_OUTTPUT
 export AWS_MAX_ATTEMPTS
 export AWS_RETRY_MODE

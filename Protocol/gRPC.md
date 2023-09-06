@@ -63,20 +63,25 @@
 
 ```bash
 ### install
-$# pip install grpcio
-$# pip install grpcio-tools
+pip install grpcio
+pip install grpcio-tools
+
 
 ### gen code && gRPC
-$# python -m grpc_tools.protoc \
+python -m grpc_tools.protoc \
     -I ${PATH_TO_PROTOS}/protos \
     --python_out=. \
     --pyi_out=. \
     --grpc_python_out=. \
     ../../protos/helloworld.proto
-# -I xxx            : (若無指定, 預設為當前目錄) 聲明要用來 import 的路徑
-# --python_out      : python source file 產出路徑, 此為 proto buffer 使用
-# --grpc_python_out : 「interface type(或 stub)」 及 「interface type 的 server 實作」, 此為 gRPC 使用
-# --pyi_out         : Python pyi stub 產出路徑
+
+# -I, --proto_path xxx : (若無指定, 預設為當前目錄) 聲明要用來 import 的路徑
+# --python_out         : python source file 產出路徑, 此為 proto buffer 使用
+# --grpc_python_out    : 「interface type(或 stub)」 及 「interface type 的 server 實作」, 此為 gRPC 使用
+# --pyi_out            : Python pyi stub 產出路徑
+
+
+### 
 ```
 
 
@@ -84,8 +89,8 @@ $# python -m grpc_tools.protoc \
 
 ```bash
 
-### 
-$# export PATH="$HOME/go/bin:$PATH"
+### 設定環境變數
+export PATH="$(go env GOPATH)/bin:${PATH}"
 # PATH 底下必須要找得到 protoc 及 protoc-gen-go 及 protoc-gen-go-grpc
 # protoc             : 用來產生 protocol buffer files 的 binary 
 # protoc-gen-go      : protoc 用來產生 protocol buffer files 的 go plugin binary
@@ -93,14 +98,40 @@ $# export PATH="$HOME/go/bin:$PATH"
 
 
 ### gen code && gRPC
-$# protoc \
-    --go_out=. \
-    --go_opt=paths=source_relative \
-    --go-grpc_out=. \
-    --go-grpc_opt=paths=source_relative \
-    routeguide/route_guide.proto
+protoc \
+  --go_out=. \
+  --go_opt=paths=source_relative \
+  --go-grpc_out=. \
+  --go-grpc_opt=paths=source_relative \
+  routeguide/route_guide.proto
+
 # --go_out      : 產生 protocol buffer code, 此為 proto buffer 使用
 # --go-grpc_out : 「interface type(或 stub)」 及 「interface type 的 server 實作」, 此為 gRPC 使用
 # --go_opt      : 「--go_opt=paths=source_relative」 告知 --go_out 輸出路徑位置, 相對於 --go_out 的路徑
 # --go-grpc_opt : 同 --go_opt
+
+
+### 
+```
+
+
+## swift
+
+```bash
+### 
+protoc \
+  --proto_path ./output/wondercise.proto \
+  --swift_out .
+
+# --proto_path   : 聲明用來 import 的路徑
+# --swift_out    : 
+
+### 
+```
+
+
+## kotlin
+
+```bash
+
 ```
