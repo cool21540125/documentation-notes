@@ -7,15 +7,14 @@
     - file cached for TTL
 - 結合了 DDoS protection && Shield, Web Application Firewall
 - CloudFron Origin:
-    - 回源到 S3 有底下的驗證機制:
+    - 回源到 S3 的驗證機制 (用來給 CloudFront access S3 的 IAM Role):
         - OAC, Origin Access Control
             - 相較於 OAI 的額外優點:
                 - 支援 all Region S3 buckets
                 - 支援 SSE-KMS
                 - 支援 Dynamic request(PUT, DELETE) to S3
         - OAI, Origin Access Identity (legacy)
-            - Enhanced security with CloudFront Origin Access Identity, OAI
-            - OAI 是用來給 CloudFront access S3 的 IAM Role
+            - Enhanced security with CloudFront OAI
     - Custom Origin(HTTP)
         - ALB && EC2 instance
             - 必須要是 public && SG 要允許 AWS CloudFront IPs 來訪問
@@ -66,19 +65,6 @@
     - 1 Primary && 1 Secondary origin (稱之為一組 Origin Group)
     - CloudFront 後面可以有 active-standby 的後端 Resource
     - S3 + CloudFront - Regional HA
-        ```mermaid
-        flowchart LR
-
-        subgraph Origin Group
-            aa["S3 Origin A"]
-            ss["S3 Origin B"]
-        end
-
-        Client --> Cloudfront;
-        Cloudfront <-- active --> aa;
-        Cloudfront <-. use standby if active failed .-> ss;
-        ss -- "Cross Region Replication(if S3)" --> aa;
-        ```
 - CloudFront - Field Level Encryption
     - Client -> Edge -> CloudFront -> ALB -> WebServer
     - 如果架構如上, 全部使用 https, *Field Level Encryption* 主要功能是, 能針對 Request 裡頭特定欄位
@@ -88,6 +74,25 @@
     - 可以啟用並記錄所有向 CloudFront 發出的 Request, 此稱為 Standard logs / Access logs
     - https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/AccessLogs.html
 
+------
+
+關於 Origin Group
+
+```mermaid
+flowchart BT
+
+subgraph Origin Group
+    aa["S3 Origin A"]
+    ss["S3 Origin B"]
+end
+
+Client --> Cloudfront;
+Cloudfront <-- active --> aa;
+Cloudfront <-. use standby if active failed .-> ss;
+ss -- "Cross Region Replication(if S3)" --> aa;
+```
+
+------
 
 
 # details
@@ -122,25 +127,8 @@ S3 -- Origin Response --> Edge -- Viewer Response --> viewer;
         - URL querystring
         - HTTP Headers
         - cookies
-
-
-# CLI
-
-```bash
-$# distribution_ID=OOOOOOOO
-
-### 新增 分佈點的清除緩存紀錄 (就是清除緩存啦)
-$# aws cloudfront create-invalidation \
-    --distribution-id ${distribution_ID} \
-    --paths "/test"
-
-### 列出 清除緩存的紀錄
-$# aws cloudfront list-invalidations \
-    --distribution-id ${distribution_ID}
-
-### 查詢 某次緩存的清除紀錄
-$# Invalidation_ID=OOOOOOOO
-$# aws cloudfront get-invalidation \
-    --distribution-id ${distribution_ID} \
-    --id ${Invalidation_ID}
-```
+- CloudFront 的 Cache Control
+    - (不是很懂)
+- CloudFront 背後的 ABL 的 sticky session 問題
+    - 如果 ALB 背後的 Instance 希望能夠做 sticky session
+        - (假設 ALB 使用 cookie 來判斷黏著), 則需要在 CloudFront 配置 forward / whitelist `AWSALB`

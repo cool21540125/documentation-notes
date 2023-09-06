@@ -33,6 +33,7 @@ IMAGE_ID=ami-0b7546e839d7ace12    # ap-northeast-1 的 Amazon Linux 2 AMI x86-64
 aws ec2 run-instances \
     --image-id ${IMAGE_ID} \
     --instance-type t2.micro \
+    --key-name ${KEY} \
     --dry-run
 
 An error occurred (DryRunOperation) when calling the RunInstances operation: Request would have succeeded, but DryRun flag is set.
