@@ -123,3 +123,9 @@ TLS    | Transport Layer Security                    | 資安               |
 VPC    | Virtual Private Cloud                       | Cloud              |
 VPN    | Virtual Private Network                     | 虛擬私有網路        | servers間點對點加密溝通 (軟體翻牆的其中一種方式)
 WAL    | Write-ahead logging                         | 預寫式日誌          | RDBMS 為了維持 原子性 & 持久性, 將所有修改提交前都先寫入 log
+
+--------------
+
+- DAU(Daily active user)
+- WAU(Weekly active user)
+- MAU(Monthly active use)
