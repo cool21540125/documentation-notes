@@ -9,12 +9,18 @@ pod
 
 # Static Pod (靜態 Pod)
 
-- 無法與 ReplicationController, Deployment, DaemonSet 進行連結
-- 由 kubelet 建立
-    - 但是 kubelet 無法對它進行健檢
-- 僅存在於 Node 上頭
-    - 不能透過 API Server 進行管理
-- 建立方式可使用 設定檔 or HTTP 方式來建立, 遇到再學
+- Static Pod 由 kubelet 建立, 但是 kubelet 無法對它進行健檢
+    - 啟動方式, 運行 kubelet daemon 的時候, 會定期去掃:
+        - 直接指定
+            - kubelet 運行命令加上此選項: `--pod-manifest-path=/etc/Kubernetes/manifest`
+            - 指定 statis pods yaml 的資料夾
+        - 間接指定 (kube admin tool 使用此種方式):
+            - kubelet 運行命令加上此選項: `--config=kubeconfig.yaml`
+            - 在此 yaml 內聲明 `staticPodPath: /etc/Kubernetes/manifest`
+- Static Pod 只能用來建立 Pods, 與 ReplicationController, Deployment, DaemonSet 無關
+    - 不過也可用此來建立 Api Server / Scheduler / Controller Manager
+- Static Pod 對於 Api Server 為 ReadOnly
+    - Static Pod Name 會自動補上 node name 作為 suffix
 
 
 # health
