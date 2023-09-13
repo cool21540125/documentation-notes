@@ -1,5 +1,17 @@
 
-# Setting
+# 最近很常用...
+
+```bash
+export GIT_SSH_COMMAND='ssh -i ~/.ssh/id_rsa_personal' git clone ${Git_Url}
+
+git config --local core.sshCommand "ssh -i ~/.ssh/id_rsa_personal"
+
+git --no-pager tag
+
+```
+
+
+# 基礎配置
 
 ```bash
 ### 常用配置

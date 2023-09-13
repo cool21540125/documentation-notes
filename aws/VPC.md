@@ -1,7 +1,16 @@
 
 # VPC
 
-- 一個 VPC link to 一個 Region
+![VPC Basic](./img/vpc_basic.png)
+
+- 對應關係
+    - 一個 VPC 只能有一個 IGW (反之亦然)
+        - VPC 與 IGW 之間, 會藉由 Route Table 來將他們關聯起來
+- 每個 VPC 建立後, 都會伴隨建立一個 `default Route`
+    - *Route Table* 用來做 訪問的存取控制
+- IGW(Internet Gateway) && NAT Gateway
+    - IGW 要透過 *Route Table* 來連結到 Subnet
+- 一個 VPC 只能 link 到一個 Region (VPC 無法 cross Region)
     - VPC 內有 Subnets
     - AZ 內有 Subnets
 - Private IPv4
@@ -211,12 +220,21 @@ end
 
 # SG && ENI && EC2 && NACL
 
-- [clf-NACL](./cert-CLF_C01.md#vpcvirtual-private-network--networking)
-    - NOTE: *VPC Peering* 的位置大概與 *IGW* 相同
-- ![NACL](./img/NACL.drawio.png)
-- 每個 Subnet 都會有個 *Default NACL*, 不過他預設 `Rule 100, ALLOW 0.0.0.0/0 all IPv4 in & out`
-- Elastic Network Interface, ENI
+![NACL](./img/NACL.drawio.png)
+
+- SG 與 NACL 都是 firewall
+    - SG
+        - Stateful, 只能 Allow (Response 自動 Allow)
+        - AWS Resource Level 的防火牆機制
+    - NACL
+        - Stateless, 可 Allow/Deny (Response 必須 explicity Allow 才能訪問)
+        - Subnet Level 的防火牆機制
+- **VPC Peering** 的定位, 大致等同於 **IGW**
+- 每個 Subnet 都會有個 *Default NACL*
+    - 預設 `Rule 100, ALLOW 0.0.0.0/0 all IPv4 in & out`
 - SG 並非直接對 EC2 作用, 它其實是 attach 到 ENI
+    - NACL 為控制流量往返 ENI/EC2 的重要機制
+    - Elastic Network Interface, ENI
     - ENI 再 attach 到 EC2
     - 一個 ENI, 可有多個 SG
     - 一個 EC2, 可有多個 ENI
@@ -251,6 +269,22 @@ end
 SG1 -- attach --> ENI;
 ENI -- attach --> EC2;
 ```
+
+---
+
+```mermaid
+flowchart TB
+subgraph VPC
+    subgraph Public Subnet
+        subgraph SG
+            EC2
+        end
+        EC2 <--> NACL
+    end
+end
+```
+
+---
 
 Security Group     | NACL
 ------------------ | --------------------------

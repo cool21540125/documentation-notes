@@ -1,14 +1,18 @@
 ### =================== 環境變數 ===================
 
 ### 使用不同的設定檔
-export AWS_PROFILE=xxx
+export AWS_PROFILE=tonychoucc
 # 需配置好 ~/.aws/config 及 ~/.aws/credentials
 
 
 ### 除了 AWS_PROFILE 以外, 可用 AWS_REGION 來動態切換 Region
 export AWS_REGION=ap-northeast-1
-# ap-northeast-1 : Tokyo
-# ap-northeast-3 : Osaka
+# ex: Tokyo : ap-northeast-1
+# ex: Osaka : ap-northeast-3
+
+
+### 可用來查看目前下的 CLI 指令是用 哪個設定檔/環境變數/命令選項
+aws configure list
 
 
 

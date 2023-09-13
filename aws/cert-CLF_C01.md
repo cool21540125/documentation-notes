@@ -778,38 +778,6 @@ ie --> ee["EventBridge Event"];
 - 由 AWS 主動告知(Web Console 右上角小鈴鐺) Service 狀態
 
 
-# VPC(Virtual Private Network) && Networking
-
-![VPC Basic](./img/vpc_basic.png)
-
-- 有非常多名詞必須記得
-    - VPC && Subnet
-        - 一個 VPC 只能有一個 IGW (反之亦然)
-    - IGW(Internet Gateway) && NAT Gateway
-        - IGW 要透過 *Route Table* 來連結到 Subnet
-    - SG(Security Group) && NACL(Network ACL)
-        - SG 與 NACL 都是 firewall
-        - SG 只能做 ALLOW ; NACL 可 ALLOW/DENY (必須指名為 ALLOW 才能訪問)
-        - NACL 為控制流量往返 ENI/EC2 的重要機制
-        - SG, stateful; response 自動 Allow
-        - NACL, stateless; response 必須 explicity 設為 Allow
-        - NACL 需要 attach 到 subnet
-            - 流量從外面進來(to EC2) 的第一道防線為 NACL, 之後才是 SG
-            - SG 為 EC2 Level ; NACL 為 Subnet Level
-            - 控制 subnet 的 traffic rules
-            ```mermaid
-            flowchart TB
-            subgraph VPC
-                subgraph Public Subnet
-                    subgraph SG
-                        EC2
-                    end
-                    EC2 <--> NACL
-                end
-            end
-            ```
-
-
 # Machine Learning
 
 ## Amazon Rekognition
