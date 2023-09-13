@@ -739,6 +739,7 @@ swagger-codegen version
 
 - 2023/08 第一次接觸 ruby 這東西=..=
 - mac 一開始已經內建 ruby 2.6
+  - 位於 `/usr/bin/ruby`
 
 ```zsh
 brew install ruby@3.1
@@ -746,8 +747,14 @@ brew install ruby@3.1
 export GEM_HOME=$HOME/.gem
 export PATH="/usr/local/opt/ruby@3.1/bin:$GEM_HOME/bin:$PATH"
 
-ruby -v
+
+### Version
+/usr/bin/ruby -v
+#ruby 2.6.10p210
+
+/usr/local/opt/ruby\@3.1/bin/ruby -v
 #ruby 3.1.4p223
+
 
 gem -v
 #3.4.10
@@ -779,6 +786,22 @@ gem install fastlane
 
 ### Usage
 $HOME/.gem/bin/fastlane -v
+```
+
+
+# Install Cocoapods
+
+```zsh
+### 安裝好 ruby && 可以使用 gem 以後
+gem install cocoapods
+
+
+which pod
+#$GEM_HOME/bin/pod
+
+
+pod --version
+#1.12.1
 ```
 
 
@@ -846,7 +869,7 @@ $ kotlinc
 ```
 
 
-# ...
+# 
 
 ```zsh
 ### 
