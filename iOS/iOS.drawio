@@ -1,17 +1,17 @@
 <mxfile host="65bd71144e">
     <diagram name="Page-1" id="q86eNr94cBDuVsGkZMzl">
-        <mxGraphModel dx="2798" dy="1249" grid="0" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="0" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+        <mxGraphModel dx="3098" dy="1291" grid="0" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="0" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
             <root>
                 <mxCell id="0"/>
                 <mxCell id="1" parent="0"/>
-                <mxCell id="167" value="Your macbook (Apple ID: 001 )" style="rounded=0;whiteSpace=wrap;html=1;labelPosition=center;verticalLabelPosition=bottom;align=center;verticalAlign=top;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="1">
+                <mxCell id="167" value="Your macbook (Apple ID: 001 )" style="rounded=0;whiteSpace=wrap;html=1;labelPosition=center;verticalLabelPosition=bottom;align=center;verticalAlign=top;fillColor=#fff2cc;strokeColor=#d6b656;" parent="1" vertex="1">
                     <mxGeometry x="316" y="808" width="665" height="345.5" as="geometry"/>
                 </mxCell>
                 <mxCell id="udy7D6bEetvilHj6OVsd-2" value="Apple Portal &amp;amp; Developer Portal" style="rounded=1;whiteSpace=wrap;html=1;labelPosition=center;verticalLabelPosition=top;align=center;verticalAlign=bottom;fillColor=#f5f5f5;strokeColor=#666666;gradientColor=#b3b3b3;" parent="1" vertex="1">
                     <mxGeometry x="33.56" y="187" width="919.44" height="404" as="geometry"/>
                 </mxCell>
-                <mxCell id="103" value="App Store Connect&lt;br&gt;Test Flight ( Production 環境)" style="rounded=1;whiteSpace=wrap;html=1;labelPosition=center;verticalLabelPosition=top;align=center;verticalAlign=bottom;fillColor=#f5f5f5;gradientColor=#b3b3b3;strokeColor=#666666;" parent="1" vertex="1">
-                    <mxGeometry x="-1001" y="-322" width="522" height="394" as="geometry"/>
+                <mxCell id="103" value="App Store Connect&lt;br&gt;Test Flight ( Production 環境)" style="rounded=0;whiteSpace=wrap;html=1;labelPosition=center;verticalLabelPosition=top;align=center;verticalAlign=bottom;fillColor=#f5f5f5;gradientColor=#b3b3b3;strokeColor=#666666;" parent="1" vertex="1">
+                    <mxGeometry x="-1001" y="-322" width="537" height="394" as="geometry"/>
                 </mxCell>
                 <mxCell id="142" style="edgeStyle=none;html=1;entryX=1;entryY=0.5;entryDx=0;entryDy=0;fontColor=#000000;exitX=0;exitY=0.25;exitDx=0;exitDy=0;" parent="1" source="134" target="106" edge="1">
                     <mxGeometry relative="1" as="geometry"/>
@@ -24,16 +24,16 @@
                 <mxCell id="134" value="內側 Alpha&lt;br&gt;Production 的設定" style="rounded=0;whiteSpace=wrap;html=1;labelBackgroundColor=#FFFFFF;fontColor=#000000;gradientColor=none;labelPosition=center;verticalLabelPosition=top;align=center;verticalAlign=bottom;" parent="1" vertex="1">
                     <mxGeometry x="-713" y="-174.87" width="157" height="99.73" as="geometry"/>
                 </mxCell>
-                <mxCell id="161" style="edgeStyle=none;html=1;entryX=0;entryY=0.75;entryDx=0;entryDy=0;fontColor=#000000;exitX=1;exitY=0;exitDx=0;exitDy=0;strokeWidth=3;dashed=1;dashPattern=1 1;" edge="1" parent="1" source="44" target="udy7D6bEetvilHj6OVsd-2">
+                <mxCell id="161" style="edgeStyle=none;html=1;entryX=0;entryY=0.75;entryDx=0;entryDy=0;fontColor=#000000;exitX=1;exitY=0;exitDx=0;exitDy=0;strokeWidth=3;dashed=1;dashPattern=1 1;" parent="1" source="44" target="udy7D6bEetvilHj6OVsd-2" edge="1">
                     <mxGeometry relative="1" as="geometry"/>
                 </mxCell>
-                <mxCell id="162" value="Apple ID login" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontColor=#000000;" vertex="1" connectable="0" parent="161">
+                <mxCell id="162" value="Apple ID login" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontColor=#000000;" parent="161" vertex="1" connectable="0">
                     <mxGeometry x="-0.4097" y="-2" relative="1" as="geometry">
                         <mxPoint as="offset"/>
                     </mxGeometry>
                 </mxCell>
                 <mxCell id="44" value="Your macbook (Apple ID: 002 )" style="rounded=0;whiteSpace=wrap;html=1;labelPosition=center;verticalLabelPosition=bottom;align=center;verticalAlign=top;fillColor=#fff2cc;strokeColor=#d6b656;" parent="1" vertex="1">
-                    <mxGeometry x="-853" y="733" width="665" height="345.5" as="geometry"/>
+                    <mxGeometry x="-853" y="733" width="665" height="414" as="geometry"/>
                 </mxCell>
                 <mxCell id="Pc43Av3YYR_3kN6ACJ1--158" style="rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" parent="1" source="130" target="136" edge="1">
                     <mxGeometry relative="1" as="geometry"/>
@@ -41,18 +41,19 @@
                 <mxCell id="130" value="" style="rounded=0;whiteSpace=wrap;html=1;labelBackgroundColor=#FFFFFF;fontColor=#000000;gradientColor=none;" parent="1" vertex="1">
                     <mxGeometry x="-643" y="820" width="253" height="102" as="geometry"/>
                 </mxCell>
-                <mxCell id="105" value="App Store (發布)" style="rounded=1;whiteSpace=wrap;html=1;labelPosition=center;verticalLabelPosition=top;align=center;verticalAlign=bottom;fillColor=#f5f5f5;strokeColor=#666666;gradientColor=#b3b3b3;" parent="1" vertex="1">
-                    <mxGeometry x="-185" y="-294" width="419" height="361" as="geometry"/>
+                <mxCell id="105" value="App Store (發布)" style="rounded=0;whiteSpace=wrap;html=1;labelPosition=center;verticalLabelPosition=top;align=center;verticalAlign=bottom;fillColor=#f5f5f5;strokeColor=#666666;gradientColor=#b3b3b3;" parent="1" vertex="1">
+                    <mxGeometry x="-465" y="-322" width="542" height="394" as="geometry"/>
                 </mxCell>
                 <mxCell id="81" value="CI/CD Pipeline (Apple ID: &lt;font color=&quot;#ff0000&quot;&gt;999&lt;/font&gt;)" style="rounded=0;whiteSpace=wrap;html=1;labelPosition=center;verticalLabelPosition=bottom;align=center;verticalAlign=top;fillColor=#fff2cc;strokeColor=#d6b656;" parent="1" vertex="1">
-                    <mxGeometry x="-603" y="381.07" width="246" height="168" as="geometry"/>
+                    <mxGeometry x="-643" y="348" width="246" height="168" as="geometry"/>
                 </mxCell>
-                <mxCell id="71" style="edgeStyle=none;html=1;entryX=0.25;entryY=0;entryDx=0;entryDy=0;startArrow=none;startFill=0;endArrow=classic;endFill=1;exitX=0;exitY=0.25;exitDx=0;exitDy=0;" parent="1" source="167" target="70" edge="1">
+                <mxCell id="71" style="edgeStyle=none;html=1;entryX=0;entryY=0.25;entryDx=0;entryDy=0;startArrow=none;startFill=0;endArrow=classic;endFill=1;exitX=0;exitY=0.5;exitDx=0;exitDy=0;" parent="1" source="167" target="172" edge="1">
                     <mxGeometry relative="1" as="geometry">
                         <mxPoint x="377" y="872.5" as="sourcePoint"/>
+                        <mxPoint x="420.5" y="984" as="targetPoint"/>
                     </mxGeometry>
                 </mxCell>
-                <mxCell id="72" value="export" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" parent="71" vertex="1" connectable="0">
+                <mxCell id="72" value="manual sign Usage" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" parent="71" vertex="1" connectable="0">
                     <mxGeometry x="0.2194" y="1" relative="1" as="geometry">
                         <mxPoint as="offset"/>
                     </mxGeometry>
@@ -69,9 +70,6 @@
                 </mxCell>
                 <mxCell id="7" value="&lt;span style=&quot;&quot;&gt;Public Key&lt;/span&gt;" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
                     <mxGeometry x="628" y="954" width="74" height="38" as="geometry"/>
-                </mxCell>
-                <mxCell id="152" style="edgeStyle=none;html=1;entryX=1;entryY=0.25;entryDx=0;entryDy=0;fontColor=#000000;startArrow=none;startFill=0;endArrow=classic;endFill=1;dashed=1;" parent="1" source="8" target="70" edge="1">
-                    <mxGeometry relative="1" as="geometry"/>
                 </mxCell>
                 <mxCell id="8" value="&lt;span style=&quot;&quot;&gt;Private Key&lt;/span&gt;" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
                     <mxGeometry x="628" y="916" width="74" height="38" as="geometry"/>
@@ -112,13 +110,13 @@
                         <mxPoint as="offset"/>
                     </mxGeometry>
                 </mxCell>
-                <mxCell id="34" style="edgeStyle=none;html=1;dashed=1;endArrow=none;endFill=0;exitX=0;exitY=0.5;exitDx=0;exitDy=0;" parent="1" source="21" target="33" edge="1">
+                <mxCell id="34" style="edgeStyle=none;html=1;dashed=1;endArrow=none;endFill=0;exitX=0.25;exitY=0;exitDx=0;exitDy=0;" parent="1" source="21" target="33" edge="1">
                     <mxGeometry relative="1" as="geometry"/>
                 </mxCell>
                 <mxCell id="21" value="Cert" style="rounded=0;whiteSpace=wrap;html=1;labelPosition=center;verticalLabelPosition=top;align=center;verticalAlign=bottom;" parent="1" vertex="1">
                     <mxGeometry x="208.56" y="499" width="289" height="82" as="geometry"/>
                 </mxCell>
-                <mxCell id="30" style="edgeStyle=none;html=1;entryX=0;entryY=0.25;entryDx=0;entryDy=0;" parent="1" source="25" target="167" edge="1">
+                <mxCell id="30" style="edgeStyle=none;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" parent="1" source="25" target="167" edge="1">
                     <mxGeometry relative="1" as="geometry">
                         <mxPoint x="377" y="872.5" as="targetPoint"/>
                     </mxGeometry>
@@ -128,10 +126,10 @@
                         <mxPoint x="16" y="-2" as="offset"/>
                     </mxGeometry>
                 </mxCell>
-                <mxCell id="25" value="&lt;span style=&quot;&quot;&gt;Cert&lt;/span&gt;" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
-                    <mxGeometry x="460" y="851" width="74" height="38" as="geometry"/>
+                <mxCell id="25" value="&lt;span style=&quot;&quot;&gt;p12&lt;br&gt;provisioning profile&lt;br&gt;&lt;/span&gt;" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+                    <mxGeometry x="460" y="851" width="128" height="61" as="geometry"/>
                 </mxCell>
-                <mxCell id="35" style="edgeStyle=none;html=1;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" parent="1" source="33" target="36" edge="1">
+                <mxCell id="35" style="edgeStyle=none;html=1;entryX=1;entryY=0.25;entryDx=0;entryDy=0;exitX=0;exitY=0.75;exitDx=0;exitDy=0;" parent="1" source="21" target="177" edge="1">
                     <mxGeometry relative="1" as="geometry">
                         <mxPoint x="76.341064453125" y="357.5026092529297" as="targetPoint"/>
                     </mxGeometry>
@@ -142,18 +140,7 @@
                     </mxGeometry>
                 </mxCell>
                 <mxCell id="33" value="Provisioning Profile" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
-                    <mxGeometry x="78.56" y="459" width="92" height="43" as="geometry"/>
-                </mxCell>
-                <mxCell id="Pc43Av3YYR_3kN6ACJ1--152" style="rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;dashed=1;endArrow=classic;endFill=1;" parent="1" source="36" target="73" edge="1">
-                    <mxGeometry relative="1" as="geometry"/>
-                </mxCell>
-                <mxCell id="Pc43Av3YYR_3kN6ACJ1--154" value="驗證" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" parent="Pc43Av3YYR_3kN6ACJ1--152" vertex="1" connectable="0">
-                    <mxGeometry x="0.2009" y="2" relative="1" as="geometry">
-                        <mxPoint as="offset"/>
-                    </mxGeometry>
-                </mxCell>
-                <mxCell id="36" value="Provisioning Profile" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
-                    <mxGeometry x="-297" y="832" width="92" height="43" as="geometry"/>
+                    <mxGeometry x="188" y="316" width="92" height="43" as="geometry"/>
                 </mxCell>
                 <mxCell id="42" style="edgeStyle=none;html=1;dashed=1;endArrow=none;endFill=0;" parent="1" source="38" target="33" edge="1">
                     <mxGeometry relative="1" as="geometry"/>
@@ -163,21 +150,21 @@
                 </mxCell>
                 <mxCell id="47" value="build -&amp;gt; xcodeproject&lt;br&gt;&amp;amp;&lt;br&gt;sign&lt;br&gt;&amp;amp;&lt;br&gt;release -&amp;gt; ipa" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" parent="46" vertex="1" connectable="0">
                     <mxGeometry x="0.4" y="-3" relative="1" as="geometry">
-                        <mxPoint x="-62" y="26" as="offset"/>
+                        <mxPoint x="-141" y="28" as="offset"/>
                     </mxGeometry>
                 </mxCell>
-                <mxCell id="50" style="edgeStyle=none;html=1;entryX=0.25;entryY=1;entryDx=0;entryDy=0;startArrow=none;startFill=0;endArrow=classic;endFill=1;" parent="1" source="45" target="36" edge="1">
+                <mxCell id="174" style="edgeStyle=none;html=1;entryX=0.75;entryY=1;entryDx=0;entryDy=0;exitX=0.75;exitY=1;exitDx=0;exitDy=0;" parent="1" source="44" target="45" edge="1">
                     <mxGeometry relative="1" as="geometry">
-                        <Array as="points"/>
+                        <mxPoint x="-359" y="1215" as="sourcePoint"/>
                     </mxGeometry>
                 </mxCell>
-                <mxCell id="51" value="use" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" parent="50" vertex="1" connectable="0">
-                    <mxGeometry x="-0.338" y="3" relative="1" as="geometry">
-                        <mxPoint x="-9" y="-3" as="offset"/>
+                <mxCell id="175" value="manual sign Usage" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" parent="174" vertex="1" connectable="0">
+                    <mxGeometry x="-0.1561" y="-2" relative="1" as="geometry">
+                        <mxPoint as="offset"/>
                     </mxGeometry>
                 </mxCell>
                 <mxCell id="45" value="xcode / fastlane&lt;br&gt;Source Code" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
-                    <mxGeometry x="-504" y="1003" width="120" height="60" as="geometry"/>
+                    <mxGeometry x="-522.5" y="989" width="120" height="60" as="geometry"/>
                 </mxCell>
                 <mxCell id="110" style="edgeStyle=none;html=1;fontColor=#000000;entryX=0;entryY=0.75;entryDx=0;entryDy=0;exitX=1;exitY=0.75;exitDx=0;exitDy=0;" parent="1" source="134" target="111" edge="1">
                     <mxGeometry relative="1" as="geometry">
@@ -219,30 +206,28 @@
                 <mxCell id="39" value="App ID: xxx&lt;br&gt;Team ID: xxx&lt;br&gt;Bundle ID: xxx" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;whiteSpace=wrap;rounded=0;" parent="66" vertex="1">
                     <mxGeometry x="4" y="12.5" width="98" height="120" as="geometry"/>
                 </mxCell>
-                <mxCell id="76" style="edgeStyle=none;html=1;entryX=1;entryY=0.75;entryDx=0;entryDy=0;startArrow=none;startFill=0;endArrow=classic;endFill=1;exitX=0;exitY=0.75;exitDx=0;exitDy=0;" parent="1" source="70" target="73" edge="1">
-                    <mxGeometry relative="1" as="geometry"/>
+                <mxCell id="76" style="edgeStyle=none;html=1;entryX=1;entryY=0.75;entryDx=0;entryDy=0;startArrow=none;startFill=0;endArrow=classic;endFill=1;exitX=0;exitY=0.5;exitDx=0;exitDy=0;" parent="1" source="25" target="177" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="402" y="1012.5" as="sourcePoint"/>
+                    </mxGeometry>
                 </mxCell>
                 <mxCell id="77" value="給" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" parent="76" vertex="1" connectable="0">
                     <mxGeometry x="0.212" y="-1" relative="1" as="geometry">
                         <mxPoint as="offset"/>
                     </mxGeometry>
                 </mxCell>
-                <mxCell id="70" value="&lt;span style=&quot;&quot;&gt;p12&lt;/span&gt;" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
-                    <mxGeometry x="402" y="984" width="74" height="38" as="geometry"/>
-                </mxCell>
-                <mxCell id="74" style="edgeStyle=none;html=1;entryX=1;entryY=0.5;entryDx=0;entryDy=0;startArrow=none;startFill=0;endArrow=classic;endFill=1;exitX=1;exitY=0.25;exitDx=0;exitDy=0;" parent="1" source="73" target="44" edge="1">
-                    <mxGeometry relative="1" as="geometry"/>
+                <mxCell id="74" style="edgeStyle=none;html=1;entryX=0.75;entryY=1;entryDx=0;entryDy=0;startArrow=none;startFill=0;endArrow=classic;endFill=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;" parent="1" source="177" target="44" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="-277.99999999999955" y="1052" as="sourcePoint"/>
+                    </mxGeometry>
                 </mxCell>
                 <mxCell id="75" value="install" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" parent="74" vertex="1" connectable="0">
                     <mxGeometry x="-0.2791" y="1" relative="1" as="geometry">
                         <mxPoint as="offset"/>
                     </mxGeometry>
                 </mxCell>
-                <mxCell id="73" value="&lt;span style=&quot;&quot;&gt;p12&lt;/span&gt;" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
-                    <mxGeometry x="-319" y="951" width="74" height="38" as="geometry"/>
-                </mxCell>
                 <mxCell id="83" value="&lt;span style=&quot;&quot;&gt;p12&lt;/span&gt;" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
-                    <mxGeometry x="-438" y="478.57" width="74" height="38" as="geometry"/>
+                    <mxGeometry x="-478" y="445.5" width="74" height="38" as="geometry"/>
                 </mxCell>
                 <mxCell id="104" value="Firebase ( Development, Staging 環境)" style="rounded=1;whiteSpace=wrap;html=1;labelPosition=center;verticalLabelPosition=bottom;align=center;verticalAlign=top;fillColor=#d5e8d4;gradientColor=#97d077;strokeColor=#82b366;" parent="1" vertex="1">
                     <mxGeometry x="-1522" y="288" width="341" height="257" as="geometry"/>
@@ -257,14 +242,14 @@
                     <mxGeometry x="-635.17" y="841.5" width="96" height="67.07" as="geometry"/>
                 </mxCell>
                 <mxCell id="108" value="Provisioning Profile" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
-                    <mxGeometry x="-468.5" y="397.07" width="92" height="43" as="geometry"/>
+                    <mxGeometry x="-508.5" y="364" width="92" height="43" as="geometry"/>
                 </mxCell>
                 <mxCell id="109" value="xcode&lt;br&gt;fastlane&lt;br&gt;Source Code" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
-                    <mxGeometry x="-581" y="448.07" width="86.5" height="55" as="geometry"/>
+                    <mxGeometry x="-621" y="415" width="86.5" height="55" as="geometry"/>
                 </mxCell>
                 <mxCell id="122" style="edgeStyle=none;html=1;fontColor=#000000;" parent="1" source="111" target="123" edge="1">
                     <mxGeometry relative="1" as="geometry">
-                        <mxPoint x="73.17431640625" y="-523.1666870117188" as="targetPoint"/>
+                        <mxPoint x="-83.82568359375" y="-551.1666870117188" as="targetPoint"/>
                     </mxGeometry>
                 </mxCell>
                 <mxCell id="125" value="download" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontColor=#000000;" parent="122" vertex="1" connectable="0">
@@ -273,10 +258,10 @@
                     </mxGeometry>
                 </mxCell>
                 <mxCell id="111" value="App" style="rounded=1;whiteSpace=wrap;html=1;" parent="1" vertex="1">
-                    <mxGeometry x="37" y="-205" width="120" height="60" as="geometry"/>
+                    <mxGeometry x="-120" y="-233" width="120" height="60" as="geometry"/>
                 </mxCell>
                 <mxCell id="124" value="" style="group" parent="1" vertex="1" connectable="0">
-                    <mxGeometry x="368" y="-288" width="142" height="162" as="geometry"/>
+                    <mxGeometry x="211" y="-316" width="142" height="162" as="geometry"/>
                 </mxCell>
                 <mxCell id="123" value="" style="rounded=0;whiteSpace=wrap;html=1;labelBackgroundColor=#FFFFFF;fontColor=#000000;gradientColor=none;strokeColor=none;" parent="124" vertex="1">
                     <mxGeometry width="142" height="162" as="geometry"/>
@@ -317,7 +302,7 @@
                 <mxCell id="138" style="edgeStyle=none;html=1;entryX=0.5;entryY=1;entryDx=0;entryDy=0;fontColor=#000000;" parent="1" source="136" target="134" edge="1">
                     <mxGeometry relative="1" as="geometry"/>
                 </mxCell>
-                <mxCell id="160" value="prod" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontColor=#000000;" vertex="1" connectable="0" parent="138">
+                <mxCell id="160" value="prod" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontColor=#000000;" parent="138" vertex="1" connectable="0">
                     <mxGeometry x="-0.1549" y="1" relative="1" as="geometry">
                         <mxPoint as="offset"/>
                     </mxGeometry>
@@ -325,9 +310,9 @@
                 <mxCell id="Pc43Av3YYR_3kN6ACJ1--155" style="rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" parent="1" source="136" target="Pc43Av3YYR_3kN6ACJ1--157" edge="1">
                     <mxGeometry relative="1" as="geometry"/>
                 </mxCell>
-                <mxCell id="Pc43Av3YYR_3kN6ACJ1--156" value="dev, qa" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" parent="Pc43Av3YYR_3kN6ACJ1--155" vertex="1" connectable="0">
+                <mxCell id="Pc43Av3YYR_3kN6ACJ1--156" value="dev, qa, prod&lt;br&gt;但我們的 iOS Team 只用來做:&lt;br&gt;dev, qa" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" parent="Pc43Av3YYR_3kN6ACJ1--155" vertex="1" connectable="0">
                     <mxGeometry x="0.258" y="1" relative="1" as="geometry">
-                        <mxPoint as="offset"/>
+                        <mxPoint x="162" y="33" as="offset"/>
                     </mxGeometry>
                 </mxCell>
                 <mxCell id="136" value="ipa&lt;br&gt;描述資料&lt;br&gt;測試內容" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" parent="1" vertex="1">
@@ -361,18 +346,6 @@
                         <mxPoint as="offset"/>
                     </mxGeometry>
                 </mxCell>
-                <mxCell id="op3rBLOCOqfQ3nE_6FgC-152" style="edgeStyle=none;html=1;entryX=1;entryY=0.25;entryDx=0;entryDy=0;startArrow=classic;startFill=1;endArrow=none;endFill=0;exitX=0;exitY=0.5;exitDx=0;exitDy=0;" parent="1" source="73" target="45" edge="1">
-                    <mxGeometry relative="1" as="geometry">
-                        <Array as="points"/>
-                        <mxPoint x="-310" y="903" as="sourcePoint"/>
-                        <mxPoint x="-407" y="1013" as="targetPoint"/>
-                    </mxGeometry>
-                </mxCell>
-                <mxCell id="op3rBLOCOqfQ3nE_6FgC-153" value="use auto with portal" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" parent="op3rBLOCOqfQ3nE_6FgC-152" vertex="1" connectable="0">
-                    <mxGeometry x="-0.338" y="3" relative="1" as="geometry">
-                        <mxPoint x="20" y="24" as="offset"/>
-                    </mxGeometry>
-                </mxCell>
                 <mxCell id="153" style="edgeStyle=none;html=1;entryX=0.5;entryY=1;entryDx=0;entryDy=0;" parent="1" source="Pc43Av3YYR_3kN6ACJ1--157" target="106" edge="1">
                     <mxGeometry relative="1" as="geometry"/>
                 </mxCell>
@@ -396,38 +369,56 @@
                     <mxGeometry x="-325" y="742" width="124" height="59" as="geometry"/>
                 </mxCell>
                 <mxCell id="155" value="人工&lt;br&gt;嚴謹人工審核&amp;nbsp;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;dashed=1;" parent="1" vertex="1">
-                    <mxGeometry x="-125" y="-197.00000000000003" width="96" height="67.07" as="geometry"/>
+                    <mxGeometry x="-282" y="-225.00000000000003" width="96" height="67.07" as="geometry"/>
                 </mxCell>
-                <mxCell id="157" value="&lt;span style=&quot;font-family: Helvetica; font-size: 12px; font-style: normal; font-variant-ligatures: normal; font-variant-caps: normal; font-weight: 400; letter-spacing: normal; orphans: 2; text-align: center; text-indent: 0px; text-transform: none; widows: 2; word-spacing: 0px; -webkit-text-stroke-width: 0px; text-decoration-thickness: initial; text-decoration-style: initial; text-decoration-color: initial; float: none; display: inline !important;&quot;&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255);&quot;&gt;&amp;nbsp;Roles:&lt;br&gt;-------------------------------------------------&lt;br&gt;admin, development, distribution&lt;br&gt;&lt;/span&gt;development, distribution&lt;span style=&quot;background-color: rgb(255, 255, 255);&quot;&gt;&lt;br&gt;&lt;/span&gt;development&lt;span style=&quot;background-color: rgb(255, 255, 255);&quot;&gt;&lt;br&gt;&lt;/span&gt;&lt;font color=&quot;#ff0000&quot;&gt;distribution&lt;/font&gt;&lt;br&gt;&lt;/span&gt;" style="text;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+                <mxCell id="157" value="&lt;span style=&quot;font-family: Helvetica; font-size: 12px; font-style: normal; font-variant-ligatures: normal; font-variant-caps: normal; font-weight: 400; letter-spacing: normal; orphans: 2; text-align: center; text-indent: 0px; text-transform: none; widows: 2; word-spacing: 0px; -webkit-text-stroke-width: 0px; text-decoration-thickness: initial; text-decoration-style: initial; text-decoration-color: initial; float: none; display: inline !important;&quot;&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255);&quot;&gt;&amp;nbsp;Roles:&lt;br&gt;-------------------------------------------------&lt;br&gt;admin, development, distribution&lt;br&gt;&lt;/span&gt;development, distribution&lt;span style=&quot;background-color: rgb(255, 255, 255);&quot;&gt;&lt;br&gt;&lt;/span&gt;development&lt;span style=&quot;background-color: rgb(255, 255, 255);&quot;&gt;&lt;br&gt;&lt;/span&gt;&lt;font color=&quot;#ff0000&quot;&gt;distribution&lt;/font&gt;&lt;br&gt;&lt;/span&gt;" style="text;whiteSpace=wrap;html=1;" parent="1" vertex="1">
                     <mxGeometry x="676" y="264.17" width="231.44" height="112.65" as="geometry"/>
                 </mxCell>
-                <mxCell id="158" value="&lt;span style=&quot;color: rgb(0, 0, 0);&quot;&gt;device102&lt;/span&gt;" style="verticalLabelPosition=bottom;sketch=0;aspect=fixed;html=1;verticalAlign=top;strokeColor=none;align=center;outlineConnect=0;shape=mxgraph.citrix.pda;dashed=1;fontColor=#FF0000;" vertex="1" parent="1">
+                <mxCell id="158" value="&lt;span style=&quot;color: rgb(0, 0, 0);&quot;&gt;device102&lt;/span&gt;" style="verticalLabelPosition=bottom;sketch=0;aspect=fixed;html=1;verticalAlign=top;strokeColor=none;align=center;outlineConnect=0;shape=mxgraph.citrix.pda;dashed=1;fontColor=#FF0000;" parent="1" vertex="1">
                     <mxGeometry x="-1435" y="-191" width="30" height="61" as="geometry"/>
                 </mxCell>
-                <mxCell id="159" value="&lt;span style=&quot;color: rgb(0, 0, 0);&quot;&gt;device103&lt;/span&gt;" style="image;html=1;image=img/lib/clip_art/telecommunication/iPhone_128x128.png;dashed=1;fontColor=#FF0000;" vertex="1" parent="1">
+                <mxCell id="159" value="&lt;span style=&quot;color: rgb(0, 0, 0);&quot;&gt;device103&lt;/span&gt;" style="image;html=1;image=img/lib/clip_art/telecommunication/iPhone_128x128.png;dashed=1;fontColor=#FF0000;" parent="1" vertex="1">
                     <mxGeometry x="-1373" y="-190" width="80" height="80" as="geometry"/>
                 </mxCell>
-                <mxCell id="163" style="edgeStyle=none;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;fontColor=#000000;exitX=1;exitY=0.25;exitDx=0;exitDy=0;strokeWidth=3;dashed=1;dashPattern=1 1;" edge="1" parent="1" source="81" target="udy7D6bEetvilHj6OVsd-2">
+                <mxCell id="163" style="edgeStyle=none;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;fontColor=#000000;exitX=1;exitY=0.25;exitDx=0;exitDy=0;strokeWidth=3;dashed=1;dashPattern=1 1;" parent="1" source="81" target="udy7D6bEetvilHj6OVsd-2" edge="1">
                     <mxGeometry relative="1" as="geometry">
                         <mxPoint x="-178" y="742.9999999999998" as="sourcePoint"/>
                         <mxPoint x="43.559999999999945" y="500" as="targetPoint"/>
                     </mxGeometry>
                 </mxCell>
-                <mxCell id="164" value="Apple ID login" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontColor=#000000;" vertex="1" connectable="0" parent="163">
+                <mxCell id="164" value="mac 機器上頭&lt;br&gt;Apple ID login" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontColor=#000000;" parent="163" vertex="1" connectable="0">
                     <mxGeometry x="-0.4097" y="-2" relative="1" as="geometry">
-                        <mxPoint as="offset"/>
+                        <mxPoint x="-64" y="-18" as="offset"/>
                     </mxGeometry>
                 </mxCell>
-                <mxCell id="165" style="edgeStyle=none;html=1;entryX=0.25;entryY=1;entryDx=0;entryDy=0;fontColor=#000000;strokeWidth=3;dashed=1;dashPattern=1 1;exitX=0;exitY=0;exitDx=0;exitDy=0;" edge="1" parent="1" source="167" target="udy7D6bEetvilHj6OVsd-2">
+                <mxCell id="165" style="edgeStyle=none;html=1;entryX=0.25;entryY=1;entryDx=0;entryDy=0;fontColor=#000000;strokeWidth=3;dashed=1;dashPattern=1 1;exitX=0;exitY=0;exitDx=0;exitDy=0;" parent="1" source="167" target="udy7D6bEetvilHj6OVsd-2" edge="1">
                     <mxGeometry relative="1" as="geometry">
                         <mxPoint x="230" y="815" as="sourcePoint"/>
                         <mxPoint x="53.559999999999945" y="510" as="targetPoint"/>
                     </mxGeometry>
                 </mxCell>
-                <mxCell id="166" value="Apple ID login" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontColor=#000000;" vertex="1" connectable="0" parent="165">
+                <mxCell id="166" value="Apple ID login" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontColor=#000000;" parent="165" vertex="1" connectable="0">
                     <mxGeometry x="-0.4097" y="-2" relative="1" as="geometry">
                         <mxPoint as="offset"/>
                     </mxGeometry>
+                </mxCell>
+                <mxCell id="168" value="一個 app 綁 100 個 apple id (內測)" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" parent="1" vertex="1">
+                    <mxGeometry x="-665" y="124" width="200" height="26" as="geometry"/>
+                </mxCell>
+                <mxCell id="169" value="一個 app 綁 10000 個 apple id (外測)" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" parent="1" vertex="1">
+                    <mxGeometry x="-1000" y="124" width="213" height="26" as="geometry"/>
+                </mxCell>
+                <mxCell id="170" value="一個 app 綁 100 個 device id (內測)" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" parent="1" vertex="1">
+                    <mxGeometry x="-1177" y="428" width="205" height="26" as="geometry"/>
+                </mxCell>
+                <mxCell id="171" value="底層是 provision profile&lt;br&gt;(綁裝置)" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" parent="1" vertex="1">
+                    <mxGeometry x="-1167" y="386" width="141" height="41" as="geometry"/>
+                </mxCell>
+                <mxCell id="172" value="&lt;span style=&quot;&quot;&gt;xcode&lt;br&gt;- manual 簽署 - 使用 p12&lt;br&gt;- auto 簽署 - 後台需要授權&lt;br&gt;&lt;/span&gt;" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+                    <mxGeometry x="467" y="1035" width="157" height="85" as="geometry"/>
+                </mxCell>
+                <mxCell id="177" value="&lt;span style=&quot;&quot;&gt;p12&lt;br&gt;provisioning profile&lt;br&gt;&lt;/span&gt;" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+                    <mxGeometry x="-337" y="977.0000000000001" width="128" height="61" as="geometry"/>
                 </mxCell>
             </root>
         </mxGraphModel>

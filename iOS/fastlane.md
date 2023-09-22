@@ -23,6 +23,9 @@
             - Profile 類似於 a group license authorizing a set of known iOS devices to install and run a given iOS app
                 - 可以跑 iOS Apps 的 Device 清單啦
         - fastlane 提供的功能
+            - 下述的 `match`, `sigh`, `cert`, 都必須要有足夠的權限, 才能使用
+                - 由 Developer Portal 控制每個 Developers 的 Apple ID 來控制
+                - Developers 的 [Roles](https://developer.apple.com/support/roles/)
             - cert && sigh : first create an iOS code signing certificate and then a provisioning profile for your app if cert succeeded.
                 - `cert` : valid certificate & private key 安裝在 local
                     - 建立 iOS code signing certificate
@@ -74,6 +77,15 @@ fastlane $lane opt1:val1 opt2:val2
 
 ### 
 ```
+
+
+# lanes
+
+- gym
+    - 為 `build_app` 的 alias
+- pilot
+    - 為 `upload_to_testflight` 的 alias
+
 
 
 # dotenv

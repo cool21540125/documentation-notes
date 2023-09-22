@@ -1,5 +1,5 @@
 
-- Provisioning profile
+- Provisioning profiles 或 provisioningProfiles
     - 一組設定檔, 主要用途:
         - 確保正確的簽署 App
             - iOS App 要上架到 **App Store** 都需要 sign
