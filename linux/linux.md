@@ -31,6 +31,14 @@ touch bck_`date +\%H\%M`.sql
 #bck_1608.sql
 
 
+### 前一個月的時間
+$# AGO=$(date -u -d "1 month ago" "+%s")  # Linux
+$# AGO=$(date -v-1m "+%s")                # Mac
+
+### 目前時間
+$# NOW=(date -u "+%s")                    # Linux & Mac
+
+
 ### timestamp 轉 datetime
 date "+%Y-%m-%d %H:%M:%S" --date=@1565596800
 #2019-08-12 16:00:00

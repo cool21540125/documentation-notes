@@ -387,6 +387,26 @@ cd /usr/local/var/log
 ### 用途不明(僅紀錄留存)
 ls -l --color /Library/LaunchDaemons
 ls -l --color ~/Library/LaunchAgents
+```
+
+
+# Install jenkins from source code
+
+- 自己編譯 jenkins
+
+```zsh
+### 1. clone jenkins source code
+
+
+### 2. reference CONTRIBUTING.md
+
+
+### 3. build jenkins.war
+mvn -am -pl war,bom -Pquick-build clean install
+# war/target/jenkins.war
+
+
+### 4. Usage
 
 ```
 
