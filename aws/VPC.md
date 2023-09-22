@@ -1,8 +1,6 @@
 
 # VPC
 
-![VPC Basic](./img/vpc_basic.png)
-
 - 對應關係
     - 一個 VPC 只能有一個 IGW (反之亦然)
         - VPC 與 IGW 之間, 會藉由 Route Table 來將他們關聯起來

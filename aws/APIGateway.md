@@ -13,11 +13,6 @@
         - API Keys (認證)
         - usage plans (不知道這啥)
 - API Gateway 具備底下功能:
-    ```mermaid
-    flowchart LR;
-
-        client <-- REST API --> gw[API Gateway] <-- proxy request --> Lambda <-- CRUD --> DynamoDB;
-    ```
     - handle Security - authentication & authorization
     - throttling
     - cache API Response
@@ -25,6 +20,13 @@
     - handle different environments
     - 後端可放任何 AWS Services
 
+----------------------------------
+```mermaid
+flowchart LR;
+
+    client <-- REST API --> gw[API Gateway] <-- proxy request --> Lambda <-- CRUD --> DynamoDB;
+```
+----------------------------------
 ```mermaid
 flowchart LR;
 
@@ -46,6 +48,7 @@ User <--> api;
 api <--> AWS
 api <--> On-Premise
 ```
+----------------------------------
 
 
 # API Gateway 的 Endpoint Types:
@@ -105,3 +108,21 @@ Client <-- HTTP Request --> api <-- "HTTP Proxy\nproxy Request/Response" --> ALB
 - HTTP
 - Mock
 - VPC Link
+
+
+# API Gateway vs. Load Balancer
+
+- API Gateway : 遊樂園入口的十字轉門
+    - 入口 single entrypoint
+    - 限流 rate-limiting requests
+    - 認證 authenticating
+    - 授權 authorization
+    - 快取 caching
+    - 日誌 logging requests/responses
+    - 安全 enforcing security policies
+    - 服務發現 service discovery
+- Load Balancer : 遊樂園的售票亭
+    - **分流 load balancing**
+    - 監控 monitoring
+    - SSL offloading
+    - 壓縮 HTTP Compression

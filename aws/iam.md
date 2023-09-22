@@ -602,15 +602,26 @@ users -- auth --> aws["AWS Simple AD"];
 
 # IAM Security & Compliance
 
-compare                | Scope         | Description
----------------------- | ------------- | --------------
-IAM Credential Report  | Account Level | 可查看 Account 底下所有的 IAM Users 的狀態
-IAM Access Advisor     | User Level    | 可查看 IAM User 使用了哪些 Services 的最近時間 (用來審視是否授權了不需使用到的 Services)
-IAM Access Analyzer    | Account Level | 可查看有哪些 AWS Resources 授權了 External Services 來訪問
+compare                | Scope         
+---------------------- | ------------- 
+IAM Credential Report  | Account Level 
+IAM Access Advisor     | User Level    
+IAM Access Analyzer    | Account Level 
 
-- IAM Access Analyzer
-    - 可以依照 *AWS Account* 或 *AWS Organization* 來設定一個 **Zone of Trust**
-    - 若不在 Zone of Trust 裡頭的, 則會被視為 External Services, 因此可以被 Access Analyzer 偵測到
+- Credential Report
+    - 可查看 Account 底下所有的 IAM Users 的狀態
+- Access Advisor
+    - 可查看 IAM User 使用了哪些 Services 的最近時間
+    - 用來審視是否授權了不需使用到的 Services
+- Access Analyzer
+    - 可查看有哪些 AWS Resources 授權了哪些 External Services 來訪問
+    - AWS Resources 都可以設定 Resource-based Role 來授權訪問:
+        - ex: S3, IAM, KMS, Lambda, SQS, SSM Secrets, ...
+        - 有時候會忘了授權了哪些人了 or 用完後, 忘了把該 Role 移除
+        - 因此可藉由此 IAM 底下的服務(也可用在 AWS Organization), 還設定一個叫做 **Zone of Trust**
+            - 若不在 Zone of Trust 裡頭的, 則會被視為 External Services, 因此可以被 Access Analyzer 偵測到
+            - 如果有 External Services, 則這些 AWS Resources 會被標記為 findings
+    - 建立 Access Analyzer 時, 回隨之建立 Service Linked Role
 
 
 # Useful Example
