@@ -21,7 +21,7 @@
 
 ```mermaid
 flowchart TB
-sg["Storage Gateway \n (Device)"];
+sgw["Storage Gateway \n (Device)"];
 
 subgraph block
     EBS;
@@ -36,10 +36,12 @@ subgraph Object
     Glacier;
 end
 
-Object  <--> sg;
-FileSystem  <--> sg;
-block  <--> sg;
-sg <--> client;
+subgraph OnPremise
+    sgw <--> client;
+end
+FSx  <--> sgw;
+is  <--> sgw;
+Glacier  <--> sgw;
 ```
 
 

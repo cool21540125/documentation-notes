@@ -4,7 +4,7 @@
 - [DNSSEC安全技術簡介](http://www.cc.ntu.edu.tw/chinese/epaper/0022/20120920_2206.html)
 
 
-## 雜湊函式 hash function
+# 雜湊函式 hash function
 
 > `hash_value = hash_function(Data)`, hash_value 可能會重複, 重複的機率取決於它的長度
 
@@ -14,7 +14,12 @@
 - NIST 公司的 SHA
 
 
-## 金鑰加密 && 數位簽章
+## MD5, Message-Digest Algorithm 5
+
+- md5(any object) -> 128 bits (32 個 16 進位字符)
+
+
+# 金鑰加密 && 數位簽章
 
 Example: A 寄信給 B
 

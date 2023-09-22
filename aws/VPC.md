@@ -47,6 +47,8 @@
         - local zones
         - aws outposts
         - wavelength zones
+            - 5G 網路 (低延遲)
+            - 可搭配 **Carrier gateway** 使用
 - VPC 冷知識
     - 每個 Region 最多 5 個 VPCs(軟性限制)
     - 每個 VPC 最多 5 組 CIDRs
@@ -72,7 +74,7 @@
 
 - 可讓 VPC 內的 AWS Resources/Lambda 具備 network connectivity
 - HA
-- 一個 VPC, 只能對應一個 IGW (反之亦然)
+- 一個 VPC, 只能對應一個 Internet Gateway, IGW (反之亦然)
 - IGW 必須要安排 *Route Table*, 才能夠上網
     - 並非 IGW attach 上去之後就能上網
 

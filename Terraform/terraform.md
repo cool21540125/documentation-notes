@@ -25,3 +25,10 @@
     - terraform-provider.tf
     - terraform-provider.tf.json
     - terraform-instances.tf
+
+```hcl
+resource "<PROVIDER>_<TYPE>" "<NAME>" {
+ [CONFIG …]
+}
+
+```
