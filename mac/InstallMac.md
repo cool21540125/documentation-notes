@@ -825,6 +825,18 @@ pod --version
 ```
 
 
+# Install watchexec
+
+```zsh
+### Install
+brew install watchexec
+
+
+### Usage
+ls * | watchexec $CommandToUseInCurrentDir
+```
+
+
 # Redis Desktop Manager for Macbook
 
 - 2020/10/01

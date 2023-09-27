@@ -1,19 +1,30 @@
+#!/usr/bin/env bash
+exit 0
+# ------------------------------
 
-# 最近很常用...
+### ======================= 常用 =======================
 
-```bash
+
+
+### ======================= 同一個 Git Server, 使用不同的 Key =======================
+
+# ex: 在 Public Gitlab 裡頭有自己帳號塞一把 key && 公司帳號也塞一把 key
+# 在做 git 操作時, 預設都會使用 `~/.ssh/id_rsa` 這把做金鑰認證
 export GIT_SSH_COMMAND='ssh -i ~/.ssh/id_rsa_personal' git clone ${Git_Url}
-
+# 或
 git config --local core.sshCommand "ssh -i ~/.ssh/id_rsa_personal"
+# 上述配置會記錄在 ./.git/config 裡頭的
+# [core]
+#    sshCommand = ssh -i ~/.ssh/id_rsa_personal
+
 
 git --no-pager tag
 
-```
 
 
-# 基礎配置
+### ======================= 基礎配置 =======================
 
-```bash
+
 ### 常用配置
 GIT_USER_NAME=TonyChou
 GIT_EMAIL=cool21540125@gmail.com
@@ -53,23 +64,23 @@ git config --global url."git@gitlab.com:".insteadOf "https://gitlab.com/"
 
 ### 
 
-```
 
 
-# Test Connection
 
-```bash
+### ======================= Test Connection =======================
+
+
 ### 測試能否與 Git Server 連線
 ssh -vT git@${GIT_SERVER_DOMAIN} -p ${PORT}
 # 若 PORT 為預設的 22, -p PORT 可略
 # GIT_SERVER_DOMAIN, ex: gitlab.com
 # 永遠使用 git user 來測
-```
+
 
 
 # Usage
 
-```bash
+
 ### 重新 Commit
 git commit --amend -m "<Commit String>"
 
@@ -106,39 +117,51 @@ git diff $COMMIT
 ### 清除 .gitignore 宣告的檔案們
 git clean -ffdx  # 全部直接刪除
 git clean -idx   # 互動式詢問
-```
 
 
-# 特殊處理
+
+### ======================= 夾雜在 ShellScript 流程會用到的 =======================
+
+
+### 取得 current Branch Name
+git rev-parse --abbrev-ref HEAD
+#master
+
+
+### 取得 master Branch 的 upstream remote name
+git config --get branch.master.remote
+#origin
+
+
+### current Branch 是否已經設定過 upstream branch
+git rev-parse --abbrev-ref --symbolic-full-name '@{u}'
+#origin/master
+
+
+
+
+
+
+### ======================= 特殊處理 =======================
 
 ## I. 使用另一把 key 來操作相同 Git Server 底下的其他 Git Projects
 
-- [How to configure a local Git repository to use a specific SSH key](https://dev.to/web3coach/how-to-configure-a-local-git-repository-to-use-a-specific-ssh-key-4aml)
-
-```bash
-### (不動設定) 手動指定 Key path
-GIT_SSH_COMMAND='ssh -i ~/.ssh/id_rsa_personal' git clone ${Git_Url}
-# ex: 在 Public Gitlab 裡頭有自己帳號塞一把 key && 公司帳號也塞一把 key
-# 在做 git 操作時, 預設都會使用 `~/.ssh/id_rsa` 這把做金鑰認證
-
-# 或
-
-### 一次性設定
-git config --local core.sshCommand "ssh -i ~/.ssh/id_rsa_personal"
-# 上述配置會記錄在 ./.git/config 裡頭的
-# [core]
-#    sshCommand = ssh -i ~/.ssh/id_rsa_personal
-```
+#How to configure a local Git repository to use a specific SSH key
+#  https://dev.to/web3coach/how-to-configure-a-local-git-repository-to-use-a-specific-ssh-key-4aml
 
 
-# 加入 submodule
+
+
+
+
+
+
+### ======================= Submodule 操作 =======================
 
 ## 假設要在 目前 GitProject 底下, 加入一個 子專案, 作法如下
 
-```bash
-### 先進入 目前 GitProject
 
-### 首次設定(一個 GitProject 如果要附加 子專案 的話, 只需做過一次即可)
+### (進入目前 GitProject) 首次設定(一個 GitProject 如果要附加 子專案 的話, 只需做過一次即可)
 git submodule init
 
 
@@ -154,12 +177,10 @@ git submodule update --init --recursive
 ### 將來要持續更新 submodule
 cd ${SubModule}
 git pull
-```
 
 
-# 移除 submodule
 
-```bash
+### 移除 submodule
 SM=xxx
 git submodule deinit -f $SM
 rm -rf .git/modules/$SM
@@ -167,4 +188,6 @@ git config -f .gitmodules --remove-section submodule.$SM
 git config -f .git/config --remove-section submodule.$SM
 git rm --cached $SM
 rm -rf $SM
-```
+
+
+### 
