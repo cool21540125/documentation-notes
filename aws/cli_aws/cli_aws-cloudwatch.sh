@@ -4,12 +4,26 @@
 ALARM_REASON=testing
 ALARM_NAME=XXX
 
+
+### 製作 Custom Metric
 aws cloudwatch set-alarm-state \
     --alarm-name ${ALARM_NAME} \
     --state-value ALARM \
     --state-reason ${ALARM_REASON}
 # 
-# OK / ALARM / INSUFFICIENT_DATA
+# 狀態有底下 3 種:
+#   OK
+#   ALARM
+#   INSUFFICIENT_DATA
 
 
-### 
+### Example memory usage of an EC2 instance
+aws cloudwatch put-metric-data \
+    --metric-name mem \
+    --namespace "/CWL-Demo/App" \
+    --unit Percent --value 23 \
+    --dimensions InstanceId=i-1234567890abcdef0,InstanceType=t2.micro
+# 推送一筆資料到 CloudWatch
+
+
+###

@@ -21,3 +21,24 @@ npm ci
     - `npm update`  : 　更新 `package.json`, 　更新 `package-lock.json`, 安裝套件
     - `npm install` : 不更動 `package.json`, 　更新 `package-lock.json`, 安裝套件
     - `npm ci`      : 不更動 `package.json`, 不更新 `package-lock.json`, 安裝套件
+
+
+```bash
+### 2023.09 的現在, versioning
+npm -v
+#8.19.4
+
+
+### 安裝 prd 套件, 放入 dependencies
+npm i xxx
+npm i --save xxx
+# npm v5.0.0 以後, 預設已經是 --save
+
+
+### 安裝 dev 套件, 放入 devDependencies
+npm i --save-dev xxx
+npm i -D xxx
+
+
+### 
+```

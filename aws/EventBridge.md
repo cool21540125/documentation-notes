@@ -16,7 +16,7 @@
 ```mermaid
 flowchart LR
 
-subgraph Sources
+subgraph es["Event Sources"]
   as["AWS Services"]
   cs["Custom Services"]
   saas["SaaS APPs"]
@@ -26,13 +26,11 @@ subgraph eb["EventBridge"]
   deb["Default Event Bus"] --> Rules;
   ceb["Custom Event Bus"] --> Rules;
   seb["SaaS Event Bus"] --> Rules;
-  es["Event Source"]
 end
 
-es --> seb;
 as -- event --> deb;
 cs -- event --> ceb;
-saas -- event --> es;
+saas -- event --> seb;
 
 subgraph Targets
   direction LR;
@@ -52,7 +50,8 @@ Rules --> Targets;
     - 特定一個 Rule, 最多只能有 5 個 Targets (致命缺陷)
     - Rules 會依照 event 的 *Event Pattern* 來配發到不同的 Target
     - Target : (等同於 SNS 的 subscriber) 針對 Events 做對應處理
-- EventBridge(EB) vs CloudWatch Events(CWE)
+- EventBridge 等同於 CloudWatch
+    - 早期兩者是不一樣的東西
     - 基本上 EB 是架構在 CWE 上頭, 使用相同的底層 API
     - EB 可完全取代 CWE, 不過 EB 更加強大.
     - 如今的 CWE, 已等同於 EB 了

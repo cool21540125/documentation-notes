@@ -114,6 +114,29 @@ ec2 -- "3. Pass auth Token \n (SSL encryption)" --> db["RDS DB"]
 ```
 
 
+# 監控 RDS
+
+- 常見的 Basic Metrics
+    - DatabaseConnections
+    - SwapUsage
+    - ReadIOPS / WriteIOPS
+    - ReadLatency / WriteLatency
+    - ReadThroughPut / WriteThroughPut
+    - DiskQueueDepth
+    - FreeStorageSpace
+- Enhanced Monitoring
+    - 從 DB instance 上頭的 agent 蒐集...
+    - 啟用方式, 進入 RDS Console > DB instance > Modify > Monitoring > Enable enhanced monitoring
+        - (選擇 / 自動建立) Monitoring Role
+        - Granularity: 1 / 5 / 10 / 15 / 30 / 60 secs (監控的頻率)
+    - 查看方式, 進入 RDS Console > DB instance > Monitoring > (下拉選單)Monitoring > Enhanced monitoring
+- RDS Performance Insights
+    - 可藉由在 RDS Instance 啟用 Performance Instights
+        - 202309 的現在, 無法作用於 t2.micro
+    - 可以用來看 RDS Instance 目前瓶頸卡在: CPU, I/O, Locks, SQL statements, number of sessions, ...
+
+
+
 # Aurora
 
 - AWS 魔改 MySQL/PostgreSQL 以後的 CloudNative RDBMS
@@ -166,6 +189,17 @@ ec2 -- "3. Pass auth Token \n (SSL encryption)" --> db["RDS DB"]
 - 整合了 ML
 - 若需要更多的監控, 可配置 `enable Enhanced Monitoring`
 - 因應 DR, 可配置 Backtrack 的 `Target Backtrack window`, 可用來還原到之前時間點的狀態
+- Auroa 的還原機制
+    - Automatic Backups
+        - 自動備份 DB, 並保存 1~35 days
+        - PITR, 可還原到近 5 mins 以內的資料狀態
+        - 也可用來還原到 new DB Cluster
+    - Aurora Backtracking
+        - 僅支援 MySQL Aurora (PostgreSQL 無此功能)
+        - 可將 Cluster 的 data 還原到 72 hrs 以內的狀態
+    - Aurora Database cloning
+        - 使用相同的 DB Cluster Volume 來還原到 new Cluster
+        - 後續使用 CoW
 
 ```mermaid
 flowchart BT;
