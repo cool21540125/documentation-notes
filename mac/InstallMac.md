@@ -61,6 +61,16 @@ $#
 
 ```zsh
 xcode-select --install
+
+
+### 將來做 iOS build 以前, 必須先設定路徑
+
+sudo xcode-select --switch /Library/Developer/CommandLineTools # Enable command line tools
+# Change the path if you installed Xcode somewhere else.
+
+sudo xcode-select -s /Applications/Xcode.app/Contents/Developer
+# 等同於
+sudo xcode-select --switch /Applications/Xcode.app/Contents/Developer
 ```
 
 

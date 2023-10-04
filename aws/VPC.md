@@ -59,6 +59,19 @@
     - 如果 access 機器, 發生 timeout,            必定是 Security Group Issue!!
     - 如果 access 機器, 發生 connection refused, 可能是 APP Error 或 機器沒開
 
+
+# VPC 連線相關
+
+- 必須要能夠區分底下這些服務
+    - Site-to-site VPC
+    - Direct Connect
+    - [VPC Peering](./VPC_Peering.md)
+    - VPC EndPoint
+    - PrivateLink
+    - Transit Gateway
+    - Classic Link
+
+
 # Subnet
 
 - AWS 為每個 Subnet 裏頭, 保留了 5 個 IPv4 addresses, ex: 10.0.0.0/24

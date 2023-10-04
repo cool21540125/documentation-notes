@@ -180,7 +180,7 @@ ALB --> Task3;
             - API call -> ECS Service
             - send container log -> CloudWatch logs
             - API call -> ECR to pull images
-            - retrive data from [Secret Manager]
+            - retrive data from **Secret Manager**
             - retrive data from [SSM Parameter Store]
     - ECS IAM Role (此 Role 被定義在 Task Definition Level, 而非 Service Level)
         - 同時適用於 both **EC2** && **Farget**

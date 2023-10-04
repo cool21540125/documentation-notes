@@ -1,16 +1,28 @@
 
 # VPC Peering
 
-- Privately connect two VPCs using AWS' network
-    - 利用 AWS network privately connect 2 VPC (連結不同 VPC 啦)
-    - 讓 VPCs 之間就像是在同樣的 network 裡頭包含了
-        - cross region, cross account
-        - 不能有 operlapping CIDRs
-    - 配置完以後, 還需要自行配置 Route Table (兩邊都需要配置)
-- 可讓不同的 VPC, 搞得就像是個 LAN
-- 如果要 expose service 給其他 VPC, 這是個比開 public 還要好的做法
-    - 不過更好的做法, 可使用 [PrivateLink](#vpc-endpoint-services-aws-privatelink)
+- 可以 Cross Account 及 Cross Region, 將 2 個 VPC 做成 LAN
+    - VPC 之間, 不能夠 overlapp CIDRs
+- 
 - 重要範例:
     - 若 A 及 B 做好了 peering && B 及 C 做好了 peering
         - A 與 C 依然無法 connect (朋友的朋友, 未必是我朋友)
         - VPC Peering connection is NOT transitive
+
+```mermaid
+flowchart LR
+
+v1["VPC A"]
+v2["VPC B"]
+vp["VPC Peering"]
+
+v1 <-- route table --> vp <-- route table --> v2;
+```
+
+實作上會建立 `VPC Peering`(路由器), 然後再設定兩邊的 Route Table
+
+> Concole > VPC > VPC Peering connections > Create (建立完後, 需要 Approval)
+> 
+> 此外, 需要為 VPC 的 **雙方** 配置 RouteTable
+> 
+> Destination: `x.x.x.x/16`, Target: `PeeringConnectionId`

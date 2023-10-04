@@ -1,9 +1,16 @@
 ## python 測試
 
 ```bash
-### 正常顯示 print
-$# pytest -s  # 將 stdout 正常顯示在 terminal
-$# pytest tests/test_XXX.py -s
-# 因 pytest 預設重新處理 stdout (print 的東西)
-# 改用上指令, 可讓他把 print 的東西秀出來
+### 跑測試 (列出裡頭的 print 結果)
+pytest -s
+pytest -s tests/test_XXX.py
+# 將 stdout 正常顯示在 terminal
+
+
+### pytest -k
+pytest test_file.py -k test_fn
+# 僅測試特定檔案的特定 FN
+
+
+### 
 ```

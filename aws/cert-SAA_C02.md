@@ -265,7 +265,7 @@ ss -- SSO access --> saml["SAML APPs"]
 
 - [KMS, Key Management Service](#kms,-key-management-service)
 - [SSM Parameter Store](#ssm-parameter-store)
-- [Secret Manager](#secret-manager)
+- [Secret Manager](./SecretManager.md)
 - [CloudHSM](#cloudhsm-hardware-security-module)
 - [WAF & Shield](#waf--shield)
 - [GuardDuty](#guardduty)
@@ -326,7 +326,7 @@ ss -- SSO access --> saml["SAML APPs"]
 - Securely store your configuration && secrets
     - 有 Versioning
     - 可使用 KMS 來將參數加密
-- 相較於 [Secret Manager](#secret-manager), 此服務比較舊, 且以 儲存參數 的功能為導向
+- 相較於 Secret Manager, 此服務比較舊, 且以 儲存參數 的功能為導向
 - Name 得以 Path 的形式來做命名, ex: "/my-app/dev/db-url"
 - 與 *CloudFormation*, *CloudWatch Events* 整合
 - 其他 AWS Services 在使用此服務時, 需要經常留意 IAM 的權限
@@ -347,22 +347,11 @@ ssmps <-- Eecryption API --> kms;
 ```
 
 
-## Secret Manager
-
-- 要用來取代 [SSM Parameter Store](#ssm-parameter-store)
-- 相較於上者, *Secret Manager* 較以 secret 為導向
-    - 使用 Lambda 來實踐, 加密則使用 KMS
-    - 可制定每隔 X days 來對 secret 做 rotation (force rotation)
-    - ex: 可由此服務, 來同步 RDS 的 secrets
-- 與 RDS, Aurora 有相當高度的整合
-- Charge: 依照 secret 數量 && API call 數量 來計費
-
-
 ## CloudHSM, Hardware Security Module
 
 - 常被拿來與 [AWS KMS](#aws-kms-key-management-service) 做比較
 - Charge: 不便宜..
-- CloudHSM 與 [Secret Manager](#secret-manager) 相比較的話:
+- CloudHSM 與 Secret Manager 相比較的話:
     - Secret Manager : AWS manage  software for encryption
     - CloudHSM       : AWS provide hardware for encryption
         - user 自行管理 keys

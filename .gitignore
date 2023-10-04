@@ -27,3 +27,4 @@ keyfile
 **/.DS_Store
 **/demo.rest
 *ignoreme*
+!SecretManager.md

@@ -138,6 +138,11 @@ git rev-parse --abbrev-ref --symbolic-full-name '@{u}'
 #origin/master
 
 
+### 自動化流程, 強制更新
+git fetch --tags --force --progress -- $(git remote -vv | head -1 | awk '{print $2}') +refs/heads/*:refs/remotes/origin/*
+
+### 自動化流程(ex: Jenkins), 切換到特定 Branch, 
+git rev-parse refs/remotes/origin/${Branch}^{commit}
 
 
 

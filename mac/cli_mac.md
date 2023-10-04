@@ -74,6 +74,18 @@ sudo kill -9 XXXX
 ```
 
 
+# Developer 相關
+
+```zsh
+### 查看 xcode project 的 Team ID
+grep DEVELOPMENT_TEAM *.xcodeproj/*.pbxproj -m 1 | sed -E 's/^[[:space:]]+//'
+#DEVELOPMENT_TEAM = ABCDE12345;
+
+
+### 
+```
+
+
 # ACL
 
 - 2020/10/26
