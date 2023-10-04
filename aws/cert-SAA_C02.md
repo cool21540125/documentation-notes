@@ -438,19 +438,18 @@ Shield3 --> Shield4;
 ```
 
 
-## GuardDuty
+## [GuardDuty](https://docs.aws.amazon.com/guardduty/latest/ug/what-is-guardduty.html)
 
-- [What is Amazon GuardDuty?](https://docs.aws.amazon.com/guardduty/latest/ug/what-is-guardduty.html)
-    - perform intelligent threat discovery in order to protect your AWS account
-    - 正如其名, 持續監控找出 AWS Account 的髒東西 & 惡意威脅 & 惡意 IP & 由 CloudTrail logs 找出異常活動
-        - by leveraging ML
-    - 用 ML && 3rd data, 來看 user account 是否 under attack
-    - 後續動作像是, 偵測異常後, 藉由 *EventBridge Rules* -> Lambda/SNS
-    - Protect *CryptoCurrency attacks*(WTF?)
-    - 容易與 [Macie](#macie) 搞混
-    - 容易與 [Inspector](#inspector) 搞混
-        - Inspector 由 settings && configurations 來找 **APP** 的潛在威脅
-        - Guardduty 找出 **AWS Account, Data Store, Workload** 方面的潛在威脅
+- perform intelligent threat discovery in order to protect your AWS account
+- 正如其名, 持續監控找出 AWS Account 的髒東西 & 惡意威脅 & 惡意 IP & 由 CloudTrail logs 找出異常活動
+    - by leveraging ML
+- 用 ML && 3rd data, 來看 user account 是否 under attack
+- 後續動作像是, 偵測異常後, 藉由 *EventBridge Rules* -> Lambda/SNS
+- Protect *CryptoCurrency attacks*(WTF?)
+- 容易與 [Macie](#macie) 搞混
+- 容易與 [Inspector](#inspector) 搞混
+    - Inspector 由 settings && configurations 來找 **APP** 的潛在威脅
+    - Guardduty 找出 **AWS Account, Data Store, Workload** 方面的潛在威脅
 - Input data 包含了:
     - [VPC Flow Logs](./VPC.md#vpc-flow-logs)
     - DNS Logs
@@ -503,9 +502,8 @@ is -- if proble, report --> eb["EventBridge"]
 ```
 
 
-## Macie
+## [Macie](https://docs.aws.amazon.com/macie/latest/user/what-is-macie.html)
 
-- [What is Amazon Macie?](https://docs.aws.amazon.com/macie/latest/user/what-is-macie.html)
 - Fully managed data security && data privacy service, by using:
     - ML && Pattern matching to discover && protect sensitive data
     - 也用來協助 identify && alert sensitive data, ex: personally identifiable information, PII
@@ -561,7 +559,6 @@ ce -- integration --> pipeline["SNS, Lambda, ..."];
 
 # Disaster Recovery & Migrations
 
-- [clf-dr](./cert-CLF_C01.md#disaster-recovery-strategy)
 - [Disaster recovery options in the cloud](https://docs.aws.amazon.com/whitepapers/latest/disaster-recovery-workloads-on-aws/disaster-recovery-options-in-the-cloud.html)
 
 

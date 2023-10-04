@@ -1,16 +1,15 @@
 
-# X-Ray
+# [X-Ray](https://docs.aws.amazon.com/xray/latest/devguide/aws-xray.html)
 
-- [What is AWS X-Ray?](https://docs.aws.amazon.com/xray/latest/devguide/aws-xray.html)
-    - 視覺化 Request 近來到 APP 以後, 整個後端的資料流
+- 視覺化 Request 近來到 APP 以後, 整個後端的資料流
 - Tracing && Visual analysis for APP
     - 對於 Distributed System 排查很有幫助
     - 它會在我們的 Request 塞 "trace" 這神奇的東西
         - Trace: segments collected together to form an end-to-end trace
-        - trace 裡頭由一系列的 `segments` 所構成
-        - segment 又由一系列的 `subsegments` 所構成
+            - trace 裡頭由一系列的 `segments` 所構成
+                - segment 又由一系列的 `subsegments` 所構成
         - 知道上面這細節概念的話, 對於 x-Ray 在 Coding 有幫助...
-    - 而這 Request 發送到 AWS Resources 上頭, Resources 可針對 trace 做一些識別, 最終得出一個 Service Map
+    - Request 發送到 AWS Resources 上頭, Resources 可針對 trace 做一些識別, 最終得出一個 Service Map
         - ![X-Ray graph](./img/x-ray_graph.png)
 - Charge: 針對送到 X-Ray 的資料計費
 - X-Ray 的各種需求牽扯到的關鍵字

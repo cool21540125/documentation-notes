@@ -77,6 +77,8 @@ EC2 選購時, 有底下這一大堆的 purchasing options:
     - 對特定 az 保留 capacity
     - 不做使用承諾, 但可保有 reserved capacity
     - 短期任務 && 重要(不可中斷), 適合用這種
+    - 使用這種方案享受不到 Discount
+    - 可跨帳號共用這些 Capacity Reservations
 
 ---
 

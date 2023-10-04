@@ -54,7 +54,12 @@
 - Charge: 3 dashboards(up to 50 metrics) for FREE
     - 超過部分, $3/dashboard/month
 - Dashboard 該怎麼建立... 現階段先 PASS
-
+- **CloudWatch ServiceLens** 可用來將下列的各種資訊整合到同一個地方, 用來增加對於 App 的 observability:
+    - traces
+    - metrics
+    - logs
+    - alarms
+    - other resource health information
 
 # CloudWatch Metrics
 
@@ -172,21 +177,28 @@ ct --> cwl["CloudWatch Logs"]
 ct --> S3
 ```
 
+- CloudTrail is a way to get governance, compliance and audit for your AWS Account.
+    - governance / compliance / operational auditing / risk auditing of AWS account
+- 可取得 AWS Events & API call 的 history & log
+    - 因此可將 log -> CloudWatch Logs 或 S3
+    - AWS CloudTrail can be used to audit AWS API calls
 - 追蹤操作記錄, ex:
     - trace API call
         - 紀錄 SDK/CLI/Console/Users/Roles 的操作
     - Audit changes to AWS Resources by users
         - 哪個小白把 AWS Resources 砍了
-- governance / compliance / operational auditing / risk auditing of AWS account
-- 有底下這些 CloudTrail Events:
-    - Management Events
+        - 可查看誰把 EC2 關了
+- 如果要讓 CloudTrail 可以追蹤 Event History, 可能要花上 15 分鐘才會有資料
+- 有底下這些 `CloudTrail Events`:
+    - 預設保留 90 days
+    - `Management Events`
         - 預設啟用
         - 針對 AWS Resources 的增刪改, 都會被記錄
             - ex: EC2 的 Start, Stop ; Create IAM Role, ...
         - Events 區分為:
             - Read Events
             - Write Events (需要留意這個是否也被搞破壞, 就無法追查了)
-    - Data Events
+    - `Data Events`
         - 預設不啟用 (因為資料量龐大)
         - 針對 AWS Account 裡頭資源的調用
             - Event Source 目前僅能為:
@@ -196,23 +208,37 @@ ct --> S3
         - Events 一樣區分為:
             - Read Events
             - Write Events
-    - CloudTrail Insights Events
+    - `CloudTrail Insights Events`
         - Charge: 要課金 (預設不啟用)
         - 紀錄 AWS Account 裡頭 「非常規活動」
             - ex: 資源配置不正確, 資源使用達到 limits, user behavior, ...
         - Events 僅針對 *Write Events* 做紀錄
-            ```mermaid
-            flowchart TB;
 
-            me["Management Events"]
-            cti["CloudTrail Insights"]
-            ie["Insights Events"]
+```mermaid
+flowchart TB;
 
-            me <-- Continous analysis --> cti;
-            cti -- generate --> ie;
-            ie -- 預設保留 90 days --> cc["CloudTrail"]
-            ie --> S3
-            ie --> ebe["EventBridge Event"]
-            ```
-- Event History 可能要花上 15 分鐘才會有資料
+me["Management Events"]
+cti["CloudTrail Insights"]
+ie["Insights Events"]
 
+me <-- Continous analysis --> cti;
+cti -- generate --> ie;
+ie -- 預設保留 90 days --> cc["CloudTrail"]
+ie --> S3
+ie --> ebe["EventBridge Event"]
+```
+
+
+-----
+
+```mermaid
+flowchart LR
+
+ce["CloudTrail Events"] -- "保留 90 days"--> CloudTrail
+CloudTrail -- 長久保存 --> S3
+Athena -- analyze --> S3
+```
+
+- 上圖流程, 事件發生, 直到 CloudWatch Web Console 看得到資料, 可能 > 10 mins
+
+---

@@ -251,6 +251,12 @@ client -- "兩個 AZ 比例都 50%" --> az2;
     - 如果想要 Disable, 則將 **slow start duration** 調整為 0
 
 
+# ELB Tracing
+
+- ELB 會對請求加入一個 Header 用來協助後續追蹤, example:
+    `X-Amzn-Trace-Id: Root=1-5759e988-bd862e3fe1be46a994272793`
+
+
 # [ELB troubleshoot](https://docs.aws.amazon.com/elasticloadbalancing/latest/application/load-balancer-troubleshooting.html)
 
 - 501, Not Implemented

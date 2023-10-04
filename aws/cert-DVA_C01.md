@@ -96,21 +96,9 @@
 
 # Monitoring & Audit : CloudWatch, X-Ray, CloudTrail
 
-- [CloudWatch](./CloudWatch.md#aws-cloudwatch)
-- [X-Ray](./CloudWatch.md#aws-x-ray)
-- [CloudTrail](./CloudWatch.md#aws-cloudtrail)
-
-
 # AWS Intergration & Messaging - SQS, SNS, Kinesis
 
-- [SQS](./SQS.md)
-- [SNS](./SNS.md)
-- [Kinesis](./Kinesis.md)
-
-
 # Amazon Cognito Section
-
-
 
 # Other Serverless Section
 

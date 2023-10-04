@@ -685,48 +685,7 @@ ww --> region;
         - 用 CloudWatch Event 來監控 root account 是否被登入
 
 
-## [AWS CloudTrail](./CloudWatch.md#aws-cloudtrail)
-
-- CloudTrail is a way to get governance, compliance and audit for your AWS Account.
-- 可取得 AWS Events & API call 的 history & log
-    - 因此可將 log -> CloudWatch Logs 或 S3
-    - AWS CloudTrail can be used to audit AWS API calls
-- Use Case:
-    - 可查看誰把 EC2 關了
-
-```mermaid
-flowchart LR
-
-subgraph aws
-    direction LR;
-    Resources["SDK\nCLI\nConsole\nIAM Users\nIAM Roles"]
-end
-
-aws -- "call" --> CloudTrail;
-```
-
-- CloudTrail Events
-    - 預設保留 90 days
-    - 分成 3 種
-        - Management Events (Free)
-            - 對 AWS Resources 的操作
-            - 分成 Read, Write
-        - Data Events
-            - ex: lambda funcation call, access S3, ...
-            - 分成 Read, Write
-        - CloudTrail Insights Events
-            - WTF?
-
-```mermaid
-flowchart LR
-
-ce["CloudTrail Events"] -- "保留 90 days"--> CloudTrail
-CloudTrail -- 長久保存 --> S3
-Athena -- analyze --> S3
-```
-
-- 上圖流程, 事件發生, 直到 CloudWatch Web Console 看得到資料, 可能 > 10 mins
-
+## AWS CloudTrail
 
 ### CloudTrail Insights
 
@@ -998,7 +957,6 @@ S3 --> Web;
 
 ## Disaster Recovery Strategy
 
-- [saa-dr](./cert-SAA_C02.md#disaster-recovery--migrations)
 - 費用由上到下越來越貴
     - Backup & Restore - 存 S3
     - Pilot Light - 開 EC2 (low spec), 用來存放 Core Function
@@ -1012,8 +970,7 @@ S3 --> Web;
 - 可快速 Recover 本地 Service -> AWS
 
 
-##  [DataSync](./DataSync.md)
-
+## DataSync
 
 ## AWS Fault Injection Simulator, FIS
 

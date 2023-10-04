@@ -14,6 +14,115 @@
             - 如果要整合 CloudWatch, 那就給這個 *CloudWatchFullAccess* Policy
             - 如果要讓 SSM 訪問 EC2, 那就給這個 *AmazonSSMManagedInstanceCore* Policy
 
+# SSM - Documents
+
+> Console > AWS System Manager > Documents
+
+- 使用 SSM 的 RunCommand 來運行
+- 這根本就是 Ansible Playbook 嘛...
+    - Documents 可用 Yaml 或 Json
+    - 定義裡頭的 parameters 及 actions
+- 有點類似 SSM - Automation
+
+
+# SSM - Run Command / RunCommand
+
+- 用來跑 Documents
+    - 可結合像是 EventBridge 來觸發執行
+- 可設定 Rate Control / Error Control
+
+
+# SSM - Automation
+
+> Console > AWS System Manager > Automation
+
+- 用來跑 Runbooks (automation documents)
+    - 可結合像是 SDK / Maintenance Windows / EventBridge / AWS Config Remediation 來觸發執行
+- 自動化 maintenance & deploy 到 EC2 及 AWS Resources
+
+
+# SSM - Parameter Store
+
+- Secure store configuration 及 secrets(明碼)
+    - 不過可無縫與 KMS 整合
+- 與 CloudFormation 有著深度的整合
+- 額度及限制
+    - Standard 
+        - 每個 AWS Account 每個 Region, 能使用 10,000 個 params
+        - 每個 param, 大小為 4 KB
+        - Free
+        - Parameter Policies : NO
+    - Advanced 
+        - 每個 AWS Account 每個 Region, 能使用 100,000 個 params
+        - 每個 param, 大小為 8 KB
+        - 針對 Advanced 收費, 每個每月收 $0.05 
+        - Parameter Policies : YES
+
+
+# SSM - Inventory
+
+- 用來搜集 EC2/On-Premises 的 metadata
+    - installed softwares
+    - OS drivers
+    - configurations
+    - installed updates
+    - running services
+    - 甚至可設定 custom metadata, ex:
+        - rack location
+- 定期 (per minute/hour/day) 蒐集 metadata
+- 可跨 Account / Region 蒐集
+- 查詢方式 - 藉由在 SSM 的 Inventory 建立 **Resource data sync**, 可將資訊彙整到 S3
+    - 須確保 SSM 有權限寫入到 S3 Bucket
+ 
+
+# SSM - State Manager
+
+- 與 SSM - Inventory 很像
+    - 用來蒐集 metadata
+- 不過, State Manager 用來記錄 State
+- 
+
+# SSM - Patch Manager
+
+- SSM Patch Manager 有 2 個主要元件:
+    - Patch Baseline
+        - 又分為 2 種:
+            - Pre-Defined Patch Baseline
+            - Custom Patch Baseline
+        - 定義 patch 的項目及方式, ex:
+            - Auto Approve / Manual Approve / Reject 
+        - 預設, 只會 patch **critical patches 及 security patches**
+    - Patch Group
+        - 針對 Instance 定義唯一的 Tag Key: `Patch Group`
+            - 如果 Instance 沒有設定 Patch Group 的話, 則會被歸類為 `Default`
+        - 因為上述的限制, 因此一個 Instance 只能同時隸屬於一個 Patch Group
+            - 且一個 Patch Group, 只能 register 到一個 **Patch Baseline**
+- 運行方式
+    - 使用 AWS **Run Document** - `AWS-RunPatchBaseline`
+- 經常與 **Maintenance Windows** 及 **AWS Tags** 結合
+
+---
+
+```
+Patch Baseline ID    Patch Group  Default
+pb-0123456897265agf  Default      Yes
+pb-abceefgp1qj98afa  Dev          No
+```
+
+- 如果 Instance 沒有設定 `Tag Key: Patch Group`, 則套用第一個 Patch Baseline, 預設會套用 Patch
+- 如果 Instance 有設定 `Tag Key: Patch Group=Dev`, 則套用 第二個 Patch Baseline, 預設不套用 Patch
+
+---
+
+
+# SSM - Maintenance Windows
+
+- 可用來設定 offline service 的定期排程
+    - ex: 半夜更新, 跑排程...
+    - 可設定 Registered Instances
+    - 可設定 Registered Tasks
+- 經常與 **Patch Manager** 結合
+
 
 # CLI
 
