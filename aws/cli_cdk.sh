@@ -35,18 +35,21 @@ cdk init sample_app --language python
 # 進取裡面開始定義 Stack 了
 
 
-### 產出 「cdk.out」Dir(整個 CDK 的重點就是要把這個 上傳到 S3 && deploy to stack)
+### 生成 CloudFormation Template
 cdk synth
-# 其次, 列出 CloudFormation yaml (放棄閱讀.... 好幾百行=.=")
+cdk synth -q  # (不確定) 應該是省略掉 「印出 CFN Temaplate」 的動作吧!?
+# 會針對整個 Cdk App 巡覽所有 Constructs, 生成 CloudFormation 所需的 uid
+# (整個 CDK 的重點就是要把這個 上傳到 S3 && deploy to stack)
 
 
 ### 與 deployed stacks 或 local CloudFormation Template 做比較
 cdk diff
+cdk diff -a  # (不確定)
 
 
 ### CloudFormation -> S3 && deploy Stack
 cdk deploy
-
+cdk deploy -a  # (不確定)
 
 ### 把 CDK stack 移除 (慎用!!)
 cdk destroy

@@ -8,6 +8,56 @@
     - [K8s](https://cdk8s.io/)
 
 
+# CDK 名詞 & 主要元件
+
+- Construct
+- Synthesis
+    - 運行 `cdk synth`, 程式會去巡覽所有的 Constructs, 並生成的 CFN Templates
+    - 東西會丟到 `cdk.out` Dir 裡頭 (`cdk deploy` 也會做同樣動作)
+- Asset
+    - Assets are files bundled into CDK Apps
+    - Assets 被視為是 cdk App 所需要操作的任何 artifacts
+    - cdk 會針對這些 artifacts, 然後藉由 bootstrap 來將他們生成 CloudFormation
+- Bootstrap
+    - 將 artifacts(也就是 assets) 生成 CloudFormation
+    - 運行 `cdk bootstrap`, 會部署一個 **CDKToolkit** CloudFormation Stack
+        - AWS Console 的 CloudFormation 會出現 **CDKToolkit** 這個 Stack
+        - 並建置對應的 AWS S3 Bucket, 來儲存這些 Assets
+    - `cdk bootstrap` 的當下, 需要 Admin Role, 後續則不需要
+- Deploy
+    - 運行 `cdk deploy`, CDK App 首先初始化成 App Tree
+        - 觸發一系列的 Constructs 的各種 `prepare`, `validate`, `synthesize` 方法
+    - Deployment **artifacts** 上傳到 **CDKToolkit**
+        - 然後就開始部署 CloudFormation deployment
+
+------
+
+```mermaid
+flowchart TD
+
+src["CDK App src"];
+app["CDK App"];
+cli["CDK CLI"];
+
+
+subgraph app
+    direction LR
+    Construct --> Prepare --> Validate --> Synthesize;
+end
+
+subgraph cfn["CloudFormation"]
+    Deploy;
+end
+
+src --> app;
+cli -- "1. call" --> app;
+app -- "Template and other artifacts" --> cfn;
+cli -- "2. output CloudFormation" --> cfn;
+```
+
+------
+
+
 # CDK 底層概念結構
 
 - cdk App 由 1~N 個 Stakcs 構成

@@ -48,3 +48,8 @@ aws sts decode-authorization-message --encoded-message ${EncodedErrorMessage}
 #An error occurred (AccessDenied) when calling the DecodeAuthorizationMessage operation: User: arn:aws:iam::152248006875:user/tonytest is not authorized to perform: sts:DecodeAuthorizationMessage because no identity-based policy allows the sts:DecodeAuthorizationMessage action
 # 如果再看到這錯誤, 需要 allow sts DecodeAuthorizationMessage 的權限
 ```
+
+
+# 其他
+
+如果覺得 `aws xxx` 指令列出結果都是 less 輸出很煩, 可在 `~/.aws/config` 的 profile 配置: `cli_pager=`

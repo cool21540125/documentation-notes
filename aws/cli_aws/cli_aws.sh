@@ -15,12 +15,15 @@ export AWS_REGION=ap-northeast-1
 aws configure list
 
 
+### AWS ACCOUNT_ID
+export ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output text)
+
+### (僅限 EC2 內使用), 取得 instance 所在 AWS_REGION
+export AWS_REGION=$(curl -s 169.254.169.254/latest/dynamic/instance-identity/document | jq -r '.region')
+
 
 ### 底下這堆都還沒實驗過 (不確定就是了)
-export AWS_ACCESS_KEY_ID
 export AWS_SECRET_ACCESS_KEY
-# AWS_REGION 優先於 AWS_DEFAULT_REGION
-export AWS_REGION
 export AWS_DEFAULT_REGION
 export AWS_DEFAULT_OUTTPUT
 export AWS_MAX_ATTEMPTS
@@ -34,6 +37,11 @@ export AWS_PROFILE=default
 aws configure
 aws configure --profile ${AWS_PROFILE}
 # (aws CLI 會自行讀取 AWS_PROFILE, 因此 `--profile AWS_PROFILE` 可省略)
+
+
+### aws configure 設定/取得 特定 Profile 的設定
+aws configure set default.region ${AWS_REGION}
+aws configure get default.region
 
 
 ### show users
