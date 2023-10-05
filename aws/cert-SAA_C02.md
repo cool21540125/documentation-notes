@@ -133,20 +133,22 @@ workers(consumer) 未限制      | 1250w subscribers & 10w topics |
 
 ## AWS Config
 
-- ![AWS Config Overview](./img/AWS%20Config%20Overview.png)
+```mermaid
+flowchart LR
+
+ssm["Auto-Remediation Action \n (SSM Document)"]
+cfg["AWS Config"]
+rr["AWS Key \n (不合規)"]
+cfg -- monitor --> rr
+cfg -- "trigger" --> ssm
+ssm -- "Retries: 5 \n deactivate" --> rr
+```
+
+![AWS Config Overview](./img/AWS%20Config%20Overview.png)
+
 - 衡量 AWS Resources 之間的關係, 確保它們符合公司的 compliances
     - 可針對 not compliance 的 Resources, 由 [AWS-Managed Automation Documentation](https://docs.aws.amazon.com/systems-manager/latest/userguide/sysman-ssm-docs.html) 或 [Custom Automation Documents] 來對這些資源做 Remediation(整治/補救)
         - ex: [AWSConfigRemediation-RevokeUnusedIAMUserCredentials](https://docs.aws.amazon.com/systems-manager-automation-runbooks/latest/userguide/automation-aws-revoke-iam-user.html), 用來 deactivate 已過 compliance duration 的 IAM Access Key
-    ```mermaid
-    flowchart LR
-
-    ssm["Auto-Remediation Action \n (SSM Document)"]
-    cfg["AWS Config"]
-    rr["AWS Key \n (不合規)"]
-    cfg -- monitor --> rr
-    cfg -- "trigger" --> ssm
-    ssm -- "Retries: 5 \n deactivate" --> rr
-    ```
 - 可對於特定資源, 做 定期/事件 來做監控
 - Charge: no free tier. 需要課金
 - 若有多個 Region, 則需逐一啟用並配置

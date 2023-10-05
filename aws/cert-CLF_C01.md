@@ -685,30 +685,6 @@ ww --> region;
         - 用 CloudWatch Event 來監控 root account 是否被登入
 
 
-## AWS CloudTrail
-
-### CloudTrail Insights
-
-- 用來在大量 log 中找出 unusual activities, ex:
-    - 達到某種 limit / Resource 配置不正確 / 違反 AWS IAM action, ...
-- 可對日常維運建立 baseline
-    - *Management Events* 會被 CloudTrail Insights 分析
-
-```mermaid
-flowchart LR
-
-me["Management Event"]
-ci["CloudTrail Insights"]
-ie["Insights Events"]
-
-me -- continous analysis --> ci;
-ci -- generate --> ie;
-ie --> cc["CloudTrail Console"];
-ie --> S3;
-ie --> ee["EventBridge Event"];
-```
-
-
 ## Amazon CodeGuru
 
 - 藉由 ML

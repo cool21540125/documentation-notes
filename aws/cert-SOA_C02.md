@@ -1,4 +1,48 @@
 
+# 考試前, 需要問自己的問題
+
+- 合規/建議/配置 比較
+    - CloudTrail
+    - Trusted Advisor
+    - AWS Config
+    - VPC Reachability Analyzer
+        - 針對 VPCs 之間的 endpoints 的配置做診斷(不做實測)
+- VPC 比較
+    - VPC Peering
+    - VPC Endpoints
+    - Interface Endpoint
+    - Gateway Endpoint
+    - Transit Gateway
+    - VPN Gateway
+    - AWS PrivateLink
+    - VPC Site-to-Site VPN
+    - VPN CloudHub
+    - Direct Connect
+    - ClassicLink
+- logs 比較
+    - VPC Flow Logs
+    - S3 server access logging
+    - CloudFront log
+    - ALB log
+    - Api Gateway log
+- EC2 - Placement Group
+    - Cluster
+    - Spread
+    - Critical
+    - Partition
+    - Distribution
+- Role & Policy 比較
+    - IAM Role
+    - Execution Role
+    - Task Role
+    - Service-Linked Role
+    - Permission Policy
+    - Security Credentials
+    - Instance Role
+    - AssumeRole
+    - Identity-Based Policy
+    - Resource-Based Policy
+
 
 # CloudFormation
 
@@ -69,15 +113,3 @@ Resources:
     - Password authentication
     - Password and IAM database authentication
     - Password and Kerberous authentication
-
-
-# Monitoring, Audition and Performance
-
-
-
-# VPC
-
-- 一個 Region 最多能有 5 VPCs (soft limit)
-- VPC 內最多能有 5 CIDRs
-    - Min : `/28` (16 IPs)
-    - Max : `/16` (65536 IPs)

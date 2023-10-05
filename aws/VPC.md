@@ -231,7 +231,7 @@ end
 ```
 
 
-# SG && ENI && EC2 && NACL
+# SG & ENI & EC2 & NACL
 
 ![NACL](./img/NACL.drawio.png)
 
@@ -258,30 +258,13 @@ end
         - IANA && Win10, client port: `49152 - 65535`
         - Linux: `32768 - 60999`
 - VPC Reachability Analyzer Tools
-    - 診斷 *VPC 內的 endpoints* 之間的網路狀況
-    - 不做侵入式的檢測, 僅從配置來做診斷, 最綜合評估底下的配置
+    - 診斷 **VPC 內/之間 endpoints** 網路狀況
+    - 不做侵入式的檢測, 僅從 **配置** 來做診斷, 最綜合評估底下的配置
         - NACL
         - SG
         - ENI
         - Route Table
     - Charge: 每跑一次要價 `$0.1` USD
-
-```mermaid
-graph TD;
-
-subgraph ps["Private Subnet"]
-    SG1;
-    SG2;
-end
-
-
-subgraph NACL
-    ps["Private Subnet"];
-end
-
-SG1 -- attach --> ENI;
-ENI -- attach --> EC2;
-```
 
 ---
 
@@ -327,7 +310,7 @@ Stateful           | Stateless
 
 # EC2-Classic && AWS ClassicLink
 
-- 2022/08/15 廢除服務
+- 2022.08 已廢除
 
 
 # VPC Flow Logs
