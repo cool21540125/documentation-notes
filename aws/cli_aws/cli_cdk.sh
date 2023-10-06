@@ -7,8 +7,9 @@ exit 0
 # (沒有找到 cdk 的 binary, 也沒找到像是 brew install 的方式, 所以就這樣吧)
 npm install -g aws-cdk
 
+
 cdk --version
-# 2.65.0 (build 5862f7a)  # 2023/02
+# 2.99.1 (build b2a895e)  # 2023/10
 
 ### 可用來取得 Account && UserId && Arn
 aws sts get-caller-identity
@@ -16,12 +17,11 @@ aws sts get-caller-identity
 
 
 ### 每次使用 CDK 起始一個 CloudFormation, 都必須要做這個 init
-AWS_ACCOUNT_ID=
-REGION="ap-northeast-1"
-cdk bootstrap aws://${AWS_ACCOUNT_ID}/${REGION}
-# 會建立目前 CDK Project 專屬的 CloudFormation, 放在 S3 bucket
-# 此外還會建立相關必要的 IAM
-# Bucket Name, ex: cdk-hnb659fds-assets-668363134003-ap-northeast-1
+cdk bootstrap
+# 建立底下的東西:
+# - CloudFormation Stack
+# - S3 Bucket(ex)
+# - IAM
 
 
 ### 初始化 CDK(特定語言) project
@@ -51,6 +51,7 @@ cdk diff -a  # (不確定)
 cdk deploy
 cdk deploy -a  # (不確定)
 
+
 ### 把 CDK stack 移除 (慎用!!)
 cdk destroy
 # 雖說把 CDK stack 移除(裡頭聲明的 Resources 確實刪除了)
@@ -61,3 +62,10 @@ cdk destroy
 
 ### 檢查 CDK 相關環境變數
 cdk doctor
+# - AWS_PROFILE = q1
+# - AWS_STS_REGIONAL_ENDPOINTS = regional
+# - AWS_NODEJS_CONNECTION_REUSE_ENABLED = 1
+# - AWS_SDK_LOAD_CONFIG = 1
+
+
+### 
