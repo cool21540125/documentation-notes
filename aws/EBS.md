@@ -34,9 +34,9 @@
     - gp2/gp3 SSD
         - IOPS 隨著 容量 增加(無法彈性選擇), 且 IOPS 最高也只有到 16000
         - General purpose, 平衡了 price && performance
-        - 1GiB ~ 16 TiB
-        -gp1 這種的好像已經沒了(2020/12)
-        -gp2
+        - 大小由 1 GiB 到 16 TiB
+        - 已在 2020/12 停止 gp1
+        - gp2
             - Volume Size && IOPS 兩者呈現正相關
                 - 小容量 Volume IOPS 為 3000, 最大可提升至 16000
             - 3 IOPS per GB, 也就是說, 增加 30 GiB 空間的話, IOPS 也會提升 10
@@ -69,7 +69,8 @@
 
 # TIPs
 
-- 啟用 *Recycle Bin for EBS Snapshots*, 防止誤砍
+- 避免 EBS Snapshot 意外刪除:
+    - 啟用 **Recycle Bin for EBS Snapshots**, 防止誤砍
     - 不知道要不要課金 (不過 Snapshot 本身要收錢, 丟到回收桶不曉得會不會停止收費)!!!!
     - 可自行設定保留在回收桶的天數 (1~365 days)
 - 為了省點摳摳, 建議針對 "不會有立即使用需求的 EBS Snapshot* 做 archive

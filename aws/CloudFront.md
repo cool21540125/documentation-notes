@@ -102,7 +102,7 @@ ss -- "Cross Region Replication(if S3)" --> aa;
     - CloudFront 對於上述方法並不會對 http -> https 發送回源請求, 取而代之的是回覆 403
 
 
-# 回源
+# 回源 - [Controlling origin requests](https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/controlling-origin-requests.html)
 
 ```mermaid
 flowchart LR
@@ -111,22 +111,23 @@ viewer -- Vierwe Request --> Edge -- Origin Request --> S3;
 S3 -- Origin Response --> Edge -- Viewer Response --> viewer;
 ```
 
-- [Controlling origin requests](https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/controlling-origin-requests.html)
-    - 回源請求的預設內容 (可使用 `Original Request Policy, ORP` 來做控制), 只會包含了:
-        - 不含 Query String 的 URL Path
+- 如果來自 **Viewer Request** 發生了 `cache miss`, 則此 Request 會被送往 origin
+    - 此 Request 僅包含了:
+        - 不含 Query String 的 URL Path (ex: *https://example.com/users/tony&age=36*, 則為 */users/tony*)
         - Request Body
-        - CloudFront 會添加底下幾個 Request Headers:
+        - 以及底下幾個 Request Headers:
             - Host
             - User-Agent
             - X-Amz-Cf-Id
-    - ORP 與 `Cache Policy, CP` 分開管控
-        - 如果 cache behavior 無 ORP, 則 Original Request 只會包含 cache policy 之中涵蓋的所有 key values ONLY
-        - 為了使用 ORP, cache behavior 需有 cache policy
-        - cache behavior 無法單純只用 ORP, 需連同 cache policy 一起使用才行
-    - 而對於 ORP, 可針對下述做 origin request, 變更回源請求能接收到的資訊多寡:
-        - URL querystring
-        - HTTP Headers
-        - cookies
+    - 如果打算修改 Origin 收到的 Viewer Request, 則要修改 `Original Request Policy, ORP`
+- ORP 與 `Cache Policy, CP` 分開管控
+    - 如果 cache behavior 無 ORP, 則 Original Request 只會包含 cache policy 之中涵蓋的所有 key values ONLY
+    - 為了使用 ORP, cache behavior 需有 cache policy
+    - cache behavior 無法單純只用 ORP, 需連同 cache policy 一起使用才行
+- 而對於 ORP, 可針對下述做 origin request, 變更回源請求能接收到的資訊多寡:
+    - URL querystring
+    - HTTP Headers
+    - cookies
 - CloudFront 的 Cache Control
     - (不是很懂)
 - CloudFront 背後的 ABL 的 sticky session 問題
