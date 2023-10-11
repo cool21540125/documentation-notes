@@ -1,35 +1,35 @@
 
-# ELB, Elastic Load Balancer
+# [ELB, Elastic Load Balancer](https://docs.aws.amazon.com/elasticloadbalancing/latest/application/introduction.html)
 
-- [What is an Application Load Balancer?](https://docs.aws.amazon.com/elasticloadbalancing/latest/application/introduction.html)
-- ![ELB](./img/LB.png)
-    - *Load Balancer* 可有多個 listener
-    - listener 必須有一個 *default rule*
-        - rule 裡頭會有 priority, actions, conditions
-    - Rule 用來決定將流量發到哪個 *Target Group*
-    - Target 可以跨重複出現在多個 *Target Group*
-    - 可在 *Target Group* 制定 *Health Check*
+![ELB](./img/LB.png)
+
+- 一個 **Load Balancer** 可有多個 Listeners
+    - 一個 **Listener** 起碼要有一個 Rule (作為 Default Rule)
+        - Rule 用來決定將流量發到哪個 **Target Group**
+            - Rule 裡頭設定 Redriction Rule
+            - Rule 裡頭會有 priority, actions, conditions
+                - action
+                    - Forward to Target Groups
+                    - Redirect to URL
+                    - Return fixed response
+- 同一個 **Target** 可重複出現在不同的 **Target Group**
+- 可在 **Target Group** 有他自己的 **Health Check**
 - ELB - Cross Zone Load Balancing
+    - CLB (已棄用)
     - ALB
         - 預設 enabled, 且無法 disabled (always on)
         - AZ 內資料傳輸免錢
     - NLB
         - 預設 disabled
         - 若啟用, AZ 內傳輸要課金
-    - CLB
-        - 預設 disabled
-        - AZ 內資料傳輸免錢
-- 目前有 4 種 Load Balance
-- AWS Load Balancer 整合了一堆 AWS Services:
-    - EC2, EC2 ASG, ECS, ACM, CloudWatch, Route53, AWS WAF, AWS Global Accelerator, ...
-- 兼具 Health Check 功能
+    - GWLB
+- ELB 有固定的 DNS Name :
+    - `{ElbName}-{Account}.{Region}.elb.amazonaws.com`
 
 
-# ELB 的 Sticky Session(Session Affinity)
+# ELB 的 Sticky Session / Session Affinity
 
-- Target Group 裡頭處理 sticky 問題
-- 用戶黏著性相關問題   
-- ALB, CLB 皆可處理此情境
+- Sticky 的問題要在 **Target Group** 裡頭處理
 - 分成 2 種 Cookies (有效期限皆為 1 sec ~ 7 days):
     - Application-based Cookie
         - 有 2 個地方可以產生此 Cookie:
@@ -49,7 +49,7 @@
             - AWSELB (CLB 使用)
 
 
-## CLB, Classic Load Balancer (Since 2009)
+## CLB, Classic Load Balancer (Since 2009) (老東西了, 別鳥它)
 
 - L4 && L7 : HTTP, HTTPS, TCP, SSL(secure TCP)
 
@@ -57,20 +57,27 @@
 ## ALB, Application Load Balancer (Since 2016)
 
 - L7 : HTTP, HTTPS, WebSocket, HTTP/2
-- ALB 後為 *Target Group*(也會處理 *Health Check*), 裡面可以放置:
+- ALB 背後的 Target Group, 裡面可以放置:
     - EC2 instances
     - ECS tasks
     - Lambda functions
-    - private IP (可以是 On-premise Data Center Servers)
-- Target 接收到 Request 後, 可由 Header 中的
-    - `X-Forwarded-For` && `X-Forwarded-Port` && `X-Forwarded-Proto` 
-    - 看到用戶真實 IP && Port && Protocol
-- 可依照不同的 *routing tables(hostname)* && *query string* && *HTTP Header*
-    - 將請求送往後端不同的 Target Groups
-    - CLB 則無此功能(需要設很多 CLB, 才能做對應流量轉發)
-- 對於 ECS 支援 dynamic port mapping (dynamic host port mapping)
+    - private IP (可以是 On-premise Data Center Servers) (注意, 無法使用 Public IP)
+- Target Group 裡頭的 Target 接收到的 Request, 裡頭有 ALB 額外附加的資訊:
+    - `X-Forwarded-Proto` : client Protocol
+    - `X-Forwarded-For`   : client IP
+    - `X-Forwarded-Port`  : client Port
+- 可以依照底下的設定(可將它們組合), 來將 traffic 送往不同的 Target Groups:
+    - Request Method
+    - Request Host Header, ex: **.example.com*
+    - Request Path
+    - Request Query String
+    - Request Http Header
+- 若 Target 為 ECS:
+    - 支援 **Dynamic Port Mapping / Dynamic Host Port Mapping**
     - ECS 為 EC2 launch type 時, 跑在裡頭的 Container, 不需定義 port mapping, ALB 自己能找到
 - 若與 Lambda 整合為 Serverless, [看這](./Lambda.md#lambda---serverless)
+
+------
 
 ```mermaid
 flowchart LR
@@ -91,9 +98,11 @@ client -- SG1 --> ALB;
 ALB -- SG2 --> tg1;
 ```
 
-- 通常實作上
+- 實作:
     - SG1 allow 0.0.0.0/0
     - SG2 allow from SG1
+
+------
 
 
 ## NLB, Network Load Balancer (Since 2017)
@@ -171,50 +180,26 @@ GLB -- 4 --> APP;
     - ALB
 
 
-## With Cross Zone Load Balancing
+## Cross Zone Load Balancing
 
-cross-zone balancing (此為 Default)
+- 可在 **Target Group** level 把 cross-zone balancing 做 disable
 
-```mermaid
-flowchart LR
+Type of LB | cross zone load balancing - default | Cross Zone Traffic Charge
+---------- | ----------------------------------- | --------------------------
+ALB        | enable                              | 不收費
+GLB        | disable                             | 收費
+NLB        | disable                             | 收費
+CLB        | disable                             | 不收費
 
-subgraph az1
-    direction TB;
-    ec0["10%"];
-    ec1["10%"];
-end
-subgraph az2
-    direction TB;
-    ec2["10%"]; ec3["10%"]; ec4["10%"]; ec5["10%"];
-    ec6["10%"]; ec7["10%"]; ec8["10%"]; ec9["10%"];
-end
+------
 
-client -- "(每一台比例都一樣)" --> az1;
-client -- "(每一台比例都一樣)" --> az2;
-```
+with cross-zone load balancing
 
+![cross zone LB- enabled](./img/cross_zone_load_balancing_enabled.png)
 
-## Without Cross Zone Load Balancing
+without cross-zone load balancing
 
-without cross-zone balancing
-
-```mermaid
-flowchart LR
-
-subgraph az1
-    direction TB;
-    ec0["25%"];
-    ec1["25%"];
-end
-subgraph az2
-    direction TB;
-    ec2["6.25%"]; ec3["6.25%"]; ec4["6.25%"]; ec5["6.25%"];
-    ec6["6.25%"]; ec7["6.25%"]; ec8["6.25%"]; ec9["6.25%"];
-end
-
-client -- "兩個 AZ 比例都 50%" --> az1;
-client -- "兩個 AZ 比例都 50%" --> az2;
-```
+![cross zone LB - disabled](./img/cross_zone_load_balancing_disabled.png)
 
 
 # SSL/TLS for ELB

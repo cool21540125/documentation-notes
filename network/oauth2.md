@@ -1,4 +1,4 @@
-# Oauth2
+# OAuth2
 
 - 2020/06/29, 2023/02/18
 - [OAuth 2.0 筆記](https://blog.yorkxin.org/2013/09/30/oauth2-1-introduction.html)
@@ -12,6 +12,7 @@
 - OAuth 2.0 是 「授權協議」
     - 授權第三方應用程序代表用戶訪問受保護資源
     - 用戶通過 授權伺服器(AS) grant 客戶端(Client) access 受保護資源(RS)
+- 
 
 
 # Client 取得授權的方式
