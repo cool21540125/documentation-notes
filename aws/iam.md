@@ -608,6 +608,13 @@ IAM Credential Report  | Account Level
 IAM Access Advisor     | User Level    
 IAM Access Analyzer    | Account Level 
 
+- IAM Security Tools
+    - IAM Credential Report (account level)
+        - Web Console > IAM > Access Reports > Credential Report
+        - 帳號底下的所有 users
+    - IAM Access Advisor (user level)
+        - Web Console > IAM > Users > (選 user) > Access Advisor
+        - 特定 User 有權限 access 的 AWS Resources && 最近訪問的時間, 方便日後追蹤 && 修訂 權限
 - Credential Report
     - 可查看 Account 底下所有的 IAM Users 的狀態
 - Access Advisor
@@ -644,7 +651,7 @@ IAM Access Analyzer    | Account Level
 # Service Role v.s. Service-Linked Role
 
 - Service-Linked Role
-    - 直接幫定 AWS Resource 的特殊 Role, 即使是 AWS Administrator 也無法修改此權限
+    - 直接綁定 AWS Resource 的特殊 Role, 即使是 AWS Administrator 也無法修改此權限
     - A unique type of IAM role that is linked directly to an AWS service.
     - An IAM administrator can view, but not edit the permissions for this.
 - Service Role

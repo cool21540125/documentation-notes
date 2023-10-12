@@ -5,6 +5,14 @@
 # Terms
 
 - aab, Android App Bundle
+- ADB, Android Debug Bridge
+    - part of Android SDK, 由底下元件組成
+        - client
+        - daemon
+        - server
+    - 用來管理 an emulator instance 或 an actual Android device
+        - 03:13 https://www.youtube.com/watch?v=FlKJuQihRiw&list=PLWIBmxdTr81dDEZRiNxoy55dIDWtMyOoc&index=2 
+            - 需要安裝 Android Virtual Device
 
 
 

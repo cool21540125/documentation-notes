@@ -113,16 +113,47 @@ server {
 IMPORTANT: 上述加入到 HSTS preload 的作法, 是一條通往 HTTPS 的不歸路!!!!! 只能單向通行.
 
 
-# HTTP Header
+# HTTP cache
 
-- [Http Header 快取(初學)](https://blog.techbridge.cc/2017/06/17/cache-introduction/)
-   - Cache-Control
-   - Expires
-   - max-age
-   - Las-Modified
-   - If-Modified-Since
-   - Etag
-   - If-Non-Match
+- 參考文件 http cache - https://blog.techbridge.cc/2017/06/17/cache-introduction/
+- `Expires`
+   - Since HTTP/1.0
+   - Client 拿到 Response 以後, 可得知 Resource **到期時間**
+   - ex, Response Header: `Expires: Oct, 12 Oct 2023 13:30:00 GMT`
+   - 問題:
+      - 如果 Client 的時間錯誤. 例如是西元 3000 年, 則每次都會跟 Server 要 Resources
+- `Cache-Control` 與 `max-age`
+   - Since HTTP/1.1
+   - Client 拿到 Response 以後, 可得知 Response **還有多久過期**
+   - ex, Response Header: 
+      - `Cache-Control: max-age=30` : Resource 快取有效時間 30 secs
+      - `Cache-Control: no-cache`   : Resource 快取有效時間 
+   - 問題:
+      - 如果同時拿到 `max-age` 及 `Expires`, 則會以 `max-age` 為主
+      - 如果 Resource 到期了, 則可藉由其他的 Response Headers 來判斷能否繼續使用
+- `Last-Modified` 及 `If-Modified-Since`
+   - Since HTTP/1.0
+   - 如果要讓 Resource 過期時, Client 能夠繼續使用, Server 平常 Response 除了給 `Cache-Control` 以外, 還要再加上 `Last-Modified`
+   - 等到真的到期了, Client Request Header 會加上 `If-Modified-Since`
+      - 若 Server 沒更新 Resource, `Status code: 304 (Not Modified)` (此時, Client 可繼續使用 Cached Resource)
+   - 問題:
+      - 檔案有無被修改, 依據的是 Client Side 的檔案是否被 真正修改 or 開啟後關閉存擋. (但 Server 都沒更動 Resource), 則會使快取失效
+- `Etag` 與 `If-None-Match`
+   - Server Response 除了給 `Cache-Control` 以外, 還會多給 `Etag`
+      - 表彰此 Resource 的 hash
+   - 快取過期後, Client Request 發送 `If-None-Match` 詢問 Server 是否有異動 Resource
+      - 有異動, 則給 new Resource
+      - 無異動, 則回 304
+- 比較
+   - `Cache-Control: no-cache`  : 每次都詢問是否 Resource 有異動
+   - `Cache-Control: no-store`  : 完全不使用快取
+- 比較
+   - `Cache-Control: max-age=0` : 
+   - `Cache-Control: no-cache`  : 
+- Http 快取
+   - 快取儲存策略
+   - 快取過期策略
+   - 快取比對策略
 
 
 # X-Forwarded-For

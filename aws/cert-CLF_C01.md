@@ -58,13 +58,6 @@ Networking    | -    | -    | -
 - IAM Roles 重點:
     - users, services 存取 Resources, 都需要有對應的 Permission(Policy)
         - ex: *EC2 Instance Roles*, *Lambda Function Roles*, *Roles for CloudFormation*
-- IAM Security Tools
-    - IAM Credential Report (account level)
-        - Web Console > IAM > Access Reports > Credential Report
-        - 帳號底下的所有 users
-    - IAM Access Advisor (user level)
-        - Web Console > IAM > Users > (選 user) > Access Advisor
-        - 特定 User 有權限 access 的 AWS Resources && 最近訪問的時間, 方便日後追蹤 && 修訂 權限
 
 
 # EC2, Elastic Compute Cloud

@@ -26,6 +26,22 @@ $ gedit ~/.config/user-dirs.dirs
 ```
 
 
+# Install ps
+
+```bash
+# ps command not found
+apt-get install -y procps
+```
+
+
+# Install ss
+
+```bash
+# ss command not found
+apt-get install -y iproute2
+```
+
+
 # Install MongoDB
 
 - 2018/06/23
