@@ -1,12 +1,26 @@
 
-# CloudFront, CDN
+# [CloudFront](https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/Introduction.html)
 
-- [What is Amazon CloudFront?](https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/Introduction.html)
 - [深入討論為何 ACM 只能在 us-east-1](https://ithelp.ithome.com.tw/articles/10242264)
 - 有超過 200+ 個 Edge Locations
     - file cached for TTL
-- 結合了 DDoS protection && Shield, Web Application Firewall
-- CloudFron Origin:
+- Security 安全性方面, 結合了:
+    - DDoS protection
+    - Shield
+    - Web Application Firewall
+- CloudFront 的 Origins 種類:
+    - S3 bucket
+        - Using a standard Amazon S3 bucket
+        - Using Amazon S3 Object Lambda
+        - Using an Amazon S3 bucket that's configured as a website endpoint
+        - Adding CloudFront to an existing Amazon S3 bucket
+        - Moving an Amazon S3 bucket to different AWS Region
+    - MediaStore container / MediaPackage channel
+    - ALB
+    - Lambda function Url
+    - EC2
+    - CloudFront origin groups
+- CloudFront Origin:
     - 回源到 S3 的驗證機制 (用來給 CloudFront access S3 的 IAM Role):
         - OAC, Origin Access Control
             - 相較於 OAI 的額外優點:
@@ -120,7 +134,7 @@ S3 -- Origin Response --> Edge -- Viewer Response --> viewer;
             - User-Agent
             - X-Amz-Cf-Id
     - 如果打算修改 Origin 收到的 Viewer Request, 則要修改 `Original Request Policy, ORP`
-- ORP 與 `Cache Policy, CP` 分開管控
+- `ORP` 與 `CP, Cache Policy` 分開管控
     - 如果 cache behavior 無 ORP, 則 Original Request 只會包含 cache policy 之中涵蓋的所有 key values ONLY
     - 為了使用 ORP, cache behavior 需有 cache policy
     - cache behavior 無法單純只用 ORP, 需連同 cache policy 一起使用才行
@@ -129,7 +143,8 @@ S3 -- Origin Response --> Edge -- Viewer Response --> viewer;
     - HTTP Headers
     - cookies
 - CloudFront 的 Cache Control
-    - (不是很懂)
+    - 如果發現 CloudFront 的 `Cache Hit Ration` 過低/不理想, 則參考這篇:
+        - https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/cache-hit-ratio.html
 - CloudFront 背後的 ABL 的 sticky session 問題
     - 如果 ALB 背後的 Instance 希望能夠做 sticky session
         - (假設 ALB 使用 cookie 來判斷黏著), 則需要在 CloudFront 配置 forward / whitelist `AWSALB`

@@ -205,14 +205,18 @@ ssm -- "Retries: 5 \n deactivate" --> rr
 
 > AWS OpsWorks provides a simple and flexible way to create and manage stacks and applications. With AWS OpsWorks, you can provision AWS resources, manage their configuration, deploy applications to those resources, and monitor their health.
 
-- [clf-opsworks](./cert-CLF_C01.md#aws-opsworks)
-- AWS 的世界中, `AWS Opsworks == Managed Chef & Puppet`
-- Chef & Puppet - 協助 perform server configuration automatically 或 repetitive actions
+- AWS 認證考試的觀念: `AWS Opsworks == Managed Chef & Puppet`
+    - AWS 魔改 Chef & Puppet
+    - 若上 AWS 前已在使用, 則可接續使用 **AWS OpsWorks**
+- 協助 perform server configuration automatically 或 repetitive actions
     - Chef   : Recipes
     - Pupuet : Manifest
 - 功能有點類似 **AWS SSM**, **Beanstalk**, **CloudFormation**
 - CaaS
-- Linux & Windows
+    - Linux & Windows
+    - 用來配置主機
+    - 讓 SysOps 用來管理 cloud/on-premise instance
+    - AWS OpsWork 為 SSM 另一套替代品
 
 
 ## AWS WorkSpaces
@@ -665,7 +669,7 @@ dms -- insert/update/delete --> rds;
         - [Snowball](./cert-CLF_C01.md#aws-snow-family)
     - on-going
         - [Site-to-Site VPN](./VPC.md#aws-site-to-site-vpn)
-        - [Direct Connect](./VPC.md#direct-connect-dx)
+        - Direct Connect
         - [DMS](./cert-CLF_C01.md#dms-database-migration-services)
         - [DataSync](#datasync)
 

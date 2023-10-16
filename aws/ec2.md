@@ -101,8 +101,9 @@ EC2 選購時, 有底下這一大堆的 purchasing options:
                 - 因此如果超過 7 台 EC2, 則會座落於 Same Region but cross AZ
         - 為了極小化 failure risk
         - ex: Hadoop, Kafka, Cassandra, ...
-    - Partition (Distributed) 
-        - 每一台 EC2 都座落於不同的 logical segments(a.k.a. partition), different Rack
+    - Partition (Distributed)
+        - 每一台 EC2 都座落於不同的 logical segments / partition
+        - different Rack
             - 每個 AZ 最多有 7 個 Racks
         - 類似 Spread 策略, 同 AZ 裡頭, 但不同機櫃
         - ex: HDFS, HBase, Cassandra, Kfaka, ...

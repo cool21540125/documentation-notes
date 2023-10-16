@@ -1,9 +1,8 @@
 
-# VPC - Direct Connect
+# [VPC - Direct Connect](https://docs.aws.amazon.com/directconnect/latest/UserGuide/Welcome.html)
 
 ![AWS Direct Connect](./img/AWSDirectConnect.png)
 
-- [Direct Connect](https://docs.aws.amazon.com/directconnect/latest/UserGuide/Welcome.html)
 - [Direct Connect v.s. Site-to-site VPN](https://www.stormit.cloud/blog/comparison-aws-direct-connect-vs-vpn/)
   - 這兩者超級容易混淆...
 - (上下圖相同) 

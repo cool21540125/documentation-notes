@@ -16,6 +16,7 @@
         - 只能有 1 master && 1 secondary
     - Latency
         - 與 user 最近的 Region (依照 TTL 判斷)
+        - 如果 Service 有跨 Region 的話, 用這功能才有用
     - Geolocation
         - 容易與 Latency 及 Geoproximity 搞混@@
         - 依照 user 所在 *實際地理位置(洲, 國家)* 來做 routing

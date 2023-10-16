@@ -498,14 +498,6 @@ tmpl --> CloudFormation;
 
 ## AWS OpsWorks
 
-- 此為 AWS 魔改 Chef & Puppet
-    - 若上 AWS 前已在使用, 則可接續使用 **AWS OpsWorks**
-    - 用來配置主機
-- 讓 SysOps 用來管理 cloud/on-premise instance
-- `AWS OpsWorks = Managed Chef & Puppet`
-    - AWS OpsWork 為 SSM 另一套替代品
-
-
 # Global Infrastructure Section
 
 - Cloudfront (CDN), Edge Locations, 也稱為 Points of Presence

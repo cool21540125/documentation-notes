@@ -76,6 +76,11 @@
     - 支援 **Dynamic Port Mapping / Dynamic Host Port Mapping**
     - ECS 為 EC2 launch type 時, 跑在裡頭的 Container, 不需定義 port mapping, ALB 自己能找到
 - 若與 Lambda 整合為 Serverless, [看這](./Lambda.md#lambda---serverless)
+- logging & tracing
+    - 預設 disable *Access Logs*
+    - 如果打算啟用 *Access Logs*, 則這些 log 每隔 5 mins 會被送往 S3, 並以下列格式儲存:
+        - `bucket[/prefix]/AWSLogs/aws-account-id/elasticloadbalancing/region/yyyy/mm/dd/aws-account-id_elasticloadbalancing_region_app.load-balancer-id_end-time_ip-address_random-string.log.gz`
+    - 這些 *Access Logs* 包含: client's IP address / latencies / request paths / server responses
 
 ------
 
