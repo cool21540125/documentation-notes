@@ -23,6 +23,12 @@ pipenv install xxx
 # (僅擷取部分)
 # Virtualenv location: $HOME/.local/share/virtualenvs/Proj_venv  # 預設
 # 除非有額外設定 PIPENV_VENV_IN_PROJECT 及 WORKON_HOME
+# 會將依賴套件, 放置到 Pipfile (等同於 package.json) 的 [packages]
+
+
+### 安裝套件 dev 環境
+pipenv install xxx --dev
+# (同上) 放到 [dev-packages]
 
 
 # ============================ 查詢環境相關 ============================

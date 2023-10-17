@@ -1,4 +1,29 @@
 
+# format example
+
+```yaml
+---
+- name: xxx
+  user: xxx
+  hosts: xxx
+  vars:  # 使用外部檔案的話, 涉及 include / roles
+    xxx: xxx
+    dns_server: 10.1.250.10
+  tasks:
+    - inlinefile:
+        path: /etc/resolve.conf
+        line: 'nameserver {{ dns_server }}'
+    - firewalld:
+        port: 1000-1020/tcp
+        permanent: true
+        state: disabled
+    - firewalld:
+        service: https
+        permanent: true
+        state: enabled
+
+```
+
 ## using tar
 
 - https://www.middlewareinventory.com/blog/ansible-archive-module-examples/

@@ -479,14 +479,10 @@ $# brew install openldap
 - 要安裝 Oracle Java 的話請另尋其他文件...
 
 ```zsh
-VERSION=8
-VERSION=11
-VERSION=17
-
 
 ### Install 
-brew install openjdk@$VERSION  # (似乎是 macOS 12  以前的安裝方式)
-brew install java$VERSION      # (似乎是 macOS 13+ 以後的安裝方式)
+brew install java11
+brew install openjdk@17
 
 
 ### env PATH
@@ -665,34 +661,6 @@ brew install mysql@8.0
 ```
 
 
-# Install nodejs
-
-- 2023/04/11
-
-```zsh
-brew install node@14
-brew install node@16
-# ---------- Output ----------
-#node@16 is keg-only, which means it was not symlinked into /usr/local,
-#because this is an alternate version of another formula.
-#
-#If you need to have node@16 first in your PATH, run:
-#  echo 'export PATH="/usr/local/opt/node@16/bin:$PATH"' >> ~/.zshrc
-#
-#For compilers to find node@16 you may need to set:
-#  export LDFLAGS="-L/usr/local/opt/node@16/lib"
-#  export CPPFLAGS="-I/usr/local/opt/node@16/include"
-#==> Summary
-#🍺  /usr/local/Cellar/node@16/16.20.0: 1,890 files, 49.4MB
-#==> Running `brew cleanup node@16`...
-#Disable this behaviour by setting HOMEBREW_NO_INSTALL_CLEANUP.
-#Hide these hints with HOMEBREW_NO_ENV_HINTS (see `man brew`).
-# ---------- Output ----------
-
-brew install node@18
-```
-
-
 # Install dotnet core
 
 - 2023/04/17
@@ -773,6 +741,9 @@ swagger-codegen version
 
 ```zsh
 brew install ruby@3.1
+#echo 'export PATH="/opt/homebrew/opt/ruby@3.1/bin:$PATH"' >> ~/.zshrc
+#export LDFLAGS="-L/opt/homebrew/opt/ruby@3.1/lib"
+#export CPPFLAGS="-I/opt/homebrew/opt/ruby@3.1/include"
 
 export GEM_HOME=$HOME/.gem
 export PATH="/usr/local/opt/ruby@3.1/bin:$GEM_HOME/bin:$PATH"
@@ -798,14 +769,14 @@ gem install ${PKGS}
 
 - build & release mobile apps
 
-# 法1. by homebrew
+## 法1. by homebrew
 
 ```zsh
 
 ```
 
 
-# 法2. by gem
+## 法2. by gem
 
 ```zsh
 ### (option) 切換成 local gem

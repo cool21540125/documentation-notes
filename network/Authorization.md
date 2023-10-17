@@ -10,6 +10,7 @@
     - 可針對特定 user 做更加細粒度的權限控制
 - ACL, Access Control List
     - 廣泛地使用在 DAC systems
+    - Linux 的 ACL 是基於 DAC
 - Discretionary Access Control, DAC, 自主存取控制
 - Mandatory Access Control, MAC, 強制存取控制
 

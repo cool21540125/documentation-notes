@@ -12,8 +12,8 @@
 SELinux : Security Enhanced Linux
 
 - 以 `政策規則` 訂定 `特定程序` 可存取 `特定檔案`, 此稱為 `委任式存取控制(Mandatory Access Control, MAC)` 取代僅有 rwx 的 `自主式存取控制(Discretionary Access Control, DAC)`
-    - DAC : 警察可以槍殺壞人
-    - MAC : 值勤中的警察可以槍殺壞人
+    - DAC : 　　　　警察 可以用 槍 (殺壞人)
+    - MAC : 值勤中的警察 可以用 槍 (殺壞人)
 
 
 ### SELinux 參考流程圖

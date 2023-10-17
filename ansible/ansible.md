@@ -33,6 +33,19 @@ $HOME/
         /templates
 ```
 
+# 變數優先級別 Variable Precedence
+
+- 優先順序為
+    - Extra Vars (`--extra-vars`)
+    - Set Facts
+    - Include Vars
+    - Role Vars
+    - Play Vars
+    - Host Facts
+    - Host Vars
+    - Group Vars
+    - Role Defaults
+
 
 # ansible.cfg
 
@@ -64,6 +77,12 @@ group2
 
 web1 ansible_host=w14301.example.com
 web2 ansible_host=w17802.example.com
+
+# Inventory Parameters
+# ansible_connection : ssh/winrm/localhost
+# ansible_port
+# ansible_user
+# ansible_ssh_pass / ansible_password (for Windows)
 ```
 
 ## 拆分 inventory
