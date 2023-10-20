@@ -42,6 +42,9 @@
     - AssumeRole
     - Identity-Based Policy
     - Resource-Based Policy
+- KMS
+    - Customer Master Key, KMS
+    - customer managed keys
 
 
 # CloudFormation

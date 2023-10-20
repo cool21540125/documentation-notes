@@ -42,3 +42,26 @@ npm i -D xxx
 
 ### 
 ```
+
+
+# .npmrc
+
+- `.npmrc` 定義了 `npm` 在 runtime 的行為. 也就是 **runtime configuration**
+- 層級
+    - Project Level `./.npmrc`
+    - User Level `~/.npmrc`
+    - Global Level `$Prefix/etc/npmrc`
+    - npm builtin config file `/path/to/npm/npmrc`
+
+```bash
+npm run --silent xx.js
+# 等同於
+npm_config_loglevel=silent npm run xx.js
+```
+
+也可配置 .nvmrc
+
+```bash
+# .npmrc
+loglevel=silent
+```

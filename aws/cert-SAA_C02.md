@@ -303,7 +303,7 @@ ss -- SSO access --> saml["SAML APPs"]
 - *KMS Key* 無法 cross region 傳送
 - Key policies are the primary way to control access to KMS keys. Every KMS key must have exactly one key policy.
     - 其次也可使用 IAM
-- 2 types of KMS:
+- 2 types of KMS Keys:
     - Symmetric Keys
         - AES-256
         - CMK, Customer Master Key, 又分成 3 種:

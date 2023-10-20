@@ -16,37 +16,37 @@
 
 ```zsh
 ### 列出 brew 已安裝套件
-$# brew list
+brew list
 
 
 ### 升級套件
-$# brew upgrade xxx
+brew upgrade xxx
 # ex: 升級 python3.10
 # brew upgrade python3.10
 # 但不確定能否正常就是了!!
 
 
 ### 安裝 xxx
-$# brew install xxx
+brew install xxx
 
 
 ### 查看所有的 current taps
-$# brew tap
-aws/tap
-hashicorp/tap
-homebrew/cask
-homebrew/core
-homebrew/services
+brew tap
+#aws/tap
+#hashicorp/tap
+#homebrew/cask
+#homebrew/core
+#homebrew/services
 # https://stackoverflow.com/questions/34408147/what-does-brew-tap-mean
 
 
 ### 增加 && 刪除 brew tap
-$# brew tap ${TAP_NAME}
-$# brew untap ${TAP_NAME}
+brew tap ${TAP_NAME}
+brew untap ${TAP_NAME}
 
 
 ### 
-$# 
+
 ```
 
 
@@ -81,30 +81,30 @@ sudo xcode-select --switch /Applications/Xcode.app/Contents/Developer
 
 ```zsh
 ### Install
-$# brew search postgresql
-$# brew install postgresql@11
-# ...PASS...
-==> Caveats
-To migrate existing data from a previous major version of PostgreSQL run:
-  brew postgresql-upgrade-database
+brew search postgresql
+brew install postgresql@11
 
-postgresql@11 is keg-only, which means it was not symlinked into /usr/local,
-because this is an alternate version of another formula.
-
-If you need to have postgresql@11 first in your PATH run:
-  echo 'export PATH="/usr/local/opt/postgresql@11/bin:$PATH"' >> ~/.bash_profile
-
-For compilers to find postgresql@11 you may need to set:
-  export LDFLAGS="-L/usr/local/opt/postgresql@11/lib"
-  export CPPFLAGS="-I/usr/local/opt/postgresql@11/include"
-
-
-To have launchd start postgresql@11 now and restart at login:
-  brew services start postgresql@11  # Daemon
-Or, if you don\'t want/need a background service you can just run:
-  pg_ctl -D /usr/local/var/postgresql@11 start  # 前景執行
-== Summary
-🍺  /usr/local/Cellar/postgresql@11/11.6: 3,191 files, 36MB
+#==> Caveats
+#To migrate existing data from a previous major version of PostgreSQL run:
+#  brew postgresql-upgrade-database
+#
+#postgresql@11 is keg-only, which means it was not symlinked into /usr/local,
+#because this is an alternate version of another formula.
+#
+#If you need to have postgresql@11 first in your PATH run:
+#  echo 'export PATH="/usr/local/opt/postgresql@11/bin:$PATH"' >> ~/.bash_profile
+#
+#For compilers to find postgresql@11 you may need to set:
+#  export LDFLAGS="-L/usr/local/opt/postgresql@11/lib"
+#  export CPPFLAGS="-I/usr/local/opt/postgresql@11/include"
+#
+#
+#To have launchd start postgresql@11 now and restart at login:
+#  brew services start postgresql@11  # Daemon
+#Or, if you don\'t want/need a background service you can just run:
+#  pg_ctl -D /usr/local/var/postgresql@11 start  # 前景執行
+#== Summary
+#🍺  /usr/local/Cellar/postgresql@11/11.6: 3,191 files, 36MB
 
 ```
 
@@ -142,69 +142,69 @@ env LDFLAGS='-L/usr/local/lib -L/usr/local/opt/openssl/lib
 - https://podman.io/getting-started/installation
 
 ```zsh
-$ brew install podman
+brew install podman
 # 會花有點久, 裝一堆東西
 
-$ podman machine init
-Downloading VM image: fedora-coreos-34.20211004.2.0-qemu.x86_64.qcow2.xz: done  
-Extracting compressed file
+podman machine init
+#Downloading VM image: fedora-coreos-34.20211004.2.0-qemu.x86_64.qcow2.xz: done  
+#Extracting compressed file
 # 抓這個也會花點時間...
 
-$ podman machine start
-INFO[0000] waiting for clients...                       
-INFO[0000] listening tcp://0.0.0.0:7777                 
-INFO[0000] new connection from  to /var/folders/pd/w7t815h1065flxx1px72xxy40000gn/T/podman/qemu_podman-machine-default.sock 
-Waiting for VM ...
-Machine "podman-machine-default" started successfully
+podman machine start
+#INFO[0000] waiting for clients...                       
+#INFO[0000] listening tcp://0.0.0.0:7777                 
+#INFO[0000] new connection from  to /var/folders/pd/w7t815h1065flxx1px72xxy40000gn/T/podman/qemu_podman-machine-default.sock 
+#Waiting for VM ...
+#Machine "podman-machine-default" started successfully
 
-$ podman info
-host:
-  arch: amd64
-  buildahVersion: 1.22.3
-  cgroupControllers: []
-  cgroupManager: systemd
-  cgroupVersion: v2
-  conmon:
-    package: conmon-2.0.29-2.fc34.x86_64
-    path: /usr/bin/conmon
-    version: 'conmon version 2.0.29, commit: '
-  cpus: 1
-  ociRuntime:
-    name: crun
-    package: crun-1.0-1.fc34.x86_64
-    path: /usr/bin/crun
-  os: linux
-  remoteSocket:
-    exists: true
-    path: /run/user/1000/podman/podman.sock
-  slirp4netns:
-    executable: /usr/bin/slirp4netns
-    package: slirp4netns-1.1.12-2.fc34.x86_64
-    version: |-
-      slirp4netns version 1.1.12
-      commit: 7a104a101aa3278a2152351a082a6df71f57c9a3
-      libslirp: 4.4.0
-      SLIRP_CONFIG_VERSION_MAX: 3
-      libseccomp: 2.5.0
-  swapFree: 0
-  swapTotal: 0
-  uptime: 48.41s
-plugins:
-  log: null
-  network: null
-  volume: null
-registries:
-  search:
-  - docker.io
-store:
-  configFile: /var/home/core/.config/containers/storage.conf
-  containerStore:
-    number: 0
-    paused: 0
-    running: 0
-    stopped: 0
-version:
-  APIVersion: 3.3.1
+podman info
+#host:
+#  arch: amd64
+#  buildahVersion: 1.22.3
+#  cgroupControllers: []
+#  cgroupManager: systemd
+#  cgroupVersion: v2
+#  conmon:
+#    package: conmon-2.0.29-2.fc34.x86_64
+#    path: /usr/bin/conmon
+#    version: 'conmon version 2.0.29, commit: '
+#  cpus: 1
+#  ociRuntime:
+#    name: crun
+#    package: crun-1.0-1.fc34.x86_64
+#    path: /usr/bin/crun
+#  os: linux
+#  remoteSocket:
+#    exists: true
+#    path: /run/user/1000/podman/podman.sock
+#  slirp4netns:
+#    executable: /usr/bin/slirp4netns
+#    package: slirp4netns-1.1.12-2.fc34.x86_64
+#    version: |-
+#      slirp4netns version 1.1.12
+#      commit: 7a104a101aa3278a2152351a082a6df71f57c9a3
+#      libslirp: 4.4.0
+#      SLIRP_CONFIG_VERSION_MAX: 3
+#      libseccomp: 2.5.0
+#  swapFree: 0
+#  swapTotal: 0
+#  uptime: 48.41s
+#plugins:
+#  log: null
+#  network: null
+#  volume: null
+#registries:
+#  search:
+#  - docker.io
+#store:
+#  configFile: /var/home/core/.config/containers/storage.conf
+#  containerStore:
+#    number: 0
+#    paused: 0
+#    running: 0
+#    stopped: 0
+#version:
+#  APIVersion: 3.3.1
 # 僅隨意節錄部分資訊
 ```
 
@@ -338,10 +338,10 @@ terraform -install-autocomplete
 
 ```zsh
 ### k8s 的額外 CLI
-$# brew install kubectx
+brew install kubectx
 # 對他還很不熟, 不過他其中一個功能可以修改 default namespace
 
-$# 
+
 ```
 
 
@@ -350,15 +350,15 @@ $#
 - 2022/09/24
 
 ```zsh
-$# aws --version
-aws-cli/2.7.9 Python/3.9.11 Darwin/21.6.0 exe/x86_64 prompt/off
+aws --version
+#aws-cli/2.7.9 Python/3.9.11 Darwin/21.6.0 exe/x86_64 prompt/off
 
-$# curl --silent --location "https://github.com/weaveworks/eksctl/releases/latest/download/eksctl_$(uname -s)_amd64.tar.gz" | tar xz -C /tmp
+curl --silent --location "https://github.com/weaveworks/eksctl/releases/latest/download/eksctl_$(uname -s)_amd64.tar.gz" | tar xz -C /tmp
 
-$# sudo mv /tmp/eksctl ~/bin/
+sudo mv /tmp/eksctl ~/bin/
 
-$# eksctl version
-0.112.0
+eksctl version
+#0.112.0
 ```
 
 
@@ -400,7 +400,7 @@ ls -l --color ~/Library/LaunchAgents
 ```
 
 
-# Install jenkins from source code
+# Install jenkins from source code (失敗)
 
 - 自己編譯 jenkins
 
@@ -882,8 +882,13 @@ $ kotlinc
 ```
 
 
-# 
+# Install bazelisk / Install bazel
 
 ```zsh
 ### 
+brew install bazelisk
+# bazelisk 地位等同於 nvm
+
+
+#bazel 6.4.0
 ```
