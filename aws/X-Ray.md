@@ -1,17 +1,21 @@
 
 # [X-Ray](https://docs.aws.amazon.com/xray/latest/devguide/aws-xray.html)
 
+![X-Ray graph](./img/x-ray_graph.png)
+
 - 視覺化 Request 近來到 APP 以後, 整個後端的資料流
-- Tracing && Visual analysis for APP
+    - Tracing && Visual analysis for APP
     - 對於 Distributed System 排查很有幫助
-    - 它會在我們的 Request 塞 "trace" 這神奇的東西
+        - 可對 分散式系統的 log 彙整, 並提供 UI, 可在 **X-Ray** Console 看到 Service Performance Status
+    - 它會在我們的 Request 塞 `trace` 這神奇的東西
         - Trace: segments collected together to form an end-to-end trace
             - trace 裡頭由一系列的 `segments` 所構成
                 - segment 又由一系列的 `subsegments` 所構成
-        - 知道上面這細節概念的話, 對於 x-Ray 在 Coding 有幫助...
+        - X-Ray 並不會接收來自 ELB 的資料
+            - ELB 會在 Request Header 塞 `X-Amzn-Trace-Id`
     - Request 發送到 AWS Resources 上頭, Resources 可針對 trace 做一些識別, 最終得出一個 Service Map
-        - ![X-Ray graph](./img/x-ray_graph.png)
-- Charge: 針對送到 X-Ray 的資料計費
+- Charge
+    - 針對送到 X-Ray 的資料計費
 - X-Ray 的各種需求牽扯到的關鍵字
     - sampling
         - 因為 X-Ray 收了一大堆數據, 用這個可以僅收集你感興趣的欄位
@@ -37,10 +41,8 @@
     - middleware
     - subsegments 
         - 如果想要 segments 裡頭有更多細節的話參考這個
-- [AWS X-Ray API](https://docs.aws.amazon.com/xray/latest/devguide/xray-api.html)
 - Old way for debugging in production
 - 可直接在 local test, 並 log -> anywhere
-- 可對 分散式系統的 log 彙整, 並提供 UI, 可在 **X-Ray** Console 看到 Service Performance Status
 - Use Cases:
     - 用來對 Performance 做 troubleshooting(bottlenecks)
     - pinpoint service issue
@@ -66,29 +68,31 @@ daemon <--> cdk;
 ```
 
 
-# X-Ray 使用方式
+# X-Ray Usage
 
 ## 1. import SDK in Code 
 
-```js
-import AWS X-Ray SDK
+### ex1. Django
+
+- 需在 settings.py 增加 X-Ray 配置, 參考 [Configuring the X-Ray SDK for Python](https://docs.aws.amazon.com/xray/latest/devguide/xray-sdk-python-configuration.html)
+
+
+### ex2. Beanstlk
+
+- 配置 `/.ebextensions/xray-daemon.config`, 或是
+- 在` X-Ray Console` enable `X-Ray`
+
+```yaml
+option_settings:
+    aws:elasticbeanstalk:xray:XRayEnabled: true
 ```
 
-- 動作上只需要加入少數的 Codes, ex:
-    - Django
-        - 需在 settings.py 增加 X-Ray 配置, 參考 [Configuring the X-Ray SDK for Python](https://docs.aws.amazon.com/xray/latest/devguide/xray-sdk-python-configuration.html)
-    - Beanstlk
-        - 配置 `/.ebextensions/xray-daemon.config`, 或是
-        - 在` X-Ray Console` enable `X-Ray`
-            ```yaml
-            option_settings:
-                aws:elasticbeanstalk:xray:XRayEnabled: true
-            ```
-    - ECS (有 3 種模式可使用)
-        - ECS Cluster EC2 Type, 分別在 EC2 上頭運行一個 `X-Ray Daemon Container`
-        - ECS Cluster EC2 Type, 裡頭運行的 Container, 都要有 `X-Ray Sidecar`
-        - Fargate Cluster, ECS Cluster 裡頭, 每個 `Fargate Task` 裡頭的 `APP Container` 都需要再掛一個 `X-Ray Sidecar`
-        - 上述的這些 sidecar, 都使用 Container 裡頭的 2000 port UDP 來做通訊
+### ex3. ECS (有 3 種模式可使用)
+
+- ECS Cluster EC2 Type, 分別在 EC2 上頭運行一個 `X-Ray Daemon Container`
+- ECS Cluster EC2 Type, 裡頭運行的 Container, 都要有 `X-Ray Sidecar`
+- Fargate Cluster, ECS Cluster 裡頭, 每個 `Fargate Task` 裡頭的 `APP Container` 都需要再掛一個 `X-Ray Sidecar`
+- 上述的這些 sidecar, 都使用 Container 裡頭的 2000 port UDP 來做通訊
 
 
 ## 2. Enable X-Ray
@@ -109,10 +113,3 @@ subgraph ec2["EC2 Instance"]
 end
 daemon -- "每秒 批次 傳送 \n Traces(Segments)" --> X-Ray;
 ```
-
-- 支援底下的 Programming Language:
-    - Java
-    - Python
-    - Go
-    - Node.js
-    - .Net

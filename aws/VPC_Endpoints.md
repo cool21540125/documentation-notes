@@ -1,5 +1,5 @@
 
-# VPC Endpoint Services
+# VPC Endpoint Services / PrivateLink
 
 - 可以用來讓 VPC/On-Premise 的 AWS Services 藉由 private 的方式, 訪問其他的 AWS Services
     - 避免走 public 增加延遲 & 克金
@@ -14,10 +14,11 @@
 - 配置方式
     - Console > VPC > Endpoints > Create endpoint
 - 可用來 expose service 給成百上千個 VPC (Secure && Scalable)
-    - 此做法可完全取代 [VPC Peering](#vpc-peering)
-    - 無需依賴於 *VPC Peering*, IGW, NATGW, Route Table
+    - **PrivateLink** 可完全取代 **VPC Peering**
+    - 無需依賴於 **VPC Peering**, IGW, NATGW, Route Table
 - 可讓 private subnet 內的 Resources, 藉由 *VPC Endpoint Gateway* 來連接外部 Resources
     - ex: S3, DynamoDB
+- PrivateLink 的兩端必須是 NLB/GLB 及 ENI
 
 ---
 

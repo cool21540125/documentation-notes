@@ -318,7 +318,11 @@ Stateful           | Stateless
 - Capture info about IP traffic going into your interfaces, 有底下 3 kinds:
     - VPC Flow Logs
     - Subnet Flow Logs
-    - Elastic Network Interface(ENI) Flow Logs
+    - ENI, Elastic Network Interface Flow Logs
+- 排查
+    - CloudWatch Logs Insights (on stream)
+    - Athena(on s3)
+    - firewall / NACL 
 - 能有效的協助 monitor && troubleshoot Connectivity Issue
 - 會從各個 AWS 管理的 interfaces 蒐集 network information:
     - ELB
@@ -329,7 +333,9 @@ Stateful           | Stateless
     - NAT Gateway
     - Transit Gateway
     - etc
-- *Flow logs* 可被保存到 S3 / CloudWatch Logs
+- Flow logs 儲存位置
+    - S3 (須建立 bucket)
+    - CloudWatch Logs (須建立 log group)
 - VPC Flow Logs 裡頭大概有這些欄位(有大概印象就好):
     - version
     - account-id
@@ -345,11 +351,13 @@ Stateful           | Stateless
     - end
     - action : Security Group 或 NACL 訪問的 http method
     - log-status
-- 想要分析這些 Flow Logs 的話, 可藉由 Athena(on s3) 或 *CloudWatch Logs Insights*(on stream)
 
 
 # VPC - Traffic Mirroring
 
+- ex: EC2 在運行重要的服務, 我們想排查它的流量, 但又不能影響它
+    - 使用 **Traffic Mirroring**, 讓流量 mirror 到另一個 NLB
+        - 此時, ENI 不會知道 traffice 被 mirror 了
 - used to capture && inspect network traffic in VPC (non-intrusive manner)
 - Use Case: 想蒐集某個 ENI 的流量, 但又不想直接干擾到機器的運作
     - 使用此方式, 會將此流量做一個 copy/mirroring 到一個 「NLB 或 GLB (with UDP listener)」 為入口的 networking
@@ -434,3 +442,14 @@ ec2pu <-- Route Table --> Router;
 Router <--> igw;
 igw <--> Internet;
 ```
+
+
+# AWS Network Firewall
+
+- 作為整個 VPC 的 Firewall
+    - L3 ~ L7
+- **AWS Network Firewall** 底層使用的是 **GLB** 
+- 所有的 logs 都可被收錄到
+    - S3
+    - CloudWatch
+    - KDF

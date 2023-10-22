@@ -163,3 +163,7 @@ cwa -- Alert --> sns["SNS"]
     | stats count(*) as sum by @location
     ```
 
+
+# CloudWatch Contributor insights
+
+- 可分析時序資料, 找出像是 top 10 的流量, 用來得知系統中有哪些部分可能是效能瓶頸

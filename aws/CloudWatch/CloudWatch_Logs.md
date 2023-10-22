@@ -53,7 +53,7 @@
     - Elastic Beanstalk
     - ECS
     - Lambda
-    - [VPC Flow Logs](./VPC.md#vpc-flow-logs), 送出特定 VPC metadata network traffic
+    - VPC Flow Logs, 送出特定 VPC metadata network traffic
     - API Gateway, 送出打到 API GW 的所有 requests
     - CloudTrail, 可設定 filter 來傳送 log
     - Route53, all DNS query

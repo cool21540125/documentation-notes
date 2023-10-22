@@ -106,3 +106,4 @@ ES -- Default EventBus \n Custom EventBus \n SaaS EventBus --> tt;
 # Lab
 
 - [Building an event-driven application with Amazon EventBridge | Amazon Web Services](https://www.youtube.com/watch?v=mOysNzNFDRw&t=1s)
+- [Serverless Patterns Collection](https://serverlessland.com/patterns)

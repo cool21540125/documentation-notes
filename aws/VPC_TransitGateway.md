@@ -1,13 +1,15 @@
 
-# VPC Transit Gateway
+# [Transit Gateway](https://docs.aws.amazon.com/vpc/latest/tgw/what-is-transit-gateway.html)
 
-- [What is a transit gateway?](https://docs.aws.amazon.com/vpc/latest/tgw/what-is-transit-gateway.html)
+- 此為 Regional Service
+    - 可以 cross region
+    - 可藉由 **Resource Access Manager, RAM** 來做 cross account sharing
+- 藉由 **Route Table** 來做訪問的存取控制
 - 可將複雜的 cross VPC 的網路問題, 簡化成一個 *hub-and-spoke(star)* connection
     - 將 Transit Gateway 置於中心, 連結各種的 networking
-    - 可再藉由 [Resource Access Manager, RAM](./iam.md#aws-resource-access-manager-ram) 來做 cross account sharing
-    - 藉由 *Route Table* 來做訪問的存取控制
     - 可同時連上成百上千個 VPC (只需要一個 Transit Gateway)
-    - 流量會跑在 *AWS Global Infrastructure*, 傳輸過程為 encrypted, 且不會跑到 public internet (較安全)
+    - 流量 inside **AWS Global Infrastructure** &&  **encrypted**
+        - 不會跑到 public
 - Transit Gateway 有幾個 key concepts:
     - Attachments. 可以 attach 一堆元件到 Transit Gateway
         - VPCs
@@ -22,7 +24,7 @@
     - Associations
     - Route propagation
 - Transit gateway 行為如同 Regional router, 用來轉發 VPCs && on-premise 的流量
-- IP Multicast
+- AWS 唯一支援 `IP Multicast` 的 network service
 - Charge:
     - 基本上, 每個 attach 到 transit gateway 的元件, 依小時計費. 此外還會依照總流量來收費
 

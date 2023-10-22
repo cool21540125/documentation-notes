@@ -375,10 +375,10 @@ ssmps <-- Eecryption API --> kms;
 ## WAF & Shield
 
 - AWS Shield 分成 2 種模式:
-    - Standard (預設啟用)
+    - Shield Standard (預設啟用)
         - Charge: Free, 
         - 基礎的 SYN/UDP Floods, Reflection attacks, L3/L4 attacks, DDoS
-    - Advanced
+    - Shield Advanced
         - Charge `$3000/month`
         - DDoS mitigation service
         - Protect: EC2, ELB, CloudFront, Global Accelerator, Route53
@@ -446,7 +446,7 @@ Shield3 --> Shield4;
     - Inspector 由 settings && configurations 來找 **APP** 的潛在威脅
     - Guardduty 找出 **AWS Account, Data Store, Workload** 方面的潛在威脅
 - Input data 包含了:
-    - [VPC Flow Logs](./VPC.md#vpc-flow-logs)
+    - VPC Flow Logs
     - DNS Logs
     - EKS Audit Logs
     - EBS Volume data
@@ -473,10 +473,13 @@ ce --> Lambda;
 
 - 讓 user automated security assessment for your AWS infra
     - 幫你的 AWS 做健診
-- Inspector 只能 inspect:
-    - EC2 - leverage *AWS System Manager (SSM) agent*, 分析異常流量 && OS 漏洞
+- Inspector 只能 inspect(檢測) 底下這些東西 ONLY:
+    - EC2 
+        - leverage *AWS System Manager (SSM) agent*, 分析異常流量 && OS 漏洞
         - database of vulnerabilities (CVE)
-    - ECR - 當有人 docker push 就去評估 image/Container
+    - ECR 
+        - 當有人 docker push 就去評估 image/Container
+    - Lambda Function
 - 容易與 [Guardduty](#guardduty) 搞混
     - Inspector 比較像是主動去探測潛在威脅
     - Guardduty 比較偏向事後針對 log 找漏洞
@@ -535,8 +538,8 @@ ce -- integration --> pipeline["SNS, Lambda, ..."];
 - 因應 Security, 可用 GuardDuty, Macie, SecurityHub, ...
 - 但如果要找出因果關係, 可使用 *Amazon Detective*
 - 啟用後, 會自動蒐集底下這些, 來建立 view (用來呈現)
-    - [VPC Flows Logs](./VPC.md#vpc-flow-logs)
-    - [CloudTrail](#cloudtrail)
+    - VPC Flows Logs
+    - CloudTrail
     - GuardDuty
 
 

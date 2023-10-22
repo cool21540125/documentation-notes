@@ -16,3 +16,16 @@
     - Application Load Balancer, ALB
     - AWS AppSync GraphQL API
     - Amazon Cognito user pool
+
+
+# Penetration testing
+
+- 如果使用 AWS 來跑服務, 對於底下的 Services 做滲透測試時, 不須知會 AWS (可自行測爆他)
+    - EC2
+    - RDS
+    - CloudFront
+    - Aurora
+    - API Gateway
+    - Lambda & Lambda Edge Function
+    - Lightsail
+    - Elastic Beanstalk

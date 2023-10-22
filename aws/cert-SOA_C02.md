@@ -14,10 +14,11 @@
     - Gateway Endpoint
     - Transit Gateway
     - VPN Gateway
-    - AWS PrivateLink
+    - AWS PrivateLink / Endpoint Services
     - VPC Site-to-Site VPN
     - VPN CloudHub
-    - Direct Connect
+    - VPN Connection
+    - Direct Connect, DX
     - ClassicLink
 - logs 比較
     - VPC Flow Logs
