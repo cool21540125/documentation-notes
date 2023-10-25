@@ -22,10 +22,6 @@ src/app/tests/BUILD
 ```
 
 
-Elements of a package are called targets, which can be categorized as files and rules.
-
-
-
 - build/test tool
     - like make, maven, gradle
 
@@ -37,3 +33,21 @@ Elements of a package are called targets, which can be categorized as files and 
 ### 
 
 ```
+
+
+# note
+
+```bash
+bazel build xx:all
+# :all 是個 meta-target
+```
+
+
+# .bazelrc
+
+順序(後者會覆蓋前者)
+
+1. `/etc/bazel.bazelrc`
+2. workspace 的 `.bazelrc` (如果 cmd option 沒有 `--noworkspace_rc` 的話)
+3. `$HOME/.bazelrc` (如果 cmd option 沒有 `--nohome_rc` 的話)
+4. cmd line 明確指定 `--bazelrc=file`

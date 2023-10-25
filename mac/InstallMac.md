@@ -899,3 +899,14 @@ echo '6.4.0' > .bazelversion
 bazel --version
 #bazel 6.4.0
 ```
+
+
+# Install graphviz / Install xdot
+
+有點像 markdown, 用來呈現 系統元件的依賴圖
+
+```zsh
+
+brew install graphviz
+brew install xdot
+```

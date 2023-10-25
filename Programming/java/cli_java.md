@@ -9,3 +9,23 @@
     - `-classpath` 可簡化成 `-cp`
 - `javac -d DIR`, 用來放置 class 的產出路徑
 
+```bash
+# 配置 JAVA_HOME 用這個吧
+export JAVA_HOME="$(dirname $(dirname $(realpath $(which javac))))"
+```
+
+
+# CLI jar
+
+```bash
+### 列出 jar 內容
+jar tf xxx.jar
+#META-INF/
+#META-INF/MANIFEST.MF
+#com/
+#com/example/
+#com/example/xxx.class
+
+
+### 
+```

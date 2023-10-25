@@ -43,6 +43,7 @@ export NVM_DIR="$HOME/.nvm"
 
 
 ### Java PATH
+# !!! export JAVA_HOME="$(dirname $(dirname $(realpath $(which javac))))" !!!
 #export JAVA_HOME="/usr/local/opt/openjdk@11"
 export JAVA_HOME="/usr/local/opt/openjdk@17"
 export PATH="$JAVA_HOME/bin:$PATH"
