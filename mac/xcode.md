@@ -1,0 +1,43 @@
+
+- [Using xcodebuild to Build from the Command Line](https://www.waldo.com/blog/use-xcodebuild-command-line)
+
+# Build Terms
+
+- iOS project file
+    - 指 **pbxproj**, which links everything in the project
+    - 此外還包含了
+        - different targets
+        - build configurations
+- Target
+    - 定義了由 Xcode project 所 build 的 product
+        - 每個 Project 起碼有一個 Target
+            - 每個 Target 都有他自己的 **Build Settings** 及 **Build Phases**
+- Scheme
+    - 定義了每個 Target 的操作該如何被執行 (how the operations are performed on each target)
+        - operations 有如下的動作:
+            - Build / Run / Test / Archive / Profile / Analyze
+    - Note: Scheme Name 與 Target Name 一樣, 因此經常被誤以為是一樣的
+    - 每個 Target 都必須要有至少一個 Scheme
+        - Scheme 裡頭需要提供 App 要 run 的 destination
+            - destination 可以是 Physical Device / Simulator
+- Build configuration
+    - Debug
+        - 可看到所有的 logs
+    - Release
+        - 不會有 debug information
+        - minimal sized bundle
+        - 專門為了 for App Store
+    - Develop
+- Certificate, identifier, and profile
+    - coding 完後, 需要做 archive. archive 檔的用途:
+        - 用來給 QA Team 測試用
+        - 用來 publish 到 App Store
+    - **Signing Certificate**
+        - App 要交付到 `App Store` 的話, 需要有 `signing certificate`, 用途:
+            - 用來識別 developers
+            - 用來識別 the content hasn't been updated after signing
+    - **Identifiers**
+        - developer 提供, 用來識別 App 的 ID
+    - **Provisioning Profile**
+        - ('signing certificate' + 'identifier' + 'the device on which the app will run') 的組合
+        - 例如 App 需要跑在 iPhone 及 iPad 的話, 則需要有 2 組 profision profiles

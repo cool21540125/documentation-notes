@@ -95,3 +95,16 @@ fastlane $lane opt1:val1 opt2:val2
     - `.env.secret` : loaded in before_all
     - `.env.ios`    : loaded in before_all in `platform :ios`
     - `.env.mac`    : loaded in before_all in `platform :mac`
+
+
+# CLI
+
+- `fastlane export_method`
+    - 此為 xcodebuild 的 wrapper
+    - 下列 options 會基於 archive 而不同
+        - app-store
+        - ad-hoc
+        - package
+        - enterprise
+        - development (Default)
+        - developer-id

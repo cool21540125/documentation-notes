@@ -60,6 +60,7 @@ brew untap ${TAP_NAME}
 # Install xcode command
 
 ```zsh
+### 這動作似乎是安裝 `xcodebuild` CLI (未驗證)
 xcode-select --install
 
 
