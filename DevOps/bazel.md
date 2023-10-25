@@ -1,6 +1,8 @@
 
 # Bazel
 
+load http_archive rule in WORKSPACE
+
 Bazel calls your top-level source file a workspace, which contains other source files in a nested fashion. Your workspace is what builds your entire software by taking a set of inputs and generating the desired output.
 
 A package contains all your related files and dependencies and a file named BUILD. Subdirectories falling under a package are called subpackages.

@@ -889,6 +889,13 @@ $ kotlinc
 brew install bazelisk
 # bazelisk 地位等同於 nvm
 
+echo '4.2.2' > .bazelversion
 
+bazel --version
+#bazel 4.2.2
+
+echo '6.4.0' > .bazelversion
+
+bazel --version
 #bazel 6.4.0
 ```
