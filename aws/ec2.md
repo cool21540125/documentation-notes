@@ -74,11 +74,12 @@ EC2 選購時, 有底下這一大堆的 purchasing options:
         - [查看兩者比較](#dedicated-host-vs-dedicated-instancehttpsdocsawsamazoncomawsec2latestuserguidededicated-instancehtmldh-di-diffs)
     - no control over instance placement
 - Capacity Reservations
-    - 對特定 az 保留 capacity
+    - https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-capacity-reservations.html
     - 不做使用承諾, 但可保有 reserved capacity
-    - 短期任務 && 重要(不可中斷), 適合用這種
-    - 使用這種方案享受不到 Discount
+        - 基本上就是大多數人使用的 EC2 那樣, 不需要就把他 Terminate 掉了
+        - 享受不到 Discount
     - 可跨帳號共用這些 Capacity Reservations
+        - 但並非 cross Account transferable
 
 ---
 
@@ -93,20 +94,21 @@ EC2 選購時, 有底下這一大堆的 purchasing options:
     - Cluster
         - same Rack, same Hardware, same AZ
         - 目的是盡可能降低 latency
+    - Partition (Distributed)
+        - 每一台 EC2 都座落於不同的 logical segments / partition
+            - 而這些不同的 segments / partition 並不會共用相同的 hardware
+        - different Rack
+            - 每個 AZ 最多有 7 個 Racks
+        - 類似 Spread 策略, 同 AZ 裡頭, 但不同機櫃
+        - 適用於 large distributed and replicated workloads
+            - ex: Hadoop / Cassandra / Kafka
     - Spread (Critical)
-        - 把 EC2 Instances 設置到不同的 機器實體
+        - 嚴格地將 一個小群組的 EC2 Instances 設置到不同的 機器實體
             - 而這些 機器實體 坐落於同一個 rack(機櫃)
                 - Same Network, Same Power Supply
             - 一個 AZ 裏頭最多只能有 7 台 EC2 Instances (using Spread)
                 - 因此如果超過 7 台 EC2, 則會座落於 Same Region but cross AZ
         - 為了極小化 failure risk
-        - ex: Hadoop, Kafka, Cassandra, ...
-    - Partition (Distributed)
-        - 每一台 EC2 都座落於不同的 logical segments / partition
-        - different Rack
-            - 每個 AZ 最多有 7 個 Racks
-        - 類似 Spread 策略, 同 AZ 裡頭, 但不同機櫃
-        - ex: HDFS, HBase, Cassandra, Kfaka, ...
 - User Data
     - 初始化建機器以後所做的 init script, 相關的 log 紀錄在 `/var/log/cloud-init-output.log`
         - 上面這個, 如果是在 EC2 Console 建立的時候不曉得會不會有 log.... 但如果使用 CloudFormation 的 User Data, 能找到上述 log

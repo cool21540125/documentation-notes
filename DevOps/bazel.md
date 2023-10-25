@@ -1,6 +1,12 @@
 
 # Bazel
 
+load http_archive rule in WORKSPACE
+
+Bazel calls your top-level source file a workspace, which contains other source files in a nested fashion. Your workspace is what builds your entire software by taking a set of inputs and generating the desired output.
+
+---
+
 bazel 為 build / test tool. 是個能夠容納大型專案的 build system. 類似工具有: gradle / make / maven
 
 由更高層次的分類來說, bazel 屬於 artifact-based build system. 類似工具有: buck / pants

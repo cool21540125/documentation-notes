@@ -1,50 +1,71 @@
 
-# AWS CloudWatch
+# [AWS CloudWatch](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/WhatIsCloudWatch.html)
 
-- [What is Amazon CloudWatch?](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/WhatIsCloudWatch.html)
 - 用來 `collect / monitor / analyze` AWS Services
     - collect 到的這些數據, 稱之為 metrics
-    - 其實也可以把 *CloudWatch* 當作是個 *metrics repository*
-- 重要名詞定義
-    - Metrics
-        - 每隔一段時間發佈到 CloudWatch 的一組 data point
-        - metric 只保存在他們所在的 Region, 無法自行刪除 (15 個月後會消失)
-    - Namespaces
-        - Metrics 的 Container, 用來隔離不同的 Metrics
-        - ex: EC2 使用 `AWS/EC2` 這個 namespace
-    - Dimensions
-        - Metric 裡的 Name-Value pair
-        - 每個 Metric 最多能有 10 個 Dimensions
-        - 好像可以理解成 OOP 裡頭的 class, attribute name, attribute value 的概念
-            - ex: Instance.id, Environment.name, ...
-        - 每一筆 Metric 都有它的蒐集頻率(StorageResolution API parameter)
-            - Standard resolution : 60 secs
-            - High resoultion     : 1 sec
-                - 很貴
-                - 使用 [collected plugin](https://github.com/awslabs/collectd-cloudwatch) 來搜集 metrics
-                - 儲存後, 查看 metrics 時, 可再自行選擇資料頻率 1/5/10/30/60 甚至更長的資料頻率
-                - WARNING: 很容易把 EC2 detailed monitoring && CloudWatch Alarm high resolution metrics 搞混!!
-                    - EC2 detailed monitoring
-                        - Enabled  : 每 1 min 發送 metrics 到 CloudWatch (需課金)
-                            - 如果是底下的操作, 預設是 Detailed Monitoring:
-                                - 使用 AWS CLI 建立 Launch Configuration
-                                - 使用 SDK 建立 Launch Configuration (New)
-                        - Disabled : 每 5 min 發送 metrics 到 CloudWatch
-                            - 如果是底下的操作, 預設是 Basic Monitoring:
-                                - 使用 Launch Template (Old)
-                                - 使用 AWS Management Console 建立 Launch Configuration
-                            - `aws ec2 monitor-instances --instance-ids ${Instance_ID}` 可用來啟動 EC2 的 detailed monitoring
-                    - High Resolution Metrics (需要課金, 而且很貴)
-                        - APPs 可以每 1 sec 發送 metrics 到 CloudWatch
-                            -  另一方面, 可以設定 CloudWatch Alarm 在不同的頻率(ex: 每 10 secs) 作為評估
-        - 如果自行搜集 custom metric 時, 都會去尻 `PutMetricData API`(收費~), 假設又使用 High Resolution, 小心錢包哭哭
-            - `aws cloudwatch put-metric-daata --namespace "xxx" --metric-data file://example-metric.json`
-    - Statistics (不解釋)
-    - Percentiles (不解釋)
-    - Alarms
-        - 針對一段時間特定 Metric 達到某個 threshold 的狀態, 所做的 actions
+    - CloudWatch 其實就是個 metrics repository
 - CloudWatch 會以 time series 的方式, 將這些 metrics 伴隨他的 timestamp 做儲存
     - user 也可自行發布 `aggregated set of data point`, 即 `statistic set` 到 CloudWatch
+
+
+## CloudWatch 重要名詞定義
+
+### Metrics
+
+- 每隔一段時間發佈到 CloudWatch 的一組 data point
+- metric 只保存在他們所在的 Region, 無法自行刪除
+    - 15 個月後會消失
+
+
+### Namespaces
+
+- Metrics 的 Container, 用來隔離不同的 Metrics
+    - ex: EC2 使用 `AWS/EC2` 這個 namespace
+
+
+### Dimensions
+
+- Metric 裡的 Name-Value pair
+- 每個 Metric 最多能有 10 個 Dimensions
+- 好像可以理解成 OOP 裡頭的 class, attribute name, attribute value 的概念, ex:
+    - Instance.id
+    - Environment.name
+- 每一筆 Metric 都有它的蒐集頻率(StorageResolution API parameter)
+    - Standard resolution : 60 secs
+    - High resoultion     : 1 sec
+        - 很貴
+        - 使用 [collected plugin](https://github.com/awslabs/collectd-cloudwatch) 來搜集 metrics
+        - 儲存後, 查看 metrics 時, 可再自行選擇資料頻率 1/5/10/30/60 甚至更長的資料頻率
+- WARNING: 很容易把 `EC2 detailed monitoring` 和 `CloudWatch Alarm high resolution metrics` 搞混!!
+    - EC2 detailed monitoring
+        - Enabled  : 每 1 min 發送 metrics 到 CloudWatch (需課金)
+            - 如果是底下的操作, 預設是 Detailed Monitoring:
+                - 使用 AWS CLI 建立 Launch Configuration
+                - 使用 SDK 建立 Launch Configuration (New)
+        - Disabled : 每 5 min 發送 metrics 到 CloudWatch
+            - 如果是底下的操作, 預設是 Basic Monitoring:
+                - 使用 Launch Template (Old)
+                - 使用 AWS Management Console 建立 Launch Configuration
+    - High Resolution Metrics (需要課金, 而且很貴)
+        - APPs 可以每 1 sec 發送 metrics 到 CloudWatch
+            -  另一方面, 可以設定 CloudWatch Alarm 在不同的頻率(ex: 每 1/5/10/30/60 secs) 作為評估
+- 如果自行搜集 custom metric 時, 都會去尻 `PutMetricData API`(收費~), 假設又使用 High Resolution, 小心錢包哭哭
+    - `aws cloudwatch put-metric-daata --namespace "xxx" --metric-data file://example-metric.json`
+
+
+### Statistics 
+
+- 不解釋
+
+
+### Percentiles 
+
+- 不解釋
+
+
+### Alarms
+
+- 針對一段時間特定 Metric 達到某個 threshold 的狀態, 所做的 actions
 
 
 # CloudWatch Dashboards

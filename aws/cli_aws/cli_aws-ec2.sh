@@ -41,3 +41,10 @@ An error occurred (DryRunOperation) when calling the RunInstances operation: Req
 
 
 ### ====================================================== 
+
+
+### 啟動 EC2 的 detailed monitoring
+aws ec2 monitor-instances --instance-ids ${Instance_ID}
+
+
+### 
