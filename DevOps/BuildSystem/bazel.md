@@ -7,9 +7,15 @@ Bazel calls your top-level source file a workspace, which contains other source 
 
 ---
 
-bazel 為 build / test tool. 是個能夠容納大型專案的 build system. 類似工具有: gradle / make / maven
+bazel 為 build / test tool
 
-由更高層次的分類來說, bazel 屬於 artifact-based build system. 類似工具有: buck / pants
+基本上有 3 個動作: build / test / run
+
+build / test 必須對於 outside world 沒有 side effect (為了能有效率的 cache)
+
+因此像是 integration tests 的話, 則必須使用 run step 或是 在 bazel 以外完成
+
+由更高層次的分類來說, bazel 屬於 artifact-based build system
 
 ---
 
@@ -23,9 +29,29 @@ BUILD file 由 `Starlank / Skylark` Language 撰寫 (此語言很像 python3)
 
 ---
 
-BUILD 定義了 what to build && how to build
+Workspace / packages / targets
 
-BUILD 裡頭定義了 targets
+Workspace 裡頭的所有 subdir 只要裡頭有 BUILD (以及裡頭的 source files), 就是個 package
+
+WORKSPACE 裡面可以是空的
+
+WORKSPACE 裡面可能定義了 build 出 outputs 所需的 external dependencies 的 references
+
+WORKSPACE 所在的目錄, 便是 root of the main repository, 也稱之為 '@'
+
+定義在 WORKSPACE 的 external repositories 要馬是 
+
+WORKSPACE 裡頭藉由 workspace rules 引用的
+
+或者
+
+Bzlmod 系統中的 modules 及 extensions 產生
+
+---
+
+BUILD 定義了 how to build
+
+BUILD 定義了 what to build (targets)
 
 * build target 需要餵入 input artifacts, 而這些 inputs 包含了: source files / dependencies / options
 
@@ -64,18 +90,14 @@ bazel 讀取 `foo.bzl` 的時候, 便會建立 `var`
 - 定義 functions
 - 使用 arguments
 
-
 ---
-
-
-
-A package contains all your related files and dependencies and a file named BUILD. Subdirectories falling under a package are called subpackages.
 
 ```
 src/app/BUILD
 src/app/core/input.txt
 src/app/tests/BUILD
 
+# (放了 BUILD 的資料夾, 就會被視為是個 package) (同 python 的 __init__.py)
 # 包含了 2 個 packages
 #   app
 #   app/tests
@@ -83,21 +105,4 @@ src/app/tests/BUILD
 # package 裡頭的 elements 稱之為 target, 可區分為
 #   files
 #   rules
-```
-
-
-Elements of a package are called targets, which can be categorized as files and rules.
-
-
-
-- build/test tool
-    - like make, maven, gradle
-
-```bash
-### mac/linux/windows 建議使用 Bazelisk 來控管 bazel 版本 (地位等同於 nvm)
-### version
-
-
-### 
-
 ```

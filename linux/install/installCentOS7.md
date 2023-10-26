@@ -2442,7 +2442,6 @@ mkdir -p $HOME/pkgs
 
 ### Step2. 下載完 maven 以後解壓縮到上述路徑
 export MVN_HOME="$HOME/pkgs/apache-maven-3.9.3"
-export JAVA_HOME="xxx"
 export PATH="$PATH:$MVN_HOME/bin:$JAVA_HOME/bin"
 
 mvn -v
