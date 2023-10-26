@@ -106,3 +106,13 @@ src/app/tests/BUILD
 #   files
 #   rules
 ```
+
+
+# .bazelrc
+
+順序(後者會覆蓋前者)
+
+1. `/etc/bazel.bazelrc`
+2. workspace 的 `.bazelrc` (如果 cmd option 沒有 `--noworkspace_rc` 的話)
+3. `$HOME/.bazelrc` (如果 cmd option 沒有 `--nohome_rc` 的話)
+4. cmd line 明確指定 `--bazelrc=file`
