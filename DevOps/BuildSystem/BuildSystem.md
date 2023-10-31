@@ -18,12 +18,17 @@
         - v1 僅支援 Python (in 2022)
         - v2 的話不曉得...
     - Learning Curve
-- RushJS
+- Rush
     - Open-Source by Microsoft
     - Language: 僅支援 JavaScript
     - Learning Curve
+- Lage
+    - by Microsoft
+- Lerna
+- moon
+    - by moonrepo
 - Nx
-    - NRWL 生態系
+    - bu NRWL
     - Cross Platform
     - Language
         - 最早是為了 for Angular, 後來逐漸擴充到 React / Vite / JS backend framework
@@ -37,9 +42,13 @@
     - 早期 for Linux Only. 但現在也支援 MacOS 及 Windows WSL 2
     - Learning Curve
         - 類似於 Dockerfile 的撰寫
-
+- Gradle
+    - by Gradle Inc
+- Turborepo
+    - by Vercel
 
 
 # References
 
+- [monorepo.tools](https://monorepo.tools/#understanding-monorepos)
 - [Monorepo Build Tools](https://earthly.dev/blog/monorepo-tools/)

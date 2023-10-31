@@ -9,6 +9,21 @@ system_profiler SPSoftwareDataType SPHardwareDataType
 
 
 ```zsh
+### 查看電腦 睡眠/休眠/hibernate 相關的設定
+pmset -g
+
+
+### 讓 mac 不要進入 休眠
+sudo pmset -b sleep 0; sudo pmset -b disablesleep 1
+#Warning: Idle sleep timings for "AC Power" may not behave as expected.
+#- Disk sleep should be non-zero whenever system sleep is non-zero.
+# ---------------------------- 會噴出上面的警告 ----------------------------
+
+
+### 讓 mac 啟用 休眠
+sudo pmset -b sleep 5; sudo pmset -b disablesleep 0
+
+
 ### TIMEFMT 設定 time 評估資源好用的輸出
 TIMEFMT+='  max RSS %M'
 time xxx
