@@ -12,7 +12,7 @@
     3. **Executes** 由 build inputs 開始執行 build actions 直到 build outputs 產出
 
 
-# bazel CLI
+## bazel CLI
 
 - [graphviz](http://www.webgraphviz.com/)
 
@@ -36,7 +36,7 @@ bazel query "rdeps(//..., //Target)"
 ```
 
 
-# Workspace
+## Workspace
 
 - WORKSPACE 所在目錄, 即為 root of the main repository, 簡寫為 '@'
 - (不是很懂) 定義在 WORKSPACE 的 external repositories 會是下列兩者之一:
@@ -44,7 +44,7 @@ bazel query "rdeps(//..., //Target)"
     - Bzlmod 系統中的 modules 及 extensions 產生
 
 
-# Package
+## Package
 
 - 資料夾裡如果有 BUILD, 則此資料夾稱之為 Package
     - BUILD 又稱之為 build file
@@ -54,9 +54,12 @@ bazel query "rdeps(//..., //Target)"
     - How to build
     - What to build
         - 產出目標則是 Targets
+- packaging rule:
+    - http_archive
+    - git_archive
 
 
-# Target
+## Target
 
 - BUILD 裡頭定義了一堆 Targets
 - BUILD file 裡頭無法:
@@ -76,7 +79,7 @@ bazel query "rdeps(//..., //Target)"
 
 
 
-# Label
+## Label
 
 - Target Name 稱之為 Label
 - Label 的完整名稱(Fully-qualified package name) 長這樣: `@my_repo//my/app/main:app_binary`
@@ -91,7 +94,7 @@ bazel query "rdeps(//..., //Target)"
     - 無法使用 `sub-package/data.txt`
 
 
-# Visibility
+## Visibility
 
 - Bazel's 2 visibility systems:
     - target visibility
@@ -99,7 +102,7 @@ bazel query "rdeps(//..., //Target)"
 - 
 
 
-# Extension
+## Extension
 
 - Bazel 的 extension files 都必須是 `.bzl` 結尾
 - 如果要使用 extension files, 則需要用 `load("//foo/bar:file.bzl", "some_library")`
@@ -122,7 +125,7 @@ bazel query "rdeps(//..., //Target)"
     - `/.bazel.rc`
 
 
-# Additional Bazel tools
+## Additional Bazel tools
 
 - buildifier
     - formatting + linting
@@ -130,3 +133,11 @@ bazel query "rdeps(//..., //Target)"
     - 可用來建立 custom rules
 - Build Event Stream
     - 用來 monitor build events 及 identify bottlenecks
+
+
+# bazel 演進
+
+- rules_python
+- rules_go
+- rules_nodejs -> rules_js
+- rules_docker -> rules_oci

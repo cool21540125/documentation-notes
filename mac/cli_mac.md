@@ -9,7 +9,8 @@ system_profiler SPSoftwareDataType SPHardwareDataType
 
 
 ```zsh
-### 查看電腦 睡眠/休眠/hibernate 相關的設定
+### pmset 用來做 mac 的電源管理(Power Management)
+# https://www.dssw.co.uk/reference/pmset/ 裡面有各種設定的 examples
 pmset -g
 
 
@@ -22,6 +23,11 @@ sudo pmset -b sleep 0; sudo pmset -b disablesleep 1
 
 ### 讓 mac 啟用 休眠
 sudo pmset -b sleep 5; sudo pmset -b disablesleep 0
+
+
+### 週一到週六 08:30-22:00 不要 Sleep, 其餘時間 Sleep
+
+
 
 
 ### TIMEFMT 設定 time 評估資源好用的輸出
