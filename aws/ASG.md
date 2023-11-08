@@ -67,13 +67,12 @@ ELB -- "traffic" --> ASG;
             - 最簡單. 只需設定個 baseline. ex: 直接設定 average ASG CPU 都維持在 50%
             - 盯住 baseline 來增減 Resources 數量
         - Simple Scaling
-            - 藉由 **CloudWatch Alarm** 來做 trigger
             - 如果達到 baseline 時, 增減 Resources 數量
             - 還不錯的 Scaline 指標:
                 - `CPUUtilization`
                 - `RequestCountPerTarget`
                 - `Average Network In/Out`
-        - Step Scaling
+        - Step Scaling / Step adjustments
             - Step Scaling 會依據 Alarm 的大小來做 scaling
     - Predictive Scaling
         - auto-scaling service 會持續監控 loading, 預測趨勢來做 scaling

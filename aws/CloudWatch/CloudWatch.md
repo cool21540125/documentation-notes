@@ -49,6 +49,8 @@
     - High Resolution Metrics (需要課金, 而且很貴)
         - APPs 可以每 1 sec 發送 metrics 到 CloudWatch
             -  另一方面, 可以設定 CloudWatch Alarm 在不同的頻率(ex: 每 1/5/10/30/60 secs) 作為評估
+    - RDS 的 Enhanced monitoring
+        - 
 - 如果自行搜集 custom metric 時, 都會去尻 `PutMetricData API`(收費~), 假設又使用 High Resolution, 小心錢包哭哭
     - `aws cloudwatch put-metric-daata --namespace "xxx" --metric-data file://example-metric.json`
 

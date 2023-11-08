@@ -3,6 +3,8 @@
 
 ![AWS Direct Connect](./img/AWSDirectConnect.png)
 
+- 需要耗時起碼一個月來架設 與 AWS VPC 的 **dedicated private connection** 專用線路
+    - 並不適用於像是建立 2 endpoints 之間的連線
 - [Direct Connect v.s. Site-to-site VPN](https://www.stormit.cloud/blog/comparison-aws-direct-connect-vs-vpn/)
   - 這兩者超級容易混淆...
 - (上下圖相同) 

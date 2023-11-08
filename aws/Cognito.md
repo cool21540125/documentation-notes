@@ -1,14 +1,14 @@
 
-# Cognito
+# [Cognito](https://docs.aws.amazon.com/cognito/latest/developerguide/what-is-amazon-cognito.html)
 
-- [What is Amazon Cognito?](https://docs.aws.amazon.com/cognito/latest/developerguide/what-is-amazon-cognito.html)
+- 用途:
     - 用來給 非 AWS Users identity
-    - 用來做 APP 的 認證 / 授權 / 用戶管理
+    - 用來做 APP / Web 的 認證 / 授權 / 用戶管理
 - 主要元件如下(可分別 or 合併 使用)
-    - Cognito User Pools
+    - Cognito User Pools, CUP
         - 用來給 APP Users 做 sign-up / sign-in
-    - Cognito Identity Pools
-        - 用來授權給 users 來 access AWS services
+    - Cognito Identity Pools, CIP
+        - 用來授權給 users 取得 **temp creds** 來 access AWS services
 - 結合使用 User Pools 及 Identity Pools 的概念示意圖:
     ```mermaid
     flowchart LR

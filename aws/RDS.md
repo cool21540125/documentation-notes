@@ -52,7 +52,6 @@
     - 自己做 snapshot(lightly backup)
 - 常見問題: Dev/Test 的 DB 需要具備 PubliclyAccess (公開訪問)
     - RDS Instance 需要具備 PubliclyAccessible
-    - 
 
 
 # Backups 與 snapshots
@@ -82,6 +81,7 @@
     - 各種 DB 的實作不同:
         - PostgreSQL : 要在 RDS Console 的 *Parameter Groups* 設定 `rds.force_ssl=1`
         - MySQL      : 要在 DB Console 初始化 user 時設定 `GRANT USAGE ON *.* TO 'DB'@'%' REQUIRE SSL;`
+- 可以在 **Database parameters** 看到 DB 是如何被配置的
 - **Backups 與 snapshots** 的 encryption
     - 如果 RDS DB 原本是 un-encrypted, snapshot 後預設依然是 un-encrypted
     - 如果 RDS DB 原本是    encrypted, snapshot 後預設依然是    encrypted

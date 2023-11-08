@@ -17,13 +17,14 @@ aws cloudwatch set-alarm-state \
 #   INSUFFICIENT_DATA
 
 
-### Example memory usage of an EC2 instance
+### 推送一筆資料到 CloudWatch
 aws cloudwatch put-metric-data \
-    --metric-name mem \
-    --namespace "/CWL-Demo/App" \
-    --unit Percent --value 23 \
+    --metric-name "$MetricName" \
+    --namespace "/Metric/Namespace" \
+    --unit Percent \
+    --value 23 \
     --dimensions InstanceId=i-1234567890abcdef0,InstanceType=t2.micro
-# 推送一筆資料到 CloudWatch
+# publishes a Buffers metric with two dimensions : InstanceId & InstanceType
 
 
 ###
