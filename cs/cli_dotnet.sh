@@ -19,6 +19,8 @@ dotnet --info
 ### ======================== Create Project & Settings ========================
 ### 約束目前專案使用的 sdk 版本
 dotnet new globaljson --sdk-version $SDK_VERSION
+dotnet new globaljson --sdk-version 3.1.426
+dotnet new globaljson --sdk-version 6.0.412
 
 
 ### 查看 CLI 可建立那些APP

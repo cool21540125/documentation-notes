@@ -17,6 +17,8 @@ git config --local core.sshCommand "ssh -i ~/.ssh/id_rsa_personal"
 # [core]
 #    sshCommand = ssh -i ~/.ssh/id_rsa_personal
 
+git config --local user.name  TonyChou
+git config --local user.email cool21540125@gmail.com
 
 git --no-pager tag
 

@@ -204,8 +204,12 @@ ALB --> Task3;
 # ECS CLI
 
 ```bash
+### 建立 ECS 要用的 ECR
+aws ecr create-repository --repository-name ${ECR_NAME} --region ${REGION}
+
+
 ### 使用本地的 task-definition.json 建立一個 task definitions
-aws ecs register-task-definition --cli-input-json file://${task_definition}.json
+aws ecs register-task-definition --cli-input-json file://${TASK_DEFINITION_FILE}.json
 # 這檔案長得一副就是 docker-compose 的樣子
 
 
@@ -214,13 +218,12 @@ aws ecs list-task-definitions
 
 
 ### List Tasks
-$# Cluster_Name=
-$# aws ecs list-tasks --cluster ${Cluster_Name}
+aws ecs list-tasks --cluster ${CLUSTER_NAME}
 
 
 ### Describe the Running Task
-$# task_ID=
-$# aws ecs describe-tasks \
-    --cluster ${Cluster_Name} \
-    --task ${task_ID}
+aws ecs describe-tasks --cluster ${CLUSTER_NAME} --task ${task_ID}
+
+
+### 
 ```

@@ -1,3 +1,6 @@
+
+- [舊文章位置](https://docs.bazel.build/versions/5.4.1/skylark/concepts.html)
+
 # Bazel
 
 - bazel 為 build / test tool
@@ -38,9 +41,12 @@ bazel query "rdeps(//..., //Target)"
 
 ## Workspace
 
-- WORKSPACE 所在目錄, 即為 root of the main repository, 簡寫為 '@'
-- (不是很懂) 定義在 WORKSPACE 的 external repositories 會是下列兩者之一:
-    - WORKSPACE 裡頭藉由 workspace rules 引用的
+- WORKSPACE.bazel 所在目錄, 即為 root of the main repository, 簡寫為 '@'
+- WORKSPACE.bazel 裡頭的東西:
+    - 構建環境
+    - 為了做 build 所需的 外部依賴
+- 定義在 WORKSPACE.bazel 的 external repositories 用途:
+    - 給 WORKSPACE.bazel 裡頭的 workspace rules 引用
     - Bzlmod 系統中的 modules 及 extensions 產生
 
 

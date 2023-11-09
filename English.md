@@ -129,3 +129,8 @@ WAL    | Write-ahead logging                         | 預寫式日誌          
 - DAU(Daily active user)
 - WAU(Weekly active user)
 - MAU(Monthly active use)
+
+
+-------------
+
+internationalization(國際化) 與 localization(本土化)

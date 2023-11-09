@@ -4,6 +4,12 @@
 - [Youtube-Maven Tutorial](https://www.youtube.com/watch?v=Xatr8AZLOsE)
 - maven 專案設定檔: `pom.xml`
 
+- 預設的 `default location for Maven local repository` 會是在 : `$HOME/.m2`
+    - 發送到 Maven Repository 的東西大概都這些:
+        - One or more artifacts
+        - The Gradle Module Metadata
+        - The Maven POM file
+
 
 # maven CLI
 
