@@ -433,18 +433,23 @@ Shield3 --> Shield4;
 ```
 
 
-## [GuardDuty](https://docs.aws.amazon.com/guardduty/latest/ug/what-is-guardduty.html)
+## [AWS - GuardDuty](https://docs.aws.amazon.com/guardduty/latest/ug/what-is-guardduty.html)
 
-- perform intelligent threat discovery in order to protect your AWS account
-- 正如其名, 持續監控找出 AWS Account 的髒東西 & 惡意威脅 & 惡意 IP & 由 CloudTrail logs 找出異常活動
+- AWS GuardDuty 是個 Security Monitoring Service
+    - Foundational data sources(基礎資料來源) 方面:
+        - CloudTrail managed events 及 event logs
+        - VPC flowlogs
+        - DNS logs
+    - Features 方面:
+        - Kubernetes audit logs
+        - RDS login activity
+        - S3 logs
+        - EBS volumes
+        - Runtime monitoring
+        - Lambda network activity logs
+- 幫你找出 AWS Account 的髒東西 / 惡意威脅 / 惡意 IP / 異常活動
     - by leveraging ML
 - 用 ML && 3rd data, 來看 user account 是否 under attack
-- 後續動作像是, 偵測異常後, 藉由 *EventBridge Rules* -> Lambda/SNS
-- Protect *CryptoCurrency attacks*(WTF?)
-- 容易與 [Macie](#macie) 搞混
-- 容易與 [Inspector](#inspector) 搞混
-    - Inspector 由 settings && configurations 來找 **APP** 的潛在威脅
-    - Guardduty 找出 **AWS Account, Data Store, Workload** 方面的潛在威脅
 - Input data 包含了:
     - VPC Flow Logs
     - DNS Logs
@@ -471,8 +476,14 @@ ce --> Lambda;
 
 ## Inspector
 
-- 讓 user automated security assessment for your AWS infra
-    - 幫你的 AWS 做健診
+- 用途
+    - AWS 的 自動化漏洞管理, 幫你的 AWS 做健診
+    - AWS Inspector 可不斷掃描 AWS 工作負載, 來尋找 軟體漏洞 && 網路風險
+- 能做些什麼, 範例:
+    - EC2, Lambda, ECR, 用來做 **軟體的 near-real time 的 漏洞偵測** && **unintended network exposure**
+    - 針對 **Centrally manage software bill of materials (SBOM)** 做 exports 管理
+    - Inspector 會做風險分析, 可用來作為修復的優先級別依據
+    - 
 - Inspector 只能 inspect(檢測) 底下這些東西 ONLY:
     - EC2 
         - leverage *AWS System Manager (SSM) agent*, 分析異常流量 && OS 漏洞
@@ -722,38 +733,37 @@ rr -- "store" --> S3;
 
 # WhitePaper Section Introduction
 
-- [AWS Well-Architected Framework](https://docs.aws.amazon.com/wellarchitected/latest/framework/welcome.html)
-    - 不要去猜測需求規模, 取而代之善用 ASG
-    - 使用 Prod 規格來做測試 (因機器可隨時關閉, 別省這點錢, 別偷懶 )
-    - 善用 CloudFormation 來重建架構, 方便實驗
-    - Drive architecture using data
-    - Well Architecture 有幾個重要構面:
-        - Operational Excellence
-        - Security
-        - Reliability
-        - Performance Efficiency
-        - Cost Optimization
-        - Sustainability
-- [What is AWS Well-Architected Tool?](https://docs.aws.amazon.com/wellarchitected/latest/userguide/intro.html)
-    - Free tool to review architecture
-    - 建立一份 Workload 以後, 開始回答一堆問題... AWS 會提出相關的 risk 以及 improvment plan
-- [AWS Trusted Advisor](https://docs.aws.amazon.com/awssupport/latest/user/trusted-advisor.html)
-    - 依照底下的 5 個分類, 以 high level AWS Account assessment 來做建議
-        - Cost optimization
-        - Performance
-        - Security
-        - Fault tolerance
-        - Service limits
-    - [AWS Trusted Advisor](https://docs.aws.amazon.com/awssupport/latest/user/trusted-advisor.html)
-        > Trusted Advisor draws upon best practices learned from serving hundreds of thousands of AWS customers.
-        > 
-        > Trusted Advisor inspects your AWS environment, and then makes recommendations when opportunities exist to save money, improve system availability and performance, or help close security gaps.
-    - 除非有啟用 Enterprise 或 business plan, 否則只有底下部分的 core checks:
-        - Cost Optimization
-        - Performance
-        - Security
-        - Fault Tolerance
-        - Service Limits
-    - [AWS-Github-Samples](https://github.com/aws-samples)
-- [Disaster Recovery of Workloads on AWS: Recovery in the Cloud](https://docs.aws.amazon.com/whitepapers/latest/disaster-recovery-workloads-on-aws/disaster-recovery-workloads-on-aws.html)
-- [AWS Well-Architected Framework – Updated White Papers, Tools, and Best Practices](https://aws.amazon.com/blogs/aws/aws-well-architected-framework-updated-white-papers-tools-and-best-practices/)
+## [AWS Well-Architected Framework](https://docs.aws.amazon.com/wellarchitected/latest/framework/welcome.html)
+
+- 不要去猜測需求規模, 取而代之善用 ASG
+- 使用 Prod 規格來做測試 (因機器可隨時關閉, 別省這點錢, 別偷懶 )
+- 善用 CloudFormation 來重建架構, 方便實驗
+- Drive architecture using data
+- Well Architecture 有幾個重要構面:
+    - Operational Excellence
+    - Security
+    - Reliability
+    - Performance Efficiency
+    - Cost Optimization
+    - Sustainability
+
+
+## [What is AWS Well-Architected Tool?](https://docs.aws.amazon.com/wellarchitected/latest/userguide/intro.html)
+
+- Free tool to review architecture
+- 建立一份 Workload 以後, 開始回答一堆問題... AWS 會提出相關的 risk 以及 improvment plan
+
+
+## [AWS Trusted Advisor](https://docs.aws.amazon.com/awssupport/latest/user/trusted-advisor.html)
+
+- AWS 依據 AWS Users 的實踐, 對底下各種方面給予 你的 AWS Account 建議:
+    - Cost optimization - 怎麼省錢
+    - Performance - 怎樣搞效能比較好
+    - Security
+    - Fault tolerance
+    - Service limits
+
+
+## [Disaster Recovery of Workloads on AWS: Recovery in the Cloud](https://docs.aws.amazon.com/whitepapers/latest/disaster-recovery-workloads-on-aws/disaster-recovery-workloads-on-aws.html)
+
+## [AWS Well-Architected Framework – Updated White Papers, Tools, and Best Practices](https://aws.amazon.com/blogs/aws/aws-well-architected-framework-updated-white-papers-tools-and-best-practices/)

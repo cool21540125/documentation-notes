@@ -1,12 +1,6 @@
 
-# 考試前, 需要問自己的問題
+# 考試前, 需要問自己的問題, 很常搞混
 
-- 合規/建議/配置 比較
-    - CloudTrail
-    - Trusted Advisor
-    - AWS Config
-    - VPC Reachability Analyzer
-        - 針對 VPCs 之間的 endpoints 的配置做診斷(不做實測)
 - VPC 比較
     - VPC Peering
     - VPC Endpoints
@@ -46,7 +40,16 @@
 - KMS
     - Customer Master Key, KMS
     - customer managed keys
-
+- Security 相關
+    - GuardDuty
+    - Inspector
+    - Macie
+- Compliance 相關
+    - CloudTrail
+    - Trusted Advisor
+    - AWS Config
+    - VPC Reachability Analyzer
+        - 針對 VPCs 之間的 endpoints 的配置做診斷(不做實測)
 
 # CloudFormation
 
@@ -69,7 +72,6 @@
         - 可以視為是 在 Linux 底下直接執行的 Terminal 結果
         - EC2 的 UserData (`Fn::Base64`) 的 log
     - `/var/log/cloud-init.log`
-        - 
     - `/var/log/cfn-init.log`
         - 可以視為是 `/var/log/cfn-init-cmd.log` 的 精簡版 log
         - EC2 執行完 UserData 以後, 跑 `cfn-init` 來向 CloudFormation query 已取得 init data

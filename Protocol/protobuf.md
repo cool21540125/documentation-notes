@@ -95,3 +95,12 @@ pb -- Output --> cls;
 data["Use PB classes to serialize, share, & deserialize data"]
 cls -- Input --> data;
 ```
+
+
+# 重要的零碎資訊(初學者筆記)
+
+```bash
+### Golang 如果要玩 protobuf, 一定要安裝 protoc-gen-go, 且這東西一定要在 PATH 底下
+GOBIN=$HOME/bin go install google.golang.org/protobuf/cmd/protoc-gen-go@latest
+# protoc-gen-go 是 protoc(這個 Compiler) 的 plugin
+```

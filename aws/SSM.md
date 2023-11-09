@@ -59,7 +59,7 @@
         - Parameter Policies : YES
 
 
-# SSM - Inventory
+# SSM - Systems Manager Inventory
 
 - 用來搜集 EC2/On-Premises 的 metadata
     - installed softwares
@@ -82,7 +82,13 @@
 - 不過, State Manager 用來記錄 State
 - 
 
-# SSM - Patch Manager
+# [SSM - Patch Manager](https://docs.aws.amazon.com/systems-manager/latest/userguide/patch-manager.html)
+
+> Patch Manager, a capability of AWS Systems Manager, automates the process of patching managed nodes with both security-related updates and other types of updates.
+> 
+> 用來統一管理 OS patching (security 及 other 類型的更新)
+> 
+> 2022/12 以後, 推出了 **patch policy**. 可用來進一步管理 account / region 的整體 patching 政策方針.
 
 - SSM Patch Manager 有 2 個主要元件:
     - Patch Baseline
@@ -123,6 +129,19 @@ pb-abceefgp1qj98afa  Dev          No
     - 可設定 Registered Tasks
 - 經常與 **Patch Manager** 結合
 
+---
+
+# [AWS - Fleet Manager](https://docs.aws.amazon.com/systems-manager/latest/userguide/fleet.html)
+
+- 用途:
+    - 用來作 remotely 管理 AWS / On-Premise 的 Nodes 的 UI (Web Console 啦)
+    - 可用來觀察 performance 及 health
+    - 可在 Console 上頭, 用 RDP 來連到 Windows 來查看 Dir / File
+- 適合誰使用:
+    - 如果想要集中化管理 Nodes 的 AWS Users
+
+
+---
 
 # CLI
 

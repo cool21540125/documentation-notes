@@ -39,6 +39,20 @@
 - 不要在 EC2 上面做 `aws configure`, 善用 IAM Role
 
 
+# EC2 - Burstable
+
+- 因為大多數人開了機器以後, 基本上 EC2 都閒在那邊, 因此有了 t 系列主機, ex: t2.micro
+- 這類型機器是與其他人共用實體機器, 藉由 AWS 的 Hypervisor 用來運行 VM, 這就是你的 EC2
+    - 這句話是我自己做結論的, AWS 官方並沒有這樣說
+- 機器沒在使用(沒有在操 CPU)時, 會累積 credits
+    - 等到需要 安裝東西/跑些啥程式/做些有的沒的, 會耗用之前累積的 CPU credits
+- 一點的 CPU Credits 大概是:
+    - One vCPU at 100% utilization for one minute
+    - One vCPU at 50% utilization for two minutes
+    - Two vCPUs at 25% utilization for two minutes
+- 如果開了 t2.micro 以後, 真的很需要 CPU, 除了調整 instance type 以外, 還可以切換成 `t2 ultimate`
+
+
 # [Instance purchasing options](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/instance-purchasing-options.html)
 
 EC2 選購時, 有底下這一大堆的 purchasing options:

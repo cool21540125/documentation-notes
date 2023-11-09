@@ -12,6 +12,7 @@
 - CloudFormation - StackSets
     - 可以 **Cross Account** 及 **Cross Region** 做一鍵 Create/Update/Delete Stacks
 - 避免 CloudFormation 被意外刪除, 可使用 **termination protection**
+    - 做此配置以後, 如果使用 CloudFormation 刪除資源時, 會移除失敗, 不過 Status 依舊是 Unchanged (而非 Failed/Success)
 - 如果想對 CloudFormaion 裡頭的 Resources 做個別限制, ex:
     - 禁止在此 CloudFormation stack 裡頭新增xxx, 修改 EC2, 針對 RDS 做 xxx
     - 可參考 Prevent Update to Stack Resources 或是 **Stack Policy**
