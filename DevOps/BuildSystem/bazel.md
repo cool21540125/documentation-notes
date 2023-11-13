@@ -9,10 +9,19 @@
 - 對於 Bazel 的 Support:
     - `bazelbuild`    : Google Support
     - `bazel-contrib` : Community Support
-- bazel 的 build process
-    1. **Loads** BUILD
-    2. **Analyzes** inputs / dependencies && apply build rules && 生成 action graph
-    3. **Executes** 由 build inputs 開始執行 build actions 直到 build outputs 產出
+- bazel 的 build process(Phase Model)
+    - Loading
+        - Reading 及 executing BUILD file (非全部, 僅必要部分)
+        - list files 可使用 `glob()`
+    - Analysis
+        - 每個 Rule 都可以用來生成 files 及 生成 rule 自身的 action
+        - inputs / dependencies && apply build rules && 生成 action graph
+        - rules 可以 create actions 
+        - (執行細節)Starlark 分析 dependencies 採用 button-up 的方式來進行
+            - 先找出 無依賴 or 依賴於產出檔, 再向上建構出依賴樹
+    - Execution
+        - 由 build inputs 開始執行 build actions 直到 build outputs 產出
+- 截至 2022, Starlark 可以寫 Loading 及 Analysis, 但無法用來寫 Execution (不知道這在講啥..)
 
 
 ## bazel CLI
@@ -35,7 +44,8 @@ bazel query "rdeps(//..., //Target)"
 # 可以看到哪些東西依賴了 Target
 
 
-### 
+### 列出 rule 的 output path
+bazel cquery --output=files //:rule
 ```
 
 
@@ -147,3 +157,4 @@ bazel query "rdeps(//..., //Target)"
 - rules_go
 - rules_nodejs -> rules_js
 - rules_docker -> rules_oci
+- 早期使用名為 `skylark` 來撰寫 rules, 但因為這名字已經有其他代表作了, 因而改成 `starlark`
