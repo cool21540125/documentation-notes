@@ -69,6 +69,11 @@ r2 -.- srv2["AWS Services \n (ex: S3)"];
         - ex: Yubikey
     - Hardward Key Fob MFA Device
     - Hardward Key Fob MFA Device for AWS GovCloud
+- IAM Role 包含了 2 種 Policies:
+    - Trust Policy
+        - 誰可以 Assume this Role
+    - Permission Policy / Permissions Policy
+        - 這個 Role 可以做啥
 
 
 # IAM Policy
@@ -128,48 +133,6 @@ r2 -.- srv2["AWS Services \n (ex: S3)"];
     ]
 }
 ```
-
-
-# Trust policy
-
-> The trust policy defines which principals can assume the role, and under which conditions. A trust policy is a specific type of resource-based policy for IAM roles.
-> 
-> Trust policies define which principal entities (accounts, users, roles, and federated users) can assume the role. An IAM role is both an identity and a resource that supports resource-based policies. For this reason, you must attach both a trust policy and an identity-based policy to an IAM role. The IAM service supports only one type of resource-based policy called a role trust policy, which is attached to an IAM role.
-
-> 我的理解: `trust policy` 是一種信任的政策, 也是一種 `Resource-based policy`
->
-> 例如: trust policy 制定成, `all principals(所有人)` 都可以 `assume the role(申請 用來進入工地用的安全帽)` 
-> 
-> `IAM role` 既是 `identity`, 同時也是 `resource that supports resource-based policy`
-> 
-> 上面所說的 `IAM role(安全帽)`, 既是 工人 的概念, 同時也是 具備工地政策的資源(我也開始亂了= =...)
-> 
-> `IAM 服務` 僅支援唯一一種 `Resource-based policy`, 稱之為 `role trust policy`(這東西附加在 `IAM role` 上頭) 
-> 
-> 蝦小... 看完之後我居然不知道怎麼做結論....
-
- ```jsonc
-//  像是 AWS IAM: tony, 常常需要授權給其他阿貓阿狗們幹嘛幹嘛的, 那麼就需要像是底下這樣一個 trusted policy:
-{
-  "Version": "2012-10-17",
-  "Statement": [
-    {
-      "Effect": "Allow",
-      "Principal": {
-        "AWS": "arn:aws:iam::111122223333:tony"
-      },
-      "Action": "sts:AssumeRole"
-      // 裡面沒有 Resource 是因為 Resource 就是 IAM Role 本身
-    }
-  ]
-}
- ```
-
- - [How to use trust policies with IAM roles](https://aws.amazon.com/blogs/security/how-to-use-trust-policies-with-iam-roles/)
- 
- > A common use case is when you need to provide access to a role in account A to assume a role in Account B. To facilitate this, you add an entry in the role in account B’s trust policy that allows authenticated principals from account A to assume the role through the sts:AssumeRole API call.
- > 
- > Account B 要訪問 Account A 的資源, 則 Account B 的 trust policy 需要增加一個條目, 允許 Account A 受信任的 user 藉由使用 `sts:AssumeRole API` 來 assume the role
 
 
 # IAM Statement
@@ -437,11 +400,7 @@ Browser -- access --> aws["AWS Resources"]
 
 ---
 
-### Web Identity Federation with Web Identity
-
-- [Using web identity federation](https://docs.amazonaws.cn/en_us/amazondynamodb/latest/developerguide/WIF.html)
-- `AssumeRoleWithWebIdentity` API
-- 建議替換成 Cognito
+### [Web Identity Federation with Web Identity](https://docs.amazonaws.cn/en_us/amazondynamodb/latest/developerguide/WIF.html)
 
 ```mermaid
 flowchart TB;
@@ -460,44 +419,6 @@ APP -- "3. Web Identity Token \n call AssumeRoleWithWebIdentity()" --> STS;
 STS -- 4. temp creds --> APP;
 APP -- 5. access --> rr;
 ```
-
----
-
-# Identity Federation
-
-有各種不同的 Federation 方式:
-
-- [1. SAML 2.0](#saml-20-federation)
-- [2. Custom Identity Broker](#2-custom-identity-broker)
-- Web Identity Federation without Web Identity
-    - 如果要用這方法... 算了吧@@, 務必使用 Cognito
-    - 需要自行處理一堆外部的 IAM user
-- [3. Web Identity Federation with Web Identity](#3-web-identity-federation-with-web-identity)
-    - 建議使用 Cognito
-- [4. AWS Cognito](./Cognito.md)
-- Single Sign On, SSO
-- Non-SAML with AWS Microsoft AD
-
-```mermaid
-flowchart LR
-
-3rd["3rd party \n user management \n (outside AWS)"]
-
-aws -- 1.trust --> 3rd;
-user -- 2.login --> 3rd;
-3rd -- 3.creds --> user;
-user -- 4.access --> aws;
-```
-
-
-### SAML 2.0 Federation
-
-
-- 需要分別於 `AWS IAM` && `SAML` 雙向設定 trust
-- 支援 web-based, cross domain SSO
-    - Using STS API: `AssumeRoleWithSAML`
-- *SAML Federation*(OLD) 可改用 **Amazon Single Sign On, SSO**(NEW)
-    - SSO, 用來建立 Federation 的新方式
 
 ---
 
@@ -657,3 +578,11 @@ IAM Access Analyzer    | Account Level
 - Service Role
     - A role that an AWS service assumes to perform actions on your behalf.
     - An IAM administrator can create, modify, and delete a service role from within IAM.
+
+
+# IAM Identity Center
+
+- 我對這不熟
+- 用來統一管理:
+    - external SAML IdP (AWS 建議用 Identity Center 來取代 SAML federation in IAM)
+    - human users

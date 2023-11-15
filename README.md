@@ -2,6 +2,22 @@
 
 - Start from 2017/07
 
+```bash
+tree -I 'node_modules|venv|.git|bin|obj|*.png|*.svg|resources/config|*.drawio'
+
+find . -name '*' \
+    ! -path "**/node_modules/*" \
+    ! -path "**/venv/*" \
+    ! -path "./.git/*" \
+    ! -path "**/bin/*" \
+    ! -path "**/obj/*" \
+    ! -path "**/*.png" \
+    ! -path "**/*.svg" \
+    ! -path "**/resources/config/*" \
+    ! -path "**/*.drawio" \
+    | xargs wc -l
+```
+
 
 ## Interesting URLs
 

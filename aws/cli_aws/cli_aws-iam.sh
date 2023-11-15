@@ -35,6 +35,15 @@ EOF
 # ------------------------------------
 
 
+### 依照本地 trust policy json file 建立 Role
+aws iam create-role --role-name demo-role --assume-role-policy-document file://demo-trust-policy.json
+# 建立一個 Role, 名為 demo-role
+# Permissions policies 會在下一步 attach
+
+
+aws iam put-role-policy --role-name demo-role --policy-name Perms-Policy-For-CognitoFederation --policy-document file://C:\policies\permspolicyforcognitofederation.json
+
+
 ### 依照本地檔案, 建立 Policy
 aws iam create-policy --policy-name test-polich --policy-document file://test-policy.json
 

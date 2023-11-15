@@ -67,3 +67,27 @@ Certificate Request:
          b9:6e:05:4f
 
 ```
+
+
+# 取得 OIDC IdP 的 Thumbprint
+
+```bash
+### 以 Github 為例
+curl https://token.actions.githubusercontent.com/.well-known/openid-configuration | jq '.jwks_uri'
+# 取出 domain : token.actions.githubusercontent.com
+
+
+### 取得 chain certificate
+openssl s_client -servername token.actions.githubusercontent.com -showcerts -connect token.actions.githubusercontent.com:443
+# 會看到非常大一包, 找到最下面的 
+# -----BEGIN CERTIFICATE-----
+# ...
+# -----END CERTIFICATE-----
+# 複製出來, 例如儲存到 github.crt
+
+### 
+openssl x509 -in github.crt -fingerprint -sha1 -noout
+# 得到
+#sha1 Fingerprint=1B:51:1A:BE:AD:59:C6:CE:20:70:77:C0:BF:0E:00:43:B1:38:26:12
+# = 右半部, 並把「:」全部消除, 就是 thumbprint 了
+```

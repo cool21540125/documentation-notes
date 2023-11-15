@@ -1,4 +1,8 @@
-- [GNU make](https://www.gnu.org/software/make/manual/html_node/index.html#SEC_Contents)
+- [GNU make](https://www.gnu.org/software/make/manual/html_node/index.html)
+- [Makefile Tutorial](https://makefiletutorial.com/)
+
+
+# Basic
 
 ```makefile
 # makefile 由一系列 rules 所組成
@@ -19,7 +23,41 @@ t1 t2:
 ```
 
 
-## CLI
+# Fancy Rules
+
+## Implicit Rules
+
+- Make 因為與 C 及 C++ 有著深度的整合, 因此有了一系列的 implicit rules
+	- `CC`       : 用來處理 C, 預設為 `cc`
+	- `CXX`      : 用來處理 C++, 預設為 `g++`
+	- `CFLAGS`   : 給 C compiler 的 extra flags
+	- `CXXFLAGS` : 給 C++ compiler 的 extra flags
+	- `LDFLAGS`  : 給 compilers 的 extra flags (當需要去 invoke the linker)
+- Implicit Rules:
+	- C : 由 **xx.c**            產出 **xx.o**
+		- `$(CC) -c $(CPPFLAGS) $(CFLAGS) $^ -o $@`
+	- C++ : 由 **xx.cc**/**xx.cpp** 產出 **xx.o**
+		- `$(CXX) -c $(CPPFLAGS) $(CXXFLAGS) $^ -o $@`
+	- Link Object File : 由 **xx.o** 產出 **xx**
+		- `$(CC) $(LDFLAGS) $^ $(LOADLIBES) $(LDLIBS) -o $@`
+
+```makefile
+### C 與 C++ 的 Implicit Rule 範例
+CC = gcc
+CFLAGS = -g  # 啟用 debug info
+
+blah: blah.o
+
+blah.c:
+	echo "int main() { return 0; }" > blah.c
+
+clean:
+	rm -f blah*
+```
+
+
+
+# CLI
 
 ```bash
 ### 

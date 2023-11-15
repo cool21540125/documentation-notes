@@ -106,6 +106,9 @@ ALB -- 2. access --> tg["Target Group"]
 
 - Goal: 讓 client 直接訪問 AWS Resources (免 create IAM users)
     - ex: 要讓 FB user, 直接使用 S3
+- 使用 **Cognito Identity Pool** 的話, 需要授權這服務使用 `AssumeRoleWithWebIdentity`
+    - 如果不使用 Cognito, 而要讓 **external IdP** 訪問 AWS Resources (藉由 OIDC 或 SAML 2.0)的話, 則需要自行實作 `AssumeRoleWithWebIdentity` 這一段
+        - 用來與 external IdP 取得 token, 去與 AWS 交換 `temporary security credentials`
 
 ```mermaid
 flowchart TB

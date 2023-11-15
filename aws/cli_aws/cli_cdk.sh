@@ -8,8 +8,9 @@ exit 0
 npm install -g aws-cdk
 
 
-cdk --version
-# 2.99.1 (build b2a895e)  # 2023/10
+cdk version
+#2.108.1 (build 2320255
+
 
 ### 可用來取得 Account && UserId && Arn
 aws sts get-caller-identity
