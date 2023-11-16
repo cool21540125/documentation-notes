@@ -210,6 +210,8 @@ aws ecr create-repository --repository-name ${ECR_NAME} --region ${REGION}
 
 ### 使用本地的 task-definition.json 建立一個 task definitions
 aws ecs register-task-definition --cli-input-json file://${TASK_DEFINITION_FILE}.json
+# containerPort : port that container exposes
+# hostPort      : port that you want to map it to on the host
 # 這檔案長得一副就是 docker-compose 的樣子
 
 
