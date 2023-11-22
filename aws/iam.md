@@ -175,6 +175,31 @@ r2 -.- srv2["AWS Services \n (ex: S3)"];
         - 然後你被賦予了 assume 總統這個 Role 的 Instance Profile, 你就能幹總統能幹的事情(販賣芒果乾, 買很多免稅菸等等)
 
 
+## 特殊權限 - IAM PassRole
+
+前言
+
+以往我們常關注 user 可以對哪些 **resources 執行特定 actions** (或是哪些被禁止), 很常忽略掉 user 可以 access 哪些 **IAM Roles**
+
+
+- `iam:PassRole` 是個 special permission, 讓你可以 associate an IAM role 到特定的 resource
+    - **Passing a role** 意指 **link role to resource**
+    - 用來限定 resource 可對於 other AWS resource 做哪些 action
+- 細節
+    - IAM PassRole 並非 API method (官方歸類上會讓人誤解)
+    - IAM PassRole 並非讓你去尻的 Api
+
+```jsonc
+// https://rowanudell.com/iam-passrole-explained/
+// 限定 user/service 可以 pass to LimitedAccess
+{
+  "Effect": "Allow",
+  "Action": "iam:PassRole",
+  "Resource": "arn:aws:::123456789012:role/LimitedAccess"
+}
+```
+
+
 # IAM Principal
 
 - 權限適用的 使用者(account / user / role)
