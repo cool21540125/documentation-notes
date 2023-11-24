@@ -161,6 +161,9 @@ git rev-parse refs/remotes/origin/${Branch}^{commit}
 
 
 
+### ======================= Git log =======================
+git log --pretty=format:%s <last release>...HEAD --no-merges
+# 列出 releases 之間的 commit
 
 
 

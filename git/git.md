@@ -114,86 +114,7 @@ $ git show HEAD
 ```
 
 
-## [索引](https://github.com/doggy8088/Learn-Git-in-30-days/blob/master/zh-tw/07.md)
 
-> 索引(index) 就是已經做了 `git add` 的地方, 底下這些名詞是相同的:
-
-- Index (索引)
-- Cache (快取)
-- Directory cache (目錄快取)
-- Current directory cache (當前目錄快取)
-- Staging area (等待被 commit 的地方)
-- Staged files (等待被 commit 的檔案)
-
-
-
-## git reset 還原索引狀態
-
-- `git reset`: 此次版本, 已做 `git add` 的檔案們, 全部變成沒做的狀態
-- `git reset --hard`: 此次版本, 不管有沒有做 `git add`, 總之把 `current index` 變乾淨
-
-> `git reset HEAD^ --hard`, --hard, 表示資料夾中的檔案也要一起回復
-
-```sh
-# O C0               (old)
-# |
-# O C1
-# |
-# O C2 <-master      (new)
-
-$ git reset HEAD^    # 把分支參考點退回上一個 commit (重寫歷史的概念)
-# O C0
-# |
-# O C1 <-master
-```
-
-
-# git reset --hard
-
-```sh
-# !!! 如果本地已經有 git, 且已有最近一次的 Commit, ex:
-# -----------------------------------
-# * 2353tc9 (HEAD -> dev, origin/dev) 改寫部分結構
-# * 745b529 修改架構
-# * b8t58d7 縮減結構
-# -----------------------------------
-
-# 而在 2353tc9 的前提之下, 作了部分修改並存檔(還沒作 git add), 發現把東西弄壞了... 想回到乾淨的 2353tc9
-
-# reset 前 ------------------------
-$ git status
-On branch structuremove
-Your branch is up-to-date with 'origin/structuremove'.
-
-Changes not staged for commit:              # 即將消失---------------------------
-  (use "git add <file>..." to update what will be committed)
-  (use "git checkout -- <file>..." to discard changes in working directory)
-
-        modified:   bis_emc/settings.py     # 即將消失---------------------------
-
-Untracked files:    # 這裡的不會變動, 因為從頭到尾 git 都不認識
-  (use "git add <file>..." to include in what will be committed)
-
-        bis.ini
-
-no changes added to commit (use "git add" and/or "git commit -a")
-
-# 大膽的回去
-$ git reset --hard
-HEAD is now at 2353tc9 改寫部分結構
-
-# reset 後 ------------------------
-$ git status
-On branch structuremove
-Your branch is up-to-date with 'origin/structuremove'.
-
-Untracked files:    # 這裡的不會變動, 因為從頭到尾 git 都不認識
-  (use "git add <file>..." to include in what will be committed)
-
-        bis.ini
-
-nothing added to commit but untracked files present (use "git add" to track)
-```
 
 
 ## git revert 取消提交 (保有 git commit的實作方式)
@@ -312,30 +233,34 @@ $ git branch -u origin/master foo
 
 # D. 操作指令
 
-## 選項
-
-選項 | 說明 | 範例
---- | --- | ---
--s | 簡易資訊 | git status -s
-
-
 ## Git cat-file
 
 ```bash
 ###
 $# git cat-file -p XXX
 # XX 可為 `commit` or `Tag` or `branch`
+
+
+### 列出簡易資訊
+git status -s
 ```
 
 ## Git tag
 
 - [Git Tag](https://github.com/doggy8088/Learn-Git-in-30-days/blob/master/zh-tw/15.md)
+- [Git Tags](https://www.youtube.com/watch?v=4wPjo5C-v8Y)
 - 2020/02/04
 
 git tag 分為 2 種:
 
-- lightweight : 只是在 commit 上, 貼上參考名稱 新增到 ~/.git/refs/tags/<TAG_NAME>
-- annotated : 產生 git object 到 ~/.git/objects/ 底下
+- lightweight
+    - 位於 `~/.git/refs/tags/<TAG_NAME>`
+    - `git tag <tag-name> [commit]`
+- annotated
+    - 位於 `~/.git/objects/`
+    - 比較嚴謹的方式. 可作 tagging message, 也可以做 GPG(GNU Privacy Guard) verify
+    - `git tag -a <tag-name> -m"<annotation> [commit]` - unsigned
+    - `git tag -s <tag-name> -m"<annotation> [commit]` - GPG-signed
 
 
 [推送 tag問題](https://stackoverflow.com/questions/5195859/how-to-push-a-tag-to-a-remote-repository-using-git)
@@ -354,6 +279,19 @@ $ git tag -d v1.0
 # 連同
 $ git push --follow-tags
 ```
+
+
+### Release Notes
+
+- Patch release
+    - List of bug fixes
+- Minor release
+    - List of changes
+    - Usage details
+- Major release
+    - List of removals
+    - List of additions
+    - Upgrade process
 
 
 ## Merge 與 Rebase
