@@ -65,6 +65,17 @@
             - 再由上面的 encrypted snapshot 來做 create volume from snapshot > 得到一個 encryption volume
         - 或是, 也可由原 volume, create snapshot(不做 encrypt)
             - 接著 create volume from snapshot > 勾選 encrypt this volume > 得到一個 encryption volume
+- EBS 的服務/額外功能: 
+    - Amazon Data Lifecycle Manager, DLM
+        - 用來自動 增刪改 EBS snapshots 及 EBS-backed AMI
+    - Fast Snapshot Restore, FSR
+        - 可將 snapshot 做快速還原
+        - 非常非常貴, 一個月幾百美的那種貴
+    - Recycle Bin for EBS Snapshots
+        - 可以幫 snapshots 開啟資源回收桶
+    - EBS Snapshot Archive
+        - 將 snapshot 移動到 archive tier
+        - 大概可節省 72% 的儲存費用
 
 
 # TIPs
