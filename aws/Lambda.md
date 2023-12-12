@@ -14,14 +14,6 @@
     - AWSLambdaSQSQueueExecutionRole - read from SQS
     - AWSLambdaVPCAccessExecutionRole - deploy Lambda function in VPC
     - AWSXRayDaemonWriteAccess - 上傳 trace data 到 X-Ray
-- [Configuring provisioned concurrency](https://docs.aws.amazon.com/lambda/latest/dg/provisioned-concurrency.html)
-- concurrency 指的是, 同一時間, Lambda 能夠同時處理的數量, 有底下 2 個控制變數:
-  - Reserved concurrency
-    - Reserved concurrency 用來保證 Lambda FN 高併發的最高數量
-    - 配置此變數不收費
-  - Provisioned concurrency
-    - Provisioned concurrency 用來初始化 execution environments 的數量, 也就是說, 若有請求可立即回覆
-    - 需要課金
 - Lambda Destionation
 - 類似 SQS DLQ (用來存放 SQS 調用 failure 的 Message), 此方式可用來存放 Lambda Execution Result
   - 包含 success & failure
@@ -121,6 +113,23 @@ aws lambda create-event-source-mapping \
     --starting-position LATEST \
     --event-source-arn ${DynamoDB_Stream_ARN}
 ```
+
+
+# Lambda - Scaling
+
+- 關於 **Reserved concurrency** 與 **Provisioned concurrency**
+- 首先, 每個 AWS Account 預設會有 1000 concurrent executions 的 concurrency limit (此限額可藉由修改 quota 來提昇)
+  - Concurrency = (平均每秒請求數) * (平均每次請求佔用秒數)
+    - ex: 平均每秒請求 100 次 * 平均每次佔用 5 secs, 則 concurrency 為 500
+    - ex: 平均每秒請求 100 次 * 平均每次佔用 0.5 secs, 則 concurrency 為 50
+- 如果有一些 Lambda FN 非常重要, 不可因為達到 Concurrency 而被限流的話, 可配置 Reserved Concurrency 給它使用
+  - 此 Reserved Concurrency 具備排他性, 配置了以後, 即使沒使用到, 也無法被其他 Lambda FN 使用
+- 如果有一些 Lambda FN 很講究效率, 希望能夠儘早給回應, 可配置 Provisioned Concurrency 給它使用
+  - 若此 Provisioned Concurrency 額度用完, 再若此 Lambda FN:
+    - 沒有配置 Reserved Concurrency, 其餘流量會使用 Unreserved Concurrency
+    - 　有配置 Reserved Concurrency, 其餘流量會使用 Reserved Concurrency
+  - 會先處理完成 Lambda FN 的 init 階段 (將來尻 Lambda FN 時可以直接進行 invoke 免需再 init)
+  - 因為需要 預先佈建, 因而會有額外費用問題
 
 
 # Lambda - Serverless

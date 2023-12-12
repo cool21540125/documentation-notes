@@ -70,6 +70,18 @@ export AWS_REGION=ap-northeast-1
 # ex: Tokyo : ap-northeast-1
 # ex: Osaka : ap-northeast-3
 
+### 變數優先級優先於 CLI 的 --region 及 SDK 的 AWS_REGION
+export AWS_DEFAULT_REGION=ap-northeast-1
+
+
+### 變數優先級優先於 profile 裡頭的 aws_access_key_id
+export AWS_ACCESS_KEY_ID=
+
+
+
+
+
+
 
 ### 可用來查看目前下的 CLI 指令是用 哪個設定檔/環境變數/命令選項
 aws configure list
@@ -84,7 +96,6 @@ export AWS_REGION=$(curl -s 169.254.169.254/latest/dynamic/instance-identity/doc
 
 ### 底下這堆都還沒實驗過 (不確定就是了)
 export AWS_SECRET_ACCESS_KEY
-export AWS_DEFAULT_REGION
 export AWS_DEFAULT_OUTTPUT
 export AWS_MAX_ATTEMPTS
 export AWS_RETRY_MODE

@@ -20,7 +20,23 @@ uname -a
 #            Kernel: Linux 3.10.0-514.el7.x86_64
 #      Architecture: x86-64
 
-cat /etc/centos-release
+
+cat /proc/version
+#Linux version 5.10.104-linuxkit (root@buildkitsandbox) (gcc (Alpine 10.2.1_pre1) 10.2.1 20201203, GNU ld (GNU Binutils) 2.35.2) #1 SMP Thu Mar 17 17:08:06 UTC 2022
+
+### 不一定會有此 CLI
+lsb_release -a
+
+### 不一定會有此 CLI
+hostnamectl
+
+### 查看 Kernel
+uname -a
+#Linux 4450648556ba 5.10.104-linuxkit #1 SMP Thu Mar 17 17:08:06 UTC 2022 x86_64 GNU/Linux
+
+
+### yum 查詢 ( **向 Yum Server 請求** )
+cat /etc/*-release
 #CentOS Linux release 7.9.2009 (Core)
 
 rpm --query centos-release
@@ -1669,6 +1685,8 @@ rpm -ivh https://repo.zabbix.com/zabbix/4.0/rhel/7/x86_64/zabbix-release-4.0-1.e
 # ↑↓ 不知道差在哪.... 4.0-1 及 4.0-2.....
 rpm -Uvh https://repo.zabbix.com/zabbix/4.0/rhel/7/x86_64/zabbix-release-4.0-2.el7.noarch.rpm
 yum clean all
+# 會去清空 /var/cache/yum/.../*.rpm
+# 此為 yum install 時, 所下載的暫存快取目錄
 
 yum install -y zabbix-get zabbix-agent zabbix-server-mysql zabbix-web-mysql 
 

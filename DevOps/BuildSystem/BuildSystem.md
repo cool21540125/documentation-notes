@@ -2,18 +2,26 @@
 # Build System
 
 - Bazel
-    - Open-Source by Google
+    - Google 內部使用的是 Blaze, 而 Bazel 則是開園後的版本
+        - 有點像是 Google 內部使用 Borg, 而開源的部分稱之為 Kubernetes
+    - Open-Source by Google in 2015
     - Language: 跨語言
     - Cross Platform
     - Learning Curve
         - 適用於超大型系統, 能控制非常多細節, 學習曲線陡峭
+    - 有哪些知名公司使用
+        - Google
+        - Stripe
+        - Netflix
 - Buck
     - Open-Source by Facebook
+        - Buck was a Bazel clone built at Facebook
     - Language: 跨語言
     - Cross Platform
     - Learning Curve
 - Pants
     - Open-Source by Twitter
+        - Pants was a Bazel clone used at Twitter and Foursquare
     - Language
         - v1 僅支援 Python (in 2022)
         - v2 的話不曉得...

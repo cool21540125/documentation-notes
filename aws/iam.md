@@ -184,7 +184,7 @@ r2 -.- srv2["AWS Services \n (ex: S3)"];
 
 - `iam:PassRole` 是個 special permission, 讓你可以 associate an IAM role 到特定的 resource
     - **Passing a role** 意指 **link role to resource**
-    - 用來限定 resource 可對於 other AWS resource 做哪些 action
+    - 用來規範 resource 可對於 other AWS resource 做哪些 action
 - 細節
     - IAM PassRole 並非 API method (官方歸類上會讓人誤解)
     - IAM PassRole 並非讓你去尻的 Api

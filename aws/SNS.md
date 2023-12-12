@@ -72,29 +72,46 @@ rule["Notification Rule"] -- target --> tg;
 - 幾乎等同於 [SQS-Security](./SQS.md#security)
 - 若 SNS 要搭配 SQS 做 fan out
     - SQS 需 allow SNS write
-    ```mermaid
-    flowchart TD;
-    buy["Buying Service"];
-    f["Fraud Service"];
-    s["Shipping Service"];
 
-    buy -- pub --> SNS;
-    SNS -- sub --> SQS1;
-    SNS -- sub --> SQS2;
-    SQS1 -- Receive --> f;
-    SQS2 -- Receive --> s;
-    ```
+```mermaid
+flowchart TD;
+buy["Buying Service"];
+f["Fraud Service"];
+s["Shipping Service"];
+
+buy -- pub --> SNS;
+SNS -- sub --> SQS1;
+SNS -- sub --> SQS2;
+SQS1 -- Receive --> f;
+SQS2 -- Receive --> s;
+```
 
 
 # CLI
 
 ```bash
-### 
-$# aws sns list-subscriptions \
-    --profile tonychoucc --region ap-northeast-1
+### Create Topic
+aws sns create-topic --name my-topic
 
-### 
-$# aws sns unsubscribe \
-    --subscription-arn arn:aws:sns:ap-northeast-1:152248006875:blog-repo-notify-topic \
-    --profile tonychoucc --region ap-northeast-1
+
+### 使用 email 訂閱
+aws sns subscribe --topic-arn arn:aws:sns:ap-northeast-1:668363134003:my-topic --protocol email --notification-endpoint tonychoucc@gmail.com
+# 去收信, 確認訂閱後, 可以取得目前用戶的 subscription-id, 如下:
+# arn:aws:sns:ap-northeast-1:668363134003:my-topic:0dee22e1-c4a0-4b32-a75c-3a829de4cc44
+
+
+### Send messages
+aws sns publish --topic-arn arn:aws:sns:ap-northeast-1:668363134003:my-topic --message "Hello World!"
+
+
+### 列出訂閱戶清單
+aws sns list-subscriptions
+
+
+### 取消訂閱用戶
+aws sns unsubscribe --subscription-arn arn:aws:sns:ap-northeast-1:668363134003:my-topic:0dee22e1-c4a0-4b32-a75c-3a829de4cc44
+
+
+### Remove Topic
+aws sns delete-topic --topic-arn arn:aws:sns:ap-northeast-1:668363134003:my-topic
 ```

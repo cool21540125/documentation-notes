@@ -2,18 +2,16 @@
 # [AWS STS, Security Token Service](https://docs.aws.amazon.com/STS/latest/APIReference/welcome.html)
 
 - AWS STS, AWS Security Token Service, 是個 Web Service
-    - 可讓 users 取得 temporary, limited-privilege credentials
-
+- STS 是個 Web Service, global endpoint 為 : `https://sts.amazonaws.com`
+    - 不過建議使用 Region endpoint 為主, 可參考底下 Url:
+        - https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_temp_enable-regions.html#id_credentials_temp_enable-regions_writing_code
 - STS 用來讓 Users 申請 Temporary Security Credential(temp creds) 及 limited-privilege creds
-    - users 如下:
+    - users 可能是下列之一:
         - AWS Identity
         - IAM
         - for users you authenticate (federated users)
         - Contractor who don't have Iam User
     - temp creds, 有效期限大概落在 15~60 mins
-- STS 是個 Web Service, global endpoint 為 : `https://sts.amazonaws.com`
-    - 不過建議使用 Region endpoint 為主, 可參考底下 Url:
-        - https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_temp_enable-regions.html#id_credentials_temp_enable-regions_writing_code
 
 
 # Terms
@@ -29,7 +27,7 @@
 STS 支援了一系列的 actions, 可用來取得 **temp creds**
 
 
-## AssumeRole
+## [AssumeRole](https://docs.aws.amazon.com/STS/latest/APIReference/API_AssumeRole.html)
 
 - 尻 AssumeRole Api 拿到的 **temp creds**, 裡頭包含了:
     - an access key pair:
@@ -67,10 +65,18 @@ STS 支援了一系列的 actions, 可用來取得 **temp creds**
 - 使用 AssumeRoleWithSAML 的前置必要作業:
 
 
-## AssumeRoleWithWebIdentity
+## [AssumeRoleWithWebIdentity](https://docs.aws.amazon.com/STS/latest/APIReference/API_AssumeRoleWithWebIdentity.html)
 
 - 使用 AssumeRoleWithWebIdentity 的時候, 不需要提供 security credentials
 - 此 Api User, 會先從 Identity Provider 那邊驗證通過後拿到 **identity token**, 再來 AWS 這邊使用此 Api 來拿到 **temp creds**
+- 拿到的 Response 包含:
+    - AssumedRoleUser
+    - Audience
+    - Credentials
+    - PackedPolicySize
+    - Provider
+    - SourceIdentity
+    - SubjectFromWebIdentityToken
 
 
 ## GetCallerIdentity
@@ -80,12 +86,50 @@ STS 支援了一系列的 actions, 可用來取得 **temp creds**
 - 尻 GetCallerIdentity Api 拿到的 **temp creds**, 可以做任何的 Api call, 但除了:
     - AssumeRole 及 GetCallerIdentity 以外的 STS Api
     - any IAM Api operations (除非有提供 MFA authentication information)
+- 拿到的 Response 包含:
+    - Account : AWS Account ID number
+    - Arn     : Account 的 Arn
+    - UserId  : 就... UserID, ex: *ARO123EXAMPLE123*
 
 
 ## GetSessionToken
 
-- 這 Api 我沒有花很多時間研究, 但研判 87% 應該與 MFA 有關
-- 
+- The purpose of the sts:GetSessionToken operation is to authenticate the user using MFA
+    - 如果 IAM User 啟用了 MFA, 則必須使用此 API
+- 使用此 API 的話, 無需任何的 Permissions
+
+
+# Temporary Credentials, temp creds
+
+temp creds 很常出現在底下的情境:
+
+- identity federation
+- delegation
+- cross account access
+- IAM roles
+
+
+## Identity federation
+
+- AWS users 都不是由 AWS 管理, 而是在 external system
+- 如果用 external system 是否為自行管理, 可在區分成下列 2 者:
+    - Enterprise identity federation
+        - 自家的 Data Center
+        - 在自家 org 的 network 做身份認證, 此即為 single sign-on, SSO
+        - AWS STS 支援了公開標準的 SAML 2.0
+            - 可用像是 *Microsoft AD FS* to leverage *Microsoft Active Directory*
+    - Web identity federation
+        - web 上頭的 3rd
+            - ex: Login with Amazon, Facebook, Google, or any OpenID Connect (OIDC) 2.0 compatible provider
+        - 
+
+
+## Delegation
+
+## Cross Account access
+
+## IAM roles
+
 
 
 # 雜記

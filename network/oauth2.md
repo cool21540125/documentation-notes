@@ -69,7 +69,8 @@
         - 無法核發 Refresh Token
         - 需要 User-Agent Redirection
         - 有個資外洩風險
-    3. Resource Owner Password Credentials Grant Type Flow
+            - 因為請求過程都是 Public (一個 auth Request, 一個 auth Response), token 夾帶在 Url 當中
+    3. Re source Owner Password Credentials Grant Type Flow
         - Resource Owner 的 帳密 直接拿來當作 Grant
         - 適用於 Resource Owner 高度信任 Client (ex: OS 內建 App, 官方 App)
         - 其他流程無法使用再來用這個
@@ -81,6 +82,19 @@
         - 不建議核發 Refresh Token
         - 無 User-Agent Redirection
 - Clients 類型分為 Public && Confidential 兩種
+
+
+```api
+### Authorization Code Flow
+GET /authorize?response_type=code&...
+
+### Implicit Code Flow - Request
+GET /authorize?response_type=token&...
+
+### Implicit Code Flow - Response
+Location /redirect_uri#access_token={TOKEN}&...
+
+```
 
 
 ### 技術要求

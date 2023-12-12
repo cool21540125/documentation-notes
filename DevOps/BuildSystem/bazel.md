@@ -1,9 +1,16 @@
 
 - [更舊的文章](https://bazel-docs-staging.netlify.app/versions/master/skylark/tutorial-creating-a-macro)
 - [舊文章位置](https://docs.bazel.build/versions/5.4.1/skylark/concepts.html)
+- [是否導入Bazel-大師們見解](https://earthly.dev/blog/bazel-build/)
 
 # Bazel
 
+- 最基本概念
+    - 把 source code →  executable 
+    - 整合了一系列的 tools 來促進 build 及 deploy
+        - 這些 tools 可能包含了: 各種程式語言的 pkg manager, runtime, sdk, …
+    - 用一句話形容 Bazel
+        - Bazel can solve large monorepo build problems very well, but it has a steep adoption curve
 - bazel 為 build / test tool
 - 基本上有 3 個動作: `bazel build`, `bazel test`, `bazel run`
     - 對於 `bazel build` 及 `bazel test` 需要是 no side-effect (為了有效 cache)
@@ -159,3 +166,15 @@ bazel cquery --output=files //:rule
 - rules_nodejs -> rules_js
 - rules_docker -> rules_oci
 - 早期使用名為 `skylark` 來撰寫 rules, 但因為這名字已經有其他代表作了, 因而改成 `starlark`
+
+
+# bazel 故事
+
+- bazel 誕生以前, google 使用了大量的 monorepo, 並且使用 makefile 來做 build 方面的管控
+- 當 code base 逐漸龐大以後, Makefile 變得非常難以維護
+- 在 google
+    - 後端 使用 Go/Java
+    - 前端 使用 React/JS
+    - 資料 使用 Python/Scala
+    - infra 使用 Go/Rust/C/C++/Lua
+- 即使使用了不同的 build system, 也很難讓開發人員具備 "具有凝聚力" 的開發者體驗 (大家都用各自的方法)
