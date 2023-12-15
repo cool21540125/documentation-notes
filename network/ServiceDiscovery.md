@@ -27,7 +27,14 @@ consumer -- 5 --> provider;
 
 # Service Discovery Patterns
 
+- Multi-container Pods Design Patterns, 屬於 CKAD 的範圍, 有 3 種方式:
+    - Sidecar
+    - Adapter
+    - Ambassador
+
+
 ## Client Side Discovery
+
 ```mermaid
 flowchart LR;
 
@@ -38,6 +45,7 @@ A -- request --> B;
 
 
 ## Server Side Discovery
+
 ```mermaid
 flowchart LR;
 
@@ -46,11 +54,13 @@ Proxy -- ask --> Registry;
 Registry -- ip --> Proxy;
 Proxy -- request --> B;
 ```
+
 ------------------------------------------------------------
 
 # Service Registration Options
 
 ## Self-Registration / Sidecar Pattern
+
 ```mermaid
 flowchart LR;
 
@@ -68,19 +78,27 @@ aa -- update --> Registry;
 bb -- update --> Registry;
 ```
 
+
 ## 3rd-Party Registration / Orchestration
+
 ```mermaid
 flowchart TB;
 
 subgraph Cluster
+    AA["A"];
+    BB[" "];
+    CC["C"];
+    DD["D"];
+
     3rd["3rd Registrar"]
     3rd -- update --> Registry;
-    3rd -- watch -.-> A["A"]
-    3rd -- watch -.-> B[" "]
-    3rd -- watch -.-> C["C"]
+    3rd -- "watch" --> AA;
+    3rd -- "watch" --> BB;
+    3rd -- "watch" --> CC;
 end
 
-3rd -- "watch 不到" -.-> D["Ｄ"]
+
+
+3rd -- "watch 不到" --> DD;
 ```
 
-------------------------------------------------------------

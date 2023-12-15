@@ -393,6 +393,10 @@ kubectl -n kube-system get service
 # k8s 的 DNS
 
 
+### 設定與 cluster 的連線
+kubectl config set-cluster
+
+
 ### 顯示目前有哪些 context
 kubectl config get-contexts
 #CURRENT   NAME                  CLUSTER               AUTHINFO   NAMESPACE
@@ -400,6 +404,10 @@ kubectl config get-contexts
 #          str-demo-k8s-str-02   str-demo-k8s-str-02   str        
 #          str-demo-k8s-str-03   str-demo-k8s-str-03   str        
 #          str-demo-k8s-str01    str-demo-k8s-str01    str
+
+
+### 查看合併後的 kubeconfig 設定
+kubectl config view
 
 
 ### 查詢 KUBECONFIG 配置是否正確配置 && 指向了哪個 k8s cluster

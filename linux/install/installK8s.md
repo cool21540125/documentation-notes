@@ -27,6 +27,16 @@
 - ![Debian-based安裝](./installUbuntu.md#install-k8s--install-kubernetes)
 - ![RedHat-based安裝](./installCentOS7.md#install-k8s--install-kubernetes)
 - 底下使用 pkg manager 的方式紀錄
+- 關於 k8s 的版本, 最大的版本號為 api-server, 且需要遵守底下的安裝版本限制
+    - kube-apiserver 為最主要的元件, ex: 
+        - v1.10
+    - controller-manager 及 scheduler 可行的版本號則為
+        - v1.10 & v1.9
+    - kubelet 及 kube-proxy 可行的版本號則為
+        - v1.10 & v1.9 & v1.8
+    - kubectl 可行的版本號則為
+        - v1.11 & v1.10 & v1.9
+
 
 
 ## 法1. Use kubeadm
@@ -41,7 +51,10 @@
 - Worker join cluster
 
 ```bash
+### 升級 k8s
+kubeadm upgrade plan
 
+kubeadm upgrade apply
 ```
 
 

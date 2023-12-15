@@ -911,3 +911,15 @@ bazel --version
 brew install graphviz
 brew install xdot
 ```
+
+
+# Install cloc
+
+- 程式碼分析
+
+```zsh
+brew install cloc
+
+
+cloc --vcs git
+```

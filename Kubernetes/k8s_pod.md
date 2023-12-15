@@ -1,10 +1,17 @@
 
-
-pod
-
 - 只能運行在同一台主機上, 無法跨主機
 - 所有 pods 總量的資源限制, 不可超過 pod 所在主機的 80%
 - pods 靠著 label 來做 Scheduling Management
+
+
+# initContainers
+
+- 一個 Pod 裡頭可以有多個 Containers 運行著
+    - 如果任何一個 Container 出狀況, Pod 會重啟
+- 不過有些 Pod 並非 long running container, 它們可能是一次性的任務
+    - 像是, 初始任務會等待外部服務正常後, 然後才開始 long running
+    - 像是, 初始任務會去外部拉某個套件, 然後才開始 long running
+- 在 k8s 裏面, 可以把這任務安排給 initContainers 去進行
 
 
 # Static Pod (靜態 Pod)
