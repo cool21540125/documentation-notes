@@ -1,7 +1,7 @@
-
 - [更舊的文章](https://bazel-docs-staging.netlify.app/versions/master/skylark/tutorial-creating-a-macro)
 - [舊文章位置](https://docs.bazel.build/versions/5.4.1/skylark/concepts.html)
 - [是否導入Bazel-大師們見解](https://earthly.dev/blog/bazel-build/)
+
 
 # Bazel
 
@@ -100,7 +100,6 @@ bazel cquery --output=files //:rule
             - 絕大多數情況下, 不需要自行實作 `build rules` (或稱之為 `Language rules`) (此外還有 `android rule` / `ios rule`)
     - 其他 (應該是很進階的議題了, 先忽略)
 - Target 裡頭可以加上 `tags` 屬性 (通常是為了做測試)
-
 
 
 ## Label

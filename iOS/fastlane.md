@@ -1,4 +1,31 @@
 
+# Authentication
+
+- fastlane 作為用來 build iOS App 的工具, 需要不時的與 Apple Services 做認證, 驗證方式有底下這些
+    - App Store Connect API key (推薦)
+        - 官方推薦使用這種方式, 但並非所有的 fastlane action 都有支援就是了
+            - [Introduction - App Store Connect API](https://docs.fastlane.tools/app-store-connect-api/)
+            - [Spec - App Store Connect API](https://developer.apple.com/documentation/appstoreconnectapi)
+        - 此並非官方(Apple)標準
+        - 使用 cookie-based web session 做認證
+    - 2FA authentication
+        - 可再區分成底下的方式
+            - Manual verification
+                - CI/CD 無法使用
+                - 若沒有專門用來取得 2FA 的 Device, 要將 Phone Number 配置到: ~/.fastlane/spaceship/[email]/cookie
+                - 把 Phone Number 放到 `~/.fastlane/spaceship/[email]/cookie`, 收簡訊再來輸入 security code
+            - Storing a manually verified session using spaceauth
+                - 藉由 `fastlane spaceauth -u user@email.com` 生成 login session, 並儲存到環境變數 - `FASTLANE_SESSION`
+                    - 得人工定期到機器上頭做 login (敲密碼), 驗證後拿到 `FASTLANE_SESSION='......` (非常大一包)
+    - Application-specific passwords
+        - 如果要藉由底下方式, 來將 App 上傳到 **App Store Connect** 或 **TetFlight**, 則需要 `FASTLANE_APPLE_APPLICATION_SPECIFIC_PASSWORD`:
+            - `upload_to_app_store` / `deliver` / `upload_to_testflight` / `pilot` / `testflight`
+        - 可以到 https://appleid.apple.com/ 建立 `FASTLANE_APPLE_APPLICATION_SPECIFIC_PASSWORD`
+    - Apple ID without 2FA
+        - 2019/02 以後都強制得 2FA 了
+        - 最原始的方式, 使用 username 及 password 做 cookie-based web session 認證方式
+
+
 # fastlane tools
 
 - [Fastlane for iOS](https://www.youtube.com/watch?v=N_NwcDO_S_s)

@@ -16,7 +16,8 @@
     - Distribution 是 pure
     - 適用於 python2 && python3
     - 無需使用像是 `2to3` 的轉換
-- distutils    : 
+- distutils    :
+    - Python 3.10 以標記為 DEPRECATED 並將在 3.12 時移除 distutils
     - 用來 封裝 && 發布 Python 程式 && 擴充功能
     - 此為 python standard library (請別直接使用它)
     - 替代方案, 請使用 `pip install setuptools wheel twine`
