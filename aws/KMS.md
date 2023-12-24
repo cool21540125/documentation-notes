@@ -1,16 +1,37 @@
 
-# KMS, Key Management Service
+# [KMS, AWS Key Management Service](https://docs.aws.amazon.com/kms/latest/developerguide/overview.html)
 
-- [AWS Key Management Service](https://docs.aws.amazon.com/kms/latest/developerguide/overview.html)
-- 幫忙 create/manage `cryptographic keys`
-- Signing Request (簽署請求)
-    - Requests 都必須經由 `access key ID && secret access key` 簽署
-        - 以下將 `access key ID && secret access key` 稱之為 SECRET_ACCESS_ID_KEY
-    - 安全性考量, 建議遵照底下方式來 sign requests:
-        - IAM User 的 SECRET_ACCESS_ID_KEY
-        - STS 產生的 temporary security credentials
-    - "不要使用" root 的 SECRET_ACCESS_ID_KEY
-- Additional Resources
+- KMS 使用 硬體安全模組(HSM), 依照 FIPS 140-2 Cryptographic Module Validation Program 來保護及驗證 `AWS KMS keys`
+- CloudTrail 與 KMS 的整合
+    - 可使用 CloudTrail 來查看 KMS 的使用
+    - 用以滿足 auditing, regulatory, and compliance needs
+- KMS 常被拿來與 **CloudHSM** 做比較
+- API call > 4KB data 須借助 **envelop encryption**
+- 使用 KMS 的注意事項
+    - 要收費, `$0.03/10000` call KMS API
+    - KMS Key - 無法 cross region 傳送
+    - [Deleting AWS KMS keys](https://docs.aws.amazon.com/kms/latest/developerguide/deleting-keys.html)
+        - 因為 KMS Key 太過敏感且重要, 為了防止誤砍, 給予了 waiting period 的機制
+        - 點選刪除後, Key 會進入 **Pending deletion** (可自行設定 7~30 days, default 30 days)
+        - 可在此期間內還原, 但如果超過此期間就 GG 了
+            - AWS 會連帶刪除與此相關的 Resources
+        - KMS Key 的權限, 主要使用 Key Policy 來管控訪問, 每把都需要有它自己的 key policy (其次也可使用 IAM)
+- 2 types of KMS Keys:
+    - Symmetric Keys
+        - AES-256
+        - CMK, Customer Master Key, 又分成 3 種:
+            - AWS Managed Service Default CMK (AWS owned CMK)
+                - Free
+            - User Keys created in KMS (AWS managed CMK)
+                - 一把 Key : 1/month
+            - User Keys imported (Customer managed CMK)
+                - 一把 Key : 1/month
+                - 必須為 256 bit symmetric key
+        - envelop encryption
+        - user call API to use Key
+    - Asymmetric Keys
+        - RSA & ECC key pairs
+        - user CAN NOT call API to see private key
 - 常用的 API
     - [Encrypt]
     - [Decrypt]
@@ -48,5 +69,3 @@
 
 
 # [GenerateDataKeyWithoutPlaintext]
-
-

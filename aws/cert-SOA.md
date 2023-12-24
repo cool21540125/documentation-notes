@@ -119,3 +119,12 @@ Resources:
     - Password authentication
     - Password and IAM database authentication
     - Password and Kerberous authentication
+
+
+# AWS Service Catalog
+
+適用於 AWS Organization
+
+root Account 的 admin User 於 AWS Service Catalog, 建立 類似於 CloudFormaiton 的 Teamplate
+
+可給 Organization accounts 來做 create/deploy service

@@ -538,7 +538,6 @@ S3 -- $0.04 / GB --> repl["cross-region Replication"]
 
 - CDN
 - 其中一個功能可做 DDoS Protection
-- 整合 Shield, AWS Web Application Firewall (WAF)
 - by using CloudFront's *Origin Access Identity(OAI)* to enhance security
     ```mermaid
     flowchart LR;
@@ -643,7 +642,6 @@ ww --> region;
     - EC2: CPU Utilization, Status, Network'
     - EBS Volume: Disk R/W
     - S3 Buckets : BucketSizeBytes, NumberOfObjects, AllRequests
-    - Billing : Total Estimated Charge (僅 us-east-1 有這功能)
 - 預設來說, metric 為 5 mins 一筆
     - 可調整, 但越細越貴
 
@@ -848,12 +846,6 @@ end
 ## Pricing Model && Savings Plan
 
 ## Costing Tools && Estimate & Tracking & Monitoring Cost
-
-- 關於 AWS 的 Billing 以及 Cost, 有下列的對應服務可以使用
-    - 預估使用成本, 可使用 **Pricing Calculator** 
-    - 追蹤服務成本, 可使用 **Billing Dashboard** && **Cost Allocation Tags** && **Cost and Usage Reports** && **Cost Explorer**
-    - 監控成本計畫, 可使用 **Billing Ararms** && **Budgets**
-
 
 ## AWS Support Plans
 

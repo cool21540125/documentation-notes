@@ -230,11 +230,6 @@ ssm -- "Retries: 5 \n deactivate" --> rr
 
 ## Cost Explorer
 
-- Billing Service 底下其中一個小服務
-- 支援 **Savings Plan** 的選擇
-- monthly/yearly cost 組成 && 視覺話
-
-
 ## ElasticTranscoder
 
 - Saas
@@ -269,13 +264,12 @@ ss -- SSO access --> saml["SAML APPs"]
 
 # Security & Encryption
 
-- [KMS, Key Management Service](#kms,-key-management-service)
+- KMS, Key Management Service
 - [SSM Parameter Store](#ssm-parameter-store)
 - [Secret Manager](./SecretManager.md)
 - [CloudHSM](#cloudhsm-hardware-security-module)
 - [WAF & Shield](#waf--shield)
 - [GuardDuty](#guardduty)
-- [Inspector](#inspector)
 - [Macie](#macie)
 
 
@@ -289,41 +283,6 @@ ss -- SSO access --> saml["SAML APPs"]
 - client side encryption
     - Client 自行加密後再傳送, Server 永遠不知道自己收到的是殺小
     - Could leverage *Envelop Encryption*
-
-
-## KMS, Key Management Service
-
-- [AWS Key Management Service](https://docs.aws.amazon.com/kms/latest/developerguide/overview.html)
-    - KMS 使用 硬體安全模組(HSM), 依照 FIPS 140-2 Cryptographic Module Validation Program 來保護及驗證 `AWS KMS keys`
-    - KMS 也有和 CloudTrail 做整合, 用以滿足 auditing, regulatory, and compliance needs
-        - 可使用 CloudTrail 來查看 KMS 的使用
-- KMS 常被拿來與 [CloudHSM](#cloudhsm-hardware-security-module) 做比較
-- Charge: `$0.03/10000` call KMS API
-- API call > 4KB data 須借助 *envelop encryption*
-- *KMS Key* 無法 cross region 傳送
-- Key policies are the primary way to control access to KMS keys. Every KMS key must have exactly one key policy.
-    - 其次也可使用 IAM
-- 2 types of KMS Keys:
-    - Symmetric Keys
-        - AES-256
-        - CMK, Customer Master Key, 又分成 3 種:
-            - AWS Managed Service Default CMK (AWS owned CMK)
-                - Free
-            - User Keys created in KMS (AWS managed CMK)
-                - 一把 Key : 1/month
-            - User Keys imported (Customer managed CMK)
-                - 一把 Key : 1/month
-                - 必須為 256 bit symmetric key
-        - envelop encryption
-        - user call API to use Key
-    - Asymmetric Keys
-        - RSA & ECC key pairs
-        - user CAN NOT call API to see private key
-- [Deleting AWS KMS keys](https://docs.aws.amazon.com/kms/latest/developerguide/deleting-keys.html)
-    - 因為 KMS Key 太過敏感且重要, 為了防止誤砍, 給予了 waiting period 的機制
-    - 點選刪除後, Key 會進入 *Pending deletion* (可自行設定 7~30 days, default 30 days)
-    - 可在此期間內還原, 但如果超過此期間就 GG 了
-        - AWS 會連帶刪除與此相關的 Resources
 
 
 ## SSM Parameter Store
@@ -353,9 +312,14 @@ ssmps <-- Eecryption API --> kms;
 ```
 
 
+# AWS Firewall Manager
+
+- 用來管理 AWS Organization 所有 accounts 的 access rules
+
+
 ## CloudHSM, Hardware Security Module
 
-- 常被拿來與 [AWS KMS](#aws-kms-key-management-service) 做比較
+- 常被拿來與 **AWS KMS** 做比較
 - Charge: 不便宜..
 - CloudHSM 與 Secret Manager 相比較的話:
     - Secret Manager : AWS manage  software for encryption
@@ -370,200 +334,6 @@ ssmps <-- Eecryption API --> kms;
 - 安全防護規格 `FIPS 140-2 Level 3 compliance` (看看就好...)
 - *Master Key* 方面, 僅支援 [Customer Managed CMK](#aws-kms-key-management-service)
 - CloudHSM deployed in VPC, 不過可 cross Region (by VPC sharing)
-
-
-## WAF & Shield
-
-- AWS Shield 分成 2 種模式:
-    - Shield Standard (預設啟用)
-        - Charge: Free, 
-        - 基礎的 SYN/UDP Floods, Reflection attacks, L3/L4 attacks, DDoS
-    - Shield Advanced
-        - Charge `$3000/month`
-        - DDoS mitigation service
-        - Protect: EC2, ELB, CloudFront, Global Accelerator, Route53
-        - 24*7 access to AWS DDoS response team(DRP)
-        - 可免除 DDoS 期間 ELB 流量暴增所造成的流量費用
-- WAF, Web Application Firewall
-    - L7, Deploy on(only): 
-        - ALB & API Gateway (Regional)
-        - CloudFront (Global)
-    - 需要自行配置 Web ACl, Web Access Control List
-    - Protect:
-        - XSS, Cross-Site Scripting
-        - SQL injection
-        - 設定訪問流量限制(size constraint)
-        - 藉由 Geometric 屏蔽特定國家 IP
-        - DDoS (by rate-based rule)
-- AWS Firewall Manager
-    - 用來管理 AWS Organization 所有 accounts 的 access rules
-
-> AWS Firewall Manager is a security management service that allows you to centrally configure and manage firewall rules across your accounts and applications in AWS Organizations.
-> 
-> It is integrated with AWS Organizations so you can enable AWS WAF rules, AWS Shield Advanced protection, security groups, AWS Network Firewall rules, and Amazon Route 53 Resolver DNS Firewall rules.
-
-```mermaid
-flowchart LR
-
-subgraph Shield1
-    Route53
-end
-subgraph Shield2
-    CloudFront
-end
-CloudFront <-- 過濾 --> waf["AWS WAF"];
-
-subgraph AWS
-    subgraph pu["Public Subnet"]
-        subgraph Shield3
-            ELB
-        end
-    end
-    subgraph pi["Public Subnet"]
-        subgraph Shield4
-            ALB
-        end
-    end
-end
-
-user --> Shield1;
-Shield1 --> Shield2;
-Shield2 --> Shield3;
-Shield3 --> Shield4;
-```
-
-
-## [AWS - GuardDuty](https://docs.aws.amazon.com/guardduty/latest/ug/what-is-guardduty.html)
-
-- AWS GuardDuty 是個 Security Monitoring Service
-    - Foundational data sources(基礎資料來源) 方面:
-        - CloudTrail managed events 及 event logs
-        - VPC flowlogs
-        - DNS logs
-    - Features 方面:
-        - Kubernetes audit logs
-        - RDS login activity
-        - S3 logs
-        - EBS volumes
-        - Runtime monitoring
-        - Lambda network activity logs
-- 幫你找出 AWS Account 的髒東西 / 惡意威脅 / 惡意 IP / 異常活動
-    - by leveraging ML
-- 用 ML && 3rd data, 來看 user account 是否 under attack
-- Input data 包含了:
-    - VPC Flow Logs
-    - DNS Logs
-    - EKS Audit Logs
-    - EBS Volume data
-    - CloudTrail Events Logs
-        - CloudTrail Management Events
-            - 從 *CloudTrail Event logs* 取 data, 來判斷是否有 unusual API call
-        - CloudTrail S3 Data Events
-- Charge: 30 天免費..
-
-```mermaid
-flowchart LR
-data["Input data"]
-gd["GuardDuty"]
-ce["CloudWatch Event"]
-
-data --> gd;
-gd --> ce;
-ce --> SNS;
-ce --> Lambda;
-```
-
-
-## Inspector
-
-- 用途
-    - AWS 的 自動化漏洞管理, 幫你的 AWS 做健診
-    - AWS Inspector 可不斷掃描 AWS 工作負載, 來尋找 軟體漏洞 && 網路風險
-- 能做些什麼, 範例:
-    - EC2, Lambda, ECR, 用來做 **軟體的 near-real time 的 漏洞偵測** && **unintended network exposure**
-    - 針對 **Centrally manage software bill of materials (SBOM)** 做 exports 管理
-    - Inspector 會做風險分析, 可用來作為修復的優先級別依據
-    - 
-- Inspector 只能 inspect(檢測) 底下這些東西 ONLY:
-    - EC2 
-        - leverage *AWS System Manager (SSM) agent*, 分析異常流量 && OS 漏洞
-        - database of vulnerabilities (CVE)
-    - ECR 
-        - 當有人 docker push 就去評估 image/Container
-    - Lambda Function
-- 容易與 [Guardduty](#guardduty) 搞混
-    - Inspector 比較像是主動去探測潛在威脅
-    - Guardduty 比較偏向事後針對 log 找漏洞
-- reporting & integrating with *AWS Security Hub*, 若發現問題會送到 *Amazon EventBridge*
-
-```mermaid
-flowchart LR
-
-ssm["SSM agent"]
-subgraph EC2
-    ssm;
-end
-
-is["Inspector Service"]
-is -- inspect --> ssm;
-is -- if problem, report --> sh["Security Hub"]
-is -- if proble, report --> eb["EventBridge"]
-```
-
-
-## [Macie](https://docs.aws.amazon.com/macie/latest/user/what-is-macie.html)
-
-- Fully managed data security && data privacy service, by using:
-    - ML && Pattern matching to discover && protect sensitive data
-    - 也用來協助 identify && alert sensitive data, ex: personally identifiable information, PII
-    - 標的主要是 data security && data privacy service
-    - 容易與 [GuardDuty](#guardduty) 搞混
-- SaaS
-
-```mermaid
-flowchart LR
-ce["CloudWatch Event \n EventBridge"]
-macie["Macie"]
-
-macie <-- "analyze \n (Discover Sensitive Data(PII))" --> S3;
-macie -- notify --> ce;
-ce -- integration --> pipeline["SNS, Lambda, ..."];
-```
-
-
-## AWS Security Hub
-
-- Central Security tool, 用來管理 security, cross AWS accounts & automate security checks
-- Charge: 燒錢~~
-- 可將底下的服務集中到 Security Hub (但需要先 enable *AWS Config Service*)
-    - GuardDuty
-    - Inspector
-    - Macie
-    - IAM Access Analyzer
-    - AWS System Manager
-    - AWS Partner Network Manager
-
-
-## Amazon Detective
-
-- 因應 Security, 可用 GuardDuty, Macie, SecurityHub, ...
-- 但如果要找出因果關係, 可使用 *Amazon Detective*
-- 啟用後, 會自動蒐集底下這些, 來建立 view (用來呈現)
-    - VPC Flows Logs
-    - CloudTrail
-    - GuardDuty
-
-
-## AWS Abuse
-
-> Report suspected AWS Resources used for abusive or illegal purposes
-
-- 用來跟 AWS 反映違規使用的 Service
-
-
-# VPC
-
-- [VPC](./VPC.md)
 
 
 # Disaster Recovery & Migrations

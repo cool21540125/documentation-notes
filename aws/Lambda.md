@@ -1,7 +1,6 @@
 
-# Lambda
+# [Lambda](https://docs.aws.amazon.com/lambda/latest/dg/welcome.html)
 
-- [What is AWS Lambda?](https://docs.aws.amazon.com/lambda/latest/dg/welcome.html)
 - [AWS Lambda FAQs](https://aws.amazon.com/lambda/faqs/?nc1=h_ls)
 - [Operator - Lambda](https://docs.aws.amazon.com/lambda/latest/operatorguide/intro.html)
 - Lambda Execution Role (IAM Role)
@@ -35,6 +34,8 @@
 - 效能
 - 跑 Lambda FN 只能調整 memory. 
   - ex: Memory=1792 MiB, 可獲得完整一顆 CPU. 隨著 Memory 增加, CPU 也會跟著增加
+- Lambda 的效能, 只能調整 RAM 用量
+  - 隨著 RAM 用量調整, CPU 會跟著變動 (不能自訂 CPU)
 
 ```mermaid
 flowchart LR

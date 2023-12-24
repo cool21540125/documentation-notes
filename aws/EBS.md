@@ -25,6 +25,8 @@
         - 4 GiB ~ 16 TiB
         - (僅此 io 系列)支援 Multi-Attach (同 AZ, 多 EC2 同時掛載)
             - 需使用較特殊的 filesystem (cluster-aware)
+                - 並非 xfs, ext4
+            - 最多同 AZ 只能有 16 EC2 Instances 同時掛載
         - ex: 要使用在非常講究 IOPS 的 DB, 可使用 io1/io2
         - IOPS 與 Size 並沒掛鉤(可獨立調整)
         - io1
