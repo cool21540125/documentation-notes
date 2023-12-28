@@ -1,33 +1,20 @@
 
 - [Using xcodebuild to Build from the Command Line](https://www.waldo.com/blog/use-xcodebuild-command-line)
 
+
 # Build Terms
 
-- iOS project file
-    - 指 **pbxproj**, which links everything in the project
-    - 此外還包含了
-        - different targets
-        - build configurations
-- Target
-    - 定義了由 Xcode project 所 build 的 product
-        - 每個 Project 起碼有一個 Target
-            - 每個 Target 都有他自己的 **Build Settings** 及 **Build Phases**
-- Scheme
+- Target 是 xcode 流程裡頭的 最小可編譯單元
+    - 每個 target 都會對應一個 編譯輸出, 可能是個 link, executable, package
+    - Target 定義了 編譯輸出 的 **Build Settings** 及 **Build Phases** 的所有細節
+- Scheme 預設的 workflows (對於 Target 的 action): Build / Run / Test / Profile / Analyze / Archive
     - 定義了每個 Target 的操作該如何被執行 (how the operations are performed on each target)
-        - operations 有如下的動作:
-            - Build / Run / Test / Archive / Profile / Analyze
-    - Note: Scheme Name 與 Target Name 一樣, 因此經常被誤以為是一樣的
-    - 每個 Target 都必須要有至少一個 Scheme
-        - Scheme 裡頭需要提供 App 要 run 的 destination
-            - destination 可以是 Physical Device / Simulator
-- Build configuration
-    - Debug
-        - 可看到所有的 logs
-    - Release
-        - 不會有 debug information
-        - minimal sized bundle
-        - 專門為了 for App Store
-    - Develop
+    - Scheme Name 與 Target Name 通常長一樣, 但其實兩者不同, 常被混淆
+        - 每個 Target 都必須要有至少一個 Scheme
+            - Scheme 裡頭需要提供 App 要 run 的 destination
+                - destination 可以是 Physical Device / Simulator
+        - Scheme 裡頭最重要的配置為 target 的 **build configuration**
+            - 預設有 `Debug` 及 `Release`
 - Certificate, identifier, and profile
     - coding 完後, 需要做 archive. archive 檔的用途:
         - 用來給 QA Team 測試用
@@ -41,3 +28,20 @@
     - **Provisioning Profile**
         - ('signing certificate' + 'identifier' + 'the device on which the app will run') 的組合
         - 例如 App 需要跑在 iPhone 及 iPad 的話, 則需要有 2 組 profision profiles
+
+
+# xcodebuild CLI
+
+```zsh
+### 列出 xcode app workspace 底下的 schemes
+xcodebuild -list -workspace $YOUR_XCODE_PROJECT_PATH.xcworkspace
+# 可能需要先進到裡頭去做 pod install (產出 pod project) 再來 list
+# 
+
+
+### 指定 Scheme 並執行 action(此範例為 build)
+xcodebuild -workspace $YOUR_XCODE_PROJECT_PATH.xcworkspace -scheme $scheme build
+
+
+### 
+```
