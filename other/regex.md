@@ -37,7 +37,7 @@ Option    | Function
 
 ```sh
 ### 列出 FILE 「非空白行」「非註解」, 外加行號
-grep -v "^ *#\|^ *$" -n $FILE
+grep -v "^ *#\|^ *$" -n $FILE  # 好用
 
 
 # 找出 linux.words 以 dog 或 cat 開頭的部分
