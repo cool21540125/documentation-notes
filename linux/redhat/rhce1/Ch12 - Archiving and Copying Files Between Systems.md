@@ -210,9 +210,14 @@ mkdir /tmp/b
 
 rsync -av /var/log  /tmp/a
 rsync -av /var/log/ /tmp/b
+# 只差在一個「/」
 
+
+# 把 log 資料夾, 整個 rsync 到 /tmp/a/log
 ll /tmp/a
 ll /tmp/b
+# 把 log 內的所有東西, rsync 到 /tmp/b/
+
 
 rm -rf /tmp/a /tmp/b
 ```

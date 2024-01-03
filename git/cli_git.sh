@@ -12,10 +12,10 @@ exit 0
 # 在做 git 操作時, 預設都會使用 `~/.ssh/id_rsa` 這把做金鑰認證
 export GIT_SSH_COMMAND='ssh -i ~/.ssh/id_rsa_personal' git clone ${Git_Url}
 # 或
-git config --local core.sshCommand "ssh -i ~/.ssh/id_rsa_personal"
-# 上述配置會記錄在 ./.git/config 裡頭的
+# 下列配置會記錄在 ./.git/config 裡頭的
 # [core]
 #    sshCommand = ssh -i ~/.ssh/id_rsa_personal
+git config --local core.sshCommand "ssh -i ~/.ssh/id_rsa_personal"
 
 git config --local user.name  TonyChou
 git config --local user.email cool21540125@gmail.com
