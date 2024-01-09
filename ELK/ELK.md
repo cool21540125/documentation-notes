@@ -8,6 +8,7 @@
 - [Logstash User Guide](https://www.elastic.co/guide/en/logstash/current/index.html)
 - [Kibana User Guide](https://www.elastic.co/guide/en/kibana/current/index.html)
 - ELK 問世以前的產品為 `splunk`, 要花 $$
+- ELK 命名源自於 Beats and X-Pack
 
 
 ## ELK in Docker

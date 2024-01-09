@@ -273,45 +273,49 @@ Athena -- Report/Dashboard --> QuickSight;
     - Glue Data Catalog
         - catalog of databases
         - 可整合 Athena, RedShift, EMR
-- Glue
-    ```mermaid
-    flowchart LR;
 
-    S3 -- Extract --> Glue;
-    RDS -- Extract --> Glue;
 
-    Glue -- load --> Redshift;
-    ```
-- Glue Data Catalog
-    ```mermaid
-    flowchart LR;
+### Glue
 
-    glue["Glue Data Crawler"];
+```mermaid
+flowchart LR;
 
-    subgraph src["Glue Data Source"]
-        S3 --> glue;
-        RDS --> glue;
-        DynamoDB --> glue;
-        JDBC --> glue;
-    end
+S3 -- Extract --> Glue;
+RDS -- Extract --> Glue;
 
-    glue -- write metadata --> gdc["Glue Data Catalog"];
-    gdc -- ETL --> gjob["Glue Jobs(ETL)"];
+Glue -- load --> Redshift;
+```
 
-    subgraph Data Discovery
-        gdc --> Athena;
-        gdc --> r["Redshift Spectrum"];
-        gdc --> EMR;
-    end
-    ```
+### Glue Data Catalog
+
+```mermaid
+flowchart LR;
+
+glue["Glue Data Crawler"];
+
+subgraph src["Glue Data Source"]
+    S3 --> glue;
+    RDS --> glue;
+    DynamoDB --> glue;
+    JDBC --> glue;
+end
+
+glue -- write metadata --> gdc["Glue Data Catalog"];
+gdc -- ETL --> gjob["Glue Jobs(ETL)"];
+
+subgraph Data Discovery
+    gdc --> Athena;
+    gdc --> r["Redshift Spectrum"];
+    gdc --> EMR;
+end
+```
 
 
 # AWS Neptune
 
-- [clf-Neptune](./cert-CLF_C01.md#amazon-neptune)
 - Graph DB
 - Use Case
-    - Social Network
+    - Social network relation
     - Wikipedia
 - Point-in-time recovery
     - 不斷 backup to S3

@@ -3,6 +3,11 @@
 - 2020/06/29, 2023/02/18
 - [OAuth 2.0 筆記](https://blog.yorkxin.org/2013/09/30/oauth2-1-introduction.html)
 - [RFC6749-Oauth2.0](https://tools.ietf.org/html/rfc6749)
+- OAuth2 僅僅是個 授權機制(Open Authorization), 會被誤以為是個「第三方認證的機制」
+    - OAuth2 並非 認證機制
+        - 認證機制 重點在於識別 Who you are
+    - OAuth2 是個 授權機制
+        - 授權機制 重點在於識別 What you can do
 - Terms:
     - RO, Resource Owner(User): ex: 臉書
     - Client(Third-party APP): 第三方用戶程序, ex: 開心農場

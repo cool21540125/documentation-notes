@@ -70,6 +70,8 @@ Rules --> Targets;
     - Custom Event Bus
     - 可針對裡頭的 events 做 Archive (可自行配置保存期限 or 永久保存)
 - Event Bridge 會自行分析發送到他身上的 events 的 schema
+    - > Console > EventBridge > Sandbox
+        - 這邊的功能, 可以模擬發生特定事件, 可用來協助測試, 特定的 Tested Event 是否能被 Event Pattern 捕獲到
 - *Schema Registry* 會在 APP 裡頭 generate code, 
     - 來讓 APP 可事先得知 how data is structured in the event bus
     - 而這些 Schema 可版控

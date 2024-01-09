@@ -282,14 +282,6 @@ Networking    | -    | -    | -
     - time series data 
 
 
-## Amazon Neptune
-
-- Graph DB
-- Use Case: social network relation, ...
-- Replication Cross 3 AZ
-    - 可高達 15 個 Read Replicas
-
-
 ## Amazon QLDB, Quantum Ledger Database
 
 - 可下 SQL
