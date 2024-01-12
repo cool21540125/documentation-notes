@@ -104,7 +104,7 @@ sqs -- Poll for messages --> asg;
 - Access Control
     - IAM Policy (identity-based policy)
         - 起碼要有個 能夠 access SQS API 的 IAM Policy
-    - Queue Acess Policies (resource-based policy)
+    - Queue Access Policies (resource-based policy)
         - Cross Account
             - SQS Policy 需 allow action: `["SQS:ReceiveMessage"]`
         - Cross AWS Services, ex: S3 events Message -> SQS

@@ -1,6 +1,20 @@
+- Origin 為底下 3 個部分組成: scheme + hostname + port  ex: **https://www.example.com:443**
+    - https://www.evil.com:443      | cross-origin: different domains
+    - https://example.com:443       | cross-origin: different subdomains
+    - https://login.example.com:443 | cross-origin: different subdomains
+    - http://www.example.com:443    | cross-origin: different schemes
+    - https://www.example.com:80    | cross-origin: different ports
+    - https://www.example.com:443   | same-origin: exact match
+    - https://www.example.com       | same-origin: implicit port number (443) matches
+- Site 的定義, 曾經有變動過. 
+    - 2019 年前, same-site 的定義 不包含 scheme - 如果 Url 的 domain 皆為 "example.com",         2024 的現在也可稱之為 `scheme-less same-site`
+    - 2019 年後, same-site 的定義 　包含 scheme - 如果 Url 的 domain 皆為 "https://example.com", 2024 的現在也可稱之為 `schemeful-site same-site`
+
+
+
 # 了解 Sec-Fetch-Site
 
-本文為 [Understanding "same-site" and "same-origin"](https://web.dev/same-site-same-origin/) 的筆記
+- [Understanding "same-site" and "same-origin"](https://web.dev/same-site-same-origin/)
 
 `same-site` 與 `same-origin`, 像是在底下的情境, 經常的被混淆:
 
@@ -62,12 +76,6 @@ IMPORTANT: 底下 2 者的觀念, 是隨著時代演進逐漸轉變:
 
 ---------------------------------------------------
 
-- https://www.evil.com:443      : cross-site: different domains
-- https://login.example.com:443 : schemeful same-site: different subdomains don't matter
-- http://www.example.com:443    : cross-site: different schemes
-- https://www.example.com:80    : schemeful same-site: different ports don't matter
-- https://www.example.com:443   : schemeful same-site: exact match
-- https://www.example.com       : schemeful same-site: ports don't matter
 
 
 ## 由 HTTP header 識別
@@ -87,6 +95,25 @@ IMPORTANT: 底下 2 者的觀念, 是隨著時代演進逐漸轉變:
 
 
 ## Cross Origin Request
+
+- https://medium.com/swf-lab/%E7%B6%B2%E9%A0%81%E9%96%8B%E7%99%BC%E5%B8%B8%E8%A6%8B%E4%B9%8B-cors-%E9%8C%AF%E8%AA%A4%E5%8E%9F%E5%9B%A0%E8%88%87-express-%E8%A7%A3%E6%B1%BA%E8%BE%A6%E6%B3%95-bc5eeedea6dc
+    - 2024/01/24
+
+Cross Site Request 的請求分成 2 種
+
+簡單請求
+
+- Condition
+    - 使用 GET, POST, HEAD 方法之一
+    - Content-Type 只能是 text/plain, multipart/form-data, application/x-www-form-urlencoded 其中一種
+    - 無自定義 Header
+- Browser 發出請求後, 會加上 Request Header: `Origin: your_domain:3000`
+- Server 接收後, 返回會加上 Request Header: `Access-Control-Allow-Origin`
+
+
+非簡單請求
+
+
 
 ### Step1
 
