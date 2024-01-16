@@ -81,6 +81,11 @@
     - 如果打算啟用 *Access Logs*, 則這些 log 每隔 5 mins 會被送往 S3, 並以下列格式儲存:
         - `bucket[/prefix]/AWSLogs/aws-account-id/elasticloadbalancing/region/yyyy/mm/dd/aws-account-id_elasticloadbalancing_region_app.load-balancer-id_end-time_ip-address_random-string.log.gz`
     - 這些 *Access Logs* 包含: client's IP address / latencies / request paths / server responses
+- 收費方式
+    - 依照每小時運行費用收費
+    - 依照每小時 LCU(Load Balancer Capacity Units) 收費
+        - 會依照 new connections / active connections / bandwidth / rule evaluations 取最大者
+        - 
 
 ------
 
