@@ -68,6 +68,13 @@ Origin : https://www.example.com:443 則:
 
 ## Cross Origin Request
 
+- opener : Js 裡頭, 如果在 A Window 操作後, 開啟了 B Window, 則 A 視為是 B 的 opener
+
+- COP, Same-Origin Policy / Same Origin Policy
+    - 規範 Web Browser 的基本安全原則, 限制來自不同網域的網站對彼此的互動. 旨在降低不受信任網站從其他網站偷取機敏資訊
+- COOP, Cross-Origin Opener Policy / Cross Origin Opener Policy
+    - COOP 為 COP 的擴展, 它 控制 頁面(opener) 如何與 新開啟的窗口(彈窗, 另開分頁) 進行互動. 旨在降低非法濫用
+
 Cross Site Request 分成 2 種
 
 簡單請求
@@ -184,28 +191,68 @@ X-Frame-Options: DENY
 ## Cross-Origin Resource Policy (CORP)
 
 - 適用於所有 website
+- attacker 從 another origin 夾帶 resources 去攻擊別人
+    - 這涉及到 exploiting web-based cross-site leaks 的議題
+    - 可利用 `Cross-Origin-Resource-Policy` 設定允許 cross origin 的準則
+
+
+```ini
+### 用來聲明, 誰可以把我夾帶到別人那邊
+Cross-Origin-Resource-Policy: same-origin
+```
 
 
 ## Cross-Origin Opener Policy (COOP)
 
 - 適用於所有 website
+- attackers 可以藉由你們家網站的 彈出視窗, 或是額外開啟的視窗
+- `Cross-Origin-Opener-Policy` 可理解成, 用來聲明自家的彈窗, 與主視窗處於 isolated 的狀態, 避免像是
+    - 網站中使用了 `window.open()` 或 `<a target="_blank">` 開啟的新的窗口
+    - attacker 藉由 此窗口, 執行 web-based cross-site leaks 或 Spectre 攻擊手法, 來非法取得 目標網站 的資訊
+
+```ini
+### 
+Cross-Origin-Opener-Policy: same-origin-allow-popups
+```
 
 
-## HTTP Strict Transport Security (HSTS)
-
-- 適用於所有 website
-
-
-
-## ross-Origin Resource Sharing (CORS)
+## Cross-Origin Resource Sharing (CORS)
 
 - Security headers for websites with advanced capabilities
+- CORS 此並非 Request Header, 而是 Browser 的機制, 用來允許 cross-origin 資源共享
+    - 預設, Browser 強制啟用 **same-origin policy** 來避免 a web page from accessing cross-origin resources
+
+```ini
+### 本站的 Resource 允許別人家 做資源訪問
+Access-Control-Allow-Origin: https://example.com
+Access-Control-Allow-Credentials: true
+```
 
 
 ## Cross-Origin Embedder Policy (COEP)
 
 - Security headers for websites with advanced capabilities
+- 為了避免 Spectre-based attacks 偷取 cross-origin resources. 系統預設停用像是 `SharedArrayBuffer`, `performance.measureUserAgentSpecificMemory()` 等功能
+- 藉由像是 `Cross-Origin-Embedder-Policy` Header, 來禁止本站載入 cross origin resources, ex: images, scripts, stylesheets, iframes and others
+    - 除非, 這些 resources 已經 explicitly 藉由 CORS 或 CORP 聲明過
+- COEP 可搭配 `Cross-Origin-Opener-Policy` 使用, 來讓 document 進行 cross-origin isolation
 
+```ini
+### 禁止 document 及 worker 載入 cross-origin resources
+Cross-Origin-Embedder-Policy: require-corp
+```
+
+
+## HTTP Strict Transport Security (HSTS)
+
+- 適用於所有 website
+- `Strict-Transport-Security` Header 會告知 Browser 永遠不要用 HTTP 來開啟本站(要用 HTTPS)
+    - 如果你們家網站想要人家永遠用 HTTPS 來訪問的話, 就要設這個
+
+```ini
+### 聲明使用 HTTPS 開啟網站的有效時間
+Strict-Transport-Security: max-age=31536000
+```
 
 
 # Study
