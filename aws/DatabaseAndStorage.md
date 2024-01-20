@@ -4,7 +4,12 @@ AWS Database && Storage related
 
 - DB Types
     - RDBMS(=SQL/OLTP)
-        - RDS, Aurora, MySQL, ...
+        - RDS
+            - MySQL
+            - PostgreSQL
+        - Aurora
+            - 比原生(OpenSource) 的還貴上 20% 以上, 但效能較強
+- 此為 AWS Cloud Native Servie
     - NoSQL
         - DynamoDB (~JSON)
         - ElastiCache (key-value pairs)

@@ -72,7 +72,7 @@
 
 # Security
 
-- At rest encryption
+- At rest encryption / At-rest encryption
     - launch time 的時候就得設定好
     - AWS KMS - AES-256 encryption
     - 對於 Oracle && MS-SQL, 可使用 Transparent Data Encryption(TDE)
@@ -132,6 +132,7 @@ ec2 -- "3. Pass auth Token \n (SSL encryption)" --> db["RDS DB"]
     - 查看方式, 進入 RDS Console > DB instance > Monitoring > (下拉選單)Monitoring > Enhanced monitoring
 - RDS Performance Insights
     - 可藉由在 RDS Instance 啟用 Performance Instights
+        - RDS Performance Insights 可用來查看 event 對於 performance 的影響
         - 202309 的現在, 無法作用於 t2.micro
     - 可以用來看 RDS Instance 目前瓶頸卡在: CPU, I/O, Locks, SQL statements, number of sessions, ...
 

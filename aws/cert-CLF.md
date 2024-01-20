@@ -183,12 +183,6 @@ Networking    | -    | -    | -
                 - 好處是, 流量都做 SSL 加密 && IAM(而非 DB) 管理 users
 
 
-### Aurora
-
-- 比原生(OpenSource) 的還貴上 20% 以上, 但效能較強
-- 此為 AWS Cloud Native Servie
-
-
 ## ElasticCache
 
 - 有兩種

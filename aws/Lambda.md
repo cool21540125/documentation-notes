@@ -66,6 +66,10 @@ Client <--> lambda[Lambda Function]
   - CloudFront
   - Alexa
   - Lex
+- 例如我們有設定 S3 object upload 觸發 Lambda 做事情...
+  - 此時大量的 Object 被上傳到 S3 Bucket, 導致 Lambda 被 throttled
+  - 但由於此種觸發方式為 async. Lambda 會有 retry 機制, 最長 6 hrs
+    - 並且採用 exponential backup (1秒, 2秒, 4秒, ...最長 5 mins)
 
 
 ### [async invoke](https://docs.aws.amazon.com/lambda/latest/dg/invocation-async.html)
@@ -295,3 +299,4 @@ $# aws lambda create-function \
 
 - [Using larger ephemeral storage for AWS Lambda](https://aws.amazon.com/blogs/compute/using-larger-ephemeral-storage-for-aws-lambda/)
     - 這篇講述如何使用 Lambda, 將資料 encrypted 以後, 存入 Lambda 的 /tmp
+        - Lambda Function 使用 `/tmp` 可使用 10 GiB
