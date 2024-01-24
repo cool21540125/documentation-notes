@@ -17,6 +17,8 @@
 - 可取得 AWS Events & API call 的 history & log
     - 因此可將 log -> CloudWatch Logs 或 S3
     - AWS CloudTrail can be used to audit AWS API calls
+- CloudTrail log file integrity
+    - 可用來檢測 CloudTrail logs 是否有被人為竄改(已經不完整了)
 
 
 ## CloudTrail Events

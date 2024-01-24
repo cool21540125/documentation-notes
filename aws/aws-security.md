@@ -135,7 +135,6 @@ ce --> Lambda;
     - EC2, Lambda, ECR, 用來做 **軟體的 near-real time 的 漏洞偵測** && **unintended network exposure**
     - 針對 **Centrally manage software bill of materials (SBOM)** 做 exports 管理
     - Inspector 會做風險分析, 可用來作為修復的優先級別依據
-    - 
 - Inspector 只能 inspect(檢測) 底下這些東西 ONLY:
     - EC2 
         - leverage *AWS System Manager (SSM) agent*, 分析異常流量 && OS 漏洞
