@@ -170,3 +170,8 @@ app -- SendMessageAPI --> sqs;
 sqs -- ReceiveMessageAPI --> trans;
 trans -- Store --> S3;
 ```
+
+
+# 不懂的各種問題
+
+- SQS 的 partial batch response

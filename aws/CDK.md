@@ -6,6 +6,7 @@
 - CDK 也有支援 :
     - [Terraform](https://developer.hashicorp.com/terraform/cdktf)
     - [K8s](https://cdk8s.io/)
+- [Former2](https://former2.com/#section-outputs-cdkv2)
 
 
 # CDK 名詞 & 主要元件
