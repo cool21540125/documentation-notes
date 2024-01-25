@@ -107,46 +107,6 @@ AWS Database && Storage related
     - On-premise, 需搭配 **AWS Outpost**
 
 
-# DynamoDB
-
-- [DynamoDB](./DynamoDB.md)
-
-
-# S3
-
-- [S3](./S3.md)
-
-
-# Athena
-
-- [How do I analyze my Amazon S3 server access logs using Athena?](https://aws.amazon.com/premiumsupport/knowledge-center/analyze-logs-athena/?nc1=h_ls)
-    - 其實最難的就只有 UI 不熟 && Create Database && Create Table 而已...
-    - 查詢起來還蠻直覺的
-    - Case Sensitive!!
-- use SQL query on S3, 用來做分析
-    - file 可以是 CSV, JSON, ORC, Avro, Parquet(built on Presto)
-    - 後面可以接 **Amazon QuickSight** 來做報表
-- Use Case: log analytics
-- Operations
-    - Serverless, no operations needed
-- Security
-    - IAM + S3 security
-- Reliability
-    - use Presto Engine, HA
-- Performance
-    - Query scale based on data size
-- Cost
-    - per query / per TB of data scanned
-
-```mermaid
-flowchart LR;
-
-user <-- "load data" --> S3;
-Athena -- Query/Analyze --> S3;
-Athena -- Report/Dashboard --> QuickSight;
-```
-
-
 # AWS Redshift
 
 - [clf-Redshift](./cert-CLF_C01.md#redshift)

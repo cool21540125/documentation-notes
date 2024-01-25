@@ -218,23 +218,6 @@ Networking    | -    | -    | -
     - ML, Data Processing, Web Indexing, Big Data, ...
 
 
-## Amazon Athena
-
-- Serverless query service to perform analytics against s3 objects
-    - 可下 SQL 對 S3 查詢做分析
-- 支援 csv, json, ORC, Avor, Parquet(built on Presto)
-- Charge: USD $5/TB second
-    - 因為 by scan 量收費, 若 data 有做 Compress 或 columnar 方式儲存, 可省下 $$
-- Use Case:
-    - BI / analytics / reporting, analyze & query VPC Flow Logs, ELB Logs / CloudTrail trails, serverless SQL analyze S3, ...
-        ```mermaid
-        flowchart LR;
-        User -- load data --> s3;
-        s3 -- Query & Analyze --> Athena;
-        Athena -- Report & Dashboard --> QuickSight;
-        ```
-
-
 ## AWS QuickSight
 
 - Serverless ML powered BI service to create interactive dashboard.

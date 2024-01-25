@@ -319,8 +319,11 @@ terraform version
 ### 法3. from source (golang required!!) -----------------
 git clone https://github.com/hashicorp/terraform.git
 cd terraform
-go install
-mv ~/go/bin/terraform ~/bin/
+
+git checkout xxx
+
+go build -ldflags "-w -s -X 'github.com/hashicorp/terraform/version.dev=no'" -o dist/ .
+mv dist/terraform ~/bin/
 
 ### Terraform tab completion
 terraform -install-autocomplete

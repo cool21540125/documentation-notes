@@ -88,7 +88,7 @@ Shield3 --> Shield4;
 - AWS GuardDuty 是個 Security Monitoring Service
     - Foundational data sources(基礎資料來源) 方面:
         - CloudTrail managed events 及 event logs
-        - VPC flowlogs
+        - VPC flow logs
         - DNS logs
     - Features 方面:
         - Kubernetes audit logs

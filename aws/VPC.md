@@ -319,10 +319,6 @@ Stateful           | Stateless
     - VPC Flow Logs
     - Subnet Flow Logs
     - ENI, Elastic Network Interface Flow Logs
-- 排查
-    - CloudWatch Logs Insights (on stream)
-    - Athena(on s3)
-    - firewall / NACL 
 - 能有效的協助 monitor && troubleshoot Connectivity Issue
 - 會從各個 AWS 管理的 interfaces 蒐集 network information:
     - ELB
@@ -334,9 +330,34 @@ Stateful           | Stateless
     - Transit Gateway
     - etc
 - Flow logs 儲存位置
-    - S3 (須建立 bucket)
-    - CloudWatch Logs (須建立 log group)
-- VPC Flow Logs 裡頭大概有這些欄位(有大概印象就好):
+    - Kinesis Data Firehose
+    - S3
+        - 需要事先建立好 S3 Bucket
+        - Bucket Policy 會自動建立 (無需自行設定權限)
+    - CloudWatch Logs
+        - 須指定要寫入的 Log Group
+        - 需自行設定權限
+            - trust policy 可參考下面
+            - Permission policies
+                - 偷懶的話, 直接給 [CloudWatchLogsFullAccess](https://us-east-1.console.aws.amazon.com/iamv2/home#/policies/details/arn%3Aaws%3Aiam%3A%3Aaws%3Apolicy%2FCloudWatchLogsFullAccess?section=permissions)
+
+```jsonc
+// VPC Flow Log - custom trust policy
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Effect": "Allow",
+            "Principal": {
+                "Service": "vpc-flow-logs.amazonaws.com"
+            },
+            "Action": "sts:AssumeRole"
+        }
+    ]
+}
+```
+
+- VPC Flow Logs 預設欄位(有大概印象就好):
     - version
     - account-id
     - interface-id
@@ -349,7 +370,7 @@ Stateful           | Stateless
     - bytes
     - start
     - end
-    - action : Security Group 或 NACL 訪問的 http method
+    - action : ACCEPT/REJECT
     - log-status
 
 
