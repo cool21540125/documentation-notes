@@ -322,7 +322,14 @@ cd terraform
 
 git checkout xxx
 
+
+# 會 build 出像是 "1.5.0-dev" 的版本, 若想 build 出正式版本, 可參考 BUILDING.md#Dev Version Reporting
+go build
+
+
+# build released version
 go build -ldflags "-w -s -X 'github.com/hashicorp/terraform/version.dev=no'" -o dist/ .
+
 mv dist/terraform ~/bin/
 
 ### Terraform tab completion
