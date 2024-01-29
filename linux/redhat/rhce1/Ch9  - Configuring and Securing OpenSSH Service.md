@@ -23,11 +23,11 @@ graph LR
 Client -- Connection --> Server
 
 subgraph Client
-    Client[?? port]
+    Client2[?? port]
 end
 
 subgraph Server
-    Server[22 port]
+    Server2[22 port]
 end
 ```
 
