@@ -346,7 +346,7 @@ src["Source DB"] -- DMS --> db["AWS Target DB"];
 
 ## Compare Batch and Lambda
 
-catalog      | Batch                      | Lambda
+type         | Batch                      | Lambda
 ------------ | -------------------------- | ----------------
 timeout      | No                         | Yes, 15 mins
 Runtime      | Any                        | Specific
@@ -442,27 +442,6 @@ tmpl --> CloudFormation;
 
 - Cloud IDE
 - edit the code "in-the-cloud"
-
-
-## AWS SSM, Systmes Manager
-
-- Hybrid. 可管 EC2 && On-Premise instances
-- 用來做
-    - automative patching
-    - enhance compliance
-    - 對整個 EC2 fleets 下指令(有點像 ansible...)
-    - 協助儲存 param configuration
-        - by **SSM Parameter Store**
-- For Win & Mac & Linux
-- 機器需安裝 *SSM Agent* (某些類型的 EC2 預設已安裝)
-
-
-### SSM Session Manager - Systems Manager
-
-- 用來 access EC2 的一種方式
-    - by *SSM Session Manager* (免開 ssh port)
-- 也會 send log -> **S3** or **CloudWatch**
-    - 需要有合適的 IAM Role: `AmazonSSMManagedInstanceCore`
 
 
 ## AWS OpsWorks

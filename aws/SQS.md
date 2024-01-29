@@ -143,13 +143,16 @@ sqs -- Poll for messages --> asg;
     - 可有效減少 API call, 減少 cost
 
 
-# Metrics
+# SQS Metrics
 
-- ApproximateNumberOfMessagesVisible
-    - SQS 裡頭有多少個 Messages
+- ApproximateAgeOfOldestMessage
+    - Queue 裡頭最舊的未刪除 message 的存在時間
 - ApproximateNumberOfMessagesDelayed
     - The number of messages in the queue that are delayed and not available for reading immediately.
     - Queue 中無法在 timeout 期間內被處理完畢的數量
+- ApproximateNumberOfMessagesVisible
+    - SQS 裡頭有多少個 Messages
+
 
 # 操作
 

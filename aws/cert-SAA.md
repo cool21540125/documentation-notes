@@ -270,7 +270,7 @@ ss -- SSO access --> saml["SAML APPs"]
 - [CloudHSM](#cloudhsm-hardware-security-module)
 - [WAF & Shield](#waf--shield)
 - [GuardDuty](#guardduty)
-- [Macie](#macie)
+- Macie
 
 
 ## Encryption

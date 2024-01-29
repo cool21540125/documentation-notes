@@ -13,6 +13,7 @@
         - 但是還原非常費時, 24~27 hrs
     - 可以 Enable *Recycle Bin for EBS Snapshow* (資源回收桶, 預設沒啟用) 防止誤砍
 - Provisioned IOPS, PIOPS
+    - Highest performance EBS volumes
 - 無法跨 AZ, 若要 Cross AZ, 則需要搭配 snapshot(再由 snapshot 到其他 AZ restore)
 - 各種 Volume Types 比較
     - [EBS Volumes 規格比較表](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ebs-volume-types.html)

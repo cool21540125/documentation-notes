@@ -1,5 +1,5 @@
 
-# [VPC Site-to-Site VPN](](https://docs.aws.amazon.com/vpn/latest/s2svpn/VPC_VPN.html))
+# [VPC Site-to-Site VPN](https://docs.aws.amazon.com/vpn/latest/s2svpn/VPC_VPN.html)
 
 - 此處的 VPN 指的是 On-Premise network 與 VPC 之間的 network connection
 - *Site-to-Site VPN* 支援了 **Internet Protocol security (IPsec) VPN connections**
@@ -40,14 +40,16 @@
 
 ```mermaid
 flowchart LR
-cg["Customer Gateway"]
-vpg["Virtual Private Gateway"]
+cg["CGW, Customer Gateway"]
+vpg["VPG, Virtual Private Gateway"]
 
 subgraph IDC
     machine <--> cg
 end
+
 subgraph VPC
     vpg <--> ps["Private Subnet"]
 end
-cg <--> vpg
+
+cg <-- "VPN Connection" --> vpg
 ```

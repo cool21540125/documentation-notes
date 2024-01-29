@@ -83,3 +83,8 @@ ELB -- "traffic" --> ASG;
 - Scaling Policy 還有個叫做 *Cooldown* 的機制, 預設 300 secs. 避免 scaling 機制接連被觸發
 - ASG 的 Default Termination Policy(最單純)
     - 會找出不同 AZ 之間, 裡頭最多 instance 的地方, 對裡頭最舊的 instance 做 terminate
+
+
+# ASG - Issues
+
+- InsufficientInstanceCapacity : 這個 AZ 裡頭的 EC2 Instance Type 已經沒了 (改用其他種的吧 or 去其他 AZ)

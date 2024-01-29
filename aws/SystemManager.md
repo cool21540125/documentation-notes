@@ -2,46 +2,36 @@
 # SSM, System Manager
 
 - [SSM workshop](https://catalog.us-east-1.prod.workshops.aws/workshops/a8e9c6a6-0ba9-48a7-a90d-378a440ab8ba/en-US/300-ssm)
-- 可把 SSM 的 `Run Command` 解成 系統以外的 ansible 的概念...
-    - 不用額外開 SG port
-    - 可指定要針對哪些 groups/instances/tags 來運行某些 `Document` 規範好的命令
-        - Document 又有點像 ansible playbook 那樣, 可參考 [這個](https://docs.aws.amazon.com/systems-manager/latest/userguide/document-schemas-features.html)
-    - 如果針對 EC2 Instance 來執行的話, 需要確保 EC2 已完成底下任務:
-        - 已安裝 && 啟動 *SSM Agent*
-            - `sudo yum install -y https://s3.amazonaws.com/ec2-downloads-windows/SSMAgent/latest/linux_amd64/amazon-ssm-agent.rpm`
-            - `systemctl status amazon-ssm-agent`
-        - Instance Roles:
-            - 如果要整合 CloudWatch, 那就給這個 *CloudWatchFullAccess* Policy
-            - 如果要讓 SSM 訪問 EC2, 那就給這個 *AmazonSSMManagedInstanceCore* Policy
-
-# SSM - Documents
-
-> Console > AWS System Manager > Documents
-
-- 使用 SSM 的 RunCommand 來運行
-- 這根本就是 Ansible Playbook 嘛...
-    - Documents 可用 Yaml 或 Json
-    - 定義裡頭的 parameters 及 actions
-- 有點類似 SSM - Automation
+- 常見用途
+    - automative patching
+    - enhance compliance
+    - 對整個 EC2 fleets 下指令(有點像 ansible...)
+    - 協助儲存 param configuration
+        - by **SSM Parameter Store**
+- logs 儲存到 **S3** or **CloudWatch**
+    - 需要有合適的 IAM Role: `AmazonSSMManagedInstanceCore`
+- 如果針對 EC2 Instance 來執行的話, 需要確保 EC2 已完成底下任務:
+    - 已安裝 && 啟動 *SSM Agent*
+        - `sudo yum install -y https://s3.amazonaws.com/ec2-downloads-windows/SSMAgent/latest/linux_amd64/amazon-ssm-agent.rpm`
+        - `systemctl status amazon-ssm-agent`
+    - Instance Roles:
+        - 如果要整合 CloudWatch, 那就給這個 *CloudWatchFullAccess* Policy
+        - 如果要讓 SSM 訪問 EC2, 那就給這個 *AmazonSSMManagedInstanceCore* Policy
 
 
-# SSM - Run Command / RunCommand
+------------------------------------------------
+# SSM - Operation Management
 
-- 用來跑 Documents
-    - 可結合像是 EventBridge 來觸發執行
-- 可設定 Rate Control / Error Control
+## Operation Management - OpsCenter
 
+## Operation Management - Incident Manager
 
-# SSM - Automation
+------------------------------------------------
+# SSM - Application Management
 
-> Console > AWS System Manager > Automation
+## Application Management - Application Manager
 
-- 用來跑 Runbooks (automation documents)
-    - 可結合像是 SDK / Maintenance Windows / EventBridge / AWS Config Remediation 來觸發執行
-- 自動化 maintenance & deploy 到 EC2 及 AWS Resources
-
-
-# SSM - Parameter Store
+## Application Management - Parameter Store
 
 - Secure store configuration 及 secrets(明碼)
     - 不過可無縫與 KMS 整合
@@ -59,7 +49,41 @@
         - Parameter Policies : YES
 
 
-# SSM - Systems Manager Inventory
+------------------------------------------------
+# SSM - Change Management
+
+## Change Management - Automation
+
+> Console > AWS System Manager > Automation
+
+- 用來跑 Runbooks (automation documents)
+    - 可結合像是 SDK / Maintenance Windows / EventBridge / AWS Config Remediation 來觸發執行
+- 自動化 maintenance & deploy 到 EC2 及 AWS Resources
+
+
+## Change Management - Maintenance Windows
+
+- 可用來設定 offline service 的定期排程
+    - ex: 半夜更新, 跑排程...
+    - 可設定 Registered Instances
+    - 可設定 Registered Tasks
+- 經常與 **Patch Manager** 結合
+
+
+------------------------------------------------
+# SSM - Node Management
+
+## Node Management - Fleet Manager
+
+- 用途:
+    - 用來作 remotely 管理 AWS / On-Premise 的 Nodes 的 UI (Web Console 啦)
+    - 可用來觀察 performance 及 health
+    - 可在 Console 上頭, 用 RDP 來連到 Windows 來查看 Dir / File
+- 適合誰使用:
+    - 如果想要集中化管理 Nodes 的 AWS Users
+
+
+## Node Management - Inventory
 
 - 用來搜集 EC2/On-Premises 的 metadata
     - installed softwares
@@ -73,16 +97,32 @@
 - 可跨 Account / Region 蒐集
 - 查詢方式 - 藉由在 SSM 的 Inventory 建立 **Resource data sync**, 可將資訊彙整到 S3
     - 須確保 SSM 有權限寫入到 S3 Bucket
- 
 
-# SSM - State Manager
+## Node Management - Session Manager
+
+- 用來 access AWS EC2 及 On-Premise instances
+- Host 上頭需安裝 agent (Instance Profile 需 allow Session Manager)
+    - 最起碼 Instance Profile 需要有 `AmazonSSMManagedInstanceCore` policy
+
+
+## Node Management - Run Command / RunCommand
+
+- 用來跑 Documents
+    - 可結合像是 EventBridge 來觸發執行
+- 可設定 Rate Control / Error Control
+- 可把 SSM 的 `Run Command` 解成 系統以外的 ansible 的概念...
+    - 不用額外開 SG port
+    - 可指定要針對哪些 groups/instances/tags 來運行某些 `Document` 規範好的命令
+
+
+## Node Management - State Manager
 
 - 與 SSM - Inventory 很像
     - 用來蒐集 metadata
 - 不過, State Manager 用來記錄 State
-- 
 
-# [SSM - Patch Manager](https://docs.aws.amazon.com/systems-manager/latest/userguide/patch-manager.html)
+
+## Node Management - Patch Manager
 
 > Patch Manager, a capability of AWS Systems Manager, automates the process of patching managed nodes with both security-related updates and other types of updates.
 > 
@@ -107,8 +147,6 @@
     - 使用 AWS **Run Document** - `AWS-RunPatchBaseline`
 - 經常與 **Maintenance Windows** 及 **AWS Tags** 結合
 
----
-
 ```
 Patch Baseline ID    Patch Group  Default
 pb-0123456897265agf  Default      Yes
@@ -118,30 +156,21 @@ pb-abceefgp1qj98afa  Dev          No
 - 如果 Instance 沒有設定 `Tag Key: Patch Group`, 則套用第一個 Patch Baseline, 預設會套用 Patch
 - 如果 Instance 有設定 `Tag Key: Patch Group=Dev`, 則套用 第二個 Patch Baseline, 預設不套用 Patch
 
----
+
+# SSM - Shared Resources
+
+## Shared Resources - Documents
+
+> Console > AWS System Manager > Documents
+
+- 使用 SSM 的 RunCommand 來運行
+- 這根本就是 Ansible Playbook 嘛...
+    - Documents 可用 Yaml 或 Json
+    - 定義裡頭的 parameters 及 actions
+- 有點類似 SSM - Automation
 
 
-# SSM - Maintenance Windows
-
-- 可用來設定 offline service 的定期排程
-    - ex: 半夜更新, 跑排程...
-    - 可設定 Registered Instances
-    - 可設定 Registered Tasks
-- 經常與 **Patch Manager** 結合
-
----
-
-# [AWS - Fleet Manager](https://docs.aws.amazon.com/systems-manager/latest/userguide/fleet.html)
-
-- 用途:
-    - 用來作 remotely 管理 AWS / On-Premise 的 Nodes 的 UI (Web Console 啦)
-    - 可用來觀察 performance 及 health
-    - 可在 Console 上頭, 用 RDP 來連到 Windows 來查看 Dir / File
-- 適合誰使用:
-    - 如果想要集中化管理 Nodes 的 AWS Users
-
-
----
+------------------------------------------------
 
 # CLI
 
