@@ -20,7 +20,7 @@ SELECT UTC_TIMESTAMP(), CURRENT_TIMESTAMP();
 ```
 
 
-## `UTC_TIMESTAMP` vs `CURRENT_TIMESTAMP`
+## `UTC_TIMESTAMP` v.s. `CURRENT_TIMESTAMP`
 - [MySQL Set UTC time as default timestamp](https://dba.stackexchange.com/questions/20217/mysql-set-utc-time-as-default-timestamp/24904)
 
 `CURRENT_TIMESTAMP` 會把 目前時間, 以 UTC 時間塞入DB, 但是查出來的時候, 會以 `current timezone` 來作解析. 而 `current timezone` 可以透過 [--default-time-zone](https://dev.mysql.com/doc/refman/5.7/en/server-system-variables.html), 使用 TCP Socket 啟動 MySQL 的參數 or 使用下面所說的 `Time Zone Setting`

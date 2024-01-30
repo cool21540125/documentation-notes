@@ -57,7 +57,7 @@ DOM
 ```
 
 
-## Attribute vs Property
+## Attribute v.s. Property
 
 ```html
 <input type="text" value="tony" id="demo" />

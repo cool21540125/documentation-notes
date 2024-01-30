@@ -131,7 +131,7 @@ kubelet -> CRI-O                                                                
 # 未整理
 
 - k8s service 的 CLUSTER-IP 不會變動; 而 pod IP 可能會變動
-- k8s apply vs create
+- k8s apply v.s. create
   - The key difference between kubectl apply and create is that apply creates Kubernetes objects through a declarative syntax, while the create command is imperative.
   - kubectl apply : declarative syntax, 可用來改變已 deploy 的規格 && 也可用來首次建立
   - kubectl create : imperative, 只能用來首次建立

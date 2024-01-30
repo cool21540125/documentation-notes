@@ -25,7 +25,7 @@ ex: IP分享器         | ex: Web Server
 NOTE: NAT 一定是個 Router
 
 
-### NAT vs Proxy
+### NAT v.s. Proxy
 
 compare | OSI        | description
 ------- | ---------- | -------------------------
@@ -35,7 +35,7 @@ Proxy   | L7         | 透過 Proxy 的服務程式提供網路代理的任務
 NAT 比較接近底層, 通過 NAT 的封包要幹嘛用的, NAT 不會去理會; 而 Proxy 是透過 Daemon 來達成, 限制較多.
 
 
-### 路由器 vs IP 分享器
+### 路由器 v.s. IP 分享器
 
 NAT = router + IP 轉譯
 

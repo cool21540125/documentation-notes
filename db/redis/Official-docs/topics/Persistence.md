@@ -12,7 +12,7 @@ Redis 提供了下述資料持久化方案:
 上述的重點在於, RDB 以及 AOF 之間的權衡關係.
 
 
-## RDB vs AOF
+## RDB v.s. AOF
 
 RDB:
 

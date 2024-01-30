@@ -29,7 +29,7 @@
 - 初始化 EC2, 使用到 *User data* 的話, 務必寫上 *Shebang Line*, 沒寫會出錯
 - Instance 重點在於:
     - *on-demand*, *spot*, *reserved* 這 3 種, 搭配 *Standard*, *Convertable*, *Scheduled*
-    - *Dedicated Host* vs *Dedicated Instance*
+    - *Dedicated Host* v.s. *Dedicated Instance*
 - EC2 Instance Connect
     - EC2 Web Console > 選取主機 > Connect > Instance Connect
         - 目前如果是 Amazon Linux 2 或 Ubuntu, 預設安裝

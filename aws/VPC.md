@@ -111,7 +111,7 @@ IGW -- www --> Internet;
 ```
 
 
-# Retion/AZ vs VPC/Subnet
+# Retion/AZ v.s. VPC/Subnet
 
 - 建立 VPC, 聲明 IP Range. ex: *10.1.0.0/16*
 - Data Center, DC - 實體資料中心
@@ -170,15 +170,15 @@ subnet3 --> az1;
         - 如果 VPC 有 IGW, 則裡頭的 Subnet 可設定他的 Route Table 到此 IGW
             - 新增 Route, `Destination: 0.0.0.0/0` `Target: IGW`
                 - 此時, 此 Subnet 即是 Public Subnet
-- Public Subnet 裡頭有個 NAT Gateway, NAT GW
+- Public Subnet 裡頭有個 NAT Gateway, NATGW
     - 給 Private Subnet 代理出門上網
     - NAT Gateway 也會有個 Elastic IP
         - NAT Gateway 要花摳摳
 - Private Subnet
     - 裡頭的 EC2, 藉由 local 的中繼站來互通
-    - 裡頭的 EC2, 藉由 Public Subnet 的 NAT GW 出去
+    - 裡頭的 EC2, 藉由 Public Subnet 的 NATGW 出去
         - Private Subnet > Route Table > Routes > Edit routes > Add route > `Destination: 0.0.0.0/0` & `Target: nat`
-        - 如此一來, 此 Private Subnet, 前往 LAN, 會藉由 local, 前往未知位置, 會走 0.0.0.0 前往 NAT GW
+        - 如此一來, 此 Private Subnet, 前往 LAN, 會藉由 local, 前往未知位置, 會走 0.0.0.0 前往 NATGW
 
 ```mermaid
 flowchart LR
@@ -206,7 +206,7 @@ subgraph VPC
             ec24;
         end
 
-        natgw["NAT GW"];
+        natgw["NATGW"];
     end
 end
 

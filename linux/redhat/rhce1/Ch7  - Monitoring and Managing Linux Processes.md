@@ -8,7 +8,7 @@
 
 ## 1. Process 概念
 
-Process vs Program 差異
+Process v.s. Program 差異
 
 - program: 就... 純文字檔的程式檔
 - process: 執行中的 program

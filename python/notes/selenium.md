@@ -6,7 +6,7 @@
 - 2017/09/23
 - [SeleniumHQ](http://www.seleniumhq.org/)
 - [Selenium Client Driver¶](https://seleniumhq.github.io/selenium/docs/api/py/)
-- [webdriver 顯式等待 vs 隱式等待](https://selenium-python-zh.readthedocs.io/en/latest/waits.html)
+- [webdriver 顯式等待 v.s. 隱式等待](https://selenium-python-zh.readthedocs.io/en/latest/waits.html)
 
 
 1. 下載Firefox Selenium Client Driver

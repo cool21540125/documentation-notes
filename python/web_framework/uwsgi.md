@@ -46,7 +46,7 @@ Server
 [pid: 5162|app: 0|req: 1/1] 127.0.0.1 () {28 vars in 288 bytes} [Tue Jul 17 20:46:50 2018] GET / => generated 11 bytes in 0 msecs (HTTP/1.1 200) 1 headers in                               44 bytes (1 switches on core 0)
 ```
 
-Single vs Multi
+Single v.s. Multi
 
 ![uWSGI Compare](../../img/uwsgi_compare.png)
 

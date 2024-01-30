@@ -1,7 +1,7 @@
 # DBApi 2.0
 
 - 2021/04/30
-- [PyMySQL vs MySQLdb](https://stackoverflow.com/questions/7224807/what-is-pymysql-and-how-does-it-differ-from-mysqldb-can-it-affect-django-deploy)
+- [PyMySQL v.s. MySQLdb](https://stackoverflow.com/questions/7224807/what-is-pymysql-and-how-does-it-differ-from-mysqldb-can-it-affect-django-deploy)
 
 
 Python標準程式庫 **沒有內附 RDBMS 介面**, 而廣為使用的第三方模組 多半遵循 `Python Database API 2.0`標準 (PEP249)

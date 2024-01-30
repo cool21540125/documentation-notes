@@ -15,6 +15,6 @@
 - Mandatory Access Control, MAC, 強制存取控制
 
 
-### RBAC vs ABAC
+### RBAC v.s. ABAC
 
 > While RBAC relies on pre-defined roles, ABAC is more dynamic and uses relation-based access control. You can use RBAC to determine access controls with broad strokes, while ABAC offers more granularity. For example, an RBAC system grants access to all managers, but an ABAC policy will only grant access to managers that are in the financial department. ABAC executes a more complex search, which requires more processing power and time, so you should only resort to ABAC when RBAC is insufficient.

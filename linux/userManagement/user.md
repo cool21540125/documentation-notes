@@ -252,7 +252,7 @@ docker:!::tony
 ```
 
 
-## 有效群組(effective group) vs 初始群組(initial group)
+## 有效群組(effective group) v.s. 初始群組(initial group)
 
 有效群組, ex: Tony 加入 登山社, 口琴社, 烘焙社等 (此皆為 次要群組, 可切換 有效群組 為 其中一種 次要群組)
 

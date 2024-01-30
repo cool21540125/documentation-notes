@@ -300,7 +300,7 @@ a  file.tar.gz      # 只把 a 解壓縮出來~
 ```
 
 
-## `tarfile` vs `tarball`
+## `tarfile` v.s. `tarball`
 
 - tarfile : 只作了打包, 沒作壓縮
 - tarball : 打包 + 壓縮

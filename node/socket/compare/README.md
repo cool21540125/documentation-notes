@@ -1,4 +1,4 @@
-# Socket.io vs WebSocket
+# Socket.io v.s. WebSocket
 - 2018/05/04
 
 ## 參考

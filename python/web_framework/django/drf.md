@@ -52,7 +52,7 @@ ModelSerializer
 HyperlinkedModelSerializer
 ```
 
-## `ModelSerializer` vs Serializer
+## `ModelSerializer` v.s. Serializer
 
 使用 serializers.ModelSerializer 取代 serializers.Serializer (兩者皆為 Form 的概念), 而 ModelSerializer 直接給定 Meta
 1. 直接套用 models 定義好的 schema 來當作 metadata

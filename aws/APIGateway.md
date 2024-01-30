@@ -110,7 +110,7 @@ Client <-- HTTP Request --> api <-- "HTTP Proxy\nproxy Request/Response" --> ALB
 - VPC Link
 
 
-# API Gateway vs. Load Balancer
+# API Gateway v.s.. Load Balancer
 
 - API Gateway : 遊樂園入口的十字轉門
     - 入口 single entrypoint

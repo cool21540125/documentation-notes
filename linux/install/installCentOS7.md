@@ -137,7 +137,7 @@ yum provides semanage
 
 ## Linux的軟體管理員 - rpm
 
-### - rpm vs dpkg
+### - rpm v.s. dpkg
 
 distribution 代表 | 軟體管理機制 | 使用指令 | 線上升級機制(指令)
 --- | --- | --- | ---
@@ -145,7 +145,7 @@ Red Hat/Fedora | RPM | rpm, rpmbuild | YUM (yum)
 Debian/Ubuntu | DPKG | dpkg | APT (apt-get)
 
 
-### - rpm vs srpm
+### - rpm v.s. srpm
 
 檔案格式 | 檔名格式 | 直接安裝與否 | 內含程式類型 | 可否修改參數並編譯
 --- | --- | --- | --- | ---

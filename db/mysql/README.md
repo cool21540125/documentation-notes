@@ -22,7 +22,7 @@
 
 ![參考完整性](../../img/ER-Relationship.png)
 
-關聯式資料模型 vs 關聯式資料庫管理系統
+關聯式資料模型 v.s. 關聯式資料庫管理系統
 RDB Model                                   | RDBMS
 ------------------------------------------- | -----------------------
 Collection of objects or relations          | DB Objects

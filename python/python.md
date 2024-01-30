@@ -298,9 +298,9 @@ x.name  # 從實例取的屬性
 
 
 
-## classmethod vs staticmethod
+## classmethod v.s. staticmethod
 
-- [classmethod vs staticmethod](https://zhuanlan.zhihu.com/p/28010894)
+- [classmethod v.s. staticmethod](https://zhuanlan.zhihu.com/p/28010894)
 
 這問題好久之前看過了, 印象中當時讀了一直看不懂是在衝三小, 就不理他了. 結果問題找上門了...
 

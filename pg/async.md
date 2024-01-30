@@ -56,7 +56,7 @@ gevent.joinall([
 
 # 程式特性 - Go 觀點
 
-- [Concurrency vs Parallelism](https://blog.golang.org/concurrency-is-not-parallelism)
+- [Concurrency v.s. Parallelism](https://blog.golang.org/concurrency-is-not-parallelism)
 
 
 
