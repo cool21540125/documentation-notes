@@ -6,6 +6,7 @@
         - VPC 與 IGW 之間, 會藉由 Route Table 來將他們關聯起來
 - 每個 VPC 建立後, 都會伴隨建立一個 `default Route`
     - *Route Table* 用來做 訪問的存取控制
+    - 預設的 Route Table 會讓 VPC CIDR 範圍內, 指向 local, 並且會自動關聯
 - IGW(Internet Gateway) && NAT Gateway
     - IGW 要透過 *Route Table* 來連結到 Subnet
 - 一個 VPC 只能 link 到一個 Region (VPC 無法 cross Region)

@@ -53,9 +53,11 @@
 - 如果開了 t2.micro 以後, 真的很需要 CPU, 除了調整 instance type 以外, 還可以切換成 `t2 ultimate`
 
 
-# [Instance purchasing options](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/instance-purchasing-options.html)
+# Instance purchasing options
 
 EC2 選購時, 有底下這一大堆的 purchasing options:
+
+https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/instance-purchasing-options.html
 
 - On-Demand
 - Reserved
@@ -94,13 +96,8 @@ EC2 選購時, 有底下這一大堆的 purchasing options:
         - 享受不到 Discount
     - 可跨帳號共用這些 Capacity Reservations
         - 但並非 cross Account transferable
-
----
-
 - [Dedicated Host v.s. Dedicated Instance](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/dedicated-instance.html#dh-di-diffs)
 
-
-# EC2 Other Note
 
 ## [Placement Group](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/placement-groups.html)
 
@@ -177,7 +174,7 @@ ethtool -i eth0
 - open sources cluster management tool to deploy HPC on AWS
 - text file
 - 自動建立 VPC, subnet, cluster type, instance type
-- 可在 cluster 裡頭 enable [EFA](#ec2---enhance-networking) (加強 Network)
+- 可在 cluster 裡頭 enable EFA
 
 
 ## EC2 Image Builder
@@ -191,58 +188,39 @@ ethtool -i eth0
     - EC2InstanceProfileForImageBuilderECRContainerBuilder
     - AmazonSSMManagedInstanceCore
 - 建立流程如下, 過程是情況, 可能花上數十分鐘
-    ```mermaid
-    flowchart LR
-        ec2ib["EC2 Image Builder"];
-        bec2i["Builder EC2 Instance"];
-        ami[New AMI];
-        tec2i[Test EC2 Instance];
-        dAMI[Distribute AMI to multi-az];
 
-        ec2ib -- create --> bec2i;
-        bec2i -- create --> ami;
-        ami --> tec2i;
-        tec2i -- publish --> dAMI;
-    ```
+```mermaid
+flowchart LR
+    ec2ib["EC2 Image Builder"];
+    bec2i["Builder EC2 Instance"];
+    ami[New AMI];
+    tec2i[Test EC2 Instance];
+    dAMI[Distribute AMI to multi-az];
+
+    ec2ib -- create --> bec2i;
+    bec2i -- create --> ami;
+    ami --> tec2i;
+    tec2i -- publish --> dAMI;
+```
+
 - 會依序建立 EC2 instance 來 Building, 之後還會建另一個來 Testing
 - 若要刪除 instance, 需 terminate instance && Deregister AMI && Delete EBS snapshot
 
 
-# 額外補充
+# EC2 - Check
 
-```bash
-### 讓 EC2 找到自身的 meta-data, 但只能在 *Web Console* && *CLI*, 這動作本身不需要權限
-curl http://169.254.169.254/latest/meta-data
-# https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/instancedata-data-retrieval.html
-
-### CLI 找機器的 meta-data
-aws ec2 describe-instances
-```
+- EC2 的 Health Check 分成 2 種
+    - System status checks   - 比較偏重於 infra 相關的檢查, 像是 AWS power, networking, or software systems
+    - Instance status checks - 重點在於 Instance OS 是否能夠接收 traffic
+- 能夠在 EC2 裡頭查看自己的 metadata
+    `curl http://169.254.169.254/latest/meta-data/`
 
 
-# TIPs
-
-
-
-```bash
-### EC2 裡頭, 可看到自己的 metadata
-$# curl http://169.254.169.254/latest/meta-data/
-```
-
-
----
----
----
-
-底下開始談 EC2 相關的 Storage
-
----
----
----
+# EC2 Storage
 
 - AWS 似乎有支援 `ceph`(檔案系統), 可支援 `Object Storage` && `Block Storage`
 
-# EC2 Instance Store
+## EC2 Storage - EC2 Instance Store
 
 - 相較於 EBS 快很多, 因為直接使用硬體
     - millions IOPS
@@ -255,13 +233,7 @@ $# curl http://169.254.169.254/latest/meta-data/
 - 長久保存的話, 建議使用 EBS
 
 
-# [EBS](./EBS.md)
-
-
-# [EFS](./EFS.md)
-
-
-# Amazon FSx
+## EC2 Storage - Amazon FSx
 
 - 可使用 3rd 的 FileSystem
     - AWS FSx for Lustre (Linux & Cluster)
@@ -269,12 +241,29 @@ $# curl http://169.254.169.254/latest/meta-data/
     - AWS FSx for NetApp ONTAP
 
 
+# EC2 metrics
+
+- InstanceLimitExceeded        : 特定 region 的 service quota 達到使用上限
+- InsufficientInstanceCapacity : AWS 那邊於 AZ 裡頭已經沒有相關的資源可供開立
+
+
 # CLI
 
 ```bash
+### 讓 EC2 找到自身的 meta-data, 但只能在 *Web Console* && *CLI*, 這動作本身不需要權限
+curl http://169.254.169.254/latest/meta-data
+# https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/instancedata-data-retrieval.html
+
+### CLI 找機器的 meta-data
+aws ec2 describe-instances
+
+
 ### 查詢 EC2 Instance 的 ImageID
 $# aws ec2 describe-instances \
     --instance-ids $EC2_Instance_ID \
     --region $Region \
     --query 'Reservations[0].Instances[0].ImageId'
+
+
+### 
 ```
