@@ -211,9 +211,8 @@ r2 -.- srv2["AWS Services \n (ex: S3)"];
 - 此為設計 IAM Permission && IAM Policy 的進階方式
 - 可套用到 *User* && *Role*, 但無法套用到 *Group*
 - 可先設定好 `IAM Permissions Boundary`, 之後如果不小心給錯(多給了)了某些過大的權限, 則這些多給的權限都無效
-- 如果再將此 boundary 與 Organization 的 SCP 一同套用, 則屆時 user 的權限僅有
-    - SCP && Boundary && Identity-based policy 共同 allow 的權限能做操作
-        - 此權限才是真正的 `Effective Permissions`
+- 如果再將此 boundary 與 Organization 的 SCP 一同套用, 則屆時 user 的權限僅限於:
+    - `Union(SCP, Boundary, Identity-based policy)` 這才是真正的 `Effective Permissions`
 - 從事任何的 `IAM action` 權限衡量流程 [Policy evaluation logic](https://docs.aws.amazon.com/IAM/latest/UserGuide/reference_policies_evaluation-logic.html), 
     - 摘要記憶方式, 大概就是(但並非這麼單純@@):
         - 不能 explicit Deny
@@ -504,30 +503,6 @@ users -- auth --> aws["AWS Simple AD"];
 
 
 ## AWS Organization
-
-- 龐大企業切割帳號, 用 *Master Account* 來統一管理旗下的 *Member Account*
-    - Organization Unit, OU 的管理, 可依照 Env 拆分, ex: Dev, Test, Prod, ... 或是依照 Department 拆分
-    - *Member Account* 也可能因為公司拆分等因素, 因此有可能會有 migration 的問題 (從 Organization 裏頭移除)
-        - 因為一個 Account 一次只能加入一個 Organization, 因此需先退出 Original Org, 再加入倒 New Org
-        - 但如果要 migrate *Master Account*, 只能土炮退出所有 *Member Account*, delete org, create new org, 再 invite...
-    - 納入 Organization 以後, 也可使用 API 來 create AWS Account
-    - 可有 Consolidated Bill, 享有多買多優惠的許多折扣
-- OU 裏頭的權限政策, 可自行選擇啟用底下的 Policy:
-    - Bucket Polies
-    - Service Control Polies, SCP
-        - SCP 與 IAM 相互牴觸時, 以 OU 內的 SCP 為主
-        - 用來對 IAM action 設立 黑白名單
-        - 可套用到 *OU Level* 或 *Account Level*
-        - 無法作用到 *Master Account*
-        - SCP 會將權限套用到 *Member Account* 底下的所有 users && roles (包含 root account)
-            - 不過不包含 *service-linked roles*
-        - 假如 OU 已被 deny 某個 action, 而在 OU 底下, 即使是 root 被 allow 某個 action, 也無法執行此 aciton
-    - Tag Polies
-    - AI Service opt-out policies
-- Best Practice:
-    - 將 logging 統一到一個 logging Account
-    - Bill 上頭可以照 Tag 來找到帳號歸屬
-    
 
 # AWS Resource Access Manager, RAM
 

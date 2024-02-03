@@ -230,6 +230,12 @@ ssm -- "Retries: 5 \n deactivate" --> rr
 
 ## Cost Explorer
 
+- 可用來客製化自己的 AWS Resources 實際使用的成本報表
+- 視覺化圖表, 可看出 AWS Services 每月/每小時 的支出
+- 裡頭可以設定 **Savings Plans**
+- 可用過去 12 months 來做未來的預估
+
+
 ## ElasticTranscoder
 
 - Saas
