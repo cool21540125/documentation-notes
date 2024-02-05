@@ -47,4 +47,8 @@ An error occurred (DryRunOperation) when calling the RunInstances operation: Req
 aws ec2 monitor-instances --instance-ids ${Instance_ID}
 
 
+### 列出已經申請的 Elastic IPs
+aws ec2 describe-addresses --query 'Addresses[*].PublicIp'
+
+
 ### 

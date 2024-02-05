@@ -933,3 +933,12 @@ brew install cloc
 
 cloc --vcs git
 ```
+
+
+# Install redis-cli
+
+如果只想使用 redis-cli 不想安裝一大包的 redis, 可考慮 docker
+
+```zsh
+docker run --rm -it redis:alpine redis-cli -h $HOST
+```

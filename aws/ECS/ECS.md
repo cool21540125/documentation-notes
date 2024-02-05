@@ -188,7 +188,7 @@ ALB --> Task3;
         - *ECS agent* 藉由此 Role, 用來授予不同的 *ECS task* 擁有不同的 [Task Role], ex:
             - Task 需要訪問 S3, Task 直接 `assume role` from ECS Task Role
             - Task 需要訪問 S3, 因此讓 ECS agent 具備授權的權限, 用來給予 Container 必要的 *Task Role*
-                - 白話文就是, 老大 派你去幹掉第二把交椅, 而授予你必要權限
+                - 白話文就是, 老大(ECS) 派 你() 去幹掉敵人, 而 授予(via Task Role) 你必要權限
                     - 老大(Agent)具備 授權的 Role
                     - 你(Task) 具備 Task Role
 

@@ -61,21 +61,9 @@
     - 如果 access 機器, 發生 connection refused, 可能是 APP Error 或 機器沒開
 
 
-# VPC 連線相關
-
-- 必須要能夠區分底下這些服務
-    - Site-to-site VPC
-    - Direct Connect
-    - [VPC Peering](./VPC_Peering.md)
-    - VPC EndPoint
-    - PrivateLink
-    - Transit Gateway
-    - Classic Link
-
-
 # Subnet
 
-- AWS 為每個 Subnet 裏頭, 保留了 5 個 IPv4 addresses, ex: 10.0.0.0/24
+- AWS 為每個 Subnet 裏頭, 保留了 5 個 IPv4 addresses(ip 數量), ex: 10.0.0.0/24
     - 10.0.0.0   : Network Address
     - 10.0.0.1   : for VPC router
     - 10.0.0.2   : for mapping to Amazon-provided DNS
@@ -258,9 +246,10 @@ end
     - port range:
         - IANA && Win10, client port: `49152 - 65535`
         - Linux: `32768 - 60999`
-- VPC Reachability Analyzer Tools
+- VPC Reachability Analyzer Tools (VPC 檢測工具)
+    - SOA course #340, #341
     - 診斷 **VPC 內/之間 endpoints** 網路狀況
-    - 不做侵入式的檢測, 僅從 **配置** 來做診斷, 最綜合評估底下的配置
+    - 不做侵入式的檢測, 僅從 **配置** 來做診斷, 綜合評估底下的配置
         - NACL
         - SG
         - ENI
@@ -309,10 +298,7 @@ Stateful           | Stateless
 - 放在 Public Subnet 的 堡壘機/跳板機
 
 
-# EC2-Classic && AWS ClassicLink
-
-- 2022.08 已廢除
-
+# EC2-Classic && AWS ClassicLink (已廢除)
 
 # VPC Flow Logs
 
