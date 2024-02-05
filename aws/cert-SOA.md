@@ -98,33 +98,18 @@ Resources:
 ```
 
 
-# RDS
-
-- RDS 考試重點之一 : `Read Replicas` v.s. `Multi-AZ`
-- Read Replicas
-    - 主要目標: 讀寫分離, 降低負載
-    - Replication 為 **ASYNC** (eventually consistent)
-    - max 5 Read Replicas, 可 Cross AZ && Cross Region
-    - APP 的 ConnectionString 需要隨著 Read Replicas 調整
-    - Cost
-        - Cross Region Read Replica 的網路流量需要收費
-            - Same Region, Cross AZ -> 不收費
-            - Cross Region, Cross AZ -> 收費
-- Multi-AZ
-    - 主要目標: availability && Disaster Recovery
-    - Replication 為 **SYNC** (strongly consistent)
-    - APP 的 ConnectionString 指向 DNS Name
-        - 此 DNS Name 主要連到 Master, 除非有問題, 會自動改目標
-- Auth
-    - Password authentication
-    - Password and IAM database authentication
-    - Password and Kerberous authentication
-
-
 # AWS Service Catalog
 
-適用於 AWS Organization
+- 適用於 AWS Organization
+- Organization 的 admin 於 AWS Service Catalog, 建立 Product (等同於 CloudFormaiton Teamplate)
+    - 用來給 Organization 來做 create/deploy service
+    - 此外也可建立 Portfolio (此即為 collection of Products)
+    - 最後再配置 IAM policy, 來讓特定 Organization Users 可使用此 products/portfolios
+- 因此, 即便 Organization Users 啥都被禁止了, 也可使用 product/portfolio 來 create stack
+- 除了給 Organization 使用以外, 也可給其他 AWS Accounts 使用
 
-root Account 的 admin User 於 AWS Service Catalog, 建立 類似於 CloudFormaiton 的 Teamplate
 
-可給 Organization accounts 來做 create/deploy service
+## Service Catalog 的 TagOptions library
+
+- (沒實作過...)
+- 建立 Key Value 以後, 可將它套用到 Portfolio, 來讓建出來的 AWS Resources 都具備此 Tag Key Value

@@ -63,7 +63,7 @@ https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/instance-purchasing-options.
 - Reserved
     - 1 or 3 年, 預付省更多
     - 分成:
-        - Reserved Instance
+        - Standard Reserved Instance
             - 可省錢達 72%, 提前退租可在 **AWS Marketplace** 賣掉
         - Convertible Reserved Instance
             - 可省錢達 66%, 可改變 instance type, family, os, scope, tenancy

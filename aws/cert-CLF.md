@@ -788,7 +788,16 @@ end
 
 ## AWS Control Tower
 
-- 依照 Best Practice, 來設定 multiple accounts 的相關權限架構
+- 只需要滑鼠點點點, 就可以開出 multiple accounts, multiple environments 依照 Best Practice 開出對應環境
+    - 因此會自動幫忙開出一堆要花錢的服務. ex:
+        - CloudTrail
+        - Service Catalog
+        - Guardrail
+        - Config
+        - AWS Native Directory & SSO
+        - .......
+- 整個設定完, 會開始燒錢, 且首次設定完, 要等它跑大概 60 mins
+- 如果要使用 Control Tower 的話, 預設也會直接啟用 AWS Organization, 並且啟用 Service Control Policy
 
 
 ## Pricing Model && Savings Plan

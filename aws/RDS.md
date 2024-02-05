@@ -31,14 +31,17 @@
     - Cost
         - based on EC2 && EBS
 - Read Replicas
-    - RDS 至多可有 5 個 Read Replicas (same AZ, cross AZ, cross Region 都行)
+    - RDS 至多可有 15 個 Read Replicas (same AZ, cross AZ, cross Region 都行)
+        - 不過像是 RDS-Oracal 及 RDS-MsSql, 只能有 5 Read Replicas
     - 為了 讀寫效能, 可改為 *讀寫分離*, 因而需要 **Read Replicas**
         - RDS 是 managed service, network traffic 僅對 cross Region 收費
             - cross Region 仍然要 $$
         - 因應 scalability 的 Read Replicas 之間採用 `ASYNC replication`
+            - Same Region, Cross AZ -> 不收費
+            - Cross Region, Cross AZ -> 收費
         - 讀寫分離後, 需修改 CONNECTION STRING
     - 為了 HA(DR, failover), 可勾選啟用 **enable multi-AZ**
-        - standby(也可稱為 read replica), 採用 `SYNC replication`
+        - standby(也可稱為 read replica), 採用 `SYNC replication` (strongly consistent)
             - same Region, 不用 $$
         - standby 無法做 scaling 用途, 因此正常情況下沒鳥用
         - 背後使用 DNS 來做 failover 切換, 因此 免修改 CONNECTION STRING
@@ -52,6 +55,13 @@
     - 自己做 snapshot(lightly backup)
 - 常見問題: Dev/Test 的 DB 需要具備 PubliclyAccess (公開訪問)
     - RDS Instance 需要具備 PubliclyAccessible
+
+
+# Authentication
+
+- Password authentication
+- Password and IAM database authentication
+- Password and Kerberous authentication
 
 
 # Backups 與 snapshots

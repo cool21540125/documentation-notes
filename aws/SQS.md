@@ -148,8 +148,8 @@ sqs -- Poll for messages --> asg;
 - ApproximateAgeOfOldestMessage
     - Queue 裡頭最舊的未刪除 message 的存在時間
 - ApproximateNumberOfMessagesDelayed
+    - 發生於 Queue 被配置為 `delay queue` 或 `message 具備 delay parameter`
     - The number of messages in the queue that are delayed and not available for reading immediately.
-    - Queue 中無法在 timeout 期間內被處理完畢的數量
 - ApproximateNumberOfMessagesVisible
     - SQS 裡頭有多少個 Messages
 
