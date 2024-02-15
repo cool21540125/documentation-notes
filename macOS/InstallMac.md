@@ -573,6 +573,8 @@ brew install pstree
 
 # Install python3
 
+## brew install python3
+
 ```zsh
 brew install python@3.9
 which python3.9

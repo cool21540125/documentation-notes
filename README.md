@@ -15,7 +15,7 @@ find . -name '*' \
     ! -path "**/*.svg" \
     ! -path "**/resources/config/*" \
     ! -path "**/*.drawio" \
-    | xargs wc -l
+    | wc -l
 ```
 
 

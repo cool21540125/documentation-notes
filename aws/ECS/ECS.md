@@ -191,6 +191,10 @@ ALB --> Task3;
                 - 白話文就是, 老大(ECS) 派 你() 去幹掉敵人, 而 授予(via Task Role) 你必要權限
                     - 老大(Agent)具備 授權的 Role
                     - 你(Task) 具備 Task Role
+        - ECS Task role
+            - ECS task (container) 執行時, 訪問 AWS Resources 所需的權限, ex: 寫 logs 到 CloudWatch, 存放資料到 S3, 從 ECR 拉 image, 丟 message 到 SQS 等等
+        - ECS Task execution role
+            - ECS 本身執行 provision ECS tasks 的時候, 所需的權限, ex: 寫 logs 到 CloudWatch (基本上就這個...)
 
 
 # Metrics

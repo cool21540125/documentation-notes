@@ -1,11 +1,8 @@
 
-# Cloud Development Kit, CDK
+# [Cloud Development Kit, CDK](https://docs.aws.amazon.com/cdk/v2/guide/home.html)
 
-- [What is the AWS CDK?](https://docs.aws.amazon.com/cdk/v2/guide/home.html)
-    - WARNING: CDK v1 將於 2023/06 起不再維護, 因此建議改用 CDK v2
-- CDK 也有支援 :
-    - [Terraform](https://developer.hashicorp.com/terraform/cdktf)
-    - [K8s](https://cdk8s.io/)
+- [cdktf](https://developer.hashicorp.com/terraform/cdktf)
+- [cdk8s](https://cdk8s.io/)
 - [Former2](https://former2.com/#section-outputs-cdkv2)
 
 
@@ -66,18 +63,16 @@ cli -- "2. output CloudFormation" --> cfn;
 - 每個 Construct 又可包含多個 **concrete AWS Resources**
     - ex: S3 Bucket, Dynamodb Table, Lambda Function
 - Construct 具有下列 3 種 fundamental flavors:
-    - L1, AWS CloudFormation-only
-        - 由 AWS CloudFormation 自動產生
-        - 命名方式都以 `Cfn` 開頭, ex: CfnBucket 表示 L1 construct 的 S3 bucket
+    - L1
+        - 直接 mapping CloudFormation Resource, 命名都是 `Cfn` 開頭
         - L1 resources 都放在 `aws-cdk-lib`
-    - L2, Curated
-        - 由 AWS CDK team 維護安排
-        - L2 封裝了 L1, 提供必要預設
-    - L3, Patterns
-- AWS CDK 的 `unit of deployment` 為 `stack`
-- cdk 操作的 App, Stack, Construct, Resource 概念結構如下:
-  - app > stack > construct > resource
-  - app 內可含多個 stacks, stack 可含多個 constructs, construct 可含多個 resources
+    - L2
+        - 此為 Curated, 由 AWS CDK team 維護安排
+        - L2 封裝了 L1, 提供了 best-practice 的預設
+    - L3
+        - 此為 Patterns, 做了更加應用層方面的包裝
+- AWS CDK 的部署單元為 stack
+
 
 ```mermaid
 classDiagram
@@ -93,3 +88,29 @@ class MyStack {
 cdkStack <|-- MyStack
 Construct *-- MyStack
 ```
+
+
+# CDK best-practice
+
+cdk 的最佳實務, 分成 4 個面向
+
+
+## cdk - Organization best practice
+
+- 團隊訓練, 擬訂執行標準及政策
+- 使用 Control Tower 設定 Organization
+- 搭配 CDK Pipelines 做 CI/CD
+
+
+## cdk - Coding best practice
+
+- 配合 AWSWell-Architected
+- 每個 App 都從 single package in single repository 作開始
+- infra 及 runtime code 放在相同的 package 裡頭
+    - 像是 Lambda Function, Docker images
+
+
+
+## cdk - Construct best practice
+
+## cdk - Application best practice
