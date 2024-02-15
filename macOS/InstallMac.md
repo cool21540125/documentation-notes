@@ -269,14 +269,16 @@ aws --version
 
 - 2023/04/04
 - [Install SAM CLI](https://aws.amazon.com/tw/serverless/sam/)
+- [Install SAM CLI](https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/install-sam-cli.html)
 
 ```zsh
-brew tap aws/tap
-brew install aws-sam-cli
-brew upgrade aws-sam-cli
+### 不要再使用 brew 了XD
+# brew tap aws/tap
+# brew install aws-sam-cli
+# brew upgrade aws-sam-cli
 
 sam --version
-#SAM CLI, version 1.78.0
+#SAM CLI, version 1.108.0
 ```
 
 

@@ -69,6 +69,31 @@ api <--> On-Premise
     - 訪問權限可使用 Resource Policy 做配置
 
 
+# API Gateway Pricing
+
+以 ap-northeast-1 為例, 區分成:
+
+- 免費額度 (僅限 AWS 新用戶)
+    - HTTP API & REST API - 前 1m 次免費
+    - WebSocket API       - 用得到再來看
+- 計費部分
+    - HTTP API (每 512KB 算一次呼叫)
+        - 呼叫次數費用
+            - 前 0.3 billion 個, 每 1m 費用 USD 1.29
+            - 超出部分則為 USD 1.18
+    - REST API
+        - 呼叫次數費用
+            - 前 0.333 billion 個, 每 1m 費用 USD 4.25
+            - 到 0.667 billion 個, 每 1m 費用 USD 3.53
+                - 後續用得到再說
+        - cache 費用
+            - 0.5 GB, USD .028/hr
+            - 1.6 GB, USD .054/hr
+                - 後續用得到再說
+    - WebSocket API
+        - 用得到再來看
+
+
 # API Gateway 的 Integration Types:
 
 ## 1. Lambda Function / AWS Service
