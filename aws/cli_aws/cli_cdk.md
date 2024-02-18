@@ -13,8 +13,7 @@ npm install -g aws-cdk
 
 
 cdk version
-#2.108.1 (build 2320255
-```
+#2.126.0 (build fb74c41)
 
 
 # cli check

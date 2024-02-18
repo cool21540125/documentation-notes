@@ -17,13 +17,16 @@
         - Multi AZ, Backups
     - Performance
         - 毫秒等級 latency
+            - single digit millsecond performance
         - 若要 caching, 可搭配 DynamoDB Accelerator, DAX
             - DynamoDB 專用的快取
             - DynamoDB fully managed in-memory cache
     - 10x performance improvement
     - Cost
         - Pay for usage
-    - Infrequent Access, IA
+- Table Class 分成 2 種:
+    - Standard Table Class
+    - Infrequent Access(IA) Table Class
 - store documents, key-value
     - max: 一筆 400 KB
 - 常見查詢
@@ -43,7 +46,7 @@
 - RCU(Read Capacity Unit)
     - 1 單位的 RCU, 表示每秒鐘的讀取量能為:
         - Strongly consistent   讀取 1 個 4 KB 物件
-        - Eventually consistent 讀取 2 個 4 KB 物件
+        - Eventually consistent 讀取 2 個 4 KB 物件 (預設查詢)
 - WCU(Write Capacity Unit)
     - 1 單位的 WCU, 表示每秒鐘能寫入 1 KB
 - 多人同時寫入的問題
@@ -53,25 +56,25 @@
 - 名詞解釋
     - FilterExpression
         - If you need to further refine the Query results, you can optionally provide a filter expression. A filter expression determines which items within the Query results should be returned to you. All of the other results are discarded.
+        - 這只會減少 ResultSet 的數量, Query 本身也是一樣耗費了原本查詢的資料筆數, 只是回傳的資料量能有效減少(類似 SQL 的 where clauses)
     - [ProjectionExpression](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/Expressions.ProjectionExpressions.html)
         - To read data from a table, you use operations such as GetItem, Query, or Scan. Amazon DynamoDB returns all the item attributes by default. To get only some, rather than all of the attributes, use a projection expression.
-- 本身並無 Create Database 的概念
-    - 動作為 Create Table, 如下範例
-        ```
-        TableName: Products
-
-        Primary Key
-            Partition Key (needed)
-            SortKey       (optional)
-
-        Attributes
-            name
-            age
-            ...
-            (每筆資料的欄位都可不同)
-        ```
 - DynamoDB - Global Table
     - 可作 active-active r/w replication
+
+```
+TableName: Products
+
+Primary Key
+    Partition Key (needed)
+    SortKey       (optional)
+
+Attributes
+    name
+    age
+    ...
+    (每筆資料的欄位都可不同)
+```
 
 
 # DynamoDB Index
@@ -91,3 +94,18 @@
 - [Setting up DynamoDB local (downloadable version)](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/DynamoDBLocal.html)
     - [跑容器化吧](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/DynamoDBLocal.DownloadingAndRunning.html#docker)
 - [NoSQL Workbench for DynamoDB](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/workbench.html)
+
+
+# DynamoDb Api
+
+- Scan API       : (沒事別用啊!! 非常昂貴)
+- GetItem API    : 查詢單一 Item 最具備效率的做法
+- PutItem API    : 
+    - Insert (PutItem    API is used to create a new item or to replace existing items completely with a new item)
+- UpdateItem API : 
+    - Update (UpdateItem API is used to create a new item or to replace existing items completely with a new item)
+
+
+# DynamoDb CLI
+
+- [DynamoDb hands-on 101](https://amazon-dynamodb-labs.workshop.aws/hands-on-labs/setup.html)

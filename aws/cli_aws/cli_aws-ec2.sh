@@ -13,6 +13,23 @@ aws ec2 describe-instances --filters "Name=instance-type,Values=t2.micro" --quer
 aws ec2 describe-instances --filters "Name=instance-type,Values=t2.micro" --query "Reservations[].Instances[].NetworkInterfaces[].Association"
 
 
+### 讓 EC2 找到自身的 meta-data, 但只能在 *Web Console* && *CLI*, 這動作本身不需要權限
+curl http://169.254.169.254/latest/meta-data
+# https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/instancedata-data-retrieval.html
+
+### CLI 找機器的 meta-data
+aws ec2 describe-instances
+
+
+### 查詢 EC2 Instance 的 ImageID
+aws ec2 describe-instances \
+    --instance-ids $EC2_Instance_ID \
+    --region $Region \
+    --query 'Reservations[0].Instances[0].ImageId'
+
+
+### 
+
 
 ### Start instance (which is stopped)
 aws ec2 start-instances --instance-ids $InstanceId
@@ -36,7 +53,7 @@ aws ec2 run-instances \
     --key-name ${KEY} \
     --dry-run
 
-An error occurred (DryRunOperation) when calling the RunInstances operation: Request would have succeeded, but DryRun flag is set.
+#An error occurred (DryRunOperation) when calling the RunInstances operation: Request would have succeeded, but DryRun flag is set.
 # 如果看到這樣, 表示指令可成功下達. 但因家了 --dry-run, 所以沒實際跑下去
 
 

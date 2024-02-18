@@ -75,20 +75,27 @@ r2 -.- srv2["AWS Services \n (ex: S3)"];
 
 # IAM Policy
 
-- 定義 Identity 被 許可/拒絕 針對 Resource 執行特定 Action
+- 定義 Identity 被 allow/deny 針對 Resource 執行 actions
 - Policy 區分為 2 個類別:
     - Identity-based policy - 以 People 的角度出發,   宣告某個 People 可以/不能 幹嘛
     - Resource-based policy - 以 Resource 的角度出發, 宣告某個 Resource 可以/不能 被誰怎樣
-        - S3 policy
-        - key policy
 - 每個 Policy 裏頭, 會有很 1~N 個 Statements
 - 最終會套用給 User / Group / Role (想像成某個擬人的 Service)
-- Trust policies 定義了哪個 principal entities(accounts/users/role/federated user) can assume the role
-- 如果 **IAM User, Role, Group** 要能夠 pass a Role 給特定 AWS Resources, 則此 **IAM User, Role, Group** 需具備 `PassRole` permission
+- **Trust policies** 定義了哪個 principal entities(accounts/users/role/federated user) can assume the role
+- 如果 **IAM User / Role / Group** 要能夠 pass a Role 給特定 AWS Resources, 則此 **IAM User / Role / Group** 需具備 `PassRole` permission
     - 此 `PassRole` permission, 無法用來授予 cross-account permission
+- 特殊的 Permissions:
+    - `PassRole`
+        - App 跑在 EC2 裏頭, App 運行期間會去訪問 AWS Resources
+        - 你這個 IAM User, 必須要具備 `PassRole` 的權限, 才能把所需的 Role 交給 EC2
+        - 如果像是更進階的議題
+            - 身為 AccountA 的 IAM User
+            - 如今需要把 AccountA 的 Role傳遞給 AccountB 的服務, 則:
+                - AccountB 須先有 "可從 AccountA assume the role" 的 Role
+
 
 ```jsonc
-// 若符合底下的 permission, 可用來授予訪問 「帳號內的 "EC2-roles-for-XYZ-" 開頭的 EC2」的權限
+// 此 policy 授予訪問 「帳號內的 "EC2-roles-for-XYZ-" 開頭的 EC2」的權限
 {
     "Version": "2012-10-17",
     "Statement": [{
@@ -261,6 +268,8 @@ r2 -.- srv2["AWS Services \n (ex: S3)"];
     - Resource
     - NotResource
     - Condition
+- IAM Policy Variables
+    - 可在 IAM Policy 裡頭的 Condition 或 Resource, 做更有彈性的規範
 
 
 ### Cross AWS Account
@@ -282,9 +291,9 @@ user -- "4. access" --> rr["AWS Resources"]
 ```
 
 
-### SAML 2.0 Federation - Client APP
+### SAML 2.0 Federation - Client APP / API
 
-- 下圖略為簡化 IdP 與 背後的 Identity Store, 詳圖參考 [Using SAML-based federation for API access to AWS](https://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles_providers_saml.html)
+- https://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles_providers_saml.html
 - IdP 事先與 STS 做好(雙向)信任 && APP 與 IdP 認證後, 藉由 `AssumeRoleWithSAML()` API, 取得 *temp creds*
 
 ```mermaid
@@ -294,17 +303,18 @@ STS <-- "0. trust" --> IdP;
 
 subgraph org["Organization"]
     user["YOU \n Client APP"]
-    user -- "1. Verify Request" --> IdP["Identity Provider"]
-    IdP -- "2. SAML Assertion" --> user;
+    user -- "1. auth Request" --> IdP["Portal 或 IdP"];
+    IdP <-- 2. auth --> ldap["LDAP-based Identity Store"];
+    IdP -- "3. SAML Assertion" --> user;
 end
 subgraph AWS
     STS
     rr["AWS Resources"]
 end
 
-user -- "3. SAML Assertion \n call AssumeRoleWithSAML()" --> STS;
-STS -- "4. temp creds" --> user;
-user -- "5. access" --> rr
+user -- "4. SAML Assertion \n call AssumeRoleWithSAML()" --> STS;
+STS -- "5. temp creds" --> user;
+user -- "6. access" --> rr
 ```
 
 ---
@@ -312,7 +322,7 @@ user -- "5. access" --> rr
 
 ### SAML 2.0 Federation - Browser
 
-- 下圖略為簡化 IdP 與 背後的 Identity Store, 詳圖參考 [Enabling SAML 2.0 federated users to access the AWS Management Console](https://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles_providers_enable-console-saml.html)
+- https://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles_providers_enable-console-saml.html
 - IdP 事先與 STS 做好(雙向)信任 && Browser 與 IdP 認證後, 藉由 `AssumeRoleWithSAML()` API, 取得 *temp creds*
 
 ```mermaid
@@ -322,19 +332,20 @@ STS <-- "0. trust" --> IdP;
 
 subgraph org["Organization"]
     user["YOU \n Browser"]
-    user -- "1. Verify Request" --> IdP["Identity Provider"]
-    IdP -- "2. SAML Assertion" --> user;
+    user -- "1. Verify Request" --> IdP["Portal 或 IdP"]
+    IdP <-- 2. auth --> ldap["LDAP-based Identity Store"];
+    IdP -- "3. SAML Assertion" --> user;
 end
 subgraph AWS
-    SSO
+    portal["AWS Portal"]
     STS
     web["AWS Web Console"]
 end
 
-user -- "3. SAML Assertion \n call AssumeRoleWithSAML()" --> SSO;
-SSO <-- "4. verify" --> STS
-SSO -- "5. temp creds" --> user;
-user -- "6. redirect to" --> web
+user -- "4. POST SAML Assertion \n call AssumeRoleWithSAML()" --> portal;
+portal <-- "5. verify" --> STS
+portal -- "6. temp creds" --> user;
+user -- "7. redirect to" --> web
 ```
 
 ---
@@ -342,27 +353,30 @@ user -- "6. redirect to" --> web
 
 ### SAML 2.0 Federation - ADFS, Active Directory FS
 
-- 下圖略為簡化 ADFS 與 背後的 AD, 詳圖參考 [AWS Federated Authentication with Active Directory Federation Services (AD FS)](https://aws.amazon.com/blogs/security/aws-federated-authentication-with-active-directory-federation-services-ad-fs/)
+- https://aws.amazon.com/blogs/security/aws-federated-authentication-with-active-directory-federation-services-ad-fs/
 - (同上面的 SAML...), 對於任何 *SAML 2.0 compatible IdP* 流程都是一樣的
 
 ```mermaid
 flowchart TB
 
+STS <-- "0. trust" --> adfs;
+
 subgraph org["Organization"]
-    user["YOU \n Browser Interface"]
+    user["YOU \n Browser"]
     user -- "1. Verify Request" --> adfs["ADFS 3.0"]
-    adfs -- "2. SAML Assertion" --> user;
+    adfs <-- 2. auth --> AD;
+    adfs -- "3. SAML Assertion" --> user;
 end
 subgraph AWS
-    STS["AWS Sign-In \n (STS)"]
-    IAM
+    portal["AWS Portal"]
+    STS
     web["AWS Web Console"]
 end
 
-user -- "3. POST 'SAML Assertion' \n (Sign In) \n call AssumeRoleWithSAML()" --> STS;
-STS <-- "4. verify" --> IAM
-STS -- "5. temp creds" --> user;
-user -- "6. redirect to" --> web
+user -- "4. POST SAML Assertion \n call AssumeRoleWithSAML()" --> portal;
+portal <-- "5. verify" --> STS
+portal -- "6. temp creds" --> user;
+user -- "7. redirect to" --> web
 ```
 
 ---
@@ -374,27 +388,30 @@ user -- "6. redirect to" --> web
     - 此時, *Identity Broker* 必須自行決定適當的 `IAM Policy`
 - Using API: `AssumeRole` && `GetFederationToken`
 - 下圖省略 *Identity Broker* 與背後的 *Identity Store*, 詳文參考 [Providing access to externally authenticated users (identity federation)](https://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles_common-scenarios_federated-users.html)
+- 此時的 Identity Broker 具備 AWS Admin 的權限
+    - 由此來決定 YOU 能取得哪種 Role
 
 ```mermaid
 flowchart LR
 
 subgraph org["Organization"]
-    ib["Identity Broker"]
-    uu["Browser 或 APP \n YOU"]
-    ldap["Identity store"]
+    bkr["Identity Broker"]
+    user["YOU \n Browser"]
+    ldap["LDAP-based Identity Store"];
 end
+
 subgraph AWS
     sts["STS"]
     ww["AWS Web Console"]
     rr["AWS Resources"]
 end
 
-uu -- 1. Sign In --> ib;
-ib <-- 2. auth --> ldap;
-ib <-- "3. temp creds \n call AssumeRole() \n 或 \n call GetFederationToken()" --> sts;
-ib -- "4. temp creds" --> uu
-uu -- 5a. redirect to --> ww;
-uu -- 5b. access API --> rr;
+user -- 1. Sign In --> bkr;
+bkr <-- 2. auth --> ldap;
+bkr <-- "3. call AssumeRole() 或 \n GetFederationToken() \n 取得 temp creds" --> sts;
+bkr -- "4. token 或 Url" --> user
+user -- 5a. redirect to --> ww;
+user -- 5b. access API --> rr;
 ```
 
 ---

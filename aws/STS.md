@@ -136,7 +136,7 @@ temp creds 很常出現在底下的情境:
 
 (底下還非常亂, 沒整理)
 
-- 用來給 *non AWS Users* 申請 *temp creds*
+- AWS STS 用來給 *non AWS Users* 申請 *temp creds*
 - user management outside of AWS
 - 如果 Users 並非 AWS Users, 而是來自 *Identity Federation(身份聯盟)*, ex:
     - SAML 2.0

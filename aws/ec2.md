@@ -3,21 +3,6 @@
 
 - IaaS
 - [EC2 機器規格比較表](https://instances.vantage.sh/)
-- [Amazon EC2 Instance Types](https://aws.amazon.com/ec2/instance-types/?nc1=h_ls), 分成底下的 Types:
-    - General Purpose
-    - Compute Optimized : ML, ...
-    - Memory Optimized : RDB
-    - Accelerated Computing : 
-        - 不曉得這個和 Compute Optimized 差在哪邊
-    - Storage Optimized : OLTP, NoSQL, ...
-    - Instance Features : 
-    - Measuring Instance Performance : 
-    - 而上述的這些 Types, 有它旗下的 Series:
-        - T2, M4, M5, C4, R5, I3 等等, 有著各種方面的優化
-    - 範例 :`m5.2xlarge`
-        - m       : instance class
-        - 5       : generation (硬體規格編號)
-        - 2xlarge : size within the instance class
 - EC2 Instance Connect, 目前未必每個 Region 都有此功能
     - 可直接使用 Web Console 做 login
         - 似乎 SG 需要開 allow 22 from 0.0.0.0 (只單純允許 MyIP 登不進去)
@@ -37,23 +22,45 @@
     - timeout, 必然是 SG Issue
     - connection refused, app error 或 not launched
 - 不要在 EC2 上面做 `aws configure`, 善用 IAM Role
+- 申請 EC2 時, 有幾個構面需要優先思考:
+    - Launch Type
+        - On-demand, Stop Instance, Dedicated, Reserved, ...
+    - Instance Type
+        - R, C, M, I, ...
+        - Instance Family
+            - M5, M6, T2, T3, ...
 
 
-# EC2 - Burstable
+## Instance Type
 
-- 因為大多數人開了機器以後, 基本上 EC2 都閒在那邊, 因此有了 t 系列主機, ex: t2.micro
-- 這類型機器是與其他人共用實體機器, 藉由 AWS 的 Hypervisor 用來運行 VM, 這就是你的 EC2
-    - 這句話是我自己做結論的, AWS 官方並沒有這樣說
-- 機器沒在使用(沒有在操 CPU)時, 會累積 credits
-    - 等到需要 安裝東西/跑些啥程式/做些有的沒的, 會耗用之前累積的 CPU credits
-- 一點的 CPU Credits 大概是:
-    - One vCPU at 100% utilization for one minute
-    - One vCPU at 50% utilization for two minutes
-    - Two vCPUs at 25% utilization for two minutes
-- 如果開了 t2.micro 以後, 真的很需要 CPU, 除了調整 instance type 以外, 還可以切換成 `t2 ultimate`
+- M7g, General Purpose
+- T, Burstable
+    - 因為大多數人開了機器以後, 基本上 EC2 都閒在那邊, 因此有了 t 系列主機, ex: t2.micro
+    - 這類型機器是與其他人共用實體機器, 藉由 AWS 的 Hypervisor 用來運行 VM, 這就是你的 EC2
+        - 這句話是我自己做結論的, AWS 官方並沒有這樣說
+    - 機器沒在使用(沒有在操 CPU)時, 會累積 credits
+        - 等到需要 安裝東西/跑些啥程式/做些有的沒的, 會耗用之前累積的 CPU credits
+    - 一點的 CPU Credits 大概是:
+        - One vCPU at 100% utilization for one minute
+        - One vCPU at 50% utilization for two minutes
+        - Two vCPUs at 25% utilization for two minutes
+    - 如果開了 t2.micro 以後, 真的很需要 CPU, 除了調整 instance type 以外, 還可以切換成 `t2 ultimate`
+- C, Compute Optimized : ML, ...
+- M, Memory Optimized : RDB
+- I, Storage Optimized : OLTP, NoSQL, ...
+- G?, Accelerated Computing : 
+    - 不曉得這個和 Compute Optimized 差在哪邊
+- Instance Features : 
+- Measuring Instance Performance : 
+- 而上述的這些 Types, 有它旗下的 Series:
+    - T2, M4, M5, C4, R5, I3 等等, 有著各種方面的優化
+- 範例 :`m5.2xlarge`
+    - m       : instance class
+    - 5       : generation (硬體規格編號)
+    - 2xlarge : size within the instance class
 
 
-# Instance purchasing options
+## Launch Type (Instance purchasing options)
 
 EC2 選購時, 有底下這一大堆的 purchasing options:
 
@@ -86,8 +93,6 @@ https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/instance-purchasing-options.
         - BYOL, Bring Your Own License
 - Dedicated Instances
     - 組織內 or 同帳號底下, 可與其他 *non dedicated instance* 共用硬體
-    - 除上述以外, 基本上與 *dedicated host* 相差無幾
-        - [查看兩者比較](#dedicated-host-vs-dedicated-instancehttpsdocsawsamazoncomawsec2latestuserguidededicated-instancehtmldh-di-diffs)
     - no control over instance placement
 - Capacity Reservations
     - https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-capacity-reservations.html
@@ -99,7 +104,7 @@ https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/instance-purchasing-options.
 - [Dedicated Host v.s. Dedicated Instance](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/dedicated-instance.html#dh-di-diffs)
 
 
-## [Placement Group](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/placement-groups.html)
+# [Placement Group](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/placement-groups.html)
 
 - 為了增加 EC2 之間的傳輸效能, 可藉由 *placement group* 來控制 EC2 在 AWS infra 之中的位置, 有 3 種佈置策略(strategy):
     - Cluster
@@ -210,8 +215,8 @@ flowchart LR
 # EC2 - Check
 
 - EC2 的 Health Check 分成 2 種
-    - System status checks   - 比較偏重於 infra 相關的檢查, 像是 AWS power, networking, or software systems
-    - Instance status checks - 重點在於 Instance OS 是否能夠接收 traffic
+    - System checks   - 硬體, ex: AWS power, networking, or software systems
+    - Instance checks - 軟體, ex: OS 是否能夠接收 traffic
 - 能夠在 EC2 裡頭查看自己的 metadata
     `curl http://169.254.169.254/latest/meta-data/`
 
@@ -219,6 +224,7 @@ flowchart LR
 # EC2 Storage
 
 - AWS 似乎有支援 `ceph`(檔案系統), 可支援 `Object Storage` && `Block Storage`
+
 
 ## EC2 Storage - EC2 Instance Store
 
@@ -245,25 +251,3 @@ flowchart LR
 
 - InstanceLimitExceeded        : 特定 region 的 service quota 達到使用上限
 - InsufficientInstanceCapacity : AWS 那邊於 AZ 裡頭已經沒有相關的資源可供開立
-
-
-# CLI
-
-```bash
-### 讓 EC2 找到自身的 meta-data, 但只能在 *Web Console* && *CLI*, 這動作本身不需要權限
-curl http://169.254.169.254/latest/meta-data
-# https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/instancedata-data-retrieval.html
-
-### CLI 找機器的 meta-data
-aws ec2 describe-instances
-
-
-### 查詢 EC2 Instance 的 ImageID
-$# aws ec2 describe-instances \
-    --instance-ids $EC2_Instance_ID \
-    --region $Region \
-    --query 'Reservations[0].Instances[0].ImageId'
-
-
-### 
-```

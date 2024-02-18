@@ -46,7 +46,7 @@ end
 
 ```bash
 sam --version
-#SAM CLI, version 1.78.0
+#SAM CLI, version 1.108.0
 
 
 ### 初始化 SAM project
