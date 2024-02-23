@@ -777,6 +777,10 @@ gem -v
 
 ### 會安裝到 $GEM_HOME
 gem install ${PKGS}
+
+
+### 查看 gem 相關資訊
+gem environment
 ```
 
 

@@ -43,5 +43,7 @@ xcodebuild -list -workspace $YOUR_XCODE_PROJECT_PATH.xcworkspace
 xcodebuild -workspace $YOUR_XCODE_PROJECT_PATH.xcworkspace -scheme $scheme build
 
 
-### 
+### 針對 xcode project 裡頭的 plist 及 .pbxproj 修改版本號
+agvtool new-marketing-version $version_number
+agvtool new-version -all $build_number
 ```
