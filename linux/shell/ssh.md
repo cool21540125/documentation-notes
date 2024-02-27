@@ -1,5 +1,21 @@
 與 ssh 有關的大小事
 
+# ssh agent
+
+```bash
+ssh -T git@github.com  # default use ~/.ssh/id_rsa
+ssh -i Another_ssh_private_key -T git@github.com
+# 除非有自己去配置 ~/.ssh/config 
+# Host github.com
+#  ForwardAgent yes
+#  IdentityFile another_key
+
+
+### 
+```
+
+
+
 # SSH Server
 
 查詢 SSH Server 目前套用的配置, 語法:
