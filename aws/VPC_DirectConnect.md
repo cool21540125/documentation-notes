@@ -11,6 +11,7 @@
   - 服務的核心有 2 個元件:
     - ISP 端用戶過來的 **Connections**
     - AWS 一端的 **Virtual Interface**
+        - Virtual Interface, VIF
   - 建立後
     - 可藉由 `Private virtual interface` 連入 VPC (接入 `Virtual private gateway`)
     - 可藉由 `Public virtual interface` 連入 S3, Glacier, ...

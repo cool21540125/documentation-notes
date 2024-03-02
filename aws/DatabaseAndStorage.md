@@ -363,7 +363,7 @@ end
 
 # AWS Transfer Family
 
-- transfer file <--> S3 或 EFS, via FTP
+- 藉由 FTP, FTPS, SFTP 做傳輸
 - Serverless, scalable, reliable, HA
 - Charge: pay per provisioned endpoint per hour + data transfer in GB
 - Security
