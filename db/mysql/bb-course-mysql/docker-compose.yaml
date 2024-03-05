@@ -1,0 +1,20 @@
+version: '3'
+
+services:
+  bb-course-mysql:
+    image: mysql:5.7
+    container_name: bb-course-mysql
+    hostname: bb-course-mysql
+    restart: always
+    ports:
+      - "3306:3306"
+    volumes:
+      - "bb-course-data:/var/lib/mysql"
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: mydb
+    command: --default-authentication-plugin=mysql_native_password
+
+volumes:
+  bb-course-data:
+    external: true
