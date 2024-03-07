@@ -7,6 +7,12 @@ docker volume create --name bb-course-data
 
 
 ### 
+docker compose up -d
+docker exec -it bb-course-mysql bash
+mysql -uroot -p
+# password
+
+use mydb;
 ```
 
 

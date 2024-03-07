@@ -1,4 +1,9 @@
 
+- 留意 Lambda Timeout
+- 若想要加速運算, 調高 RAM, 便可提高 CPU
+- 留意 Lambda Execution Role
+
+
 # [Lambda](https://docs.aws.amazon.com/lambda/latest/dg/welcome.html)
 
 - [AWS Lambda FAQs](https://aws.amazon.com/lambda/faqs/?nc1=h_ls)
