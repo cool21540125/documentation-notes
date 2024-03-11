@@ -36,7 +36,10 @@ rustup docs --book
 
 # cargo
 
-cargo 是 rust 的 `build system` 及 `package manager`
+- cargo 是 rust 的 `build system` 及 `package manager`
+- crate 是 rust 的 src code files 的 collections(crate 等同於 python 的 package)
+    - cargo build 的產出物為 binary crate
+    - 像是 `rand crate` 為 library crate (無法被直接執行)
 
 ```bash
 ### 建立 cargo project
@@ -52,6 +55,15 @@ cargo build --release  # for prd     -> target/release/
 cargo run
 
 
+### 依照 carto.toml 裡頭的 deps, 查看 package 的說明文件
+cargo doc --open 
+
+
 ### 不做 compile, 但做是否可 compile 的檢查
 cargo check
 ```
+
+
+# ownership
+
+用來保證 rust 無需 gc 依然能夠達到 memory safety 的方式
