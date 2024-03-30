@@ -2,19 +2,19 @@ version: "3.8"
 
 services:
   mongo:
-    image: mongo:4.4.4
+    image: mongo:7
     container_name: mongo
     hostname: mongo
     restart: always
     ports:
       - "27017:27017"
-    environment:
-      - MONGO_INITDB_ROOT_USERNAME=${MONGO_INITDB_ROOT_USERNAME}
-      - MONGO_INITDB_ROOT_PASSWORD=${MONGO_INITDB_ROOT_PASSWORD}
+    # environment:
+    #   - MONGO_INITDB_ROOT_USERNAME=${MONGO_INITDB_ROOT_USERNAME}
+    #   - MONGO_INITDB_ROOT_PASSWORD=${MONGO_INITDB_ROOT_PASSWORD}
     volumes:
       - "${PWD}/data_db:/data/db"
       - "${PWD}/sharding_config:/data/configdb"
-      - "${PWD}/mongod.conf:/etc/mongod.conf"
+      # - "${PWD}/mongod.conf:/etc/mongod.conf"
     networks:
       - net_mongo
     logging:
@@ -22,8 +22,7 @@ services:
       options:
         max-size: "20m"
         max-file: "3"
-    command: ["mongod", "--config", "/etc/mongod.conf"]
 
 networks:
   net_mongo:
-    name: net_mongo_single
+    name: net_db

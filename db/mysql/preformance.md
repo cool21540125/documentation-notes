@@ -1,74 +1,6 @@
-# subquery 效能
-- 2018/05/11
-
-
-## Question: 查 order資料表內，最近與我下單的所有客戶
-
-使用 `mysql_demo_data.sql`
-
-### 1. Correlated subqueries 效能差
-```sql
-SELECT custid, ordid, orderdate
-FROM ord o
-WHERE orderdate = 
-    (
-        SELECT MAX(orderdate) 
-        FROM ord i
-        WHERE i.custid = o.custid
-    )
-ORDER BY custid;
-```
-
-
-### 2.1. Subquery + Join方法 改寫
-> SELF-contained + Join
-
-```sql
-SELECT o.custid, o.ordid, o.orderdate
-FROM ord o JOIN (
-        SELECT custid, MAX(orderdate) LastOrder
-        FROM ord 
-        GROUP BY custid
-    ) i 
-    ON (o.custid = i.custid)
-WHERE o.orderdate = i.LastOrder
-ORDER BY custid;
-```
-
-
-### 2.2. Subquery + Join方法 改寫
-> SELF-contained + Join
-
-```sql
-SELECT o.custid, o.ordid, o.orderdate
-FROM ord o JOIN (
-        SELECT custid, MAX(orderdate) LastOrder
-        FROM ord 
-        GROUP BY custid
-    ) i 
-    ON (o.custid = i.custid AND o.orderdate = i.LastOrder)
-ORDER BY custid;
-```
-
-
-### 3. Table-valued Subquery
-> Self-Subquery
-
-> Oracle、MySQL5.6後可，但是SQL Server無法下multi-column subquery (相容性較差)
-
-```sql
-SELECT custid, ordid, orderdate
-FROM ord
-WHERE (custid, orderdate) in (
-        SELECT custid, MAX(orderdate)
-        FROM ord
-        group by custid
-    )
-ORDER BY custid;
-```
-
 
 # using index
+
 - 2018/08/07
 - [SELECT語法效能](https://kejyuntw.gitbooks.io/high-scaling-websites-structure-learning-notes/Database/Database-MySQL-SELECT-SQL-Explain-Test.html)
 - [What is the meaning of filtered in MySQL explain?](https://dba.stackexchange.com/questions/164251/what-is-the-meaning-of-filtered-in-mysql-explain)
@@ -89,15 +21,14 @@ Explain Query後, 所能看到的 `type` 欄位, **依照效能排序**
 - ALL (效能最差)
 
 ```sql
-
-> explain select * from datas where dt >= '2017-06-12 03:00:00' and dt<= '2017-06-12 06:00:00' order by dt desc;
-+-------+------+---------+----------+-----------------------------+
-| type  | key  | rows    | filtered | Extra                       |
-+-------+------+---------+----------+-----------------------------+
-| ALL   | NULL | 5245344 |    11.11 | Using where; Using filesort |--;# 無 Index, 180 rows in set (1.58 sec)
-| range | dt   |     180 |   100.00 | Using index condition       |--;# 有 Index, 180 rows in set (0.00 sec)
-+-------+------+---------+----------+-----------------------------+
---;# 僅節錄部分欄位 並列出比較
+explain select * from datas where dt >= '2017-06-12 03:00:00' and dt<= '2017-06-12 06:00:00' order by dt desc;
+-- +-------+------+---------+----------+-----------------------------+
+-- | type  | key  | rows    | filtered | Extra                       |
+-- +-------+------+---------+----------+-----------------------------+
+-- | ALL   | NULL | 5245344 |    11.11 | Using where; Using filesort |--;# 無 Index, 180 rows in set (1.58 sec)
+-- | range | dt   |     180 |   100.00 | Using index condition       |--;# 有 Index, 180 rows in set (0.00 sec)
+-- +-------+------+---------+----------+-----------------------------+
+-- 僅節錄部分欄位 並列出比較
 ```
 
 - `type` : 觀察重點! 
@@ -131,5 +62,3 @@ SELECT * FROM `user` WHERE `id`<>'1' FOR UPDATE;       | v          | -        |
 SELECT * FROM `user` WHERE `id` LIKE '3' FOR UPDATE;   | v          | -        | -       | 主鍵不明確，table lock
 
 `FOR UPDATE` 只能作用在 `InnoDB`, 必須要 transactions 內才能使用
-
-
