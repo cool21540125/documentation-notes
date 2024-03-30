@@ -1,7 +1,7 @@
 .vscode/
 *.py[cmd]
 package-lock.json
-node_modules/
+**/node_modules/
 *.cache
 *.pdb
 Release/
@@ -19,6 +19,7 @@ secret*
 pass_*
 *.sqlite
 data_db/
+sharding_config/
 keyfile
 *.sql.gz
 *.tar.gz
