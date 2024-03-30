@@ -140,6 +140,7 @@ aws configure --profile ${Temp_Profile_Name}
 
 ### 可用來查詢 目前正在下 aws xxx 指令的 User 是誰 (查看自己啦)
 aws sts get-caller-identity
+aws iam get-user
 
 
 ###

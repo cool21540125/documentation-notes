@@ -72,6 +72,9 @@ Rules --> Targets;
 - Event Bridge 會自行分析發送到他身上的 events 的 schema
     - > Console > EventBridge > Sandbox
         - 這邊的功能, 可以模擬發生特定事件, 可用來協助測試, 特定的 Tested Event 是否能被 Event Pattern 捕獲到
+- Schema Registry
+    - Schema registries are containers for schemas. Schema registries collect and organize schemas so that your schemas are in logical groups.
+    - schema registry 是 schema 的邏輯群組分類, 用來便於組織及管理 schemas
 - *Schema Registry* 會在 APP 裡頭 generate code, 
     - 來讓 APP 可事先得知 how data is structured in the event bus
     - 而這些 Schema 可版控

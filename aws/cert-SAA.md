@@ -175,15 +175,6 @@ ssm -- "Retries: 5 \n deactivate" --> rr
 - IaaS, declarative
 
 
-## AWS Step Functions (易與 SWF 搞混)
-
-- 用來一口氣管理一堆 **Lambda Function**
-    - 具備了一堆特色: sequence, parallel, conditions, timeouts, error handling, ...
-    - 除了 Lambda 以外, 也可與像是 EC2, ECS, API Gateway 等服務整合(但較少)
-- *JSON state machine*
-- 
-
-
 ## Simple Workflow Service, SWF (老東西, 已經不支援了)
 
 - 與 **Step Function** 有點像, 但運行在 EC2
@@ -347,14 +338,14 @@ ssmps <-- Eecryption API --> kms;
 - [Disaster recovery options in the cloud](https://docs.aws.amazon.com/whitepapers/latest/disaster-recovery-workloads-on-aws/disaster-recovery-options-in-the-cloud.html)
 
 
-## Disaster Recovery in AWS
+## DR, Disaster Recovery in AWS
 
-- DR, Disaster recovery
-- 備份還原策略, 關鍵決策的核心要考慮 2 個重點, 後續的備份還原策略, 都基於這兩者:
-    - RPO, Recovery Point Objective
-        - Disaster 與 RPO 之間, 為 data loss 可接受的範圍
-    - RTO, Recovery Time Objective
-        - RTO 與 Disaster 之間, 為 downtime 可接受的期間
+備份還原策略, 關鍵決策的核心要考慮 2 個重點, 後續的備份還原策略, 都基於這兩者:
+
+- RPO, Recovery Point Objective
+    - Disaster 與 RPO 之間, 為 data loss 可接受的範圍
+- RTO, Recovery Time Objective
+    - RTO 與 Disaster 之間, 為 downtime 可接受的期間
 
 ```
    RPO        Disaster             RTO
@@ -363,21 +354,22 @@ ssmps <-- Eecryption API --> kms;
 ------------------------------------------> time
 ```
 
-- 常見的 Disaster Recovery Strategies 如下:
-    - Backup and Resotre
-        - 遇到問題時, restore/recreate from backup
-        - high RPO && high RTO
-    - Pilot Light
-        - 僅將核心資源做線上備份 (critical systems are already up)
-        - ex: RDS 隨時與 local DB 做 replication
-            - EC2 上頭安裝了與 running APP 一樣的環境 (但關機)
-            - 遇到問題時, 改變 Route53 解析, 開 EC2
-        - 相較上者, 有較低的 RPO && RTO
-    - Warm Standby
-        - 隨時都有另一套規格較小的在運行, 作為備源
-    - Hot Site / Multi Site Approach
-        - 最貴方案, 不過 RPO & RTO 能盡可能降到最低
-        - full production scale
+常見的 Disaster Recovery Strategies 如下:
+
+- Backup and Resotre
+    - 遇到問題時, restore/recreate from backup
+    - high RPO && high RTO
+- Pilot Light
+    - 僅將核心資源做線上備份 (critical systems are already up)
+    - ex: RDS 隨時與 local DB 做 replication
+        - EC2 上頭安裝了與 running APP 一樣的環境 (但關機)
+        - 遇到問題時, 改變 Route53 解析, 開 EC2
+    - 相較上者, 有較低的 RPO && RTO
+- Warm Standby
+    - 隨時都有另一套規格較小的在運行, 作為備源
+- Hot Site / Multi Site Approach
+    - 最貴方案, 不過 RPO & RTO 能盡可能降到最低
+    - full production scale
 
 
 ## Database Migration Service, DMS

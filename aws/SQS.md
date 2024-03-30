@@ -73,7 +73,7 @@ sqs -- Poll for messages --> asg;
 - Standard SQS Queue 可以設定 `prioritize`, 來讓 Consumer 優先 poll 優先度高的 Message
 
 
-## SQS - Message Visibility Timeout
+## SQS - Message Visibility Timeout (visibilityTimeout)
 
 - 預設為 30 secs
 - 因為 SQS 為 distributed service, 因此當 Consumer 從 SQS poll message 之後, 該 Message 依舊會存在於 Queue

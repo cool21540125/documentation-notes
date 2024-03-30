@@ -189,6 +189,11 @@ r2 -.- srv2["AWS Services \n (ex: S3)"];
 - `iam:PassRole` 是個 special permission, 讓你可以 associate an IAM role 到特定的 resource
     - **Passing a role** 意指 **link role to resource**
     - 用來規範 resource 可對於 other AWS resource 做哪些 action
+    - 具體範例:
+        - IAM User 必須要有 `iam:PassRole` 才能將 Role assign 給 CloudFormation
+            - 如果 CloudFormation 操作 Resources 的時候不指定 Role, 預設會使用 IAM User Role (與 `iam:PassRole` 無關)
+            - 如果 CloudFormation 操作 Resources 的時候指定了 Role, 則作此操作的 IAM User 需要有 `iam:PassRole` 的權限才行
+                - 當然了, pass 給 CloudFormation 的 Role Policy, 勢必得讓 CloudFormation 有權限操作 Resources
 - 細節
     - IAM PassRole 並非 API method (官方歸類上會讓人誤解)
     - IAM PassRole 並非讓你去尻的 Api
