@@ -21,6 +21,8 @@ mvn -v
 ### 安裝 maven wrapper
 mvn wrapper:wrapper
 # 必須要有 pom.xml
+# 等同於在 local project 裏頭, 放了一包 gradlew
+# 安裝完以後就有 ./mvnw 可以用了
 
 
 ### 驗證是否為合格的 maven project

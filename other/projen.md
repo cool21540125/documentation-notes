@@ -20,3 +20,21 @@ classDiagram
 ```
 
 ------
+
+```bash
+### init
+npx projen new demo
+
+
+##
+npx projen
+# 可用來同步版本 (先修改 .projenrc.js, 再執行 CLI)
+
+
+### 
+npx projen build
+# 起碼要寫一個 test 才能正常運行
+
+
+### 
+```

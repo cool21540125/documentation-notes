@@ -9,7 +9,7 @@
 ```bash
 ### 系統層級安裝 poetry
 poetry --version
-#Poetry (version 1.7.1)
+#Poetry (version 1.8.2)
 
 
 ### 如果希望讓 venv 建立在專案內, 改用這樣的配置
@@ -31,7 +31,7 @@ poetry init
 
 
 ### 建立 虛擬環境 (必須要先有 pyproject.toml)
-poetry env use python3.11
+poetry env use python3.12
 
 
 ### 移除 $HOME/Library/Caches/pypoetry/virtualenvs/ 底下的 venv

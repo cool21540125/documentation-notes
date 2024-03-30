@@ -15,6 +15,25 @@ python -m doctest -v abc.py
 
 ![Python Class](../img/python_class.png)
 
+```python
+### 解壓縮zip
+import os
+import requests
+from io import BytesIO
+from zipfile import ZipFile
+
+if not os.path.isfile("moviedata.json"):
+    print(f"Downloading {"moviedata.json"}...")
+    movie_content = requests.get(
+        "https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/samples/moviedata.zip"
+    )
+    movie_zip = ZipFile(BytesIO(movie_content.content))
+    movie_zip.extractall()
+
+
+### 
+```
+
 
 
 ## [base64](https://docs.python.org/3.6/library/base64.html)
