@@ -35,7 +35,7 @@ $HOME/
 
 # 變數優先級別 Variable Precedence
 
-- 優先順序為
+- 優先順序為(高到低)
     - Extra Vars (`--extra-vars`)
     - Set Facts
     - Include Vars
@@ -50,8 +50,28 @@ $HOME/
 # ansible.cfg
 
 ```ini
+# 預設的 Global Config Path
+#   /etc/ansible/ansible.cfg
+
 [defaults]
-inventory = hosts
+inventory = /etc/ansible/hosts
+
+log_path = /var/log/ansible.log
+
+library = /usr/share/my_modules
+
+### 如果 playbook directory structure 找不到 roles, 則會來這邊找 role
+roles_path = /etc/ansible/roles
+# 寫法可參照 PATH
+# ex: ~/.ansible/roles:/usr/share/ansible/roles:/etc/ansible/roles
+
+action_plugins = /usr/share/ansible/plugins/action
+
+gathering = implicit
+
+# SSH timeout
+timeout = 10
+forks = 5
 
 remote_user = vagrant
 #private_key_file = ~/.ssh/id_rsa
@@ -59,10 +79,21 @@ remote_user = vagrant
 # host_key_checking
 host_key_checking = False
 
-### 如果 playbook directory structure 找不到 roles, 則會來這邊找 role
-roles_path = /etc/ansible/roles
-# (不知能否這樣寫... 但他如同 PATH)
-# ex: ~/.ansible/roles:/usr/share/ansible/roles:/etc/ansible/roles
+
+[inventory]
+enable_plugins = host_list, virtualbox, yaml, constructed
+
+
+[privilege_escalation]
+
+[paramiko_connection]
+
+[ssh_connection]
+
+[persistent_connection]
+
+[colors]
+
 ```
 
 
@@ -80,10 +111,14 @@ web2 ansible_host=w17802.example.com
 
 # Inventory Parameters
 # ansible_connection : ssh/winrm/localhost
+#   for Windows
+#     ansible_connection=winrm (而非 ansible_connection=ssh for Linux)
+#     ansible_password=xxx     (而非 ansible_ssh_pass=xxx   for Linux)
 # ansible_port
 # ansible_user
 # ansible_ssh_pass / ansible_password (for Windows)
 ```
+
 
 ## 拆分 inventory
 

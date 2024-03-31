@@ -1,0 +1,10 @@
+### Udemy - ansible basic - 15
+- 
+  name: Add DNS server to resolv.conf
+  hosts: localhost
+  vars:
+    dns_server: 168.95.1.1
+    tasks:
+      - inlinefile:
+          path: /etc/resolv.conf
+          line: 'nameserver {{ dns_server }}'

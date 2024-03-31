@@ -1,0 +1,16 @@
+# https://www.udemy.com/course/learn-ansible/learn/lecture/39596698#overview
+# Ansible Variables - Magic Variable
+# Course 19
+# descriptions:
+#   Let other hosts get attributes that don't belone to them
+---
+- name: Print dns server
+  hosts: all
+  tasks:
+  - debug:
+      msg: " The DNS of {{ hostvars['web1'].ansible_host }} is {{ hostvars['web1'].dns_server }}"
+      # 如此一來, 每個 web 都能列出 web1.dns_server
+      # 當然還有更多的 {{ hostvars['web1'].ansible_facts.xxx }} 可使用
+      # 
+      # msg: "{{ dns_server }}"
+      # 這種方式, 對於 web0 及 web2 來說, 他們不知道 dns_server

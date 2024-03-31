@@ -1,0 +1,18 @@
+### Udemy - ansible basic - 17
+- name: Check /etc/hosts file
+  hosts: all
+
+  tasks:
+
+    - shell: cat /etc/hosts
+      register: result
+      # 將此 task 結果保存到 result
+
+
+    - debug:
+        var: result.stdout
+        # var: result.rc
+        # var: result
+
+# 輸出結果:
+#   "rc": 0 表示正確執行

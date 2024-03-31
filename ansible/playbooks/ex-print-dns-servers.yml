@@ -1,0 +1,9 @@
+### Udemy - ansible basic - 18
+- name: Print dns server
+  hosts: all
+
+  tasks:
+
+    - debug:
+        msg: '{{ dns_server }}'
+        # 此前提是, inventory file 裡頭需要聲明這些 hosts 的 dns_server

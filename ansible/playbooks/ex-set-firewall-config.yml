@@ -1,0 +1,28 @@
+### Udemy - ansible basic - 15
+- 
+  name: Set Firewall Configurations
+  hosts: web
+  tasks:
+
+  - firewalld:
+      service: https
+      permanent: true
+      state: enabled
+
+  - firewalld:
+    #   port: 8081/tcp
+      port: '{{ http_port }}'/tcp
+      permanent: true
+      state: disabled
+
+  - firewalld:
+    #   port: 161-162/udp
+      port: '{{ snmp_port }}'/udp
+      permanent: true
+      state: disabled
+
+  - firewalld:
+    #   source: 192.0.2.0/24
+      source: '{{ inter_ip_range }}'/24
+      Zone: internal
+      state: enabled

@@ -4,15 +4,21 @@
 ```bash
 ### Version
 ansible --version
-#ansible [core 2.14.2]
-#  config file = None
-#  configured module search path = ['/Users/tony/.ansible/plugins/modules', '/usr/share/#ansible/plugins/modules']
-#  ansible python module location = /usr/local/lib/python3.10/site-packages/ansible
-#  ansible collection location = /Users/tony/.ansible/collections:/usr/share/ansible/#collections
-#  executable location = /usr/local/bin/ansible
-#  python version = 3.10.9 (main, Dec 15 2022, 18:25:35) [Clang 14.0.0 (clang-1400.0.29.#202)] (/usr/local/opt/python@3.10/bin/python3.10)
-#  jinja version = 3.1.2
-#  libyaml = True
+#ansible [core 2.16.4]
+# (僅摘要)
+
+
+### show current settings
+ansible-config dump | grep xxx
+# (應該會是最好用的吧!!)
+
+
+### list all configurations
+ansible-config list
+
+
+### show current config file
+ansible-config view
 
 
 ### ansible CLI
@@ -29,7 +35,7 @@ ansible ${Target} \
 # -u : 指定遠端執行的用戶
 # -K, --ask-become-pass : 可加上這個, 來互動式詢問 privilege escalation 的密碼
 # --become : 若為 poweruser, 加上這個不指定用戶, 則會使用 root 運行. 但也可指定使用特定用戶
-
+# -v : 類似 debug mode (可列出 cat /path/to/file 這類的結果)
 
 ### ansible ping
 ansible host03 -m ping
