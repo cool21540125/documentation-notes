@@ -1,7 +1,10 @@
-
+#!/bin/env bash
+# terraform CLI
+exit 0
+# --------------------
 
 terraform version
-#Terraform v1.5.7
+#Terraform v1.7.5
 #on darwin_amd64
 
 
@@ -18,16 +21,22 @@ terraform apply --var-file="terraform-$ENV.tfvars"
 terraform destroy
 terraform destroy --var-file="terraform-$ENV.tfvars"
 
-### 對 xx.tf 排版
-terraform fmt
-
-
-### 驗證 xx.tf 是否合規
-terraform validate
-
 
 ### 檢查當前資料夾下的 .terraform.tfstate
 terraform show
 
 
-### 
+### ============ Terraform Workspace ============
+### 可用來切不同環境, ex: dev / stg / prd
+tf workspace new dev
+tf workspace new pre
+tf workspace new prd
+
+tf workspace select dev
+
+tf workspace list
+
+tf workspace delete pre
+
+# state 會被保存在
+# ./terraform.tfstate.d/${terraform.workspace}/terraform.tfstate

@@ -25,10 +25,42 @@
     - terraform-provider.tf
     - terraform-provider.tf.json
     - terraform-instances.tf
+- 變數順位
+    - 1. CLI                         (for 特殊情境)
+    - 2. terraform Environment       (for CI/CD)
+    - 3. xx.tfvars                   (for dev 環境)
+        - 此檔案不上版控, 不過可版控一個 xx.tfvars.example
+    - 4. variable definition         
+        - 也就是 xx.tf 裡頭的 variable 區塊啦
+    - 5. variable default definition
+- Dependency
+    - 使用 `depends_on` ; 循環依賴可參考: `implicit` 或 `module graph`
+- Lifecycle
+    - `prevent_destroy` / `ignore_changes` / `precondition`
+
+
+--- 
 
 ```hcl
 resource "<PROVIDER>_<TYPE>" "<NAME>" {
  [CONFIG …]
 }
+```
 
+
+## 遠端狀態後台 Backend
+    - A backend defines where Terraform stores its state data files.
+    - 用來讓團隊共同維持 **terraform.tfstate** (避免衝突), 可保存到:
+        - AWS S3 / GCP Stroage / HashiCorp Consul / Azure Blog / HashiCorp Terraform Cloud / 等等
+        - 預設使用 **local**
+
+```hcl
+// Terraform Backend
+terraform {
+  backend "gcs" {
+    bucket = ""
+    prefix = ""
+    project = ""
+  }
+}
 ```
