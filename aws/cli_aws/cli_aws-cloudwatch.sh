@@ -17,7 +17,8 @@ aws cloudwatch set-alarm-state \
 #   INSUFFICIENT_DATA
 
 
-### 推送一筆資料到 CloudWatch
+### 推送一筆資料到 CloudWatch - 自行建立 custom metric (區間可以是: 2週前 ~ 2小時候)
+# https://awscli.amazonaws.com/v2/documentation/api/latest/reference/cloudwatch/put-metric-data.html
 aws cloudwatch put-metric-data \
     --metric-name "$MetricName" \
     --namespace "/Metric/Namespace" \

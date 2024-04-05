@@ -1,7 +1,6 @@
 
-# CloudWatch Logs
+# [CloudWatch Logs](https://docs.aws.amazon.com/AmazonCloudWatch/latest/logs/WhatIsCloudWatchLogs.html)
 
-- [What is Amazon CloudWatch Logs?](https://docs.aws.amazon.com/AmazonCloudWatch/latest/logs/WhatIsCloudWatchLogs.html)
 - [CloudWatch Logs workshop](https://catalog.us-east-1.prod.workshops.aws/workshops/a8e9c6a6-0ba9-48a7-a90d-378a440ab8ba/en-US/200-cloudwatch/220-cloudwatch-logs)
 - 預設 CloudWatch Logs 永遠不會到期. 但可調整 *Log Group* 的 *retention policy*
     - CloudWatch Logs 是要收錢的喔!!

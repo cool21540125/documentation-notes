@@ -10,16 +10,9 @@
 
 ## CloudWatch 重要名詞定義
 
-### Metrics
-
-- 每隔一段時間發佈到 CloudWatch 的一組 data point
-- metric 只保存在他們所在的 Region, 無法自行刪除
-    - 15 個月後會消失
-
-
 ### Namespaces
 
-- Metrics 的 Container, 用來隔離不同的 Metrics
+- Metrics 的 Container, 用來隔離不同的 Metrics (基本上一個 AWS Service 會有一個 Namespace)
     - ex: EC2 使用 `AWS/EC2` 這個 namespace
 
 
@@ -30,13 +23,13 @@
 - 好像可以理解成 OOP 裡頭的 class, attribute name, attribute value 的概念, ex:
     - Instance.id
     - Environment.name
-- 每一筆 Metric 都有它的蒐集頻率(StorageResolution API parameter)
+- 每一筆 CloudWatch Metric 都有它的蒐集頻率(StorageResolution API parameter)
     - Standard resolution : 60 secs
     - High resoultion     : 1 sec
         - 很貴
-        - 使用 [collected plugin](https://github.com/awslabs/collectd-cloudwatch) 來搜集 metrics
+        - 使用 *collected plugin* 來搜集 metrics
         - 儲存後, 查看 metrics 時, 可再自行選擇資料頻率 1/5/10/30/60 甚至更長的資料頻率
-- WARNING: 很容易把 `EC2 detailed monitoring` 和 `CloudWatch Alarm high resolution metrics` 搞混!!
+- WARNING: 很容易把 **EC2 detailed monitoring** 和 **CloudWatch Alarm high resolution metrics** 搞混!!
     - EC2 detailed monitoring
         - Enabled  : 每 1 min 發送 metrics 到 CloudWatch (需課金)
             - 如果是底下的操作, 預設是 Detailed Monitoring:
@@ -52,22 +45,11 @@
     - RDS 的 Enhanced monitoring
         - 
 - 如果自行搜集 custom metric 時, 都會去尻 `PutMetricData API`(收費~), 假設又使用 High Resolution, 小心錢包哭哭
-    - `aws cloudwatch put-metric-daata --namespace "xxx" --metric-data file://example-metric.json`
+    - 可以自行建立 **2 週前 ~ 2 hrs 後** 的 metrics (不會發生錯誤)
 
-
-### Statistics 
-
-- 不解釋
-
-
-### Percentiles 
-
-- 不解釋
-
-
-### Alarms
-
-- 針對一段時間特定 Metric 達到某個 threshold 的狀態, 所做的 actions
+```bash
+aws cloudwatch put-metric-data --namespace "xxx" --metric-data file://example-metric.json
+```
 
 
 # CloudWatch Dashboards
@@ -84,6 +66,7 @@
     - alarms
     - other resource health information
 
+
 # CloudWatch Metrics
 
 - [CloudWatch Metcrics workshop](https://catalog.us-east-1.prod.workshops.aws/workshops/a8e9c6a6-0ba9-48a7-a90d-378a440ab8ba/en-US/200-cloudwatch/210-cloudwatch-metrics)
@@ -92,11 +75,13 @@
     - EC2 Memory Usage 並沒在預設的 metrics 裡頭, 想要這個的話需要 custom
 - UNKNOWN Accepts metric data points two weeks in the past and two hours in the future
     - (make sure to configure your EC2 instance time correctly)
-- 可使用 [put-metric-data](https://awscli.amazonaws.com/v2/documentation/api/latest/reference/cloudwatch/put-metric-data.html) API 來增加 custom metric
 - 可以針對 metric 超過門檻, 配置對應的 [alarm actions](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/cloudwatch_concepts.html#CloudWatchAlarms)
 - EC2 預設每 5 mins 會有一筆 metric -> CloudWatch Metric, 如果需要更頻繁的資料, 可啟用 *EC2 Detailed monitoring*(每 1 min 一筆)
     - 很容易與 CloudWatch Metric high resolution && CloudWatch Alarm high resolution 搞混!!
 - `Search Expression` 為其中一種 `Math Expression`
+- 可作異常檢測 by ML
+    - **Cloudwatch Anomaly Detection** (半套) - 只能做檢測, 須自行搭配 CW Alarm
+    - **Amazon Lookout for Metrics** (全套) - 可整合一系列的 log source, 並且做對應 action
 
 
 ## CloudWatch configuration
@@ -105,13 +90,6 @@
     - agent   : agent configuration
     - metrics : custom metrics
     - logs    : additional log files
-
-
-
-
-# CloudWatch Events
-
-- 老東西, 現在已改為 [EventBridge](#aws-eventbridge-前身為-cloudwatch-events)
 
 
 # CloudWatch Alarms
