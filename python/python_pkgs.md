@@ -1,8 +1,6 @@
 
 # 發布擴充功能
 
-- 2018/08/01
-- [Setuptools Integration](https://click.palletsprojects.com/en/7.x/setuptools/)
 - [Python Package User Guide](https://packaging.python.org/tutorials/)
 - [Python Package Project Structure](https://packaging.python.org/tutorials/packaging-projects/)
 
@@ -37,7 +35,7 @@
 # 搭建私有 pypi server
 
 1. 建立空專案 demo_privatepypi, 裡頭建立 packages 資料夾
-2. 專案裡頭建立 python 虛擬環境, 並安裝 `pip install pypiserver`
+2. 專案裡頭建立 python 虛擬環境, 並安裝 `pip install pypiserver`
 3. 運行 `pypi-server -p 8999 ./packages &`
 
 因為以上建立的 pypi server 不安全, 所以下面啟用驗證

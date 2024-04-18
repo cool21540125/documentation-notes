@@ -1188,26 +1188,16 @@ rpm --import nginx_signing.key
 
 # 2. 建立 Yum Repo
 cat <<"EOT" > /etc/yum.repos.d/nginx.repo
-[nginx-stable]
-name=nginx stable repo
+[nginx]
+name=nginx repo
 baseurl=https://nginx.org/packages/centos/$releasever/$basearch/
 gpgcheck=1
 enabled=1
-gpgkey=https://nginx.org/keys/nginx_signing.key
-module_hotfixes=true
-
-[nginx-mainline]
-name=nginx mainline repo
-baseurl=http://nginx.org/packages/mainline/centos/$releasever/$basearch/
-gpgcheck=1
-enabled=0
-gpgkey=https://nginx.org/keys/nginx_signing.key
-module_hotfixes=true
 EOT
 ###### 內容如上 ######
 
 ### 重要選擇性資訊
-yum-config-manager --enable ${中括號裡面的名稱}
+yum-config-manager --enable nginx
 # 上面有 2 個支線可用來追蹤, 如果要選擇其他的話, 則使用此指令更改安裝來源, ex:
 # yum-config-manager --enable nginx-stable
 # yum-config-manager --enable nginx-mainline

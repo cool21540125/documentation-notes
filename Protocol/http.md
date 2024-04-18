@@ -148,7 +148,7 @@ IMPORTANT: 上述加入到 HSTS preload 的作法, 是一條通往 HTTPS 的不�
    - `Cache-Control: no-cache`  : 每次都詢問是否 Resource 有異動
    - `Cache-Control: no-store`  : 完全不使用快取
 - 比較
-   - `Cache-Control: max-age=0` : 
+   - `Cache-Control: max-age=0` : Client 自行發起, 告知不要 cache
    - `Cache-Control: no-cache`  : 
 - Http 快取
    - 快取儲存策略

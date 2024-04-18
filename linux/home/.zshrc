@@ -31,6 +31,10 @@ alias dienv='docker inspect --format="{{json .Config.Env}}"'
 alias k='kubectl'
 
 
+### 移除暫時的 python 檔案
+alias pyclean='find . \( -type f -name "*.py[co]" -o -type d -name "__pycache__" \) -delete && echo "Removed pycs and __pycache__"'
+
+
 
 ### golang PATH
 export PATH="$(go env GOPATH)/bin:${PATH}"

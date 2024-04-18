@@ -87,4 +87,11 @@ end
 ### SSH Tunnel 玩法
 ssh -L 8000:192.168.124.74:80 pome@192.168.124.133
 # ssh -L <本地port>:<要訪問的IP>:<要訪問的Port> <跳板user>@<跳板IP>
+
+
+ssh -L 9998:localhost:15672 -p 2223 user@remote_jump_host.com -N
+# bind local 9998 and remote 15672
+# -p 指定 remote server client ssh port
+# -N 不做 login remote shell
+# access: http://localhost:9998
 ```
