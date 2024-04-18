@@ -125,7 +125,11 @@ sam list endpoints --stack-name $StackName
 #
 
 
-### (不知道怎麼解釋)
+### 使用 sam CLI 生成 event
+sam local generate-event
+
+### 
+sam local generate-event apigateway aws-proxy
 sam local generate-event apigateway aws-proxy \
     --body "" --path "hello" --method GET > api-event.json
 

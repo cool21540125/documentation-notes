@@ -1,29 +1,30 @@
 
-# DynamoDB Common
+# [DynamoDB](https://docs.amazonaws.cn/en_us/amazondynamodb/latest/developerguide/Introduction.html)
 
-- [What is Amazon DynamoDB?](https://docs.amazonaws.cn/en_us/amazondynamodb/latest/developerguide/Introduction.html)
-- [CLF-DynamoDB](./cert-CLF_C01.md#dynamodb)
-- 摘要特色:
-    - Operations
-        - Serverless -> 無需 operations
-        - Auto Scaling
-        - HA + Cross 3 AZ replication 的 NoSQL
-            - Key-Value
-    - Security
-        - IAM Policy
-        - KMS encryption
-        - SSL in flight
-    - Reliability
-        - Multi AZ, Backups
-    - Performance
-        - 毫秒等級 latency
-            - single digit millsecond performance
-        - 若要 caching, 可搭配 DynamoDB Accelerator, DAX
-            - DynamoDB 專用的快取
-            - DynamoDB fully managed in-memory cache
-    - 10x performance improvement
-    - Cost
-        - Pay for usage
+
+- Performance
+    - 毫秒等級 latency
+        - single digit millsecond performance
+    - 若要 caching, 可搭配 DynamoDB Accelerator, DAX
+        - DynamoDB 專用的快取
+        - DynamoDB fully managed in-memory cache
+        - 10x performance improvement
+- Cost
+    - 儲存容量計費
+    - 流量計費
+    - WCU & RCU 計費
+
+---
+
+Cost                  | RCU               | WCU
+--------------------- | ----------------- | ---------------
+Eventually consistent | 8 KB / per unit   | 1 KB / per unit
+Strongly consistent   | 4 KB / per unit   | 1 KB / per unit
+Transactional request | 4 KB / per 2 unit | 1 KB / per 2 unit
+
+---
+
+
 - Table Class 分成 2 種:
     - Standard Table Class
     - Infrequent Access(IA) Table Class
@@ -80,10 +81,24 @@ Attributes
 # DynamoDB Index
 
 - DynamoDB 支援底下 2 種 types 的 secondary indexes:
-    - Global secondary index
-        - An index with a partition key and a sort key that can be different from those on the base table. A global secondary index is considered "global" because queries on the index can span all of the data in the base table, across all partitions. A global secondary index has no size limitations and has its own provisioned throughput settings for read and write activity that are separate from those of the table.
-    - Local secondary index
-        - An index that has the same partition key as the base table, but a different sort key. A local secondary index is "local" in the sense that every partition of a local secondary index is scoped to a base table partition that has the same partition key value. As a result, the total size of indexed items for any one partition key value can't exceed 10 GB. Also, a local secondary index shares provisioned throughput settings for read and write activity with the table it is indexing.
+    - GSI, Global secondary index
+        - 可替換原有的 Partition Key 及 Sort Key
+        - 可以事後異動
+    - LSI, Local secondary index
+        - 沿用既有的 Partition Key, 此 LSI 替換掉原有的 Sort Key
+        - 需要在 Table 建立的時候就先建立好 LSI (無法事後異動)
+
+
+# DynamoDB backup
+
+- 支援了 2 種類型的 backup
+    - On-Demand backup and restore
+        - 依照使用的需求, 可隨時快速地做備份還原
+        - 需要自行配置 backup
+    - Point-in-Time Recovery
+        - 依照特定時間點, 還原到當時的狀態
+        - 最久可還原到 35 天前的狀態
+        - 由 AWS 實作 backup
 
 
 # DynamoDB Streams

@@ -212,13 +212,16 @@ flowchart LR
 - 若要刪除 instance, 需 terminate instance && Deregister AMI && Delete EBS snapshot
 
 
-# EC2 - Check
+# EC2 - Status Check
 
 - EC2 的 Health Check 分成 2 種
-    - System checks   - 硬體, ex: AWS power, networking, or software systems
-    - Instance checks - 軟體, ex: OS 是否能夠接收 traffic
+    - System status checks   - 硬體, ex: AWS power, networking, or software systems
+    - Instance status checks - 軟體, ex: OS 是否能夠接收 traffic
 - 能夠在 EC2 裡頭查看自己的 metadata
-    `curl http://169.254.169.254/latest/meta-data/`
+
+```bash
+curl http://169.254.169.254/latest/meta-data/
+```
 
 
 # EC2 Storage

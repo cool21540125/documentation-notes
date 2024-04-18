@@ -1,0 +1,31 @@
+{
+  "version": "1.0",
+  "timestamp": "2024-04-09T13:09:29.120Z",
+  "requestContext": {
+    "requestId": "ae6bcbee-acc8-4fe0-937b-fc06a991533b",
+    "functionArn": "arn:aws:lambda:YOUR_REGION:ACCOUNT_ID:function:ORIGINAL_LAMBDA_FUNCTION:$LATEST",
+    "condition": "Success",  // 原始 Lambda Function 執行結果
+    "approximateInvokeCount": 1
+  },
+  "requestPayload": {
+    "version": "0",
+    "id": "ac0e5051-6a62-6400-c1d9-089860f5999a",
+    "detail-type": "Scheduled Event",  // 原始 Lambda Function 觸發方式
+    "source": "aws.events",  // 
+    "account": "ACCOUNT_ID",
+    "time": "2024-04-09T13:09:00Z",
+    "region": "YOUR_REGION",
+    "resources": [
+      "arn:aws:events:YOUR_REGION:ACCOUNT_ID:rule/TRIGGER_SOURCE"  // ex: EventBridge cron job
+    ],
+    "detail": {}
+  },
+  "responseContext": {
+    "statusCode": 200,
+    "executedVersion": "$LATEST"
+  },
+  "responsePayload": {
+    "statusCode": 200,
+    "body": "OK"
+  }
+}

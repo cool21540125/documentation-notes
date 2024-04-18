@@ -1,16 +1,21 @@
 
-# VPC Endpoint Services / PrivateLink
+# VPC Endpoint Services / PrivateLink(Private Link)
 
 - 可以用來讓 VPC/On-Premise 的 AWS Services 藉由 private 的方式, 訪問其他的 AWS Services
     - 避免走 public 增加延遲 & 克金
+- PrivateLink 定義: *A technology that provides private connectivity between VPCs and services.*
+- VPC Endpoint 定義: *The entry point in your VPC that enables you to connect privately to a service.*
 - VPC Endpoints 分成 2 種類型:
-    - Interface Endpoints (powered by AWS PrivateLink)
+    - Interface VPC Endpoints
+        - 藉由: PrivateLink (實現 VPC 內部訪問)
         - 須配置: `ENI` 及 `Security Group`
+        - 支援範圍: https://docs.aws.amazon.com/vpc/latest/privatelink/aws-services-privatelink-support.html
         - 收費: 使用時數 & 傳輸量
-    - Gateway Endpoints
+    - Gateway VPC Endpoints
+        - 藉由: 
         - 須配置: `gateway` 及 `Route Table`
-        - 免費
-        - 僅限 `DynamoDB` 及 `S3`
+        - 支援範圍: `DynamoDB` 及 `S3`
+        - 收費: 免費~~
 - 配置方式
     - Console > VPC > Endpoints > Create endpoint
 - 可用來 expose service 給成百上千個 VPC (Secure && Scalable)

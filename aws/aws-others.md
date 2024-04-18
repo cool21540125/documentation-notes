@@ -1,6 +1,5 @@
 # 未分類雜訊
 
-
 AWS 租機器的方式
 - 整台給 $$$
 - 不超賣 $$
@@ -15,6 +14,7 @@ AWS 租機器的方式
 
 - distribution & open-source
 - 用來提供給 Your App 一系列的 APIs, libs, agents, collector services
+    - (用來作 tracing 的啦)
     - 蒐集 Apps 的 distributed traces and metrics
         - 可搜集 EC2, ECS, EKS, Lambda, On-Premise
     - 蒐集 AWS resources and services 的 metadata

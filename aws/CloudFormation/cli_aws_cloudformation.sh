@@ -1,7 +1,14 @@
+#!/bin/bash
+exit 0
+# --------------------------
 
-# CLI CloudFormation
 
-```bash
+API_URL=$(aws cloudformation describe-stacks --stack-name ${CFN_STACK_NAME} --query 'Stacks[0].Outputs[?OutputKey==`HelloWorldApi`].OutputValue' --output text)
+LAMBDA_ARN=$(aws cloudformation describe-stacks --stack-name ${CFN_STACK_NAME} --query 'Stacks[0].Outputs[?OutputKey==`HelloWorldFunction`].OutputValue' --output text)
+echo API_URL=$API_URL
+echo LAMBDA_ARN=$LAMBDA_ARN
+
+
 ### LIST CloudFormation Stacks (without Deleted)
 aws cloudformation list-stacks  --stack-status-filter CREATE_COMPLETE UPDATE_COMPLETE ROLLBACK_COMPLETE
 # 如果不加上 filter, 則會列出包含已刪除的 Stacks
@@ -44,7 +51,7 @@ aws cloudformation create-stack  --stack-name $EXAMPLE_STACK  --template-body fi
 
 ### 
 
-```
+
 
 
 # CLI CloudFormation Tools

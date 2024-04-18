@@ -1,4 +1,4 @@
-
+- [Ref 及 GetAtt 快速查找表](https://theburningmonk.com/cloudformation-ref-and-getatt-cheatsheet/)
 - https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/intrinsic-function-reference.html
 - CloudFormation 內建的 Functions
     - Fn::Ref
@@ -6,7 +6,7 @@
         - 對於 Resources, 回傳 resource 的 physical ID
     - Fn::GetAtt
         - 對於 Resources, 可取得它對應的各種 peoperty/attribute
-        - 各種 AWS Resources 的 
+        - 各種 AWS Resources 的 attributes
     - Fn::FindInMap
         - 此為底層用法(必須逐一事先宣告)
         - 適用情境為, 能夠掌握所有參數的話, 再來制定 Map

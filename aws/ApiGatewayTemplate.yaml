@@ -1,0 +1,78 @@
+Resources:
+  ### Sam Template 快速用來整合 ApiGateway, 建立 resources and methods (藉由 https endpoint 訪問)
+  # https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/sam-resource-api.html
+  # Sam 使用的 Api Gateway
+  # 無需自行建立, 也不要沒事使用這個..... Lambda Function 聲明了以後, 會自行建立
+  ExampleServerlessSamApiGateway:
+    Type: AWS::Serverless::Api  # Sam Template ONLY
+    Properties:
+      Name: String  # 既然都把這包寫出來了, 就幫它取個名字吧
+
+  ExampleServerlessFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Events:
+        RestApiEvent:
+          Type: Api  # 由 `Type: Api` 可知, 此為 RestApi
+          Properties:
+            RestApiId: !Ref ExampleServerlessSamApiGateway
+            Path: /hello
+            Method: GET
+
+  ### 建立 Rest | Http - Api Gateway 與 Lambda Function 做 integration
+  # https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/sam-resource-httpapi.html
+  ExampleApiGateway:
+    Type: AWS::Serverless::HttpApi
+    Properties:
+      Name: String
+      StageName: String
+      Models: Map
+
+  ExampleFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Events:
+        RestApiEvent:  # Rest Api
+          Type: Api
+          Properties:
+            Path: /
+            Method: get
+            RestApiId: !Ref ExampleApiGateway
+        HttpApiEvent:  # Http Api
+          Type: HttpApi
+          Properties:
+            Path: /
+            Method: GET
+            ApiId: !Ref ExampleApiGateway
+
+  # ================================================================================
+  ### 建立 RestApi (用來支援 OpenApi/Swagger)
+  # https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-apigateway-restapi.html
+  # 
+  ExampleRestApi01:
+    Type: AWS::ApiGateway::RestApi
+    Properties:
+      Body: Json
+      Mode: String
+      Name: String
+      Parameters:
+        Key: Value
+
+  ### 將 `RestApi` 的 ApiGateway deploy 到一個 Stage
+  # https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-apigateway-deployment.html
+  ExampleDeployment:
+    Type: AWS::ApiGateway::Deployment
+    Properties:
+      RestApiId: !Ref ExampleRestApi01
+      StageName: String
+
+  # ================================================================================
+  ###
+  # https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-apigatewayv2-api.html
+  ExampleApi:
+    Type: AWS::ApiGatewayV2::Api
+    Properties:
+      Name: String
+      Target: String # quick create ApiGateway Integration 相關資源. 僅支援 Http Api (ex: HTTP_PROXY | AWS_PROXY)
+
+###

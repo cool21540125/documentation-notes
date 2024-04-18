@@ -103,6 +103,12 @@
 - 用來 access AWS EC2 及 On-Premise instances
 - Host 上頭需安裝 agent (Instance Profile 需 allow Session Manager)
     - 最起碼 Instance Profile 需要有 `AmazonSSMManagedInstanceCore` policy
+- 並且 EC2 的 Security Group 需要開啟 443, allow 底下的 endpoints (需要能夠對外)
+    - ssm.ap-northeast-1.amazonaws.com
+    - ec2messages.ap-northeast-1.amazonaws.com
+    - ssmmessages.ap-northeast-1.amazonaws.com
+- 最該死的是, 搞不好一切都配好了, 但還是無法使用 Session Manager....
+    - 重開機就能正常使用了 QAQ
 
 
 ## Node Management - Run Command / RunCommand

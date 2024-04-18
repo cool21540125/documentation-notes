@@ -83,7 +83,7 @@ STS 支援了一系列的 actions, 可用來取得 **temp creds**
 
 - 可用來取得呼叫此 Api 的 User/Role 的 credentials
     - 感覺有點類似 Linux 的 `whoami` 指令, 又或者是 `echo $0`
-- 尻 GetCallerIdentity Api 拿到的 **temp creds**, 可以做任何的 Api call, 但除了:
+- 尻 GetCallerIdentity Api 拿到的 **temp creds**, 基本上可以做任何的 Api call, 但除了:
     - AssumeRole 及 GetCallerIdentity 以外的 STS Api
     - any IAM Api operations (除非有提供 MFA authentication information)
 - 拿到的 Response 包含:

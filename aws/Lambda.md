@@ -6,58 +6,56 @@
 
 # [Lambda](https://docs.aws.amazon.com/lambda/latest/dg/welcome.html)
 
-- [AWS Lambda FAQs](https://aws.amazon.com/lambda/faqs/?nc1=h_ls)
-- [Operator - Lambda](https://docs.aws.amazon.com/lambda/latest/operatorguide/intro.html)
 - Lambda Execution Role (IAM Role)
-  - 執行 Lambda Function 的時候, 每個 Lambda Function 都會有它自己的 **Execution Role**
-    - 預設, 這個 Execution Role 是用來授予 Lambda Function 寫入 Logs
-  - 常見的 **Lambda Execution Role** 範例:
-    - AWSLambdaBasicExecutionRole - 上傳 logs 到 CloudWatch
-    - AWSLambdaDynamoDBExecutionRole - read from DynameDB Streams
-    - AWSLambdaKinesisExecutionRole - read from Kinesis
-    - AWSLambdaSQSQueueExecutionRole - read from SQS
-    - AWSLambdaVPCAccessExecutionRole - deploy Lambda function in VPC
-    - AWSXRayDaemonWriteAccess - 上傳 trace data 到 X-Ray
+    - 執行 Lambda Function 的時候, 每個 Lambda Function 都會有它自己的 **Execution Role**
+        - 預設, 這個 Execution Role 是用來授予 Lambda Function 寫入 Logs
+    - 常見的 **Lambda Execution Role** 範例:
+        - AWSLambdaBasicExecutionRole - 上傳 logs 到 CloudWatch
+        - AWSLambdaDynamoDBExecutionRole - read from DynameDB Streams
+        - AWSLambdaKinesisExecutionRole - read from Kinesis
+        - AWSLambdaSQSQueueExecutionRole - read from SQS
+        - AWSLambdaVPCAccessExecutionRole - deploy Lambda function in VPC
+        - AWSXRayDaemonWriteAccess - 上傳 trace data 到 X-Ray
 - Lambda Destionation
 - 類似 SQS DLQ (用來存放 SQS 調用 failure 的 Message), 此方式可用來存放 Lambda Execution Result
-  - 包含 success & failure
-  - AWS 官方建議改使用 Lambda Destination 取代 SQS DLQ
+    - 包含 success & failure
+    - AWS 官方建議改使用 Lambda Destination 取代 SQS DLQ
 - 可用來作為 Destination 的 Services:
-  - SQS
-  - SNS
-  - Lambda
-  - EventBridge bus
-- invoke Lambda Function 有底下 3 種 patterns:
-- [sync invoke](#sync-invoke)
-  - retry 機制: 無
-- [async invoke](#async-invoke)
-  - retry 機制: Built in, retries twice
-- [polling invoke](#polling-invoke)
-  - retry 機制: Depends on event source
+    - SQS
+    - SNS
+    - Lambda
+    - EventBridge bus
 - Lambda Execution environment lifecycle (Lambda 運行階段):
 - init 階段, 包含了 Lambda Function 運行前的 main function 以外的 Codes
 - 效能
 - 跑 Lambda FN 只能調整 memory. 
-  - ex: Memory=1792 MiB, 可獲得完整一顆 CPU. 隨著 Memory 增加, CPU 也會跟著增加
+    - ex: Memory=1792 MiB, 可獲得完整一顆 CPU. 隨著 Memory 增加, CPU 也會跟著增加
 - Lambda 的效能, 只能調整 RAM 用量
-  - 隨著 RAM 用量調整, CPU 會跟著變動 (不能自訂 CPU)
+    - 隨著 RAM 用量調整, CPU 會跟著變動 (不能自訂 CPU)
 
 ```mermaid
 flowchart LR
 subgraph init
-  ext0["Extension init"] --> run["Runtime init"] --> fn["Function init"]
+    ext0["Extension init"] --> run["Runtime init"] --> fn["Function init"]
 end
 subgraph invoke
-  invk1["invoke FN1"] --> invk2["invoke FN2"]
+    invk1["invoke FN1"] --> invk2["invoke FN2"]
 end
 subgraph shutdown
-  rt["Runtime shutdown"] --> ext1["Extension shutdown"]
+    rt["Runtime shutdown"] --> ext1["Extension shutdown"]
 end
 init --> invoke --> shutdown
 ```
 
+- invoke Lambda Function 有底下 3 種 patterns:
+  - sync invoke
+  - async invoke
+  - polling invoke
 
-### [sync invoke](https://docs.aws.amazon.com/lambda/latest/dg/invocation-sync.html)
+
+### [1/3 sync invoke](https://docs.aws.amazon.com/lambda/latest/dg/invocation-sync.html)
+
+- 無 retry 機制
 
 ```mermaid
 flowchart LR
@@ -66,18 +64,20 @@ Client <--> lambda[Lambda Function]
 ```
 
 - 適用的 AWS Services:
-  - API Gateway
-  - CloudFormation
-  - CloudFront
-  - Alexa
-  - Lex
+    - API Gateway
+    - CloudFormation
+    - CloudFront
+    - Alexa
+    - Lex
 - 例如我們有設定 S3 object upload 觸發 Lambda 做事情...
-  - 此時大量的 Object 被上傳到 S3 Bucket, 導致 Lambda 被 throttled
-  - 但由於此種觸發方式為 async. Lambda 會有 retry 機制, 最長 6 hrs
-    - 並且採用 exponential backup (1秒, 2秒, 4秒, ...最長 5 mins)
+    - 此時大量的 Object 被上傳到 S3 Bucket, 導致 Lambda 被 throttled
+    - 但由於此種觸發方式為 async. Lambda 會有 retry 機制, 最長 6 hrs
+        - 並且採用 exponential backup (1秒, 2秒, 4秒, ...最長 5 mins)
 
 
-### [async invoke](https://docs.aws.amazon.com/lambda/latest/dg/invocation-async.html)
+### [2/3 async invoke](https://docs.aws.amazon.com/lambda/latest/dg/invocation-async.html)
+
+- retry 機制: Built in, retries twice
 
 ```mermaid
 flowchart LR
@@ -88,12 +88,14 @@ lambda --> Destination
 ```
 
 - 適用的 AWS Services:
-  - SNS
-  - S3
-  - EventBridge
+    - SNS
+    - S3
+    - EventBridge
 
 
-### [polling invoke](https://docs.aws.amazon.com/lambda/latest/dg/invocation-eventsourcemapping.html)
+### [3/3 polling invoke](https://docs.aws.amazon.com/lambda/latest/dg/invocation-eventsourcemapping.html)
+
+- retry 機制: Depends on event source
 
 ```mermaid
 flowchart LR
@@ -103,26 +105,16 @@ lambda -- result --> Destination
 ```
 
 - The configuration of services as event triggers is known as event source mapping.
-  - 觸發 event 的配置, 稱之為 `event source mapping`
+    - 觸發 event 的配置, 稱之為 `event source mapping`
 - 需要使用 Lambda Function 的 execution role, 授予權限可至 Event Source 取得資料
 - polling invoke pattern 比較適用於 streaming 或 queuing based services
 - 特殊情況: 由於 *distributed nature of its pollers*, Lambda 極少數情況下會收到重複事件
 - Event Source Services:
-  - Kinesis
-  - SQS
-  - Amazon MQ
-  - Kafka
-  - DynamoDB
-
-```bash
-### Example
-aws lambda create-event-source-mapping \
-    --function-name my-function \
-    --batch-size 500 \
-    --maximum-batching-window-in-seconds 5 \
-    --starting-position LATEST \
-    --event-source-arn ${DynamoDB_Stream_ARN}
-```
+    - Kinesis
+    - SQS
+    - Amazon MQ
+    - Kafka
+    - DynamoDB
 
 
 # Lambda - Scaling
@@ -229,7 +221,7 @@ CloudFront <-- 回源 API --> lambda["Lambda@edge"]
 lambda <-- Query --> DynamoDB["DynamoDB Global Table"]
 ```
 
-
+---
 # Lambda - Event Source Mapping
 
 - [Lambda event source mappings](https://docs.aws.amazon.com/lambda/latest/dg/invocation-eventsourcemapping.html)
@@ -245,6 +237,100 @@ lambda <-- Query --> DynamoDB["DynamoDB Global Table"]
     - [DynamoDB Streams](./DynamoDB.md#dynamodb-streams)
     - MQ
     - Apache Kafka
+
+LambdaFunction 與 Kinesis 使用 Event Source Mapping 的範例:
+
+```mermaid
+flowchart LR
+
+kinesis -- "return Batch" --> Lambda;
+Lambda -- POLL --> kinesis;
+
+subgraph Lambda
+  esm["Event Source Mapping"] -- "invoke with Event Batch" --> LambdaFunction;
+end
+```
+
+---
+# Lambda Destination
+
+- Lambda Destionation 用來作為 Lambda Function 執行後, 會將 **execution record** 拋到此處
+  - Lambda Destination 可能的地方有:
+    - Lambda Function
+    - SNS
+    - SQS
+    - EventBridge
+
+```js
+// 此範例為, Lambda Function A 設定 B 為它的 Failure Destination
+// 當 A 執行失敗後, 會 async 再次嘗試, 若 RetriesExhausted 時, 則將 execution record 拋向 destination (也就是 B)
+// 而 B 裏頭, 把 evnet 給 print 出來後, 可看到底下這包
+// 而我測試的範例當中, A 的 3 次 invoke 時間分別是:
+// 16:07:12
+// 16:08:15
+// 16:10:21
+// 
+// 而 approximateInvokeCount 對應到 CloudFormation 的屬性則是 MaximumRetryAttempts 及 MaximumEventAgeInSeconds
+// 對應到的 Web Console 則為 Retry attempts 及 
+{
+  "version": "1.0",
+  "timestamp": "2024-04-08T16:10:21.821Z",
+  "requestContext": {
+    "requestId": "ea6bc156-3430-4f5e-98fd-6267811b88bb",
+    "functionArn": "arn:aws:lambda:ap-northeast-1:297886803107:function:demo-destination:$LATEST",
+    "condition": "RetriesExhausted",
+    "approximateInvokeCount": 3  // 這邊可以得知, 自從 invoke A 失敗後, 後續又不斷嘗試(包含原始調度的 總嘗試次數)
+  },
+  "requestPayload": {  // 這包是當初發送給 A 時候的 event payload
+    "Success": false
+  },
+  "responseContext": {  // B 執行結果
+    "statusCode": 200,
+    "executedVersion": "$LATEST",
+    "functionError": "Unhandled"
+  },
+  "responsePayload": {
+    "errorType": "Error",
+    "errorMessage": "Authentication Failed",
+    "trace": [
+      "Error: Authentication Failed",
+      "    at Runtime.handler (file:///var/task/index.mjs:19:11)",
+      "    at Runtime.handleOnceNonStreaming (file:///var/runtime/index.mjs:1173:29)"
+    ]
+  }
+}
+```
+
+
+# Lambda Aliases & Lambda Versions (與 Api Gateway 搭配)
+
+- 假設現在寫了一個 Lambda Function, 名為 「demo-lambda」, 然後發佈了 3 個 Versions
+- Lambda Console
+    - 然後希望有不同的 Lambda Aliases 指向不同的 Lambda Versions, 如下:
+        - DEV  -> version: $LATEST
+        - TEST -> version: 2
+        - PROD -> version: 1
+    - 上述動作在 Lambda 分別 Deploy 完成後, 建立他們的 Versions, 並將 Aliases 指向對應 Versions
+- API Gateway Console
+    - 之後發布 API Gateway, 希望有 3 個 Stages, 指向 3 個 Lambda Aliases, 如下:
+        - dev -> DEV stage
+        - test -> test stage
+        - prod -> prod stage
+    - 在 API Gateway > Resources > ${LOCATION} > ${METHOD} > Lambda Function 裡頭
+        - 輸入 `$LAMBDA_FUNCTION:${stageVariables.YOUR_STAGE_NAME}`
+        - 會被告知, 因為並沒有一個 Lambda 叫做上面這樣的名字, 因此需要分別賦予給 3 個 Lambda 的 execution role 給這個 API Gateway
+        - 因此需要授權給 Api Gateway 不同的 Stage 可以調用 Lambad Function
+            - `aws lambda add-permission ...`
+- API Gateway
+    - Resources > Actions > Deploy API > 分別發布 dev/test/prod
+    - Stages > 分別編輯 dev/test/prod > Stage Variables > Add Stage Variable
+        - Name: lambdaAlias
+        - Value: 分別輸入 DEV/TEST/PROD
+    - 屆時訪問時的 URL 如下:
+        - https://${RANDOM}.execute-api.ap-northeast-1.amazonaws.com/dev/stagevariables
+        - https://${RANDOM}.execute-api.ap-northeast-1.amazonaws.com/test/stagevariables
+        - https://${RANDOM}.execute-api.ap-northeast-1.amazonaws.com/prod/stagevariables
+
 
 
 # Usage
