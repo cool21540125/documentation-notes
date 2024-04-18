@@ -1,0 +1,14 @@
+# Udemy Ansible for the Absolute Beginner - #20
+# Usage:
+#   ansible-playbook basic-20-1-ansible_facts.yaml
+#
+# 用來展示, 即使這裡頭者做單純的 print helloworld
+# 也可以看到 TASK [Gathering Facts] 這段, 這段就是 setup module(從 host 上頭搜集資訊)
+# 這些資訊都會報保存在 Variable: `ansible_facts`
+#
+---
+- name: Print hello world
+  hosts: localhost
+  tasks:
+    - debug:
+        msg: Hello from ansible!

@@ -1,8 +1,9 @@
-# https://www.udemy.com/course/learn-ansible/learn/lecture/39596698#overview
-# Ansible Variables - Magic Variable
-# Course 19
-# descriptions:
+# Udemy Ansible for the Absolute Beginner - #19
+# Usage:
+#   ansible-playbook basic-19-1-magic_vars.yaml
+# 
 #   Let other hosts get attributes that don't belone to them
+# 
 ---
 - name: Print dns server
   hosts: all

@@ -1,3 +1,8 @@
+# Ansible knowledge
+
+- Ansible 訪問到其他 host 的時候, 會搜集 host 上頭的資訊, ex: ip, mac addr, fqdn, ..., 而這些都稱為 **facts**
+    - Ansible 使用 playbook 時, 藉由 setup module 蒐集 facts (即使 playbook 裡頭沒有聲明 setup module) 
+
 
 # Structure
 
@@ -45,56 +50,6 @@ $HOME/
     - Host Vars
     - Group Vars
     - Role Defaults
-
-
-# ansible.cfg
-
-```ini
-# 預設的 Global Config Path
-#   /etc/ansible/ansible.cfg
-
-[defaults]
-inventory = /etc/ansible/hosts
-
-log_path = /var/log/ansible.log
-
-library = /usr/share/my_modules
-
-### 如果 playbook directory structure 找不到 roles, 則會來這邊找 role
-roles_path = /etc/ansible/roles
-# 寫法可參照 PATH
-# ex: ~/.ansible/roles:/usr/share/ansible/roles:/etc/ansible/roles
-
-action_plugins = /usr/share/ansible/plugins/action
-
-gathering = implicit
-
-# SSH timeout
-timeout = 10
-forks = 5
-
-remote_user = vagrant
-#private_key_file = ~/.ssh/id_rsa
-
-# host_key_checking
-host_key_checking = False
-
-
-[inventory]
-enable_plugins = host_list, virtualbox, yaml, constructed
-
-
-[privilege_escalation]
-
-[paramiko_connection]
-
-[ssh_connection]
-
-[persistent_connection]
-
-[colors]
-
-```
 
 
 # inventory hosts

@@ -1,0 +1,14 @@
+# Udemy Ansible for the Absolute Beginner - #19
+# Usage:
+#   ansible-playbook basic-15-1-add-line-to-file.yaml
+#
+#   為檔案增加一行
+#
+---
+- name: Add DNS Server to resolve.conf
+  hosts: localhost
+  become: yes
+  tasks:
+    - lineinfile:
+        path: /etc/resolv.conf
+        line: "nameserver 168.95.1.1"

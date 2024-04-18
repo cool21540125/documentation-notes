@@ -1,0 +1,13 @@
+# Udemy Ansible for the Absolute Beginner - #20
+# Usage:
+#   ansible-playbook basic-20-2-print_ansible_facts.yaml
+#
+# 印出所有的 ansible_facts(remote host information)
+#
+---
+- name: Print hello world
+  gather_facts: no  # 不要搜集 facts
+  hosts: localhost
+  tasks:
+    - debug:
+        var: ansible_facts
