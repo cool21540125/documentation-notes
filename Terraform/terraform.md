@@ -20,16 +20,31 @@
         - 也是用來作 upgrade providers 的依據
     - `.terraform/`
         - 像是 `terraform init` 會在裡頭安裝相關的 provider plugin
+- provisioners 配置器
+    - Create/Update infra 的過程中, 可用來執行額外的 設定/命令
+        - ex: install pkg 或 update config
+        - ex: 可用 remote Shell
+    - Terraform Provisioner 支援底下這些:
+        - local-exec
+        - remote-exec
+        - file
+        - chef
+        - salt-masterless
 - 命名
-    - terraform.tfvars
+    - `terraform.tfvars`
     - terraform-provider.tf
     - terraform-provider.tf.json
     - terraform-instances.tf
 - 變數順位
     - 1. CLI                         (for 特殊情境)
     - 2. terraform Environment       (for CI/CD)
-    - 3. xx.tfvars                   (for dev 環境)
-        - 此檔案不上版控, 不過可版控一個 xx.tfvars.example
+    - 3. xx.tfvars OR xx.tfvars.json (for specific ENV)
+        - tfvars 的順位:
+            - 1. CLI -var 或 CLI -var-file
+            - 2. xx.auto.tfvars 及 xx.auto.tfvars.json
+            - 3. terraform.tfvars.json
+            - 4. terraform.tfvars
+            - 5. ENV
     - 4. variable definition         
         - 也就是 xx.tf 裡頭的 variable 區塊啦
     - 5. variable default definition

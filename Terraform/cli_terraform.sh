@@ -22,6 +22,15 @@ terraform destroy
 terraform destroy --var-file="terraform-$ENV.tfvars"
 
 
+### 移除特定資源
+terraform destroy -target="RESOURCE.NAME"
+# 使用 tf state list 查詢 targets
+
+
+### 列出所有資源
+terraform state list | grep xxx
+
+
 ### 檢查當前資料夾下的 .terraform.tfstate
 terraform show
 
@@ -40,3 +49,13 @@ tf workspace delete pre
 
 # state 會被保存在
 # ./terraform.tfstate.d/${terraform.workspace}/terraform.tfstate
+
+
+### 載入變數
+tf plan -var="foo=bar"
+TF_VAR_foo="bar" tf plan
+
+tf plan -var-file="foo.tfvars"
+tf plan -var-file="foo.tfvars.json"
+# terraform.tfvars 及 terraform.tfvars.json 會被自動載入
+# 或是可用 xx.auto.tfvars 及 xx.auto.tfvars.json
