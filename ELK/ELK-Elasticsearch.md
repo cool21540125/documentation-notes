@@ -1,9 +1,11 @@
 # ElasticSearch
 
-- 2019/01/16
-- ElasticSearch: v6.5.4
-- java: v1.8.0_161
-- [ElasticSearch Plugins](https://www.elastic.co/guide/en/elasticsearch/plugins/current/index.html)
+- TF-IDE 指 Term Frequency * Inverse Document Frequency
+    - Elasticsearch 衡量 term 的相關性, 某種程度上也是基於 TF-IDF
+    - Term Frequency     : Term 出現在 specific document 的頻率
+    - Document Frequency : Term 出現在 all documents     的頻率
+    - Term Frequency / Document Frequency : 衡量 relevance of a term in the document
+
 
 ### vscode 外掛
 
