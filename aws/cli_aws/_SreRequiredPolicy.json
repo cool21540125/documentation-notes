@@ -1,0 +1,42 @@
+{
+	"Version": "2012-10-17",
+	"Statement": [
+		{
+			"Sid": "VisualEditor0",
+			"Effect": "Allow",
+			"Action": [
+				"iam:CreateRole",
+				"iam:DeleteRole",
+                "iam:AttachRolePolicy",
+                "iam:DetachRolePolicy",
+                "iam:PutRolePolicy",
+                "iam:DeleteRolePolicy"
+			],
+			"Resource": "arn:aws:iam::297886803107:role/*"
+		},
+		{
+			"Sid": "VisualEditor1",
+			"Effect": "Allow",
+			"Action": [
+				"iam:CreatePolicy",
+				"iam:DeletePolicy",
+				"iam:GetPolicyVersion",
+				"iam:ListPolicyVersions",
+				"iam:CreatePolicyVersion",
+				"iam:DeletePolicyVersion"
+			],
+			"Resource": "arn:aws:iam::297886803107:policy/*"
+		},
+        {
+			"Sid": "VisualEditor2",
+			"Effect": "Allow",
+			"Action": [
+				"iam:PutUserPolicy",
+                "iam:DeleteUserPolicy",
+                "iam:AttachUserPolicy",
+                "iam:DetachUserPolicy"
+			],
+			"Resource": "arn:aws:iam::297886803107:user/*"
+        }
+	]
+}

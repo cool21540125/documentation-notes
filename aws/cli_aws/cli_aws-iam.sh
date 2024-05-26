@@ -2,6 +2,10 @@
 exit 0
 # ------------------------------------
 
+AWS_ACCOUNT=$(aws sts get-caller-identity --output json | jq -r ".Account")
+AWS_USERNAME=$(aws iam get-user --output json | jq -r ".User.UserName")
+AWS_REGION=ap-northeast-1
+
 # How do I assume an IAM role using the AWS CLI
 #   https://www.youtube.com/watch?v=-uogKFE1r60&ab_channel=AmazonWebServices
 
@@ -9,6 +13,19 @@ exit 0
 # CLI - assume an IAM role using AWS CLI
 
 
+### 建立 iam.Policy
+aws iam create-policy \
+    --policy-name better-developer-experience \
+    --description "Created via Aws Cli. For better develop experience." \
+    --policy-document file://_BetterDeveloperExperiencePolicy.json \
+    --tags "Key=CreatedVia,Value=cli" "Key=Usage,Value=Better for Iam User to use AWS"
+# 
+aws iam create-policy \
+    --policy-name better-sre-experience \
+    --description "Created via Aws Cli. For SRE required permissions." \
+    --policy-document file://_SreRequiredPolicy.json \
+    --tags "Key=CreatedVia,Value=cli" "Key=Usage,Value=Enlarge SRE permissions"
+#
 
 
 ### 建立 IAM User
@@ -49,9 +66,9 @@ aws iam create-policy --policy-name test-polich --policy-document file://test-po
 
 
 ### 將 policy attach 給 user
-export ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output text)
-TEST_POLICY_ARN="arn:aws:iam::${ACCOUNT_ID}:policy/test-polich"
-aws iam attach-user-policy --user-name test-user \
+TEST_POLICY_ARN="arn:aws:iam::${AWS_ACCOUNT}:policy/test-polich"
+aws iam attach-user-policy \
+    --user-name test-user \
     --policy-arn ${TEST_POLICY_ARN}
 
 
@@ -68,7 +85,7 @@ aws iam create-access-key \
 
 ### 
 LOCAL_FILE2="test-role-trust-policy.json"
-TEST_POLICY2_ARN="arn:aws:iam::${ACCOUNT_ID}:root"
+TEST_POLICY2_ARN="arn:aws:iam::${AWS_ACCOUNT}:root"
 # 上一步建立的 ARN
 
 
@@ -97,7 +114,7 @@ aws iam create-role \
 
 
 ### 
-Arn="arn:aws:iam::${ACCOUNT_ID}:role/${ROLE_NAME_ON_AWS}"
+Arn="arn:aws:iam::${AWS_ACCOUNT}:role/${ROLE_NAME_ON_AWS}"
 aws iam attach-role-policy \
     --role-name ${ROLE_NAME_ON_AWS} \
     --policy-arn ${Arn}
@@ -129,5 +146,3 @@ aws iam get-role --role-name "AWSServiceRoleForECS" || aws iam create-service-li
 # https://catalog.us-east-1.prod.workshops.aws/workshops/869f7eee-d3a2-490b-bf9a-ac90a8fb2d36/en-US/3-setup/02-setup-environments
 # 還不太會解讀上面這個 linked-role....
 
-
-### 

@@ -80,6 +80,15 @@ kdf -- Near Real Time --> S3;
 ```
 
 
+# Subscription Filters
+
+- 各種 Filter Pattern 的用途
+    - Matric filters       : transform log data into actionable metrics
+    - Subscription filters : route log events to other AWS services
+    - Filter log events    : search for log events
+    - Live tail            : interactively view your logs in real-time
+
+
 # CLI
 
 ```bash

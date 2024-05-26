@@ -1,0 +1,37 @@
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Action": [
+        "iam:CreateVirtualMFADevice",
+        "iam:DeactivateMFADevice",
+        "iam:DeleteVirtualMFADevice",
+        "iam:EnableMFADevice"
+      ],
+      "Resource": "*",
+      "Effect": "Allow",
+      "Sid": "forIamUsersToUseMfaForSecurity"
+    },
+    {
+      "Action": [
+        "iam:ListAccessKeys",
+        "iam:GetAccessKeyLastUsed",
+        "iam:CreateAccessKey",
+        "iam:UpdateAccessKey",
+        "iam:DeleteAccessKey",
+        "iam:ListPolicies",
+        "iam:GetPolicy",
+        "iam:GetUserPolicy",
+        "iam:ListEntitiesForPolicy",
+        "iam:ListSSHPublicKeys",
+        "iam:GetSSHPublicKey",
+        "iam:UpdateSSHPublicKey",
+        "iam:DeleteSSHPublicKey",
+        "iam:UploadSSHPublicKey"
+      ],
+      "Resource": "*",
+      "Effect": "Allow",
+      "Sid": "forDevelopersToHaveTheirAccessKeys"
+    }
+  ]
+}

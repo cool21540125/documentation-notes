@@ -1,6 +1,6 @@
 # [Amazon EventBridge](https://docs.aws.amazon.com/eventbridge/latest/userguide/eb-what-is.html)
 
-- **CloudWatch Event** 的新一代產品
+- EventBridge 會以 near-real time(近乎即時) 的方式, 接收 AWS Events
 - 有個 Default Event Bus
     - AWS Services && CloudWatch Events 產生的 Events
 - 可建立 **Parent Event Bus**, 也可為 APP 建立 **Custom Event Bus**
