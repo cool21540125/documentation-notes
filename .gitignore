@@ -1,6 +1,4 @@
-.vscode/
 *.py[cmd]
-package-lock.json
 **/node_modules/
 *.cache
 *.pdb
@@ -15,7 +13,6 @@ venv/
 packages/*
 .idea/
 *.crt
-secret*
 pass_*
 *.sqlite
 data_db/
@@ -28,4 +25,6 @@ keyfile
 **/.DS_Store
 **/demo.rest
 *ignoreme*
+
+secret*
 !SecretManager.md

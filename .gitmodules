@@ -10,3 +10,6 @@
 [submodule "api"]
 	path = api
 	url = git@github.com:cool21540125/api.git
+[submodule "Terraform/terraform-pocs"]
+	path = Terraform/terraform-pocs
+	url = git@github.com:cool21540125/terraform-pocs.git
