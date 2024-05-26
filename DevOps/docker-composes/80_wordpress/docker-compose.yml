@@ -1,34 +1,37 @@
-version: '3.3'
-
 services:
 
   wordpress:
-    image: wordpress:5.3.2-php7.3-apache
-    container_name: compose_wp
-    restart: always
+    image: wordpress
+    container_name: wordpress
+    hostname: wordpress
     ports:
-      - 4998:80
+      - 8080:80
     environment:
       WORDPRESS_DB_HOST: db:3306
       WORDPRESS_DB_USER: wordpress
       WORDPRESS_DB_PASSWORD: wordpress
       WORDPRESS_DB_NAME: wordpress
     volumes:
-      - wp:/var/www/html
+      - wordpress_data:/var/www/html
+      - ./logs:/var/log
+    # healthcheck:
+
 
   db:
-    image: mysql:5.7
-    container_name: compose_wp_db
-    restart: always
+    image: mysql:8
+    container_name: wordpress_db
+    hostname: wordpress_db
     environment:
       MYSQL_DATABASE: wordpress
       MYSQL_USER: wordpress
       MYSQL_PASSWORD: wordpress
       MYSQL_ROOT_PASSWORD: python
     volumes:
-      - wp_db:/var/lib/mysql
-      - "./uploads.ini:/usr/local/etc/php/conf.d/uploads.ini"
+      - wordpress_db_data:/var/lib/mysql
 
 volumes:
-  wp:
-  wp_db:
+  wordpress_data:
+    name: wordpress_data
+
+  wordpress_db_data:
+    name: wordpress_db_data
