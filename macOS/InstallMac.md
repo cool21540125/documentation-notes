@@ -308,8 +308,8 @@ copilot --version
 ```zsh
 ### 法1. (放棄使用 brew 吧!!) (需要依賴噁爛到爆的 xcode) -----------------
 # install the HashiCorp tap, a repository of all our Homebrew packages.
-brew tap hashicorp/tap
-brew install hashicorp/tap/terraform
+# brew tap hashicorp/tap
+# brew install hashicorp/tap/terraform
 
 
 ### 法2. 尊重生命, 選離 xcode -- 直接抓 binary -----------------
@@ -330,7 +330,7 @@ go build
 
 
 # build released version
-go build -ldflags "-w -s -X 'github.com/hashicorp/terraform/version.dev=no'" -o dist/ .
+go build -ldflags "-w -s -X 'github.com/hashicorp/terraform/version.dev=no'" -o ~/bin/
 
 mv dist/terraform ~/bin/
 

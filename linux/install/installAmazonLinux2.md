@@ -65,8 +65,8 @@ $#
 ```bash
 ### Install
 sudo amazon-linux-extras install epel -y
-sudo yum install stress -y
-
+sudo yum -y install stress  # 壓測工具1 (沒認真用過)
+sudo yum -y install siege   # 壓測工具2 (沒用過)
 
 ### Usage
 stress -c 4
