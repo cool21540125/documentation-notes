@@ -79,3 +79,16 @@ terraform {
   }
 }
 ```
+
+# Note
+
+- 迴圈
+    - count parameter
+        - 適用於 迴圈掃視 resource && module
+        - `${count.index}`
+    - for_each expression
+        - 適用於 迴圈掃視 resource && block in resource && module
+    - for expression
+        - 適用於 迴圈掃視 lists && maps
+    - for string drective
+        - 適用於 迴圈掃視 字串中的 lists && maps
