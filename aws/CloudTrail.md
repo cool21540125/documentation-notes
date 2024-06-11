@@ -3,6 +3,7 @@
 
 - 白話文用途: 從 log 裡頭找到異常行為
     - 達到某種 limit / Resource 配置不正確 / 違反 AWS IAM action, ...
+    - 非即時 (near-real time)
 - 官方說明: CloudTrail is a way to get governance, compliance and audit for your AWS Account.
     - governance / compliance / operational auditing / risk auditing of AWS account
 - 可對日常維運建立 baseline

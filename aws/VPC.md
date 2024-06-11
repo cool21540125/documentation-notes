@@ -306,6 +306,7 @@ Stateful           | Stateless
     - VPC Flow Logs
     - Subnet Flow Logs
     - ENI, Elastic Network Interface Flow Logs
+- 可用來排查 VPCs 之間的連線問題, 不過這些 VPC Flow Logs 可能會延遲 15 mins
 - 能有效的協助 monitor && troubleshoot Connectivity Issue
 - 會從各個 AWS 管理的 interfaces 蒐集 network information:
     - ELB

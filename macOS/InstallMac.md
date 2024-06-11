@@ -11,6 +11,15 @@
 
 # brew
 
+```zsh
+### 常用必安裝
+brew install jq
+brew install yq
+brew install pstree
+brew install telnet
+brew install nvm
+```
+
 - [List of all packages installed using Homebrew](https://apple.stackexchange.com/questions/101090/list-of-all-packages-installed-using-homebrew)
 - [Homebrew 的相關專業術語/專業用語(termonology)](https://github.com/Homebrew/brew/blob/master/docs/Formula-Cookbook.md#homebrew-terminology)
 
