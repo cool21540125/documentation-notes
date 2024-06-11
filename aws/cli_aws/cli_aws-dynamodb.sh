@@ -1,5 +1,6 @@
 #!/bin/bash
-
+exit 0
+# ------------------------------
 
 ### Create Table
 aws dynamodb create-table \
@@ -10,8 +11,8 @@ aws dynamodb create-table \
     --key-schema \
         AttributeName=year,KeyType=HASH \
         AttributeName=title,KeyType=RANGE \
-   --billing-mode PROVISIONED \
-   --provisioned-throughput ReadCapacityUnits=2,WriteCapacityUnits=1
+    --billing-mode PROVISIONED \
+    --provisioned-throughput ReadCapacityUnits=2,WriteCapacityUnits=1
 # 會回傳一大包的執行結果
 # 不想燒錢的話留意免費額度
 # 也可藉由使用 「--endpoint-url http://localhost:8000」來指向 local DynamoDB
@@ -22,7 +23,7 @@ aws dynamodb put-item \
     --table-name Movies \
     --item \
         '{"year": {"N": "1900"},
-          "title": {"S": "Example 1"}}'
+        "title": {"S": "Example 1"}}'
 # for DynamoDB online, tablename 為 case-senstive
 # for DynamoDB local, tablename 為 case-insenstive
 
@@ -38,34 +39,33 @@ aws dynamodb query \
 # --projection-expression, 告知需要回傳的欄位
 # year 是 DynamoDB 的保留字... (UNKNOWN)
 # ----- example query result -----
-{
-    "Items": [
-        {
-            "title": {
-                "S": "Back to the Future"
-            }
-        },
-        {
-            "title": {
-                "S": "Pee-wee's Big Adventure"
-            }
-        },
-        {
-            "title": {
-                "S": "The Breakfast Club"
-            }
-        },
-        {
-            "title": {
-                "S": "The Goonies"
-            }
-        }
-    ],
-    "Count": 4,
-    "ScannedCount": 4,
-    "ConsumedCapacity": null
-}
-# ----- example query result -----
+#{
+#    "Items": [
+#        {
+#            "title": {
+#                "S": "Back to the Future"
+#            }
+#        },
+#        {
+#            "title": {
+#                "S": "Pee-wee's Big Adventure"
+#            }
+#        },
+#        {
+#            "title": {
+#                "S": "The Breakfast Club"
+#            }
+#        },
+#        {
+#            "title": {
+#                "S": "The Goonies"
+#            }
+#        }
+#    ],
+#    "Count": 4,
+#    "ScannedCount": 4,
+#    "ConsumedCapacity": null
+#}
 
 
 ### 使用 Scan (慎用 scan!!)
@@ -169,3 +169,11 @@ aws dynamodb scan \
     --starting-token eyJFeGNsdXNpdmVTdGFydEtleSI6IG51bGwsICJib3RvX3RydW5jYXRlX2Ftb3VudCI6IDF9 \
     --endpoint-url http://localhost:8000
 # --starting-token : aws s3 xxxx 也有這樣的概念, 可理解成從某一筆資料起算 (並無 --page=xx 的指令)
+
+
+
+### 如果遇到大量高頻使用 DDb 的話, 需要留意 DynamoDB quota 問題
+aws dynamodb describe-limits
+
+
+### 

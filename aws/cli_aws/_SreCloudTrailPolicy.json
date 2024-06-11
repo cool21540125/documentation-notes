@@ -1,0 +1,35 @@
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Effect": "Allow",
+            "Action": [
+                "iam:CreateRole",
+                "iam:DeleteRole",
+                "iam:AttachRolePolicy",
+                "iam:DetachRolePolicy"
+            ],
+            "Resource": [
+                "arn:aws:iam::123456789012:role/trail*",
+                "arn:aws:iam::123456789012:role/service-role/trail*"
+            ],
+            "Condition": {
+                "StringEquals": {
+                    "sts:AWSServiceName": [
+                        "cloudtrail.amazonaws.com"
+                    ]
+                }
+            }
+        },
+        {
+            "Effect": "Allow",
+            "Action": [
+                "iam:CreatePolicy",
+                "iam:DeletePolicy"
+            ],
+            "Resource": [
+                "arn:aws:iam::123456789012:policy/service-role/Cloudtrail-CW-access-policy-*"
+            ]
+        }
+    ]
+}

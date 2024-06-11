@@ -76,3 +76,16 @@ aws cloudwatch set-alarm-state \
     --alarm-name ${METRIC_ALARM_NAME} \
     --state-value ALARM \
     --state-reason "This is Only test, dont be panic"
+
+
+
+### 查詢 CloudWatch Log Groups 的儲存量
+PREFIX=production.log
+aws logs describe-log-groups --log-group-name-prefix  "$PREFIX" --output yaml | yq ".logGroups[].storedBytes"
+aws logs describe-log-groups --log-group-name-prefix  "$PREFIX" --output yaml  | yq ".logGroups[].logGroupName"
+
+
+aws logs describe-log-groups --log-group-name-prefix "/aws/rds" --query 'logGroups[].{LogGroup: logGroupName, Size: storedBytes}'
+
+
+### 
