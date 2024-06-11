@@ -179,34 +179,38 @@ r2 -.- srv2["AWS Services \n (ex: S3)"];
         - 然後你被賦予了 assume 總統這個 Role 的 Instance Profile, 你就能幹總統能幹的事情(販賣芒果乾, 買很多免稅菸等等)
 
 
-## 特殊權限 - IAM PassRole
+## 特殊權限 - iam:PassRole
 
-前言
+`iam:PassRole` 是個 special permission, 讓 **Iam User** 可以 associate an **IAM role** 到 **Resource**
 
-以往我們常關注 user 可以對哪些 **resources 執行特定 actions** (或是哪些被禁止), 很常忽略掉 user 可以 access 哪些 **IAM Roles**
+例如, **Tony IAM User**, 要建立一個跑在 EC2 上頭的 App, 而這 App 需要能夠「把資料寫入到 S3 的權限」
 
+為了達成此需求, Tony 需要 Pass a Role 給 EC2, 也就是說, Tony 需要有 `iam:PassRole` 的權限
 
-- `iam:PassRole` 是個 special permission, 讓你可以 associate an IAM role 到特定的 resource
-    - **Passing a role** 意指 **link role to resource**
-    - 用來規範 resource 可對於 other AWS resource 做哪些 action
-    - 具體範例:
-        - IAM User 必須要有 `iam:PassRole` 才能將 Role assign 給 CloudFormation
-            - 如果 CloudFormation 操作 Resources 的時候不指定 Role, 預設會使用 IAM User Role (與 `iam:PassRole` 無關)
-            - 如果 CloudFormation 操作 Resources 的時候指定了 Role, 則作此操作的 IAM User 需要有 `iam:PassRole` 的權限才行
-                - 當然了, pass 給 CloudFormation 的 Role Policy, 勢必得讓 CloudFormation 有權限操作 Resources
+當然, Tony Pass 了一個 Role 給 EC2 以後, 這個 Role 上頭也要有特定的 Permission, 好讓 EC2 可以「把資料寫入到 S3 的權限」, 則不在 PassRole 的範圍內了
+
+- **Passing a role** 意指 **link role to resource**
+- 其他範例: IAM User 必須要有 `iam:PassRole` 才能將 Role assign 給 CloudFormation
+    - 如果 CloudFormation 操作 Resources 的時候不指定 Role, 預設會使用 IAM User Role (與 `iam:PassRole` 無關, User 多大, CloudFormation 就有多大)
+    - 如果 CloudFormation 操作 Resources 的時候指定了 Role, 則作此操作的 IAM User 需要有 `iam:PassRole` 的權限才行
 - 細節
     - IAM PassRole 並非 API method (官方歸類上會讓人誤解)
     - IAM PassRole 並非讓你去尻的 Api
 
 ```jsonc
 // https://rowanudell.com/iam-passrole-explained/
-// 限定 user/service 可以 pass to LimitedAccess
+// 具備底下 permission 的 Entity, 可以 PassRole 給 `arn:aws:::123456789012:role/LimitedAccess`
 {
   "Effect": "Allow",
   "Action": "iam:PassRole",
   "Resource": "arn:aws:::123456789012:role/LimitedAccess"
 }
 ```
+
+
+## Special Permission - iam:PassedToService
+
+- https://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles_use_passrole.html
 
 
 # IAM Principal

@@ -83,12 +83,16 @@ terraform {
 # Note
 
 - 迴圈
-    - count parameter
+    - `count` parameter
         - 適用於 迴圈掃視 resource && module
         - `${count.index}`
-    - for_each expression
+        - IMPORTANT: 如果在 resource 內使用 `count` 的話, 此 resource 就會變成「一個由 resource 組成的 Array」
+    - `for_each` expression
         - 適用於 迴圈掃視 resource && block in resource && module
-    - for expression
-        - 適用於 迴圈掃視 lists && maps
-    - for string drective
+        - 在 resource 內使用 `for_each`, resource 就會變成「一個由 resource 構成的 map」
+    - `for` expression 
+        - 適用於 迴圈掃視 lists && maps (跟 python 的 list comprehension 一樣)
+        - `[ for <ITEM> in <LIST> : <OUTPUT> if <CONDITION> ]`        用來掃 list 
+        - `[ for <KEY>, <VALUE> in <MAP> : <NAME> => <VALUE> ]` 用來掃 map
+    - `for` string drective
         - 適用於 迴圈掃視 字串中的 lists && maps
