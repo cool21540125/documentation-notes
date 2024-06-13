@@ -40,10 +40,11 @@
         - 這句話是我自己做結論的, AWS 官方並沒有這樣說
     - 機器沒在使用(沒有在操 CPU)時, 會累積 credits
         - 等到需要 安裝東西/跑些啥程式/做些有的沒的, 會耗用之前累積的 CPU credits
-    - 一點的 CPU Credits 大概是:
-        - One vCPU at 100% utilization for one minute
-        - One vCPU at 50% utilization for two minutes
-        - Two vCPUs at 25% utilization for two minutes
+    - CPU Credit 計算:
+        - 1 CPU credit = 1 vCPU * 100% * 1 min
+        - 1 CPU credit = 1 vCPU *  50% * 2 mins
+        - 1 CPU credit = 2 vCPU *  25% * 2 mins
+    - CPU credit 的累積, 如果是 t2 將 instance stop 以後會全數消失, t3 以上則會保存一週
     - 如果開了 t2.micro 以後, 真的很需要 CPU, 除了調整 instance type 以外, 還可以切換成 `t2 ultimate`
 - C, Compute Optimized : ML, ...
 - M, Memory Optimized : RDB
@@ -254,3 +255,8 @@ curl http://169.254.169.254/latest/meta-data/
 
 - InstanceLimitExceeded        : 特定 region 的 service quota 達到使用上限
 - InsufficientInstanceCapacity : AWS 那邊於 AZ 裡頭已經沒有相關的資源可供開立
+
+
+# Study
+
+- https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/burstable-performance-instances.html
