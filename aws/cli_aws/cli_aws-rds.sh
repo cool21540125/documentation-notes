@@ -11,6 +11,7 @@ aws rds describe-db-instances --output yaml | yq ".DBInstances[].DeletionProtect
 ### 查看 RDS DB instance
 aws rds describe-db-instances --db-instance-identifier $INSTANCE_IDENTIFIER
 aws rds describe-db-instances --output yaml | yq ".DBInstances[].DBInstanceIdentifier"
+aws rds describe-db-instances --output yaml | yq ".DBInstances[].DBInstanceClass"
 aws rds describe-db-instances --output yaml | yq ".DBInstances[].DeletionProtection"
 aws rds describe-db-instances --output yaml | yq ".DBInstances[].PubliclyAccessible"
 aws rds describe-db-instances --output yaml | yq ".DBInstances[].BackupRetentionPeriod"
@@ -20,6 +21,15 @@ aws rds describe-db-instances --output yaml | yq ".DBInstances[].BackupRetention
 aws rds describe-db-instances --output yaml | yq ".DBInstances[].PreferredBackupWindow"
 aws rds describe-db-instances --output yaml | yq ".DBInstances[].PreferredMaintenanceWindow"
 
+### Security
+aws rds describe-db-instances --query "DBInstances[].{db: DBInstanceIdentifier, encrypt: StorageEncrypted, enhanceMonitor: MonitoringInterval}" --output json
+
+
+### Monitoring
+aws rds describe-db-instances --query "DBInstances[].{db: DBInstanceIdentifier, class: DBInstanceClass, insight: PerformanceInsightsEnabled}" --output json
+
+
+aws rds describe-db-instances --query "DBInstances[].{db: DBInstanceIdentifier, StorageNow: AllocatedStorage, StorageMax: MaxAllocatedStorage}" --output json
 
 
 ### RDS 配了多大的儲存空間
@@ -27,3 +37,4 @@ aws rds describe-db-instances --output yaml | yq ".DBInstances[].MaxAllocatedSto
 
 
 aws rds describe-db-instances --query 'DBInstances[].{Db: DBInstanceIdentifier, username: MasterUsername}'
+aws rds describe-db-instances --query "DBInstances[].{Db: DBInstanceIdentifier, logs: EnabledCloudwatchLogsExports}" --output json
