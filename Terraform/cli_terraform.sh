@@ -8,6 +8,12 @@ terraform version
 #on darwin_amd64
 
 
+### 切換 terraform workspace
+terraform workspace show
+terraform worksapce list
+terraform workspace select $ENV
+
+
 ### 初始化 Terraform
 terraform init
 terraform init --var-file="terraform-$ENV.tfvars"

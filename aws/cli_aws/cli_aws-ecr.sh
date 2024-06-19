@@ -25,7 +25,7 @@ aws ecr get-login-password \
 
 
 ### Pull ECR Image
-docker pull ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/wondercise-lambda:v1.23.0
+docker pull ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/demo-lambda:v1.23.0
 
 
 ### ECR 建立一個 repo, 名為 hello-server101

@@ -18,6 +18,7 @@ brew install yq
 brew install pstree
 brew install telnet
 brew install nvm
+brew install md5sha1sum
 ```
 
 - [List of all packages installed using Homebrew](https://apple.stackexchange.com/questions/101090/list-of-all-packages-installed-using-homebrew)

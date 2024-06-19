@@ -120,7 +120,7 @@ protoc \
 ```bash
 ### 
 protoc \
-  --proto_path ./output/wondercise.proto \
+  --proto_path ./output/demo.proto \
   --swift_out .
 
 # --proto_path   : 聲明用來 import 的路徑

@@ -15,6 +15,7 @@ aws rds describe-db-instances --output yaml | yq ".DBInstances[].DBInstanceClass
 aws rds describe-db-instances --output yaml | yq ".DBInstances[].DeletionProtection"
 aws rds describe-db-instances --output yaml | yq ".DBInstances[].PubliclyAccessible"
 aws rds describe-db-instances --output yaml | yq ".DBInstances[].BackupRetentionPeriod"
+aws rds describe-db-instances --output yaml | yq ".DBInstances[].MultiAZ"
 
 
 ### 目前各個 DB instance 做 Backup & Maintenance Window
@@ -28,8 +29,11 @@ aws rds describe-db-instances --query "DBInstances[].{db: DBInstanceIdentifier, 
 ### Monitoring
 aws rds describe-db-instances --query "DBInstances[].{db: DBInstanceIdentifier, class: DBInstanceClass, insight: PerformanceInsightsEnabled}" --output json
 
-
+### Spec
 aws rds describe-db-instances --query "DBInstances[].{db: DBInstanceIdentifier, StorageNow: AllocatedStorage, StorageMax: MaxAllocatedStorage}" --output json
+aws rds describe-db-instances --query "DBInstances[].{db: DBInstanceIdentifier, Storage: StorageType}" --output json
+
+
 
 
 ### RDS 配了多大的儲存空間

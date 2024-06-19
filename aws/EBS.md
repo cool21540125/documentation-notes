@@ -1,3 +1,4 @@
+- IOPS, (I/O Operations Per Second)
 
 # EBS, Elastic Block Storage
 
@@ -81,6 +82,18 @@
         - 大概可節省 72% 的儲存費用
 
 
+## gp2 v.s. gp3
+
+- gp2 及 gp3 都具備了高達 99.8% 以上的 durability, 也就是約 0.2% 的 annual failure rate
+- Volume Size 可從 1 GiB ~ 16 TiB
+- gp2 的 Max IOPS 為 16,000 (也就是 16 KiB I/O); Max throughput 為 128~250 MiB/sec
+- gp3 的 Max IOPS 為 64,000 (也就是 64 KiB I/O); Max throughput 為   1,000 MiB/sec
+
+> AWS Disk 每一個操作, 如果資料量 < `256KB`, 則視為一個操作; 如果 資料量 > `256KB`, 則會被視為不同的操作
+> 
+> 如果是隨機讀寫 < `256KB`, 可能也會被視為是多次操作
+
+
 # TIPs
 
 - 避免 EBS Snapshot 意外刪除:
@@ -90,3 +103,32 @@
 - 為了省點摳摳, 建議針對 "不會有立即使用需求的 EBS Snapshot* 做 archive
     - 可以省 75% 的摳摳
     - 不過還原的話, 需要花上 24~72 hrs
+
+
+# 未整理雜訊
+
+> If I/O size is very large, you may hit the throughput limit of the volume, causing you may experience a smaller number of IOPS
+> 
+> 如果 I/O 非常大, 則可能因為已經觸及了 throughput limit, 因而造成體驗到不如預期的 IOPS
+
+> throughput 計算方式 : 
+> 
+> `Throughput in MiB/s = (Volume Size in GiB) * (IOPS per GiB) * (I/O size in KiB)`
+> 
+> 也就是: 
+> 
+> `Throughput in MiB/s = (IOPS performance) * (I/O size in KiB) / 1024`
+
+如果未達到 3000 IOPS 時(也就是 Volume Size < 1000GiB), 此時才會有 Burst 的議題
+
+gp2 EBS Volume 每秒鐘, 能獲得 `IOPS * 3` 的 BurstCredit, 而此 BurstCredit, 一個 EBS Volume 上限為 5,400,000
+
+也就是如果已經把 BurstCredit 消耗光了, 那等他慢慢回滿
+
+對於 10 GiB 的 Volume, 回滿需要花 : 5400000/100/60/60 = 15 hrs (因為 IOPS 最低保障, 不管 Volume Size 多少, 都能夠有 100)
+
+對於 40 GiB 的 Volume, 回滿需要花 : 5400000/(40*3)/60/60 = 12.5 hrs
+
+對於 100 GiB 的 Volume, 回滿需要花 : 5400000/(100*3)/60/60 = 5 hrs
+
+對於 1000 GiB 的 Volume, 因為已有 3000 的 Baseline IOPS performance, 因此也不會有 Burst 的問題
