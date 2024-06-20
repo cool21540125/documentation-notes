@@ -14,3 +14,12 @@ aws ecs execute-command \
 
 
 ### 
+CLUSTER=
+SERVICE_NAME=
+
+TASK_ARN=$(aws ecs list-tasks --cluster $CLUSTER --service-name $SERVICE_NAME --query 'taskArns[0]' --output text)
+TASK_DETAILS=$(aws ecs describe-tasks --cluster $CLUSTER --task "${TASK_ARN}" --query 'tasks[0].attachments[0].details' --output json)
+ENI=$(echo $TASK_DETAILS | jq -r '.[] | select(.name=="networkInterfaceId").value')
+PUBLICIP=$(aws ec2 describe-network-interfaces --network-interface-ids "${ENI}" --query 'NetworkInterfaces[0].Association.PublicIp' --output text)
+echo $TASK_DETAILS | jq
+echo $PUBLICIP

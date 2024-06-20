@@ -81,7 +81,7 @@ aws cloudwatch set-alarm-state \
 
 ### 查詢 CloudWatch Log Groups 的儲存量
 PREFIX=production.log
-aws logs describe-log-groups --log-group-name-prefix  "$PREFIX" --output yaml | yq ".logGroups[].storedBytes"
+aws logs describe-log-groups --log-group-name-prefix  "$PREFIX" --query  "logGroups[].{LogGroup: logGroupName, Size: storedBytes}" --output json
 aws logs describe-log-groups --log-group-name-prefix  "$PREFIX" --output yaml  | yq ".logGroups[].logGroupName"
 
 
