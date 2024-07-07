@@ -1,0 +1,105 @@
+{
+  "metrics": {
+    "namespace": "", // default to "CWAgent"
+    "append_dimensions": {
+      "ImageId": "${aws:ImageId}",
+      "InstanceId": "${aws:InstanceId}",
+      "InstanceType": "${aws:InstanceType}",
+      "AutoScalingGroupName": "${aws:AutoScalingGroupName}"
+    },
+    "aggregation_dimensions": [ // 依照哪個 dimension 將 metrics 做 aggregation. 若使用 [], 則視為忽略所有 dimension, 並將他們做成統一一個 aggregation value
+      [
+        "InstanceId"
+      ],
+      [
+        "InstanceType"
+      ],
+      [
+        "InstanceId",
+        "InstanceType"
+      ]
+    ],
+    "endpoint_override": "", // (進階)額外寫入到其他地方用的
+    "metrics_collected": { // Required
+      "collectd": { // collectd protocol. 需另行安裝 collectd: https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch-Agent-custom-metrics-collectd.html
+      },
+      "statsd": { // StatsD protocol: https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch-Agent-custom-metrics-statsd.html
+      },
+      "cpu": { // 裡頭必須包含: resources | totalcpu (or Both)
+        "drop_original_metrics": [ // 用來降低 CW Agent 發送到 CW 的 metrics. 可用來捨棄 aggregation_dimensions 底下的 metrics (不發送到 CW)
+          "cpu_usage_guest" // 官方文件也這麼寫.. 不曉得用意 (指目前寫法 及 .measurement 裡頭的 cpu_usage_guest)
+        ],
+        "resources": [ // 只接受 "*", 表示發送 per-cpu metrics
+          "*"
+        ],
+        "totalcpu": false, // cpu metrics aggregated across all cpu cores
+        "measurement": [ // 約有 20+ 個 CPU 相關的 measurements
+          { // 若要做 rename 或 unit 的話, 要這樣寫
+            "name": "usage_idle",
+            "rename": "USAGE_IDLE",
+            "unit": "Percent"
+          },
+          "time_active", // 否則直接這樣寫就行了
+          "time_active, time_guest, time_guest_nice, time_idle, time_iowait, time_irq, time_nice, time_softirq, time_steal, time_system, time_user, usage_active, usage_guest, usage_guest_nice, usage_idle, usage_iowait, usage_irq, usage_nice, usage_softirq, usage_steal, usage_system, and usage_user"
+        ],
+        "metrics_collection_interval": 60, // 覆寫 global agent 定義的時間. 用來聲明每隔 N 秒搜集一次 metric
+        "append_dimensions": {} // 用來覆寫 global append_dimensions
+      },
+      "disk": {
+        "drop_original_metrics": [],
+        "resources": [ // disk mount points. 預設會搜集 all mount points
+          "*"
+        ],
+        "measurement": [ // Required
+          "free, total, used, used_percent, inodes_free, inodes_used, and inodes_total"
+        ],
+        "ignore_file_system_types": "", // 排除特定的 file system types, ex: sysfs, devtmpfs
+        "drop_device": true, // default to false. 可避免 Device(裝置名稱) 被歸類為單一 dimension (device name 變了, metric dimension 也會跟著變更, 造成不必要的 INSUFFICIENT_DATA)
+        "metrics_collection_interval": 60,
+        "append_dimensions": {
+          "VolumeId": "${aws:VolumeId}" // (若要使用的話, 則必須配置 drop_device: false) 對於 EBS 則為 EBS Volume ID, 對於 EC2 instance store 則為 device serial.
+        }
+      },
+      "diskio": {
+        "measurement": [
+          "reads, writes, read_bytes, write_bytes, read_time, write_time, io_time, and iops_in_progress"
+        ],
+      },
+      "swap": {
+        "measurement": [
+          "free, used, and used_percent"
+        ]
+      },
+      "mem": {
+        "measurement": [
+          "active, available, available_percent, buffered, cached, free, inactive, total, used, and used_percent"
+        ]
+      },
+      "net": {
+        "measurement": [
+          "bytes_sent, bytes_recv, drop_in, drop_out, err_in, err_out, packets_sent, and packets_recv"
+        ]
+      },
+      "netstat": {
+        "measurement": [
+          "tcp_close, tcp_close_wait, tcp_closing, tcp_established, tcp_fin_wait1, tcp_fin_wait2, tcp_last_ack, tcp_listen, tcp_none, tcp_syn_sent, tcp_syn_recv, tcp_time_wait, and udp_socket"
+        ],
+        "metrics_collection_interval": 60
+      },
+      "processes": {
+        "measurement": [
+          "blocked, dead, idle, paging, running, sleeping, stopped, total, total_threads, wait, and zombies"
+        ]
+      },
+      "nvidia_gpu": {},
+      "procstat": {  // procstat plugin: https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch-Agent-procstat-process-metrics.html
+        // 可針對特定 pid 蒐集資訊
+      },
+      "ethtool": {}
+    },
+    "force_flush_interval": 5, // 預設 logs 會存在於 Memory Buffer 直到 time interval 或 累積達 1MB 才將 logs 發送出去. 但若使用 high-resolution, 則建議維持預設的 5
+    "credentials": {
+      "role_arn": "" // 例如要發送到 other Account, 用來覆寫 agent section 的 role_arn
+    }
+  }
+}

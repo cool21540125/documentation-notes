@@ -19,6 +19,12 @@ ROOT_OR_NOT="\$"
 export PS1="${CYAN}[${BLUE}\W${CYAN}]\$${TEXT_RESET} "
 export PS1="${CYAN}[${RED}${TIME}${WHITE} ${CURRENT_PATH}${CYAN}]${ROOT_OR_NOT}${TEXT_RESET} "
 export PS1="${CYAN}[${BLUE}${TIME}${WHITE} ${CURRENT_HOST} ${ORANGE}${CURRENT_PATH}${CYAN}]${ROOT_OR_NOT}${TEXT_RESET} "
+
+
+
+### Ubuntu
+export PS1="\[\e]0;\u@\h: \w\a\]${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]\$ "
+
 ```
 
 

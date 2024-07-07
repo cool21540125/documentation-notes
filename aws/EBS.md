@@ -2,6 +2,9 @@
 
 # EBS, Elastic Block Storage
 
+- [Understanding GP2 Volume Performance](https://www.rhythmictech.com/blog/aws/understanding-gp2-volume-performance/)
+    - 計算 throughtpu 及 gp2 IOPS 深度好文
+
 - 為 Network Device
     - 只能同時掛載到一台 Instance
         - 早期的 io1, io2 可同時掛載到多個 EC2
@@ -41,6 +44,15 @@
         - 大小由 1 GiB 到 16 TiB
         - 已在 2020/12 停止 gp1
         - gp2
+            - gp2 的 IOPS 計算方式: `min(max(100, Size*3), 16000)`, 也就是 100 ~ 16000, 例如:
+                - 10    GiB, IOPS 為 100
+                - 20    GiB, IOPS 為 100
+                - 33.34 GiB, IOPS 為 100
+                - 40    GiB, IOPS 為 120
+                - 1000  GiB, IOPS 為 3000  <- Burstable 腎上腺素
+                - 5300  GiB, IOPS 為 15900
+                - 5334  GiB, IOPS 為 16000
+                - 6000  GiB, IOPS 為 16000
             - Volume Size && IOPS 兩者呈現正相關
                 - 小容量 Volume IOPS 為 3000, 最大可提升至 16000
             - 3 IOPS per GB, 也就是說, 增加 30 GiB 空間的話, IOPS 也會提升 10
@@ -125,10 +137,9 @@ gp2 EBS Volume 每秒鐘, 能獲得 `IOPS * 3` 的 BurstCredit, 而此 BurstCred
 
 也就是如果已經把 BurstCredit 消耗光了, 那等他慢慢回滿
 
-對於 10 GiB 的 Volume, 回滿需要花 : 5400000/100/60/60 = 15 hrs (因為 IOPS 最低保障, 不管 Volume Size 多少, 都能夠有 100)
+- 對於   10 GiB 的 Volume, 回滿需要花 : 5400000/(3*100)/3600 = 5 hrs (因為 IOPS 最低保障, 不管 Volume Size 多少, 都能夠有 100)
+- 對於   50 GiB 的 Volume, 回滿需要花 : 5400000/(3*150)/3600 = 3.3334 hrs
+- 對於  100 GiB 的 Volume, 回滿需要花 : 5400000/(3*300)/3600 = 1.6667 hrs
+- 對於 1000 GiB 的 Volume, 回滿需要花 : 5400000/(3*3000)/3600 = 0.16667 hrs = 10 mins (不過其實這沒有啥用了, 因為不會在 Burst 了)
 
-對於 40 GiB 的 Volume, 回滿需要花 : 5400000/(40*3)/60/60 = 12.5 hrs
-
-對於 100 GiB 的 Volume, 回滿需要花 : 5400000/(100*3)/60/60 = 5 hrs
-
-對於 1000 GiB 的 Volume, 因為已有 3000 的 Baseline IOPS performance, 因此也不會有 Burst 的問題
+> throughput = func(VolumeSize)

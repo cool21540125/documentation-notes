@@ -1,0 +1,43 @@
+{
+  "logs": {
+    "logs_collected": {
+      "files": {
+        "collect_list": [
+          {
+            "file_path": "/var/log/xxx_*.log", 
+            "auto_removal": false,
+            "log_group_name": "xxx.log",  // 預設會帶入 file_path 最後一個 . 以前的路徑名稱作為 Log Group Name (此欄位可使用變數)
+            "log_group_class": "STANDARD",
+            "log_stream_name": "xxx",  // 預設使用 global 層級的 logs section. 若無, 則使用 {instance_id}
+            "retention_in_days": 90,  // 若設定一個小於已有 Log Groups 的天數的話, Old logs 會被刪除!!!
+            "filters": [  // filters 內的全部規則都需要符合, 才會上傳到 CWL. 此外, re 寫得太爛會影響 performance!!
+              {
+                "type": "include | exclude",
+                "expression": "P(UT|OST)",  // 規則參考: https://github.com/google/re2/wiki/Syntax 及 https://owasp.org/www-community/attacks/Regular_expression_Denial_of_Service_-_ReDoS
+              }
+            ],
+            "timezone": "Local",  // UTC | Local
+            "timestamp_format": "",
+            "multi_line_start_pattern": "",
+            "encoding": "utf-8"
+          }
+        ]
+      },
+      "windows_events": {}  // Windows 的毒瘤
+    },
+    "log_stream_name": "",  // Required
+    "endpoint_override": "",  // (進階)額外寫入到其他地方用的
+    "force_flush_interval": 5, // 預設 logs 會存在於 Memory Buffer 直到 time interval 或 累積達 1MB 才將 logs 發送出去. 但若使用 high-resolution, 則建議維持預設的 5
+    "credentials": {
+      "role_arn": ""  // 例如要發送到 other Account, 用來覆寫 agent section 的 role_arn
+    },
+    "metrics_collected": {  // 與 CloudWatch Application Signals 及 Container Insights 有關. 增加 observability 用的
+      "application_signals": "",
+      "kubernetes": {
+        "enhanced_container_insights": true,  // enable Container Insights with enhanced observability for Amazon EKS
+        "accelerated_compute_metrics": true  // Nvidia GPU
+      },
+      "emf": ""  // legacy field. 別鳥它了
+    }
+  }
+}

@@ -2,27 +2,11 @@
 install xxx on Ubuntu
 
 
-# dpkg intro
+# misc
 
-- 早期(2017/03) 學 Ubuntu的筆記
-
-- dpkg 為 Debian-based 系統管理增刪建立套件的相關指令
-
-```sh
-# 顯示所有已安裝套件
-$ dpkg -l
-
-# 安裝了哪些相關套件, ex: python
-$ dpkg -l | grep python
-
-# 特定套件所安裝的所有檔案, ex: python
-$ dpkg -L python
-
-# 某資料夾底下有多少個 installed package
-$ dpkg -S /usr
-
-# 更改預設 desktop, music等資料夾
-$ gedit ~/.config/user-dirs.dirs
+```bash
+### 更改預設 desktop, music等資料夾
+vim ~/.config/user-dirs.dirs
 ```
 
 
@@ -191,4 +175,56 @@ apt install openssh-server -y
 systemctl start sshd
 systemctl enable sshd
 systemctl status sshd
+```
+
+
+# Install collectd
+
+```bash
+### collectd protocol. 用來搜集 logs 使用的一種協定
+apt-get install collectd -y
+```
+
+
+
+# Install CloudWatch Unified Agent
+
+- [Verifying the signature of the CloudWatch agent package](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/verify-CloudWatch-Agent-Package-Signature.html)
+
+
+```bash
+### ========================= 可省略的驗證步驟 =========================
+### AWS Public Key
+wget https://amazoncloudwatch-agent.s3.amazonaws.com/assets/amazon-cloudwatch-agent.gpg
+
+
+gpg --import amazon-cloudwatch-agent.gpg
+# key: D58167303B789C72
+# ~/.gnupg/secring.gpg
+
+### 依照 PUBLIC KEY 產出的 finger print
+gpg --fingerprint D58167303B789C72
+# 9376 16F3 450B 7D80 6CBD  9725 D581 6730 3B78 9C72
+# 務必與官網比對, 如果指紋不一樣, 表示此 Public 為 偽造
+# ------------------ 若為偽造, 不要再繼續往下做了 ------------------
+
+
+### 下載 deb
+wget https://amazoncloudwatch-agent.s3.amazonaws.com/ubuntu/amd64/latest/amazon-cloudwatch-agent.deb
+
+### 下載 deb.sig
+wget https://amazoncloudwatch-agent.s3.amazonaws.com/ubuntu/amd64/latest/amazon-cloudwatch-agent.deb.sig
+
+
+### 驗證 deb 及 sig 檔案, 並與稍早 import 的 public key 比對
+gpg --verify amazon-cloudwatch-agent.deb.sig amazon-cloudwatch-agent.deb
+
+
+### ========================= Install =========================
+### 下載 deb (上面下載過了的話則可免)
+wget https://amazoncloudwatch-agent.s3.amazonaws.com/ubuntu/amd64/latest/amazon-cloudwatch-agent.deb
+
+dpkg -i -E ./amazon-cloudwatch-agent.deb
+# Config Path: /opt/aws/amazon-cloudwatch-agent/etc/
+# Main Config: /opt/aws/amazon-cloudwatch-agent/etc/common-config.toml
 ```

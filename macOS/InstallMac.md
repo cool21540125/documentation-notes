@@ -19,6 +19,8 @@ brew install pstree
 brew install telnet
 brew install nvm
 brew install md5sha1sum
+brew install gpg2
+brew install wget
 ```
 
 - [List of all packages installed using Homebrew](https://apple.stackexchange.com/questions/101090/list-of-all-packages-installed-using-homebrew)
@@ -232,7 +234,8 @@ brew install mercurial
 
 
 ### zsh install gvm
-zsh < <(curl -s -S -L https://raw.githubusercontent.com/moovweb/gvm/master/binscripts/gvm-installer)
+# rm -rf ~/.gvm
+bash < <(curl -s -S -L https://raw.githubusercontent.com/moovweb/gvm/master/binscripts/gvm-installer)
 source $HOME/.gvm/scripts/gvm
 
 
@@ -249,7 +252,7 @@ gvm list
 
 
 ### Install
-gvm install go1.20.5
+gvm install go1.19
 ```
 
 
@@ -500,20 +503,29 @@ $# brew install openldap
 
 - 2022/11/11
 - 要安裝 Oracle Java 的話請另尋其他文件...
+- [Downloads for Amazon Corretto 17](https://docs.aws.amazon.com/corretto/latest/corretto-17-ug/downloads-list.html)
 
 ```zsh
+### Install (愛惜電腦, 請遠離 homebrew)
+### 直接去抓 AWS 版本的 java 吧...
+# 東西會安裝到
+cd /Library/Java/JavaVirtualMachines/
+ls -l 
+#amazon-corretto-17.jdk
+#amazon-corretto-8.jdk
 
-### Install 
-brew install java11
-brew install openjdk@17
 
-
-### env PATH
-VERSION=
-export CPPFLAGS="-I/usr/local/opt/openjdk@${VERSION}/include"
-export JAVA_HOME="/usr/local/opt/openjdk@${VERSION}"
-export PATH="${JAVA_HOME}/bin:$PATH"
-
+# -------------------- 別用了 --------------------
+#brew install java11
+#brew install openjdk@17
+#
+#
+#### env PATH
+#VERSION=
+#export CPPFLAGS="-I/usr/local/opt/openjdk@${VERSION}/include"
+#export JAVA_HOME="/usr/local/opt/openjdk@${VERSION}"
+#export PATH="${JAVA_HOME}/bin:$PATH"
+# -------------------- 別用了 --------------------
 
 ### 
 java -version
@@ -681,8 +693,19 @@ protoc --version
 - 2023/04/11
 
 ```zsh
-brew install mysql@8.0
+### 愛惜電腦, 遠離 homebrew
+#brew install mysql@8.0
 
+
+### 直接到官網抓 mysqlsh
+# https://dev.mysql.com/downloads/shell/
+# 安裝完成以後
+mysqlsh
+
+
+### (已進入 mysqlsh)
+\connect root@127.0.0.1:3306
+# 輸入密碼
 ```
 
 
@@ -691,6 +714,17 @@ brew install mysql@8.0
 - 2023/04/17
 - https://dotnet.microsoft.com/en-us/download/dotnet
 - 到上面 URL 抓吧
+
+
+# Install rvm
+
+```zsh
+### Install rvm
+curl -L https://get.rvm.io | bash -s stable
+
+rvm --version
+#rvm 1.29.12 (latest) by Michal Papis, Piotr Kuczynski, Wayne E. Seguin [https://rvm.io]
+```
 
 
 # Install nvm

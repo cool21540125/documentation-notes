@@ -197,6 +197,13 @@ ALB --> Task3;
             - ECS 本身執行 provision ECS tasks 的時候, 所需的權限, ex: 寫 logs 到 CloudWatch (基本上就這個...)
 
 
+# 實戰
+
+```bash
+### 如果 ECS Deployment 看到底下的訊息, 表示服務接連不斷的 exponentially restart failure
+service YOUR_SERVICE_NAME is unable to consistently start tasks successfully.
+```
+
 # Metrics
 
 - CPUUtilization

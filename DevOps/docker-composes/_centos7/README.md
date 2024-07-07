@@ -26,9 +26,7 @@ cd ~
 wget https://nodejs.org/dist/v12.18.4/node-v12.18.4-linux-x64.tar.xz
 tar xJf node-v12.18.4-linux-x64.tar.xz
 
-echo 'PATH=/root/node-v12.18.4-linux-x64/bin:${PATH}' >> ~/.bash_profile
-echo 'export PATH' >> ~/.bash_profile
-source ~/.bash_profile
+export PATH="/root/node-v12.18.4-linux-x64/bin:${PATH}"
 
 npm install -g @angular/cli
 
@@ -48,16 +46,16 @@ npm run prod
 hostname -I
 
 vim /etc/nginx/conf.d/server.conf
-server {
-
-    listen 34200;
-    server_name localhost;
-    # if BACKEND_URI is using TLS/SSL with SNI, this is important!
-    proxy_ssl_server_name on;
-
-    location / {
-        root /root/proj/angular-map/dist;
-    }
-}
+#server {
+#
+#    listen 34200;
+#    server_name localhost;
+#    # if BACKEND_URI is using TLS/SSL with SNI, this is important!
+#    proxy_ssl_server_name on;
+#
+#    location / {
+#        root /root/proj/angular-map/dist;
+#    }
+#}
 ````
 

@@ -1,0 +1,16 @@
+{
+  "agent": {
+    "metrics_collection_interval": 60,  // all metrics 預設蒐集的 interval, 若 < 60, 則表示啟用 high-resolution
+    "region": "us-west-2",  // 預設為 EC2 所在 Region
+    "credentials": {
+      "role_arn": "" // 例如要發送到 other Account, 用來覆寫 agent section 的 role_arn
+    },
+    "debug": false,
+    "aws_sdk_log_level": "LogDebug | LogDebugWithSigning | LogDebugWithHTTPBody | LogDebugRequestRetries | LogDebugWithEventStreamBody", // 用來 logging for AWS SDK endpoints
+    "logfile": "/opt/aws/amazon-cloudwatch-agent/logs/amazon-cloudwatch-agent.log", // CW Agent 的 log 預設路徑 (自動 rotate 保留 5 days & 100MB)
+    "omit_hostname": false,
+    "run_as_user": "root",
+    "user_agent": "",  // 向 CW 發送請求的 agent string
+    "usage_data": false, // default to true. 是否將 CW Agent 的 health and performance data 發送到 CW
+  }
+}

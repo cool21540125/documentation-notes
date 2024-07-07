@@ -329,7 +329,7 @@ ssmps <-- Eecryption API --> kms;
 - 與 Redshift 有高度整合
 - Good option for SSE-C Encryption
 - 安全防護規格 `FIPS 140-2 Level 3 compliance` (看看就好...)
-- *Master Key* 方面, 僅支援 [Customer Managed CMK](#aws-kms-key-management-service)
+- *Master Key* 方面, 僅支援 *Customer Managed CMK*
 - CloudHSM deployed in VPC, 不過可 cross Region (by VPC sharing)
 
 

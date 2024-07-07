@@ -3,8 +3,11 @@
 ### =================== 好用的設定(一定要配的啦~) ===================
 
 ### AWS CLI settings
-aws configure set default.s3.max_concurrent_requests 100
+aws configure set default.s3.max_concurrent_requests 1000
 # S3 concurrent 上傳(default: 10)
+# aws CLI concurrent upload to S3
+
+#或者
 
 
 

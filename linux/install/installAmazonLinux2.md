@@ -195,7 +195,23 @@ sudo /opt/aws/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent-ctl \
 - 2023/03/14
 
 ```bash
-$# 
+### 法1. 使用 rmp 安裝 (適用於 Amazon Linux, Amazon Linux 2, and Amazon Linux 2023)
+wget https://s3.region.amazonaws.com/amazoncloudwatch-agent-region/amazon_linux/amd64/latest/amazon-cloudwatch-agent.rpm
+
+
+### 法2-1. 使用 wizard 建立 CloudWatch Unified Configuration File
+sudo /opt/aws/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent-config-wizard
+
+### 法2-2.CloudWatch Unitifed Agent | CloudWatch Agent
+sudo /opt/aws/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent-ctl -a fetch-config -m ec2 -c file:$PATH_TO_CONFIG -s
+
+
+### CloudWatch Unified Agent Configuration
+ls /opt/aws/amazon-cloudwatch-agent/etc/amazon-cloudwatch-agent.toml
+
+
+### 服務狀態
+systemctl status amazon-cloudwatch-agent
 ```
 
 

@@ -85,7 +85,7 @@ aws logs describe-log-groups --log-group-name-prefix  "$PREFIX" --query  "logGro
 aws logs describe-log-groups --log-group-name-prefix  "$PREFIX" --output yaml  | yq ".logGroups[].logGroupName"
 
 
-aws logs describe-log-groups --log-group-name-prefix "/aws/cloudtrail" --query 'logGroups[].{LogGroup: logGroupName, Size: storedBytes}'
+aws logs describe-log-groups --log-group-name-prefix "/aws/cloudtrail/tf-write-events" --query 'logGroups[].{LogGroup: logGroupName, Size: storedBytes}'
 
 
 ### 

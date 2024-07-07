@@ -32,10 +32,7 @@ cd Python-3.9.3
 
 make && make install
 
-### root 環境變數 (一般使用者可直接使用...)
-echo 'PYTHON_HOME=/usr/local/bin' >> ~/.bash_profile
-echo 'PATH=${PYTHON_HOME}:${PATH}' >> ~/.bash_profile
-source ~/.bash_profile
+PATH=/usr/local/bin:${PATH}
 ```
 
 
