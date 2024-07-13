@@ -8,9 +8,9 @@
     "debug": false,
     "aws_sdk_log_level": "LogDebug | LogDebugWithSigning | LogDebugWithHTTPBody | LogDebugRequestRetries | LogDebugWithEventStreamBody", // 用來 logging for AWS SDK endpoints
     "logfile": "/opt/aws/amazon-cloudwatch-agent/logs/amazon-cloudwatch-agent.log", // CW Agent 的 log 預設路徑 (自動 rotate 保留 5 days & 100MB)
-    "omit_hostname": false,
+    "omit_hostname": false,  // (default: false) 預設會使用 hostname 作為 agent 所收集用來做分類的 dimension. 如果沒額外聲明 append_dimensions 的話, 設定為 true 可避免 hostname 作為 dimensions 被上傳到 CW
     "run_as_user": "root",
-    "user_agent": "",  // 向 CW 發送請求的 agent string
-    "usage_data": false, // default to true. 是否將 CW Agent 的 health and performance data 發送到 CW
+    "user_agent": "",  // 向 CW Api 發送請求的 agent string
+    "usage_data": false, // (default: true) 是否將 CW Agent 的 health and performance data 發送到 CW
   }
 }

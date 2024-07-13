@@ -1,4 +1,5 @@
 // Linux 的話放在 /etc/docker/daemon.json
+// 直接做 live reload systemd
 {
   "builder": {
     "gc": {
@@ -6,15 +7,30 @@
       "enabled": true
     }
   },
+  "live-restore": true, // 解除 container 與 docker daemon 的耦合
+
+  // DOCKER_HOME 搬家, default to /var/lib/docker
   "data-root": "/data/docker",
+
   "debug": false,
   "experimental": false,
+
   "features": {
     "buildkit": true // 優化 Docker build 的流程
   },
+
+  // custom registry
   "insecure-registries": [],
+  "registry-mirrors": [],
+
   "ipv6": false,
-  "live-restore": true, // 解除 container 與 docker daemon 的耦合
+
   "log-driver": "json-file", // logging-driver - https://docs.docker.com/config/containers/logging/configure/
-  "registry-mirrors": []
+
+  // prometheus - configure the Docker daemon as a Prometheus target
+  // https://docs.docker.com/config/daemon/prometheus/
+  "metrics-addr": "127.0.0.1:9323",
+
+  // 讓 image/container 所在的 networking 直接給定它的 default0 network IP (就目前理解, 這應該會直接影響到 docker0 network 所在的網段)
+  "host-gateway-ip": "192.0.2.0",  // 如果使用 Docker Desktop, 則無須設定 (因為已經有預設為 `host.docker.internal`)
 }

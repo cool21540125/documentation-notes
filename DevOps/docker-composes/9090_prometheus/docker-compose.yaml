@@ -1,24 +1,53 @@
 version: "3"
 services:
-  prometheus:
-    image:  prom/prometheus
-    container_name: prometheus
-    hostname: prometheus
-    restart: always
-    volumes: 
-      - ./prometheus.yml:/etc/prometheus/prometheus.yml
-      - /etc/localtime:/etc/localtime
-      - vol_prometheus:/prometheus
-    networks:
-      - net_devops
+  cadvisor:
+    container_name: "cadvisor"
+    hostname: "cadvisor"
+    privileged: true
+    restart: "always"
+    image: "gcr.io/cadvisor/cadvisor:${CADVISOR_VERSION}"
     ports:
-      - 9090:9090
-    command: ["--config.file=/etc/prometheus/prometheus.yml"]
+      - "28080:8080"
+    volumes: 
+      - "/:/rootfs:ro"
+      - "/var/run:/var/run:ro"
+      - "/sys:/sys:ro"
+      - "/var/lib/docker/:/var/lib/docker:ro"
+      - "/dev/disk/:/dev/disk:ro"
+    networks:
+      net_monitoring:
+        ipv4_address: 192.168.200.200
+    devices: 
+      - "/dev/kmsg"
+
+  prometheus:
+    container_name: "prometheus"
+    hostname: "prometheus"
+    restart: "always"
+    image: "prom/prometheus:${PROMETHEUS_VERSION}"
+    ports:
+      - "29090:9090"
+    volumes:
+      - "./config:/etc/prometheus"
+      - "vol_prometheus:/prometheus"
+    networks:
+      net_monitoring:
+        ipv4_address: 192.168.200.201
+    depends_on:
+      - cadvisor
+    extra_hosts:
+      - "cadvisor:192.168.200.200"
+      - "host.docker:192.168.200.1"
+    command: [ "--config.file=/etc/prometheus/prometheus.yml",
+               "--web.config.file=/etc/prometheus/web.yml",
+               "--storage.tsdb.path=/prometheus",
+               "--web.console.libraries=/usr/share/prometheus/console_libraries",
+               "--web.console.templates=/usr/share/prometheus/consoles" ]
+
+networks:
+  net_monitoring:
+    external: true
 
 volumes:
   vol_prometheus:
     name: vol_prometheus
-
-networks:
-  net_devops:
-    external: true

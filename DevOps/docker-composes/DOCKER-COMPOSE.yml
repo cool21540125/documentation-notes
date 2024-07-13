@@ -1,0 +1,10 @@
+
+
+services:
+  container1:
+    image: alpine
+    hostname: alpine
+    container_name: alpine
+    restart: always
+    extra_hosts:
+      - "host.docker.alpine:172.17.0.1"  # docker run --add-host HOST:IP

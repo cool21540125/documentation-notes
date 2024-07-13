@@ -1,7 +1,7 @@
 {
   "metrics": {
     "namespace": "", // default to "CWAgent"
-    "append_dimensions": {
+    "append_dimensions": {  // 截至 2024.07, 僅支援底下 4 種 Key-Value Pair 的設定方式 (無論是 Key 或 Value 都照這樣設定就是了). 設定底下除外的配置則會被忽略.
       "ImageId": "${aws:ImageId}",
       "InstanceId": "${aws:InstanceId}",
       "InstanceType": "${aws:InstanceType}",

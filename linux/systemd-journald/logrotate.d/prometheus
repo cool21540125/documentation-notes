@@ -1,0 +1,9 @@
+/var/log/prometheus/query.log {
+    daily
+    rotate 7
+    compress
+    delaycompress
+    postrotate
+        killall -HUP prometheus
+    endscript
+}

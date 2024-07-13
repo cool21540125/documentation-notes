@@ -1,134 +1,205 @@
 # MongoDB
 
-## linux環境使用mongo
+```sh
+$ mongo --version
+# MongoDB shell version v3.6.3
+```
 
 ```sh
-$ mongod --dbpath ~/mongodb                     #自定義路徑，儲存data files
-$ mongod --fork --logpath ~/log/mongodb.log     #背景執行，並且把log寫入指定log檔
+$ mongo <host>:<port>/<db name> -u <id> -p <pd>
 ```
 
 
-# 規劃實務
 
-- [MongoDB Schema 設計指南](https://blog.toright.com/posts/4483/mongodb-schema-%E8%A8%AD%E8%A8%88%E6%8C%87%E5%8D%97.html)
-- 2017/12/01
+# Example
+
+- [example for nodejs using mongodb](https://gist.github.com/dolphin278/5445957)
 
 
-### Child-Referencing
-
-單一 Document內的子元素, 可能有上百個, 可用 Child-Referencing ( `資料主角`紀錄`子文件`位置 )
-
+counter_simulate_data.js
 ```js
-// 模擬資料
-db.parts.insertMany([
-    {"_id": "q1", "qty":94,  "cost": 0.94, "price": 3.99, "address": "tw" },
-    {"_id": "q2", "qty":23,  "cost": 0.38, "price": 1,    "address": "cn" },
-    {"_id": "q3", "qty":322, "cost": 1.58, "price": 400,  "address": "jp" }
-]);
-db.main.insertOne({"_id": "tony", "age": 30,"has": [ "q1", "q2", "q3" ]});
+/* 
+    Date: 2018/05/04
 
-// 查詢方式
-owner = db.main.findOne({_id: 'tony'});
-qry = db.parts.find({_id: { $in:  owner.has }});
-// { "_id" : "q1", "qty" : 94, "cost" : 0.94, "price" : 3.99, "address" : "tw" }
-// { "_id" : "q2", "qty" : 23, "cost" : 0.38, "price" : 1, "address" : "cn" }
-// { "_id" : "q3", "qty" : 322, "cost" : 1.58, "price" : 400, "address" : "jp" }
+    Dependancy:
+        npm install mongodb
+
+    Edition: v8.11.1
+
+    Program: 
+        每 freq 豪秒, 塞1筆模擬的 Counter data到 <dbName> 裡的 <collName>
+        資料格式如下:
+        {
+            "_id": ObjectID(),          MongoDB ID
+            "v": <int>,                 亂數產生 - 資料值(累計值) 
+            "dt": <datetime>,           資料來源時間(毫秒) ISODate
+            "src": <string>             資料來源的 感應器名稱 or 感應器ID
+            "type": "co",               Counter以 "co" 表示
+        }
+*/
+
+// 參數 ********************************************************
+
+var uid = '';
+var upd = '';
+var host = "127.0.0.1";
+var port = 27017;
+var dbName = "test";
+var collName = "counter";
+var src = 'co1';                    // 資料來源
+var freq = 500;                     // 每筆 「freq/1000 」秒
+
+// 程式開始 ******************************************************
+
+var MongoClient = require('mongodb').MongoClient;
+
+if (uid === '' && upd === '') {
+    var url = "mongodb://" + host + ":" + port + "/";
+} else {
+    var url = "mongodb://" + uid + ":" + upd + "@" + host + ":" + port + "/";
+}
+
+MongoClient.connect(url, function(err, db) {
+    if (err) throw err;
+    var dbo = db.db(dbName);
+    dbo.collection(collName).deleteMany({'src': src, 'type': 'co'});
+    dbo.collection(collName, function(err, collName) {
+        var q = 0;              // 累計 counter值
+        var i = 0;              // 第幾筆
+        var data;
+
+        setInterval(function() {
+            q += Math.round(Math.random() * 3);
+            data = {
+                q: q,
+                dt: new Date(),
+                src: src,
+                type: 'co',
+            }
+
+            collName.insert(data, function(err, doc) {
+                i++;
+                console.log('第 ' + i + ' 筆\n', data);
+            });
+        }, freq * 1);
+    });
+});
 ```
 
 
-### Parent-Referencing
-
-單一 Document內的子元素, 可能有巨量級資料, 可用 Parent-Referencing ( 每筆`子文件`紀錄`資料主角`位置 )
-
+insertRandomTimeData.js
 ```js
-// 模擬資料
-db.hosts.insertOne({_id:"ObjectID('AAAB')",name:'goofy.example.com',ipaddr:'127.66.66.66'});
-db.logmsg.insertOne({time:new Date(),message:'cpuisonfire!',host:"ObjectID('AAAB')"});
+/* 說明
+    Date: 2018/05/04
 
-// 尋找方式
-host = db.hosts.findOne({ipaddr: '127.66.66.66'});
-qry = db.logmsg.find({host: host._id}).toArray();
-// [
-//         {
-//                 "_id" : ObjectId("5a214ed99dc338934f58000c"),
-//                 "time" : ISODate("2017-12-01T12:45:13.206Z"),
-//                 "message" : "cpuisonfire!",
-//                 "host" : "ObjectID('AAAB')"
-//         }
-// ]
+    Dependancy:
+        npm install mongodb
+        npm install gaussian
+
+    Version: v8.11.1
+
+    Program: 
+        每 freq 豪秒, 塞1筆模擬資料到 dbName 裡的 collName
+        模擬觸發事件送資料到資料庫的情況
+*/
+
+// 參數 ********************************************************
+
+var uid = '';
+var upd = '';
+var host = "127.0.0.1";
+var port = 27017;
+var dbName = "test";
+var collName = "randTime";
+
+// 亂數模擬參數---
+var mean = 10;
+var variance = 10;
+
+// 程式開始 ******************************************************
+
+var MongoClient = require('mongodb').MongoClient;
+var gaussian = require('gaussian');
+
+if (uid === '' && upd === '') {
+    var url = "mongodb://" + host + ":" + port + "/" + dbName;
+} else {
+    var url = "mongodb://" + uid + ":" + upd + "@" + host + ":" + port + "/" + dbName;
+}
+
+var dist = gaussian(mean, variance);
+
+function onCollection(err, collection) {
+    var itemsSent = 0;
+    var time_period;
+
+    function call_me() {
+        collection.insert({
+            dt: new ISODate(),
+
+        }, function(err, doc) {
+            itemsSent++;
+            console.log('items sent', itemsSent + '.');
+        }); 
+
+        setTimeout(call_me, 1000 * dist.ppf(Math.random())); // 平均 mean秒, 變異數 variance秒, 塞資料
+    } 
+
+    call_me();
+}
+
+function onConnected(err, db) {
+    db.collection(collName, onCollection);
+}
+
+MongoClient.connect(url, onConnected);
 ```
 
 
-### Two-Way Referencing
-
-兩邊資料都剖大, 有可能雙向查找
-
-> 優點: 查找容易<br />
-  缺點: 更新時, 需要一次更新兩個地方, `必須手動同步關聯狀態`.
+insertSimulateData.js
 ```js
-// 模擬資料 使用者 對應 工單
-db.person.insertOne({_id:"ObjectID('AAF1')",name:"KateMonster",tasks:["ObjectID('ADF9')","ObjectID('AE02')","ObjectID('AE73')"]})
-db.tasks.insertOne({_id:"ObjectID('ADF9')",description:"Writelessonplan",due_date:new Date(),owner:"ObjectID('AAF1')"})
-```
+/* 說明
+    date: 2018/05
 
+    Dependancy:
+        mongodb
 
-### Intermediate (媒介設計模式)
+    Program:
+        每 freq 豪秒, 塞1筆模擬資料到 dbName 裡的 collName
+*/
 
-#### 多對一反正規化
+// 參數 ********************************************************
+var uid = '';
+var upd = '';
+var host = "127.0.0.1";
+var port = 27017;
+var dbName = "test";
+var collName = "test";
+var freq = 1;               // 每筆 「freq/1000 」秒
 
-```js
-// 模擬資料
-db.products.insertOne({_id:'left-handedsmokeshifter',manufacturer:'AcmeCorp',catalog_number:1234,parts:[{id:"ObjectID('F17C')",name:'fanbladeassembly'},{id:"ObjectID('D2AA')",name:'powerswitch'}]});
-db.parts.insertMany([{_id:"ObjectID('AAAA')",name:'#4grommet'},{_id:"ObjectID('F17C')",name:'fanbladeassembly'},{_id:"ObjectID('D2AA')",name:'powerswitch'}])
+// 程式開始 ******************************************************
 
-// 以 products.parts.id為清單, 找到對應的 parts._id 的詳細資訊, 運用的技巧稱為 Application-level Join
-product = db.products.findOne({catalog_number: 1234});
-part_ids = product.parts.map( function(doc) { return doc.id } );
-product_parts = db.parts.find({_id: { $in : part_ids } } ).toArray();
-```
+var MongoClient = require('mongodb').MongoClient;
 
+if (uid === '' && upd === '') {
+    var url = "mongodb://" + host + ":" + port + "/" + dbName;
+} else {
+    var url = "mongodb://" + uid + ":" + upd + "@" + host + ":" + port + "/" + dbName;
+}
 
-### aggregate + update
+MongoClient.connect(url, function(err, db) {
+    db.collection(collName, function(err, collection) {
+        var itemsSent = 0;
 
-- [Aggregation with update in mongoDB](https://stackoverflow.com/questions/19384871/aggregation-with-update-in-mongodb)
-- 2017/12/13
-
-```js
-// 1. 
-> db.agg.insertMany([{ 
-    "_id": ObjectId("525c22348771ebd7b179add8"), 
-    "cust_id": "A1234", 
-    "score": 500, 
-    "status": "A",
-    "clear": "No"
-},{ 
-    "_id": ObjectId("525c22348771ebd7b179add9"), 
-    "cust_id": "A1234", 
-    "score": 1600, 
-    "status": "B",
-    "clear": "No"
-}]);
-
-// 2.
-> db.agg.find();
-{ "_id" : ObjectId("525c22348771ebd7b179add8"), "cust_id" : "A1234", "score" : 500, "status" : "A", "clear" : "No" }
-{ "_id" : ObjectId("525c22348771ebd7b179add9"), "cust_id" : "A1234", "score" : 1600, "status" : "B", "clear" : "No" }
-
-// 3a.
-var gg = db.agg.aggregate([
-    {'$match': { '$or': [{'status': 'A'}, {'status': 'B'}]}},
-    {'$group': {'_id': '$cust_id', 'total': {'$sum': '$score'}}},
-    {'$match': {'total': {'$gt': 2000}}}
-]);
-
-// 3b.
-gg.forEach(function(x) {
-        db.agg.update({'cust_id': x._id}, {'$set': {'clear': 'YES'}}, {'multi': true});
-    }
-);
-
-// result
-> db.agg.find();
-{ "_id" : ObjectId("525c22348771ebd7b179add8"), "cust_id" : "A1234", "score" : 500, "status" : "A", "clear" : "YES" }
-{ "_id" : ObjectId("525c22348771ebd7b179add9"), "cust_id" : "A1234", "score" : 1600, "status" : "B", "clear" : "YES" }
+        setInterval(function() {
+            collection.insert({
+                value: Math.round(Math.random() * 100),
+                dt: new Date().toLocaleString()
+            }, function(err, doc) {
+                itemsSent++;
+                // console.log('items sent', itemsSent);
+            });
+        }, freq * 1);
+    });
+});
 ```

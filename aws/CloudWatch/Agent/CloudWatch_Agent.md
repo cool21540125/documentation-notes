@@ -1,37 +1,33 @@
-
-# CloudWatch Agents - CloudWatch Unified Agent
-
-前身為 `CloudWatch Agent` (別用它了)
-
+# Install CloudWatch Agent
 
 ```bash
-### Install CloudWatch unified Agent
-# https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/Install-CloudWatch-Agent.html 
+
+####################################################################################################
+# Install CloudWatch unified Agent
+# https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/Install-CloudWatch-Agent.html
+# 
+####################################################################################################
 sudo yum install amazon-cloudwatch-agent.service
 sudo systemctl start  amazon-cloudwatch-agent.service
 sudo systemctl enable  amazon-cloudwatch-agent.service
 sudo systemctl restart  amazon-cloudwatch-agent.service
+
 systemctl status amazon-cloudwatch-agent.service
 
-### Configuration
-# https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/create-cloudwatch-agent-configuration-file.html
+ps aux | grep -v grep | grep "USER\|amazon-cloudwatch-agent"
 
 
-### Trigger event
-### 觸發 alarm (debug 使用)
-aws cloudwatch set-alarm-state xxx
-```
+####################################################################################################
+# 啟動 CloudWatch Unified Agent (必須要有 Configuration)
+####################################################################################################
 
-
-# CloudWatch Unified Agent - 配置檔
-
-- [Wizard 細節](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/create-cloudwatch-agent-configuration-file-wizard.html)
-- [CW Agent metrics](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/metrics-collected-by-CloudWatch-agent.html)
-
-```bash
 ### 版本驗證
 /opt/aws/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent --version
 #CWAgent/1.300041.0b681 (go1.22.3; linux; amd64)
+
+
+### 
+tail -f /opt/aws/amazon-cloudwatch-agent/logs/amazon-cloudwatch-agent.log
 
 
 ### =========== 一開始 CloudWatch Unified Agent 安裝完成以後, 並不會有配置檔案 ===========
@@ -45,18 +41,45 @@ aws cloudwatch set-alarm-state xxx
 
 ### 法2. 使用 manual 方式生成... (比較 hardcode... PASS)
 
-```
 
-
-# 啟動 CloudWatch Unified Agent
-
-```bash
-### 啟動 CloudWatch Unified Agent (必須要有 config)
 cd /opt/aws/amazon-cloudwatch-agent/
-bin/amazon-cloudwatch-agent-ctl -a fetch-config -m ec2 -s -c file:/opt/aws/amazon-cloudwatch-agent/bin/config.json
+
+### 啟動服務 (並生成 systemd service)
+sudo bin/amazon-cloudwatch-agent-ctl -a fetch-config -m ec2 -s -c file:/opt/aws/amazon-cloudwatch-agent/bin/sre.json
+sudo bin/amazon-cloudwatch-agent-ctl -a stop
+# -a ACTION
+#    fetch-config: apply config for agent (必須再額外聲明 -c CONFIG_FILE)
+#    start
+#    stop
+#    status
+#    append-config
+#    remove-config
+#
+# -m MODE
+#    ec2
+#    auto
+#
+# -c CONFIGURATION
+#    file:CONFIG_PATH
+#    ssm:PARAMETER_STORE_NAME
+# 
+# -s
+#    僅適用於 -a [ fetch-config / append-config / remove-config ], 表示套用後重啟 agent
 
 
 bin/amazon-cloudwatch-agent-ctl -a status
+```
 
-systemctl status amazon-cloudwatch-agent.service
+
+# CloudWatch Agents - CloudWatch Unified Agent
+
+前身為 `CloudWatch Agent` (別用它了)
+
+- https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/create-cloudwatch-agent-configuration-file.html
+
+
+```bash
+### Trigger event
+### 觸發 alarm (debug 使用)
+aws cloudwatch set-alarm-state xxx
 ```

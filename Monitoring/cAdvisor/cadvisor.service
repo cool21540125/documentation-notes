@@ -1,0 +1,20 @@
+# /usr/lib/systemd/system/cadvisor.service
+
+[Unit]
+Description=cadvisor
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+Type=simple
+Restart=always
+KillMode=process
+TimeoutSec=3
+
+User=root
+Group=root
+
+ExecStart=/var/www/cadvisor/cadvisor -port 8080
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,31 @@
+global:
+  scrape_interval: 15s # Set the scrape interval to every 15 seconds. Default is every 1 minute.
+  evaluation_interval: 15s # Evaluate rules every 15 seconds. The default is every 1 minute.
+  query_log_file: /var/log/prometheus/query.log  # 用來記錄所有的 prometheus query
+
+rule_files:
+- 'prometheus.rules.yml'
+
+scrape_configs:
+  - job_name: "cadvisor"
+    static_configs:
+      - targets: ["localhost:28080"]
+
+  - job_name: "prometheus"
+    basic_auth:
+      username: "admin"
+      password: "password_to_scrap_target"
+    static_configs:
+      - targets: ["localhost:29090"]
+
+  - job_name: 'node'
+    file_sd_configs:
+    - files:
+      - 'node_targets.json'
+
+  - job_name: docker
+    docker_sd_configs:
+      - host: unix:///var/run/docker.sock  # Unix Socket
+    # 或
+    #static_configs:
+    #  - targets: ["localhost:9323"]  # TCP Socket (需搭配 docker daemon 有配置 metrics-addr)

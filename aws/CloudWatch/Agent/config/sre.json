@@ -1,0 +1,60 @@
+{
+  "agent": {
+    "metrics_collection_interval": 60,
+    "run_as_user": "root"
+  },
+  "logs": {
+    "metrics_collected": {
+      "prometheus": {
+        "log_group_name": "/aws/ec2/DataCenter/CWAgent",
+        "prometheus_config_path": "/opt/aws/amazon-cloudwatch-agent/etc/prometheus/prometheus.yml"
+      },
+      "emf_processor": {
+        "metric_declaration_dedup": true,
+        "metric_namespace": "cwagent",
+        "metric_unit": {
+          "container_memory_rss": "Gauge"
+        },
+        "metric_declaration": [
+          {
+            "source_labels": [ "name" ],
+            "label_matcher": "^tony$",
+            "dimensions": [
+              ["InstanceId"]
+            ],
+            "metric_selectors": [
+              "^container_memory_rss$"
+            ]
+          }
+        ]
+      }
+    }
+  },
+  "metrics": {
+    "aggregation_dimensions": [
+      [
+        "InstanceId"
+      ]
+    ],
+    "append_dimensions": {
+      "InstanceId": "${aws:InstanceId}"
+    },
+    "metrics_collected": {
+      "disk": {
+        "measurement": [
+          "used_percent"
+        ],
+        "metrics_collection_interval": 60,
+        "resources": [
+          "*"
+        ]
+      },
+      "mem": {
+        "measurement": [
+          "mem_used_percent"
+        ],
+        "metrics_collection_interval": 60
+      }
+    }
+  }
+}

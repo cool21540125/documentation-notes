@@ -62,8 +62,6 @@ Docker Container Logs 分成 2 類: `daemon logs` 及 `container logs`
 
 - Container 內部發送到 `STDOUT` & `STDERR` 的訊息都會被 logging driver 捕獲
     - 追蹤 log: `docker logs -f Container_Name` 
-    - 觀察 CPU & Memory: `docker stats --no-stream` 
-    - 觀察 running processes: `docker top Container_Name`
     - 觀察 Docker events: `docker events`
     - 觀察 Storage Usage: `docker system df`
 - 開發階段, 將容器內的 Log 輸出到 `STDOUT` & `STDERR` 很方便除錯, 但若生產環境, 建議集中蒐集 Logs

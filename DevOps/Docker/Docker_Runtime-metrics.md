@@ -3,13 +3,6 @@
 - 2021/03/05
 
 
-# Docker stats
-
-使用 `docker stats` 監控 Containers `CPU, memory usage, memory limit, network IO metrics` 的即時串流指標 
-
-![docker stats](../img/docker-stats.png)
-
-
 # Control groups
 
 Linux Containers 依賴底層的 *CGroup*, 這些 *CGroup* 揭露了 `processes`, `CPU, memory, block I/O usage` 的 metrics

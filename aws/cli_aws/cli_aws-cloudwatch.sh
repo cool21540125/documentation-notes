@@ -45,7 +45,7 @@ COMPOSITE_ALARM_NAME="TkoWordpress-task-all-dead-OK"
 # https://docs.aws.amazon.com/AmazonCloudWatch/latest/APIReference/API_PutMetricAlarm.html
 aws cloudwatch put-metric-alarm \
     --alarm-name ${METRIC_ALARM_NAME} \
-    --alarm-description "Takeorder Wordpress ECS Tasks - DEAD" \
+    --alarm-description "Wordpress ECS Tasks - DEAD" \
     --actions-enabled  \
     --namespace "AWS/ApplicationELB" \
     --dimensions ${DIMENSION_TG} ${DIMENSION_ALB} \
@@ -64,7 +64,7 @@ aws cloudwatch put-metric-alarm \
 # https://docs.aws.amazon.com/AmazonCloudWatch/latest/APIReference/API_PutCompositeAlarm.html
 aws cloudwatch put-composite-alarm \
     --alarm-name ${COMPOSITE_ALARM_NAME} \
-    --alarm-description "Takeorder Wordpress ECS Tasks - OK" \
+    --alarm-description "Wordpress ECS Tasks - OK" \
     --actions-enabled \
     --alarm-rule "ALARM(\"${METRIC_ALARM_NAME}\")" \
     --ok-actions ${ACTION_SNS_ARN}

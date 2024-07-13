@@ -203,7 +203,10 @@ wget https://s3.region.amazonaws.com/amazoncloudwatch-agent-region/amazon_linux/
 sudo /opt/aws/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent-config-wizard
 
 ### 法2-2.CloudWatch Unitifed Agent | CloudWatch Agent
-sudo /opt/aws/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent-ctl -a fetch-config -m ec2 -c file:$PATH_TO_CONFIG -s
+sudo /opt/aws/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent-ctl \
+    -a fetch-config \
+    -m ec2 \
+    -c file:$PATH_TO_CONFIG -s
 
 
 ### CloudWatch Unified Agent Configuration

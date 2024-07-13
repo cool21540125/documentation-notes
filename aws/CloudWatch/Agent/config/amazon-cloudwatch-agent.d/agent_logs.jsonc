@@ -37,7 +37,41 @@
         "enhanced_container_insights": true,  // enable Container Insights with enhanced observability for Amazon EKS
         "accelerated_compute_metrics": true  // Nvidia GPU
       },
-      "emf": ""  // legacy field. 別鳥它了
+      "emf": "",  // legacy field. 別鳥它了?
+      "prometheus": {
+        // https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch-Agent-PrometheusEC2.html#CloudWatch-Agent-PrometheusEC2-configure
+        "cluster_name": "prometheus-cluster",  // optional
+        "log_group_name": "Prometheus",
+        "prometheus_config_path": "/path/to/Prometheus scrape configuration file path/prometheus.yaml",
+        "emf_processor": {  // 不曉得還是不是 legacy...
+          "metric_declaration_dedup": true,  // ??
+          "metric_namespace": "CWAgent-Prometheus",  // CloudWatch Metric 上頭的 namespace 分類
+          "metric_unit": {
+            "jvm_threads_current": "Count",
+            "jvm_gc_collection_seconds_sum": "Milliseconds"
+          },
+          "metric_declaration": [
+            {
+              "source_labels": [
+                "job", "key"
+              ],
+              "label_matcher": "MY_JOB;^value2",
+              "dimensions": [
+                [
+                  "key1", "key2"
+                ],
+                [
+                  "key2"
+                ]
+              ],
+              "metric_selector": [
+                "^jvm_threads_current$",
+                "^jvm_gc_collection_seconds_sum$"
+              ]
+            }
+          ]
+        }
+      }
     }
   }
 }

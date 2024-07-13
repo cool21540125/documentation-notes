@@ -1,0 +1,7 @@
+groups:
+- name: docker
+  rules:
+  - record: container_cpu_usage_seconds:avg
+    expr: sum(rate(container_cpu_usage_seconds_total[5m])) BY (name)
+  - record: container_memory_usage_seconds:avg
+    expr: avg(container_memory_working_set_bytes/1024/1024) BY (name)

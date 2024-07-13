@@ -32,6 +32,15 @@ If you use Docker Datacenter (DDC), it includes Docker Trusted Registry (DTR).
 
 ## Docker Daemon(dockerd)
 
+- https://docs.docker.com/reference/cli/dockerd/
+
+Host gateway IP
+
+- container 或 image 可在 buildtime 及 runtime 期間, 藉由加入 `--add-host host.docker.internal:host-gateway` 讓 container 藉由此 gateway 訪問 docker host
+
+
+
+
 ## Docker Client(docker)
 
 ## Control groups (cgroups)
