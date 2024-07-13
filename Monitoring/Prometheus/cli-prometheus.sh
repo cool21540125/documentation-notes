@@ -15,7 +15,8 @@ prometheus --config.file=config/prometheus.yml --web.config.file=config/web.yml 
 
 
 ### reload the Prometheus configuration
-curl -X POST http://localhost:29090/-/reload
+curl -X POST http://localhost:29090/-/reload -u "admin:PASSWORD"
+# 需要搭配 --web.enable-lifecycle 才能使用
 
 
 ### 

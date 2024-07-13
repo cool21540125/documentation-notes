@@ -7,7 +7,9 @@ promtool check config config/prometheus.yml
 
 
 ### 驗證 prometheus rule file
-promtool check rules /PATH/TO/rule.yml
+promtool check rules /etc/prometheus/rules.yml
+# container
+docker exec prometheus promtool check rules /etc/prometheus/rules.yml
 
 
 ### test rules

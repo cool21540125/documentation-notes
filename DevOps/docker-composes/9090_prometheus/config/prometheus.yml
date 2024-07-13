@@ -27,4 +27,9 @@ scrape_configs:
   #     - host: "host.docker:9323"
 
 rule_files:
-  - 'rules.yml'
+  - rules.yml
+
+alerting:
+  alertmanagers:
+  - static_configs:
+    - targets: ["alertmanager:9093"]

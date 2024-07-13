@@ -1,0 +1,24 @@
+# https://webhook.site/#!/view/086c1994-551d-41e1-a1a7-95de45af0f7e
+#
+global:
+  resolve_timeout: 5m
+
+# templates:
+#   - '/etc/alertmanager/template/*.tmpl'
+
+route:
+  group_interval: 1m
+  repeat_interval: 30m  # interval to re-alert
+  receiver: 'demo'
+
+receivers:
+  - name: 'demo'
+    webhook_configs:
+      - url: 'https://webhook.site/086c1994-551d-41e1-a1a7-95de45af0f7e'
+        send_resolved: true
+
+  # - name: 'sns.webhook'
+  #   sns_configs:
+
+  # - name: 'slack.webhook'
+  #   slack_configs:

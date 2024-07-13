@@ -16,7 +16,6 @@ services:
       - "/dev/disk/:/dev/disk:ro"
     networks:
       net_monitoring:
-        ipv4_address: 192.168.200.200
     devices: 
       - "/dev/kmsg"
 
@@ -32,17 +31,29 @@ services:
       - "vol_prometheus:/prometheus"
     networks:
       net_monitoring:
-        ipv4_address: 192.168.200.201
     depends_on:
       - cadvisor
-    extra_hosts:
-      - "cadvisor:192.168.200.200"
-      - "host.docker:192.168.200.1"
     command: [ "--config.file=/etc/prometheus/prometheus.yml",
                "--web.config.file=/etc/prometheus/web.yml",
                "--storage.tsdb.path=/prometheus",
+               "--web.enable-lifecycle",
                "--web.console.libraries=/usr/share/prometheus/console_libraries",
                "--web.console.templates=/usr/share/prometheus/consoles" ]
+
+  alertmanager:
+    container_name: "alertmanager"
+    hostname: "alertmanager"
+    restart: "always"
+    image: "quay.io/prometheus/alertmanager:${ALERTMANAGER_VERSION}"
+    ports:
+      - "29093:9093"
+    volumes:
+      - "./config:/etc/alertmanager"
+    networks:
+      net_monitoring:
+    depends_on:
+      - prometheus
+    command: [ "--config.file=/etc/alertmanager/alertmanager.yml" ]
 
 networks:
   net_monitoring:

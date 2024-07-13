@@ -1,7 +1,71 @@
 groups:
+# - name: docker
+#   rules:
+#   - record: container_cpu_usage_seconds:avg
+#     expr: sum(rate(container_cpu_usage_seconds_total[5m])) BY (name)
+#   - record: container_memory_usage_seconds:avg
+#     expr: avg(container_memory_rss[5m]/1024/1024) BY (name)
+
 - name: docker
   rules:
-  - record: container_cpu_usage_seconds:avg
-    expr: sum(rate(container_cpu_usage_seconds_total[5m])) BY (name)
-  - record: container_memory_usage_seconds:avg
-    expr: avg(container_memory_working_set_bytes/1024/1024) BY (name)
+  - alert: airflow-worker-cpu
+    expr: sum(rate(container_cpu_usage_seconds_total{name="airflow-airflow-worker-1"}[5m])) BY (name) > 0.7
+    for: 5m
+    labels:
+      severity: warning
+  - alert: airflow-scheduler-cpu
+    expr: sum(rate(container_cpu_usage_seconds_total{name="airflow-airflow-scheduler-1"}[5m])) BY (name) > 0.8
+    for: 5m
+    labels:
+      severity: warning
+  - alert: airflow-webserver-cpu
+    expr: sum(rate(container_cpu_usage_seconds_total{name="airflow-airflow-scheduler-1"}[5m])) BY (name) > 0.7
+    for: 5m
+    labels:
+      severity: warning
+  - alert: airflow-trigger-cpu
+    expr: sum(rate(container_cpu_usage_seconds_total{name="airflow-airflow-scheduler-1"}[5m])) BY (name) > 0.7
+    for: 5m
+    labels:
+      severity: warning
+  - alert: airflow-redis-cpu
+    expr: sum(rate(container_cpu_usage_seconds_total{name="airflow-redis-1"}[5m])) BY (name) > 0.7
+    for: 5m
+    labels:
+      severity: warning
+  - alert: mongo-cpu
+    expr: sum(rate(container_cpu_usage_seconds_total{name="mongo"}[5m])) BY (name) > 0.7
+    for: 5m
+    labels:
+      severity: warning
+
+  - alert: airflow-worker-memory
+    expr: container_memory_rss{name="airflow-airflow-worker-1"} > 1048576  * 1024 * 5
+    for: 5m
+    labels:
+      severity: warning
+  - alert: airflow-scheduler-memory
+    expr: container_memory_rss{name="airflow-airflow-scheduler-1"} > 1048576  * 1024 *  3 / 4
+    for: 5m
+    labels:
+      severity: warning
+  - alert: airflow-webserver-memory
+    expr: container_memory_rss{name="airflow-airflow-scheduler-1"} > 1048576  * 1024 * 1.5
+    for: 5m
+    labels:
+      severity: warning
+  - alert: airflow-trigger-memory
+    expr: container_memory_rss{name="airflow-airflow-scheduler-1"} > 1048576  * 1024 * 3
+    for: 5m
+    labels:
+      severity: warning
+  - alert: airflow-redis-memory
+    expr: container_memory_rss{name="airflow-redis-1"} > 1048576 * 128
+    for: 5m
+    labels:
+      severity: warning
+  - alert: mongo-memory
+    expr: container_memory_rss{name="mongo"} > 1048576 * 1024 * 1
+    for: 10s
+    labels:
+      severity: warning
