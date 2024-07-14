@@ -2,7 +2,6 @@
 exit 0
 # ------------------------
 
-
 ### 將已經運行的 prometheus 做 live reload (而非 restart)
 kill -s SIGHUP $ORIGINAL_PROMETHEUS_PID
 # 可用來動態載入 rule_files
@@ -16,6 +15,7 @@ prometheus --config.file=config/prometheus.yml --web.config.file=config/web.yml 
 
 ### reload the Prometheus configuration
 curl -X POST http://localhost:29090/-/reload -u admin
+curl -X POST http://localhost:29093/-/reload
 # 需要搭配 --web.enable-lifecycle 才能使用
 
 

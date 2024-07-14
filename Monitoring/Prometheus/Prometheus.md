@@ -17,3 +17,16 @@
         - 讓 Prometheus 可以串 Prometheus
     - '/graph'
         - GUI 介面
+
+
+- Exporter 可視為是 Service 的 Sidecar
+
+```mermaid
+flowchart LR
+
+Prometheus -- fetch '/metrics' --> Exporter;
+
+subgraph ap
+    Exporter -- fetch metrics --> Service;
+end
+```

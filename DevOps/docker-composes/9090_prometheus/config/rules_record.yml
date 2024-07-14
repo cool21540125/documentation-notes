@@ -1,0 +1,16 @@
+groups:
+  - name: example
+    rules:
+      - record: code:prometheus_http_requests_total:sum
+        expr: sum by (code) (prometheus_http_requests_total)
+      - record: tt
+        expr: sum(up)
+        labels:
+          usage: poc
+
+  # - name: docker
+  #   rules:
+  #   - record: container_cpu_usage_seconds:avg
+  #     expr: sum(rate(container_cpu_usage_seconds_total[5m])) BY (name)
+  #   - record: container_memory_usage_seconds:avg
+  #     expr: avg(container_memory_rss[5m]/1024/1024) BY (name)

@@ -7,7 +7,7 @@ docker network create --subnet 192.168.200.0/24 net_monitoring
 
 ```
 
-    cadvisor    <---------    prometheus    <--------    cloudwatch agent
+    cadvisor    <---------    prometheus    -------->    alertmanager
        
        |
        | auto discovery

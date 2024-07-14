@@ -2,6 +2,11 @@ global:
   scrape_interval: 20s
   scrape_timeout: 5s
   evaluation_interval: 20s
+  # query_log_file: /var/log/prometheus/query.log  # 用來記錄所有的 prometheus query
+
+rule_files:
+  - rules_alert.yml
+  - rules_record.yml
 
 scrape_configs:
   - job_name: "cadvisor"
@@ -17,21 +22,21 @@ scrape_configs:
   - job_name: "prometheus"
     basic_auth:
       username: "admin"
-      password: "<明碼密碼>" # bcrypt(<明碼密碼>) 需要放置於 web.yml
+      password: "<明碼密碼>" # FIXME: bcrypt(<明碼密碼>) 需要放置於 web.yml
     static_configs:
       - targets: ["localhost:9090"]
 
-  # ### 監控 docker daemon (cadvisor 可以取代此功能, 因此可不配置 docker_sd_configs)
-  # - job_name: "docker"
-  #   docker_sd_configs:
-  #     - host: "host.docker:9323"
-
-  - job_name: node
+  - job_name: "node"
     static_configs:
       - targets: ["docker_host:9100"]
+    #file_sd_configs:
+    #  - files:
+    #      - "node_targets.json"
 
-rule_files:
-  - rules.yml
+  #- job_name: "docker" # (cadvisor 可以取代此功能)
+  #  docker_sd_configs:
+  #    - host: "host.docker:9323" # via TCP Socket
+  #    - host: unix:///var/run/docker.sock  # via Unix Socket
 
 alerting:
   alertmanagers:

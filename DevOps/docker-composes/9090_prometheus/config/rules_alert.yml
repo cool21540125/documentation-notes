@@ -1,11 +1,4 @@
 groups:
-  # - name: docker
-  #   rules:
-  #   - record: container_cpu_usage_seconds:avg
-  #     expr: sum(rate(container_cpu_usage_seconds_total[5m])) BY (name)
-  #   - record: container_memory_usage_seconds:avg
-  #     expr: avg(container_memory_rss[5m]/1024/1024) BY (name)
-
   - name: docker
     rules:
       - alert: airflow-worker-cpu
@@ -69,3 +62,33 @@ groups:
         for: 10s
         labels:
           severity: warning
+
+  - name: danger
+    rules:
+      - alert: Dead-cadvisor
+        expr: up{job="cadvisor"} == 0
+        for: 1m
+        labels:
+          priority: err
+          severity: page
+        annotations:
+          summary: "Container {{ $labels.job }} dead"
+          description: "{{ $labels.instance }} of job {{ $labels.job }} is dead!!"
+      - alert: Dead-prometheus
+        expr: up{job="prometheus"} == 0
+        for: 1m
+        labels:
+          priority: err
+          severity: page
+        annotations:
+          summary: "Container {{ $labels.job }} dead"
+          description: "{{ $labels.instance }} of job {{ $labels.job }} is dead!!"
+      - alert: Dead-node
+        expr: up{job="node"} == 0
+        for: 1m
+        labels:
+          priority: err
+          severity: page
+        annotations:
+          summary: "Service {{ $labels.job }} dead"
+          description: "{{ $labels.instance }} of job {{ $labels.job }} is dead!!"
