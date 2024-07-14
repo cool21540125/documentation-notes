@@ -15,21 +15,25 @@ scrape_configs:
         action: labeldrop
 
   - job_name: "prometheus"
-    # basic_auth:
-    #   username: "admin"
-    #   password: "xxxxxxxx"
+    basic_auth:
+      username: "admin"
+      password: "<明碼密碼>" # bcrypt(<明碼密碼>) 需要放置於 web.yml
     static_configs:
       - targets: ["localhost:9090"]
 
-  # ###(cadvisor 可以取代此功能, 因此可不配置 docker_sd_configs)
+  # ### 監控 docker daemon (cadvisor 可以取代此功能, 因此可不配置 docker_sd_configs)
   # - job_name: "docker"
   #   docker_sd_configs:
   #     - host: "host.docker:9323"
+
+  - job_name: node
+    static_configs:
+      - targets: ["docker_host:9100"]
 
 rule_files:
   - rules.yml
 
 alerting:
   alertmanagers:
-  - static_configs:
-    - targets: ["alertmanager:9093"]
+    - static_configs:
+        - targets: ["alertmanager:9093"]

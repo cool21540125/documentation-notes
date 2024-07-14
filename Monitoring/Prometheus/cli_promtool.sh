@@ -18,3 +18,5 @@ promtool test rules /PATH/TO/test_rule1.yml /PATH/TO/test_rule2.yml /PATH/TO/tes
 
 
 ### 
+
+curl -X POST http://localhost:29093/-/reload

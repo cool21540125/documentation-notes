@@ -1,14 +1,14 @@
 version: "3"
 services:
   cadvisor:
+    image: "gcr.io/cadvisor/cadvisor:v0.49.1"
     container_name: "cadvisor"
     hostname: "cadvisor"
-    privileged: true
     restart: "always"
-    image: "gcr.io/cadvisor/cadvisor:${CADVISOR_VERSION}"
+    privileged: true
     ports:
       - "28080:8080"
-    volumes: 
+    volumes:
       - "/:/rootfs:ro"
       - "/var/run:/var/run:ro"
       - "/sys:/sys:ro"
@@ -16,14 +16,14 @@ services:
       - "/dev/disk/:/dev/disk:ro"
     networks:
       net_monitoring:
-    devices: 
+    devices:
       - "/dev/kmsg"
 
   prometheus:
+    image: "prom/prometheus:v2.53.0" # Use LTS
     container_name: "prometheus"
     hostname: "prometheus"
     restart: "always"
-    image: "prom/prometheus:${PROMETHEUS_VERSION}"
     ports:
       - "29090:9090"
     volumes:
@@ -33,18 +33,23 @@ services:
       net_monitoring:
     depends_on:
       - cadvisor
-    command: [ "--config.file=/etc/prometheus/prometheus.yml",
-               "--web.config.file=/etc/prometheus/web.yml",
-               "--storage.tsdb.path=/prometheus",
-               "--web.enable-lifecycle",
-               "--web.console.libraries=/usr/share/prometheus/console_libraries",
-               "--web.console.templates=/usr/share/prometheus/consoles" ]
+    command:
+      [
+        "--config.file=/etc/prometheus/prometheus.yml",
+        "--web.config.file=/etc/prometheus/web.yml",
+        "--storage.tsdb.path=/prometheus",
+        "--web.enable-lifecycle",
+        "--web.console.libraries=/usr/share/prometheus/console_libraries",
+        "--web.console.templates=/usr/share/prometheus/consoles",
+      ]
+    extra_hosts:
+      - "docker_host:192.168.200.1" # node_exporter location
 
   alertmanager:
+    image: "quay.io/prometheus/alertmanager:v0.27.0"
     container_name: "alertmanager"
     hostname: "alertmanager"
     restart: "always"
-    image: "quay.io/prometheus/alertmanager:${ALERTMANAGER_VERSION}"
     ports:
       - "29093:9093"
     volumes:
@@ -53,12 +58,12 @@ services:
       net_monitoring:
     depends_on:
       - prometheus
-    command: [ "--config.file=/etc/alertmanager/alertmanager.yml" ]
-
-networks:
-  net_monitoring:
-    external: true
+    command: ["--config.file=/etc/alertmanager/alertmanager.yml"]
 
 volumes:
   vol_prometheus:
     name: vol_prometheus
+
+networks:
+  net_monitoring:
+    external: true

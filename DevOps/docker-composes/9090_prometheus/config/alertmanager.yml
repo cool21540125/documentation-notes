@@ -1,5 +1,3 @@
-# https://webhook.site/#!/view/086c1994-551d-41e1-a1a7-95de45af0f7e
-#
 global:
   resolve_timeout: 5m
 
@@ -8,17 +6,17 @@ global:
 
 route:
   group_interval: 1m
-  repeat_interval: 30m  # interval to re-alert
-  receiver: 'demo'
+  repeat_interval: 30m # interval to re-alert
+  receiver: "demo_hook"
 
 receivers:
-  - name: 'demo'
+  - name: "demo_hook"
     webhook_configs:
-      - url: 'https://webhook.site/086c1994-551d-41e1-a1a7-95de45af0f7e'
+      - url: "https://webhook.site/086c1994-551d-41e1-a1a7-95de45af0f7e" # https://webhook.site/
         send_resolved: true
 
-  # - name: 'sns.webhook'
+  # - name: 'sns_hook'
   #   sns_configs:
 
-  # - name: 'slack.webhook'
+  # - name: 'slack_hook'
   #   slack_configs:

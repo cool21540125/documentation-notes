@@ -1,4 +1,4 @@
 # https://prometheus.io/docs/prometheus/latest/configuration/https/
 # prometheus 的 https and authentication (於 2024.07 的現在, prometheus 官網聲稱此為 experimental 的性質, 將來版本可能會失效)
 basic_auth_users:
-    admin: <BCRYPT PASSWORD>
+    admin: "bcrypt(<明碼密碼>)" # 此組帳密需至於 prometheus.yml
