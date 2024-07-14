@@ -1,26 +1,51 @@
 global:
   resolve_timeout: 5m
+  slack_api_url: "https://hooks.slack.com/services/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"
 
-# templates:
-#   - '/etc/alertmanager/template/*.tmpl'
+#templates:
+#  - "/etc/alertmanager/templates/myorg.tmpl"
 
 route:
-  group_interval: 1m
+  receiver: "demo_receiver"
+  group_wait: 30s
+  group_interval: 5m
   repeat_interval: 30m # interval to re-alert
-  receiver: "slack_hook"
+
+  routes:
+    - receiver: "slack_receiver"
+      group_wait: 10s
+      matchers:
+        - priority=err
+        - severity=page
+
+  #- receiver: "sns_receiver"
+  #  matchers:
+  #    - job="sns"
 
 receivers:
-  - name: "demo_hook"
+  - name: "demo_receiver"
     webhook_configs:
-      - url: "WEBHOOK_SITE_URL" # https://webhook.site/
+      - url: "https://webhook.site/71d25981-0d12-48bf-91a4-d0c37ba88e3e" # https://webhook.site/
         send_resolved: true
 
-  - name: 'slack_hook'
+  - name: "slack_receiver"
     slack_configs:
-    - channel: '#alert'
-      api_url: "SLACK_WEBHOOK_URL"
-      send_resolved: true
-      text: "<!channel> \n {{ .CommonAnnotations.description }}"
+      - channel: "#alert"
+        send_resolved: true
+        #icon_url: https://avatars3.githubusercontent.com/u/3380462
+        title: >-
+          "[{{ .Status | toUpper }}] EC2 - Data Center -- 'job: {{ .CommonLabels.job }}'"
+        text: >-
+          {{ range .Alerts -}}
+            *Alert:* {{ .Annotations.summary }}{{ if .Labels.severity }} - `{{ .Labels.severity }}`{{ end }}
 
-  # - name: 'sns_hook'
-  #   sns_configs:
+            *Description:* {{ .Annotations.description }}
+
+            *Details:*
+              {{ range .Labels.SortedPairs }} • *{{ .Name }}:* `{{ .Value }}`
+              {{ end }}
+          {{ end }}
+
+  #- name: "sns_receiver"
+  #  sns_configs:
+  #    -

@@ -65,7 +65,7 @@ groups:
 
   - name: danger
     rules:
-      - alert: Dead-cadvisor
+      - alert: "cadvisor -- dead"
         expr: up{job="cadvisor"} == 0
         for: 1m
         labels:
@@ -74,7 +74,7 @@ groups:
         annotations:
           summary: "Container {{ $labels.job }} dead"
           description: "{{ $labels.instance }} of job {{ $labels.job }} is dead!!"
-      - alert: Dead-prometheus
+      - alert: "prometheus -- dead"
         expr: up{job="prometheus"} == 0
         for: 1m
         labels:
@@ -83,7 +83,7 @@ groups:
         annotations:
           summary: "Container {{ $labels.job }} dead"
           description: "{{ $labels.instance }} of job {{ $labels.job }} is dead!!"
-      - alert: Dead-node
+      - alert: "node_exporter -- dead"
         expr: up{job="node"} == 0
         for: 1m
         labels:

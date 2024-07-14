@@ -14,7 +14,7 @@ promtool check config config/prometheus.yml
 
 # Usage
 promtool check config /var/www/docker/prometheus/config/prometheus.yml
-
+amtool check-config /var/www/docker/prometheus/config/alertmanager.yml
 
 
 ### 驗證 prometheus rule file
