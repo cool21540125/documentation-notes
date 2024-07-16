@@ -27,12 +27,14 @@ services:
     ports:
       - "29090:9090"
     volumes:
-      - "./config:/etc/prometheus"
+      - "./config/prometheus:/etc/prometheus"
       - "vol_prometheus:/prometheus"
+      #- "/var/run/docker.sock:/var/run/docker.sock:rw" # 需要讓 prometheus container 的 user 可以對 docker.sock 做 rw !!!
     networks:
       net_monitoring:
     depends_on:
       - cadvisor
+      - grafana
     command:
       [
         "--config.file=/etc/prometheus/prometheus.yml",
@@ -43,7 +45,7 @@ services:
         "--web.console.templates=/usr/share/prometheus/consoles",
       ]
     extra_hosts:
-      - "docker_host:192.168.200.1" # node_exporter location
+      - "docker_host:host-gateway" # node_exporter location
 
   alertmanager:
     image: "quay.io/prometheus/alertmanager:v0.27.0"
@@ -53,16 +55,32 @@ services:
     ports:
       - "29093:9093"
     volumes:
-      - "./config:/etc/alertmanager"
+      - "./config/alertmanager:/etc/alertmanager"
     networks:
       net_monitoring:
     depends_on:
       - prometheus
     command: ["--config.file=/etc/alertmanager/alertmanager.yml"]
 
+  grafana:
+    image: "grafana/grafana:11.1.0"
+    container_name: "grafana"
+    hostname: "grafana"
+    restart: "always"
+    ports:
+      - "23000:3000"
+    volumes:
+      - "vol_grafana:/var/lib/grafana"
+      - "./config/grafana/grafana.ini:/etc/grafana/grafana.ini"
+      - "./config/grafana/ldap.toml:/etc/grafana/ldap.toml"
+    networks:
+      net_monitoring:
+
 volumes:
   vol_prometheus:
     name: vol_prometheus
+  vol_grafana:
+    name: vol_grafana
 
 networks:
   net_monitoring:

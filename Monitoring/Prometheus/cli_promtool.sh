@@ -13,8 +13,8 @@ promtool check rules /var/www/docker/prometheus/config/rule*.yml
 promtool check config config/prometheus.yml
 
 # Usage
-promtool check config /var/www/docker/prometheus/config/prometheus.yml
-amtool check-config /var/www/docker/prometheus/config/alertmanager.yml
+promtool check config /var/www/docker/prometheus/config/prometheus/prometheus.yml
+amtool check-config /var/www/docker/prometheus/config/alertmanager/alertmanager.yml
 
 
 ### 驗證 prometheus rule file

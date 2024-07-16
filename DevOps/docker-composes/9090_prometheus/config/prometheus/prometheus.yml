@@ -1,6 +1,6 @@
 global:
   scrape_interval: 20s
-  scrape_timeout: 5s
+  scrape_timeout: 3s
   evaluation_interval: 20s
   # query_log_file: /var/log/prometheus/query.log  # 用來記錄所有的 prometheus query
 
@@ -33,10 +33,15 @@ scrape_configs:
     #  - files:
     #      - "node_targets.json"
 
-  #- job_name: "docker" # (cadvisor 可以取代此功能)
+  - job_name: "grafana"
+    scrape_interval: "30s"
+    static_configs:
+      - targets: ["grafana:3000"]
+
+  #- job_name: "docker"
   #  docker_sd_configs:
-  #    - host: "host.docker:9323" # via TCP Socket
-  #    - host: unix:///var/run/docker.sock  # via Unix Socket
+  #    - host: "unix:///var/run/docker.sock"
+  #    - host: "DOCKER_HOST_IP_BUT_STILL_NOT_SUCCESS"
 
 alerting:
   alertmanagers:
