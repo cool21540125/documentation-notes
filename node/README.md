@@ -30,3 +30,8 @@ $ npm install --save-dev
 $ npm install --save express
 
 ```
+
+
+# packages
+
+- babel : 用來做 web 開發, 可將擴展後的 js (ex: jsx) 編譯回(瀏覽器可是別的) javascript. 用來作為無限擴展 js 的工具

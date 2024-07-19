@@ -1,94 +1,116 @@
 groups:
   - name: docker
     rules:
-      - alert: airflow-worker-cpu
-        expr: sum(rate(container_cpu_usage_seconds_total{name="airflow-airflow-worker-1"}[5m])) BY (name) > 0.7
+      - alert: airflow_webserver_cpu
+        expr: sum(rate(container_cpu_usage_seconds_total{name="airflow-airflow-webserver-1"}[5m])) > 0.7
         for: 5m
         labels:
           severity: warning
-      - alert: airflow-scheduler-cpu
-        expr: sum(rate(container_cpu_usage_seconds_total{name="airflow-airflow-scheduler-1"}[5m])) BY (name) > 0.8
+      - alert: airflow_worker_cpu
+        expr: sum(rate(container_cpu_usage_seconds_total{name="airflow-airflow-worker-1"}[5m])) > 0.7
         for: 5m
         labels:
           severity: warning
-      - alert: airflow-webserver-cpu
-        expr: sum(rate(container_cpu_usage_seconds_total{name="airflow-airflow-scheduler-1"}[5m])) BY (name) > 0.7
+      - alert: airflow_scheduler_cpu
+        expr: sum(rate(container_cpu_usage_seconds_total{name="airflow-airflow-scheduler-1"}[5m])) > 0.7
         for: 5m
         labels:
           severity: warning
-      - alert: airflow-trigger-cpu
-        expr: sum(rate(container_cpu_usage_seconds_total{name="airflow-airflow-scheduler-1"}[5m])) BY (name) > 0.7
+      - alert: airflow_triggerer_cpu
+        expr: sum(rate(container_cpu_usage_seconds_total{name="airflow-airflow-triggerer-1"}[5m])) > 0.7
         for: 5m
         labels:
           severity: warning
-      - alert: airflow-redis-cpu
-        expr: sum(rate(container_cpu_usage_seconds_total{name="airflow-redis-1"}[5m])) BY (name) > 0.7
+      - alert: airflow_redis_cpu
+        expr: sum(rate(container_cpu_usage_seconds_total{name="airflow-redis-1"}[5m])) > 0.7
         for: 5m
         labels:
           severity: warning
-      - alert: mongo-cpu
-        expr: sum(rate(container_cpu_usage_seconds_total{name="mongo"}[5m])) BY (name) > 0.7
+      - alert: mongo_cpu
+        expr: sum(rate(container_cpu_usage_seconds_total{name="mongo"}[5m])) > 0.7
         for: 5m
         labels:
           severity: warning
 
-      - alert: airflow-worker-memory
-        expr: container_memory_rss{name="airflow-airflow-worker-1"} > 1048576  * 1024 * 5
+      - alert: airflow_webserver_memory
+        expr: avg_over_time(container_memory_usage_bytes{name="airflow-airflow-webserver-1"}[5m]) / 2^20 > 1500
         for: 5m
         labels:
           severity: warning
-      - alert: airflow-scheduler-memory
-        expr: container_memory_rss{name="airflow-airflow-scheduler-1"} > 1048576  * 1024 *  3 / 4
+      - alert: airflow_worker_memory
+        expr: avg_over_time(container_memory_usage_bytes{name="airflow-airflow-worker-1"}[5m]) / 2^20 > 3500
         for: 5m
         labels:
           severity: warning
-      - alert: airflow-webserver-memory
-        expr: container_memory_rss{name="airflow-airflow-scheduler-1"} > 1048576  * 1024 * 1.5
+      - alert: airflow_scheduler_memory
+        expr: avg_over_time(container_memory_usage_bytes{name="airflow-airflow-scheduler-1"}[5m]) / 2^20 > 1500
         for: 5m
         labels:
           severity: warning
-      - alert: airflow-trigger-memory
-        expr: container_memory_rss{name="airflow-airflow-scheduler-1"} > 1048576  * 1024 * 3
+      - alert: airflow_triggerer_memory
+        expr: avg_over_time(container_memory_usage_bytes{name="airflow-airflow-triggerer-1"}[5m]) / 2^20 > 2500
         for: 5m
         labels:
           severity: warning
-      - alert: airflow-redis-memory
-        expr: container_memory_rss{name="airflow-redis-1"} > 1048576 * 128
+      - alert: airflow_redis_memory
+        expr: avg_over_time(container_memory_usage_bytes{name="airflow-redis-1"}[5m]) / 2^20 > 250
         for: 5m
         labels:
           severity: warning
-      - alert: mongo-memory
-        expr: container_memory_rss{name="mongo"} > 1048576 * 1024 * 2
+      - alert: mongo_memory
+        expr: avg_over_time(container_memory_usage_bytes{name="mongo"}[5m]) / 2^20 > 2000
         for: 10s
         labels:
           severity: warning
 
-  - name: danger
+  # ==============================================================================================================
+  # monitoring process
+  # ==============================================================================================================
+  - name: monitoring_base
     rules:
-      - alert: "cadvisor -- dead"
+      - alert: "cadvisor_dead"
         expr: up{job="cadvisor"} == 0
         for: 1m
         labels:
-          priority: err
-          severity: page
+          severity: error
         annotations:
           summary: "Container {{ $labels.job }} dead"
           description: "{{ $labels.instance }} of job {{ $labels.job }} is dead!!"
-      - alert: "prometheus -- dead"
+      - alert: "prometheus_dead"
         expr: up{job="prometheus"} == 0
         for: 1m
         labels:
-          priority: err
-          severity: page
+          severity: error
         annotations:
           summary: "Container {{ $labels.job }} dead"
           description: "{{ $labels.instance }} of job {{ $labels.job }} is dead!!"
-      - alert: "node_exporter -- dead"
+      - alert: "node_exporter_dead"
         expr: up{job="node"} == 0
         for: 1m
         labels:
-          priority: err
-          severity: page
+          severity: error
+        annotations:
+          summary: "Service {{ $labels.job }} dead"
+          description: "{{ $labels.instance }} of job {{ $labels.job }} is dead!!"
+      - alert: "grafana_dead"
+        expr: up{job="grafana"} == 0
+        for: 1m
+        labels:
+          severity: error
+        annotations:
+          summary: "Service {{ $labels.job }} dead"
+          description: "{{ $labels.instance }} of job {{ $labels.job }} is dead!!"
+
+  # ==============================================================================================================
+  # DevTest
+  # ==============================================================================================================
+  - name: test
+    rules:
+      - alert: test
+        expr: container_memory_usage_bytes{name="demo"} / 2^20 > 1
+        for: 10s
+        labels:
+          severity: warning
         annotations:
           summary: "Service {{ $labels.job }} dead"
           description: "{{ $labels.instance }} of job {{ $labels.job }} is dead!!"

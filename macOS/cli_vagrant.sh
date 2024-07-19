@@ -1,8 +1,7 @@
+#!/bin/bash
+exit 0
+# -------------------------
 
-- 可用來操作 VirtualBox
-- 2023/08
-
-```zsh
 ### 
 vagrant -v
 #Vagrant 2.3.7
@@ -36,4 +35,3 @@ vagrant destroy -f
 
 
 ### 
-```

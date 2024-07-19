@@ -3,17 +3,17 @@ exit 0
 # https://awscli.amazonaws.com/v2/documentation/api/latest/reference/rds/index.html
 # ----------------------------
 
-ECS_CLUSTER=
-ECS_SERVICE=
-ECS_TASK=
-ECS_CONTAINER=
+ECS_CLUSTER=takeorder
+ECS_SERVICE=takeorderApi
+ECS_TASK_ID=c52aeac911bb434286a5cbf3fb41957e
+ECS_CONTAINER=takeorderApi
 
 
 ### 遠端登入到 ECS Task
 # ECS Task Container 需有 Public IP
 aws ecs execute-command \
   --cluster $ECS_CLUSTER \
-  --task $ECS_TASK \
+  --task $ECS_TASK_ID \
   --container $ECS_CONTAINER \
   --interactive --command "/bin/sh"
 
