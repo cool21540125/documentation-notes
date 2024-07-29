@@ -10,7 +10,21 @@ Example:
 set_real_ip_from  192.168.1.0/24;
 set_real_ip_from  192.168.2.1;
 set_real_ip_from  2001:0db8::/32;
-real_ip_header    X-Forwarded-For;
+
+### (想清楚再這樣設!!)
+set_real_ip_from 0.0.0.0/0;
+# 針對這些來源, 全部替換為 real ip (而非來訪的 Load Balancer)
+# 例如我們只在意進入的 Server 的上一層是誰而已, 而非最根源的 Source, 那麼就不要做 set_real_ip_from
+# 因為會嘗試使用 real_ip_header 所揭露的 IP <- 將此視為 Real Client IP
+# 又或者
+# 已經可以確認所有流量皆來自 ALB, 那就這樣設定吧
+# 此設定就是告訴 nginx, 信任來自 set_real_ip_from 所告知的 real_ip_header (相信這一定是真的)
+# 將此視為 real client ip
+# 反之
+# 不要隨意 set_real_ip_from 設定自己不信任的來源
+# 避免該來源偽造了一堆假的 real_ip_header
+
+real_ip_header    X-Forwarded-For;  # 例如 AWS ALB, 預設會拋此 Header 過來
 real_ip_recursive on;
 ```
 

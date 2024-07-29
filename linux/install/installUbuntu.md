@@ -228,3 +228,16 @@ dpkg -i -E ./amazon-cloudwatch-agent.deb
 # Config Path: /opt/aws/amazon-cloudwatch-agent/etc/
 # Main Config: /opt/aws/amazon-cloudwatch-agent/etc/common-config.toml
 ```
+
+
+# Install squid
+
+- https://ubuntu.com/server/docs/how-to-install-a-squid-server
+
+```bash
+### Install
+sudo apt install squid
+
+
+### 
+```

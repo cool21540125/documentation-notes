@@ -1,18 +1,16 @@
+#!/bin/bash
+exit 0
+# ----------------------------------------------------------
 
-## Help
-
-```bash
+# =====================================================================================================
+# Redis Cluster
+# =====================================================================================================
 redis-cli help
 
 redis-cli --help
 
 redis-cli --cluster help
-```
 
-
-## Usage
-
-```bash
 ### Create RedisCluster
 redis-cli --cluster create \
    192.168.194.5:6381 \
@@ -45,12 +43,9 @@ redis-cli -c -p 6381 cluster info
 redis-cli -c -p 6381 cluster nodes
 
 ### Check
-docker exec jinli_redis6379 redis-cli -c cluster info         | grep 'cluster_my_epoch\|cluster_state'
+docker exec jinli_redis6379 redis-cli -c cluster info | grep 'cluster_my_epoch\|cluster_state'
 docker exec jinli_redis6380 redis-cli -c -p 6380 cluster info | grep 'cluster_my_epoch\|cluster_state'
-```
 
-
-```bash
 redis-cli -a 883K6Ec@N=pkbD9k --cluster check 127.0.0.1:6379
 
 redis-cli -c
@@ -62,11 +57,8 @@ cluster nodes
 
 cluster info
 
-
 ### create cluster
 redis-cli --cluster create redis01:6001 redis02:6002 redis03:6003 redis04:6004 redis05:6005 redis06:6006 --cluster-replicas 1
 
 ### 建立 cluster 以後的檢查
 redis-cli -h redis01 -p 6001 cluster nodes
-```
-

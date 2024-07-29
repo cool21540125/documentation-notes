@@ -1,6 +1,9 @@
 groups:
   - name: docker
     rules:
+      # --------------------------------------------------------------------------------------------------------------
+      # CPU too high
+      # --------------------------------------------------------------------------------------------------------------
       - alert: airflow_webserver_cpu
         expr: sum(rate(container_cpu_usage_seconds_total{name="airflow-airflow-webserver-1"}[5m])) > 0.7
         for: 5m
@@ -32,39 +35,76 @@ groups:
         labels:
           severity: warning
 
-      - alert: airflow_webserver_memory
+      # --------------------------------------------------------------------------------------------------------------
+      # Memory too high
+      # --------------------------------------------------------------------------------------------------------------
+      - alert: airflow_webserver_high_memory
         expr: avg_over_time(container_memory_usage_bytes{name="airflow-airflow-webserver-1"}[5m]) / 2^20 > 1500
         for: 5m
         labels:
           severity: warning
-      - alert: airflow_worker_memory
+      - alert: airflow_worker_high_memory
         expr: avg_over_time(container_memory_usage_bytes{name="airflow-airflow-worker-1"}[5m]) / 2^20 > 3500
         for: 5m
         labels:
           severity: warning
-      - alert: airflow_scheduler_memory
+      - alert: airflow_scheduler_high_memory
         expr: avg_over_time(container_memory_usage_bytes{name="airflow-airflow-scheduler-1"}[5m]) / 2^20 > 1500
         for: 5m
         labels:
           severity: warning
-      - alert: airflow_triggerer_memory
+      - alert: airflow_triggerer_high_memory
         expr: avg_over_time(container_memory_usage_bytes{name="airflow-airflow-triggerer-1"}[5m]) / 2^20 > 2500
         for: 5m
         labels:
           severity: warning
-      - alert: airflow_redis_memory
+      - alert: airflow_redis_high_memory
         expr: avg_over_time(container_memory_usage_bytes{name="airflow-redis-1"}[5m]) / 2^20 > 250
         for: 5m
         labels:
           severity: warning
-      - alert: mongo_memory
+      - alert: mongo_high_memory
         expr: avg_over_time(container_memory_usage_bytes{name="mongo"}[5m]) / 2^20 > 2000
-        for: 10s
+        for: 5m
         labels:
           severity: warning
 
+      # --------------------------------------------------------------------------------------------------------------
+      # 重要的 Container 掛掉了
+      # --------------------------------------------------------------------------------------------------------------
+      - alert: airflow_webserver_dead
+        expr: up{name="airflow-airflow-webserver-1"} == 0
+        for: 1m
+        labels:
+          severity: error
+      - alert: airflow_worker_dead
+        expr: up{name="airflow-airflow-worker-1"} == 0
+        for: 1m
+        labels:
+          severity: error
+      - alert: airflow_scheduler_dead
+        expr: up{name="airflow-airflow-scheduler-1"} == 0
+        for: 1m
+        labels:
+          severity: error
+      - alert: airflow_triggerer_dead
+        expr: up{name="airflow-airflow-triggerer-1"} == 0
+        for: 1m
+        labels:
+          severity: error
+      - alert: airflow_redis_dead
+        expr: up{name="airflow-redis-1"} == 0
+        for: 1m
+        labels:
+          severity: error
+      - alert: mongo_dead
+        expr: up{name="mongo"} == 0
+        for: 1m
+        labels:
+          severity: error
+
   # ==============================================================================================================
-  # monitoring process
+  # 用於監控的基礎設施 的監控
   # ==============================================================================================================
   - name: monitoring_base
     rules:

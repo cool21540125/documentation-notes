@@ -2,7 +2,6 @@ squid - HTTP Cache Proxy Server
 
 - 2019/12/30
 - https://dywang.csie.cyut.edu.tw/dywang/linuxserver/node138.html
-- http://linux.vbird.org/linux_server/0420squid.php
 
 
 Linux 代理伺服器的軟體, ex: `squid`, `v2ray`, ...
@@ -127,3 +126,13 @@ refresh_pattern ^gopher:    1440    0%  1440
 refresh_pattern -i (/cgi-bin/|\?) 0 0%  0
 refresh_pattern .       0   20% 4320
 ```
+
+
+
+# squid - transparent caching (透明快取)
+
+實作方式:
+
+- Policy based routing
+- Smart switching
+- Use Squid Box as a Gateway

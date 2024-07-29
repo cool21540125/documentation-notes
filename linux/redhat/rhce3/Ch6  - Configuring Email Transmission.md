@@ -41,7 +41,7 @@
 - hotmail : 本地端使用的郵件伺服器(MTA)
 - gmail : 遠端使用者使用的郵件伺服器(MTA)
 
-### 1. MUA(Mail User Agent): 幫用戶 收受信件到 `郵件伺服器` 
+### 1. MUA(Mail User Agent): 幫用戶 收受信件到 `郵件伺服器`
 
 幫你跑郵局的管家啦!!
 
