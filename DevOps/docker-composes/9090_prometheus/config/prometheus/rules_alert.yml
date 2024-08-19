@@ -44,7 +44,7 @@ groups:
         labels:
           severity: warning
       - alert: airflow_worker_high_memory
-        expr: avg_over_time(container_memory_usage_bytes{name="airflow-airflow-worker-1"}[5m]) / 2^20 > 3500
+        expr: avg_over_time(container_memory_usage_bytes{name="airflow-airflow-worker-1"}[5m]) / 2^20 > 5000
         for: 5m
         labels:
           severity: warning
@@ -54,7 +54,7 @@ groups:
         labels:
           severity: warning
       - alert: airflow_triggerer_high_memory
-        expr: avg_over_time(container_memory_usage_bytes{name="airflow-airflow-triggerer-1"}[5m]) / 2^20 > 2500
+        expr: avg_over_time(container_memory_usage_bytes{name="airflow-airflow-triggerer-1"}[5m]) / 2^20 > 3500
         for: 5m
         labels:
           severity: warning

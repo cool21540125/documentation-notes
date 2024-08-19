@@ -241,3 +241,30 @@ sudo apt install squid
 
 ### 
 ```
+
+
+# Install SSM Agent on EC2
+
+- https://docs.aws.amazon.com/systems-manager/latest/userguide/agent-install-ubuntu-64-snap.html
+- https://docs.aws.amazon.com/systems-manager/latest/userguide/ssm-agent-status-and-restart.html
+- EC2 Ubuntu install SSM Agent / EC2 install SSM Agent
+
+```bash
+### 安裝 SSM Agent
+sudo snap install amazon-ssm-agent --classic
+
+sudo snap start amazon-ssm-agent # 自帶 enable
+
+snap list amazon-ssm-agent
+systemctl status snap.amazon-ssm-agent.amazon-ssm-agent
+
+sudo snap stop amazon-ssm-agent
+
+
+
+### 刪除 SSM Agent
+sudo dpkg -r amazon-ssm-agent
+```
+
+
+# 

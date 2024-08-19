@@ -1,0 +1,89 @@
+groups:
+  - name: staging_docker
+    rules:
+      # --------------------------------------------------------------------------------------------------------------
+      # CPU too high
+      # --------------------------------------------------------------------------------------------------------------
+      - alert: staging_airflow_webserver_cpu
+        expr: sum(rate(container_cpu_usage_seconds_total{name="airflow_staging-airflow-webserver-1"}[5m])) > 0.7
+        for: 5m
+        labels:
+          severity: warning
+      - alert: staging_airflow_worker_cpu
+        expr: sum(rate(container_cpu_usage_seconds_total{name="airflow_staging-airflow-worker-1"}[5m])) > 0.7
+        for: 5m
+        labels:
+          severity: warning
+      - alert: staging_airflow_scheduler_cpu
+        expr: sum(rate(container_cpu_usage_seconds_total{name="airflow_staging-airflow-scheduler-1"}[5m])) > 0.7
+        for: 5m
+        labels:
+          severity: warning
+      - alert: staging_airflow_triggerer_cpu
+        expr: sum(rate(container_cpu_usage_seconds_total{name="airflow_staging-airflow-triggerer-1"}[5m])) > 0.7
+        for: 5m
+        labels:
+          severity: warning
+      - alert: staging_airflow_redis_cpu
+        expr: sum(rate(container_cpu_usage_seconds_total{name="airflow_staging-redis-1"}[5m])) > 0.7
+        for: 5m
+        labels:
+          severity: warning
+
+      # --------------------------------------------------------------------------------------------------------------
+      # Memory too high
+      # --------------------------------------------------------------------------------------------------------------
+      - alert: staging_airflow_webserver_high_memory
+        expr: avg_over_time(container_memory_usage_bytes{name="airflow_staging-airflow-webserver-1"}[5m]) / 2^20 > 1500
+        for: 5m
+        labels:
+          severity: warning
+      - alert: staging_airflow_worker_high_memory
+        expr: avg_over_time(container_memory_usage_bytes{name="airflow_staging-airflow-worker-1"}[5m]) / 2^20 > 5000
+        for: 5m
+        labels:
+          severity: warning
+      - alert: staging_airflow_scheduler_high_memory
+        expr: avg_over_time(container_memory_usage_bytes{name="airflow_staging-airflow-scheduler-1"}[5m]) / 2^20 > 1500
+        for: 5m
+        labels:
+          severity: warning
+      - alert: staging_airflow_triggerer_high_memory
+        expr: avg_over_time(container_memory_usage_bytes{name="airflow_staging-airflow-triggerer-1"}[5m]) / 2^20 > 3500
+        for: 5m
+        labels:
+          severity: warning
+      - alert: staging_airflow_redis_high_memory
+        expr: avg_over_time(container_memory_usage_bytes{name="airflow_staging-redis-1"}[5m]) / 2^20 > 250
+        for: 5m
+        labels:
+          severity: warning
+
+      # --------------------------------------------------------------------------------------------------------------
+      # 重要的 Container 掛掉了
+      # --------------------------------------------------------------------------------------------------------------
+      - alert: staging_airflow_webserver_dead
+        expr: up{name="airflow_staging-airflow-webserver-1"} == 0
+        for: 1m
+        labels:
+          severity: error
+      - alert: staging_airflow_worker_dead
+        expr: up{name="airflow_staging-airflow-worker-1"} == 0
+        for: 1m
+        labels:
+          severity: error
+      - alert: staging_airflow_scheduler_dead
+        expr: up{name="airflow_staging-airflow-scheduler-1"} == 0
+        for: 1m
+        labels:
+          severity: error
+      - alert: staging_airflow_triggerer_dead
+        expr: up{name="airflow_staging-airflow-triggerer-1"} == 0
+        for: 1m
+        labels:
+          severity: error
+      - alert: staging_airflow_redis_dead
+        expr: up{name="airflow_staging-redis-1"} == 0
+        for: 1m
+        labels:
+          severity: error

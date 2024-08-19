@@ -170,8 +170,11 @@ modinfo ena
 
 ### 查看 ENI 使用的 driver
 ethtool -i eth0
-#driver: xxx  <-- 如果以啟用 Enhanced Networking, 應該看到 ena
+#driver: xxx  <-- 如果已啟用 Enhanced Networking, 應該看到 ena
 # Amazon Linux 2023, 使用 enX0 取代原有的 eth0
+
+### 或者可以使用 aws cli 查看是否已經啟用了 ENA
+aws ec2 describe-instances --instance-ids $INSTANCE_ID --query "Reservations[].Instances[].EnaSupport"
 ```
 
 

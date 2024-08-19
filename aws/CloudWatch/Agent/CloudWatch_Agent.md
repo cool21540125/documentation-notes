@@ -45,8 +45,8 @@ tail -f /opt/aws/amazon-cloudwatch-agent/logs/amazon-cloudwatch-agent.log
 cd /opt/aws/amazon-cloudwatch-agent/
 
 ### 啟動服務 (並生成 systemd service)
-sudo bin/amazon-cloudwatch-agent-ctl -a fetch-config -m ec2 -s -c file:/opt/aws/amazon-cloudwatch-agent/bin/sre.json
 sudo bin/amazon-cloudwatch-agent-ctl -a stop
+sudo bin/amazon-cloudwatch-agent-ctl -a fetch-config -m ec2 -s -c file:/opt/aws/amazon-cloudwatch-agent/bin/config.json
 # -a ACTION
 #    fetch-config: apply config for agent (必須再額外聲明 -c CONFIG_FILE)
 #    start
@@ -75,8 +75,8 @@ bin/amazon-cloudwatch-agent-ctl -a status
 
 前身為 `CloudWatch Agent` (別用它了)
 
-- https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/create-cloudwatch-agent-configuration-file.html
-
+- [Create the CloudWatch agent configuration file](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/create-cloudwatch-agent-configuration-file.html)
+- [Metrics collected by the CloudWatch agent](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/metrics-collected-by-CloudWatch-agent.html)
 
 ```bash
 ### Trigger event

@@ -71,4 +71,6 @@ aws ec2 describe-vpc-endpoint-services \
 # service-type: Interface | Gateway | GatewayLoadBalancer
 # 上述 CLI 能使用, 但用途我還不是很清楚在查啥
 
-###
+# ====================================================== EC2 Networking ======================================================
+### 查看 EC2 是否支援 ENA
+aws ec2 describe-instances --instance-ids $Instance_ID --query "Reservations[].Instances[].EnaSupport"

@@ -1,7 +1,7 @@
 global:
-  scrape_interval: 20s
+  scrape_interval: 60s
   scrape_timeout: 3s
-  evaluation_interval: 20s
+  evaluation_interval: 60s
   # query_log_file: /var/log/prometheus/query.log  # 用來記錄所有的 prometheus query
 
 rule_files:
