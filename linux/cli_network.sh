@@ -7,8 +7,7 @@ sudo netstat -pna | grep 5001
 # -a: 列出 listening & non-listening sockets
 
 
-### 列出佔用 port 的 process 相關程序
-sudo lsof -i -P -n | grep 5001
+
 
 
 ### 

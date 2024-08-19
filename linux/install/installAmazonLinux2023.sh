@@ -9,4 +9,7 @@ sudo systemctl start nginx
 sudo systemctl enable nginx
 systemctl status nginx
 
-### ==================  ==================
+### ================== Install golang ==================
+sudo dnf install golang
+
+###

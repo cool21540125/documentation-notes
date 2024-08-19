@@ -1,4 +1,3 @@
-
 # System 相關
 
 ```zsh
@@ -6,7 +5,6 @@
 system_profiler SPSoftwareDataType SPHardwareDataType
 
 ```
-
 
 ```zsh
 ### pmset 用來做 mac 的電源管理(Power Management)
@@ -46,7 +44,6 @@ du -hd1 .
 du -hd2 .  # (應該是不會用到啦....)
 ```
 
-
 # 設定 login shell
 
 ```sh
@@ -68,7 +65,6 @@ dscl . -read /Users/$USER UserShell
 ### dscl 等同於 usermod
 
 ```
-
 
 # monitoring 相關
 
@@ -94,7 +90,6 @@ ps -ef | grep httpd
 sudo kill -9 XXXX
 ```
 
-
 # Developer 相關
 
 ```zsh
@@ -103,20 +98,26 @@ grep DEVELOPMENT_TEAM *.xcodeproj/*.pbxproj -m 1 | sed -E 's/^[[:space:]]+//'
 #DEVELOPMENT_TEAM = ABCDE12345;
 
 
-### 
+###
 ```
-
 
 # ACL
 
 - 2020/10/26
 - [Set default directory and file permissions](https://discussions.apple.com/thread/4805409)
 
-macbook 至今依舊沒有 Linux 上的 `setfacl` 功能,  可用底下方式代替
+macbook 至今依舊沒有 Linux 上的 `setfacl` 功能, 可用底下方式代替
 
 ```zsh
 chmod -R +a "group:GroupName allow read,write,append,readattr,writeattr,readextattr,writeextattr" /Path-To-Shared-Directory
 
 chmod -R +a "group:tony allow read,write,append,readattr,writeattr,readextattr,writeextattr" /var/log
 chmod  -R +a 'tony allow write,delete,file_inherit,directory_inherit,add_subdirectory' /var/log
+```
+
+# 清除 mac 的 DNS cache, flush DNS
+
+```zsh
+sudo dscacheutil -flushcache
+sudo killall -HUP mDNSResponder
 ```

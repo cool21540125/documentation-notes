@@ -1,5 +1,3 @@
-
-
 # Install Basic Tooks
 
 ```sh
@@ -17,7 +15,6 @@ apk add busybox-extras
 apk add bind-tools
 ```
 
-
 # Install Docker
 
 ```sh
@@ -31,7 +28,6 @@ $# sudo rc-update add docker boot
 $# sudo addgroup ${USER} docker
 $# sudo reboot
 ```
-
 
 # Install CRI-O & CRI-Tools
 
@@ -57,7 +53,6 @@ INFO[0000] RDT is not enabled: failed to detect resctrl mount point: resctrl not
 crio version 1.22.0
 ```
 
-
 # Install NFS
 
 ```sh
@@ -81,7 +76,6 @@ exporting 192.168.152.0/24:/opt/nfs
 $# sudo mount -t nfs 192.168.152.4:/opt/nfs /mnt
 ```
 
-
 # Install sshd
 
 - 2022/09/06
@@ -101,7 +95,6 @@ $# rc-update delete sshd
 ```sh
 $# apk add openrc
 ```
-
 
 # Install dropbear
 

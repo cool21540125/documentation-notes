@@ -54,7 +54,11 @@ receivers:
 
   - name: "sns"
     sns_configs:
-      - topic_arn: "arn:aws:sns:us-west-2:303053866824:poc-sre-topic"
+      - api_url: sns.us-west-2.amazonaws.com
+        topic_arn: "arn:aws:sns:us-west-2:123456789012:poc-sre-topic"
+        sigv4:
+          region: "us-west-2"
+          role_arn: "arn:aws:iam::123456789012:role/Ec2NotificationRole"
         subject: >-
           "[{{ .Status | toUpper }}] EC2 - Data Center -- 'job: {{ .CommonLabels.job }}'"
         message: >-

@@ -150,7 +150,7 @@ groups:
         expr: container_memory_usage_bytes{name="demo"} / 2^20 > 1
         for: 10s
         labels:
-          severity: warning
+          severity: error
         annotations:
           summary: "Service {{ $labels.job }} dead"
           description: "{{ $labels.instance }} of job {{ $labels.job }} is dead!!"

@@ -40,6 +40,6 @@ https://github.com/google/cadvisor/blob/master/docs/storage/prometheus.md
 
 ------------------------------------
 
-container_memory_usage_bytes = container_memory_rss + container_memory_cache + container_memory_kernel_usage
-
-container_memory_working_set_bytes = container_memory_usage_bytes - total_inactive_file(這啥?)
+- `container_memory_usage_bytes = container_memory_rss + container_memory_cache + container_memory_kernel_usage`
+    - container_memory_rss 排除了 cache (結果比較貼近 `docker stats` 看到的 Memory 消耗)
+- `container_memory_working_set_bytes = container_memory_usage_bytes - total_inactive_file` (這啥?)

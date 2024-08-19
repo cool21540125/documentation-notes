@@ -1,4 +1,3 @@
-
 # Note
 
 - `brew install xxx` 的東西, 似乎都會建立軟連結在 `/usr/local/bin/` 裏頭
@@ -7,7 +6,6 @@
   - /usr/local/bin
   - /usr/local/Cellar
   - /Library/Frameworks/
-
 
 # brew
 
@@ -57,17 +55,15 @@ brew tap ${TAP_NAME}
 brew untap ${TAP_NAME}
 
 
-### 
+###
 
 ```
-
 
 # Install Homebrew
 
 ```sh
 /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
 ```
-
 
 # Install xcode command
 
@@ -85,7 +81,6 @@ sudo xcode-select -s /Applications/Xcode.app/Contents/Developer
 # 等同於
 sudo xcode-select --switch /Applications/Xcode.app/Contents/Developer
 ```
-
 
 # Install Postgresql 11
 
@@ -121,19 +116,17 @@ brew install postgresql@11
 
 ```
 
-
 # psycopg2 on macbook
 
 - 2020/10/15
 
-#### 法1
+#### 法 1
 
 我已經先做好了 `brew install brew install postgresql@11`
 
 改用 `pip install psycopg2-binary`
 
-
-#### 法2
+#### 法 2
 
 - 2020/11/05
 - [Can't install psycopg2 with pip in virtualenv on Mac OS X 10.7](https://stackoverflow.com/questions/9678408/cant-install-psycopg2-with-pip-in-virtualenv-on-mac-os-x-10-7)
@@ -148,8 +141,6 @@ env LDFLAGS='-L/usr/local/lib -L/usr/local/opt/openssl/lib
 -L/usr/local/opt/readline/lib' pip install psycopg2
 ```
 
-
-
 # Install podman
 
 - https://podman.io/getting-started/installation
@@ -159,14 +150,14 @@ brew install podman
 # 會花有點久, 裝一堆東西
 
 podman machine init
-#Downloading VM image: fedora-coreos-34.20211004.2.0-qemu.x86_64.qcow2.xz: done  
+#Downloading VM image: fedora-coreos-34.20211004.2.0-qemu.x86_64.qcow2.xz: done
 #Extracting compressed file
 # 抓這個也會花點時間...
 
 podman machine start
-#INFO[0000] waiting for clients...                       
-#INFO[0000] listening tcp://0.0.0.0:7777                 
-#INFO[0000] new connection from  to /var/folders/pd/w7t815h1065flxx1px72xxy40000gn/T/podman/qemu_podman-machine-default.sock 
+#INFO[0000] waiting for clients...
+#INFO[0000] listening tcp://0.0.0.0:7777
+#INFO[0000] new connection from  to /var/folders/pd/w7t815h1065flxx1px72xxy40000gn/T/podman/qemu_podman-machine-default.sock
 #Waiting for VM ...
 #Machine "podman-machine-default" started successfully
 
@@ -221,7 +212,6 @@ podman info
 # 僅隨意節錄部分資訊
 ```
 
-
 # Install golang (using gvm)
 
 - 2023/06/22
@@ -255,7 +245,6 @@ gvm list
 gvm install go1.19
 ```
 
-
 # Install aws
 
 - [Installing or updating the latest version of the AWS CLI](https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html)
@@ -277,7 +266,6 @@ aws --version
 # aws-cli/2.7.9 Python/3.9.11 Darwin/21.5.0 exe/x86_64 prompt/off
 ```
 
-
 # Install SAM CLI (aws-sam)
 
 - 2023/04/04
@@ -293,7 +281,6 @@ aws --version
 sam --version
 #SAM CLI, version 1.108.0
 ```
-
 
 # Install Copilot
 
@@ -311,7 +298,6 @@ sudo curl -Lo /usr/local/bin/copilot https://github.com/aws/copilot-cli/releases
 copilot --version
 #copilot version: v1.27.0
 ```
-
 
 # Install terraform
 
@@ -351,12 +337,10 @@ mv dist/terraform ~/bin/
 terraform -install-autocomplete
 ```
 
-
 # Install helm
 
 - 2023/05/04
 - [直接來抓 binary](https://github.com/helm/helm/releases)
-
 
 # Install kubectx
 
@@ -369,7 +353,6 @@ brew install kubectx
 
 
 ```
-
 
 # Install ekscli
 
@@ -386,7 +369,6 @@ sudo mv /tmp/eksctl ~/bin/
 eksctl version
 #0.112.0
 ```
-
 
 # Install Jenkins-lts
 
@@ -425,7 +407,6 @@ ls -l --color /Library/LaunchDaemons
 ls -l --color ~/Library/LaunchAgents
 ```
 
-
 # Install jenkins from source code (失敗)
 
 - 自己編譯 jenkins
@@ -445,7 +426,6 @@ mvn -am -pl war,bom -Pquick-build clean install
 ### 4. Usage
 
 ```
-
 
 # Install nginx
 
@@ -474,14 +454,11 @@ tail -f /usr/local/var/log/nginx/access.log
 tail -f /usr/local/var/log/nginx/error.log
 ```
 
-
-
 # Install md5sha1sum
 
 ```zsh
 brew install md5sha1sum
 ```
-
 
 # Install socat
 
@@ -491,13 +468,11 @@ brew install md5sha1sum
 $# brew install socat
 ```
 
-
 # Install openldap
 
 ```zsh
 $# brew install openldap
 ```
-
 
 # Install java (install OpenJDK)
 
@@ -510,7 +485,7 @@ $# brew install openldap
 ### 直接去抓 AWS 版本的 java 吧...
 # 東西會安裝到
 cd /Library/Java/JavaVirtualMachines/
-ls -l 
+ls -l
 #amazon-corretto-17.jdk
 #amazon-corretto-8.jdk
 
@@ -527,17 +502,15 @@ ls -l
 #export PATH="${JAVA_HOME}/bin:$PATH"
 # -------------------- 別用了 --------------------
 
-### 
+###
 java -version
 javac -version
 ```
-
 
 # Install gcloud
 
 - 2022/11/20
 - 底下列出 2 種安裝方式
-
 
 ## 1. by docker
 
@@ -578,7 +551,6 @@ Updated property [core/project].
 # 然後就可以開始使用 gcloud 了
 ```
 
-
 ## 2. by handy
 
 - [Install the gcloud CLI](https://cloud.google.com/sdk/docs/install)
@@ -587,13 +559,11 @@ Updated property [core/project].
 
 ```
 
-
 # Install pstree
 
 ```sh
 brew install pstree
 ```
-
 
 # Install python3
 
@@ -607,7 +577,6 @@ which python3.9
 ls -l /usr/local/bin/python3.9
 #lrwxr-xr-x  1 USER  GROUP  41 11 17 17:28 /usr/local/bin/python3.9 -> ../Cellar/python@3.9/3.9.15/bin/python3.9
 ```
-
 
 # Install golang
 
@@ -624,7 +593,6 @@ ll /usr/local/bin/go*
 #lrwxr-xr-x  1 USER  GROUP  39 11 10 14:34 /usr/local/bin/gobject-query -> ../Cellar/glib/2.74.0/bin/gobject-query
 #lrwxr-xr-x  1 USER  GROUP  29 12  7 16:24 /usr/local/bin/gofmt -> ../Cellar/go/1.19.4/bin/gofmt
 ```
-
 
 # Install RabbitMQ
 
@@ -662,7 +630,6 @@ $# cd /usr/local/var/log/rabbitmq
 # 預設帳密 guest/guest
 ```
 
-
 # Install protoc
 
 - 2023/04/13
@@ -687,7 +654,6 @@ protoc --version
 #libprotoc 3.21.12
 ```
 
-
 # Install MySQL
 
 - 2023/04/11
@@ -708,13 +674,11 @@ mysqlsh
 # 輸入密碼
 ```
 
-
 # Install dotnet core
 
 - 2023/04/17
 - https://dotnet.microsoft.com/en-us/download/dotnet
 - 到上面 URL 抓吧
-
 
 # Install rvm
 
@@ -725,7 +689,6 @@ curl -L https://get.rvm.io | bash -s stable
 rvm --version
 #rvm 1.29.12 (latest) by Michal Papis, Piotr Kuczynski, Wayne E. Seguin [https://rvm.io]
 ```
-
 
 # Install nvm
 
@@ -759,7 +722,6 @@ nvm install 18
 nvm use 16
 ```
 
-
 # Install jsonnet
 
 - 2023/05/17
@@ -771,16 +733,14 @@ jsonnet --version
 #Jsonnet commandline interpreter v0.20.0
 ```
 
-
 # Install rar
 
 直接到 App Store 抓 Unarchiver
 
 ```zsh
 ### 別用這個~~
-#brew install rar 
+#brew install rar
 ```
-
 
 # Install swagger-codegen
 
@@ -790,7 +750,6 @@ brew install swagger-codegen
 swagger-codegen version
 # 3.0.46
 ```
-
 
 # Install ruby
 
@@ -827,19 +786,17 @@ gem install ${PKGS}
 gem environment
 ```
 
-
 # Install fastlane
 
 - build & release mobile apps
 
-## 法1. by homebrew
+## 法 1. by homebrew
 
 ```zsh
 
 ```
 
-
-## 法2. by gem
+## 法 2. by gem
 
 ```zsh
 ### (option) 切換成 local gem
@@ -851,7 +808,6 @@ gem install fastlane
 ### Usage
 $HOME/.gem/bin/fastlane -v
 ```
-
 
 # Install Cocoapods
 
@@ -868,7 +824,6 @@ pod --version
 #1.12.1
 ```
 
-
 # Install watchexec
 
 ```zsh
@@ -880,14 +835,12 @@ brew install watchexec
 ls * | watchexec $CommandToUseInCurrentDir
 ```
 
-
 # Redis Desktop Manager for Macbook
 
 - 2020/10/01
 - (很久以前的東西, 還沒實作過)
 - [在 macOS 上 Build Redis Desktop Manager(RDM)](https://blog.yowko.com/build-redis-desktop-manager-on-mac/)
 - [RDM-Quick Install-Build on OS X](http://docs.redisdesktop.com/en/latest/install/)
-
 
 ## 環境
 
@@ -900,7 +853,6 @@ ls * | watchexec $CommandToUseInCurrentDir
 - openssl 1.1
 - cmake 3.18.3
 
-
 ## 相依
 
 1. 安裝 XCode (App Store)
@@ -908,10 +860,9 @@ ls * | watchexec $CommandToUseInCurrentDir
 3. 安裝 git
 4. 安裝 qt (`brew install qt`)
 5. 安裝 qt-creator (`brew cask install qt-creator`)
-8. 安裝 python3
-6. 安裝 openssl (`brew install openssl`)
-7. 安裝 cmake (`brew install cmake`)
-
+6. 安裝 python3
+7. 安裝 openssl (`brew install openssl`)
+8. 安裝 cmake (`brew install cmake`)
 
 ## 編譯
 
@@ -920,9 +871,8 @@ ls * | watchexec $CommandToUseInCurrentDir
 $# VERSION_OR_TAG=2020.3
 $# git clone --recursive https://github.com/uglide/RedisDesktopManager.git -b $VERSION_OR_TAG rdm && cd ./rdm
 
-$# 
+$#
 ```
-
 
 # Install kotlin
 
@@ -944,11 +894,10 @@ info: kotlinc-jvm 1.9.10 (JRE 11.0.20.1+0)
 $ kotlinc
 ```
 
-
 # Install bazelisk / Install bazel
 
 ```zsh
-### 
+###
 brew install bazelisk
 # bazelisk 地位等同於 nvm
 
@@ -963,7 +912,6 @@ bazel --version
 #bazel 6.4.0
 ```
 
-
 # Install graphviz / Install xdot
 
 有點像 markdown, 用來呈現 系統元件的依賴圖
@@ -973,7 +921,6 @@ bazel --version
 brew install graphviz
 brew install xdot
 ```
-
 
 # Install cloc
 
@@ -986,7 +933,6 @@ brew install cloc
 cloc --vcs git
 ```
 
-
 # Install redis-cli
 
 如果只想使用 redis-cli 不想安裝一大包的 redis, 可考慮 docker
@@ -994,3 +940,21 @@ cloc --vcs git
 ```zsh
 docker run --rm -it redis:alpine redis-cli -h $HOST
 ```
+
+# Install mtr
+
+- 檢查與節點的路由封包情況
+
+```zsh
+brew install mtr
+#mtr 0.95
+```
+
+# Install iproute2mac
+
+```zsh
+# ip command not found
+brew install iproute2mac
+```
+
+#

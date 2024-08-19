@@ -74,3 +74,18 @@ aws ec2 describe-vpc-endpoint-services \
 # ====================================================== EC2 Networking ======================================================
 ### 查看 EC2 是否支援 ENA
 aws ec2 describe-instances --instance-ids $Instance_ID --query "Reservations[].Instances[].EnaSupport"
+
+### 查看 EC2 的 CPU 為 nitro 或 xen
+# https://awscli.amazonaws.com/v2/documentation/api/latest/reference/ec2/describe-instance-types.html
+INSTANCE_TYPE=m6i.2xlarge
+aws ec2 describe-instance-types --instance-type $INSTANCE_TYPE --query "InstanceTypes[].Hypervisor"
+
+### 查詢 EC2 Console 上頭的 Key Pair 的 KeyFingerprint
+# 這把Key 是建立 EC2 的時候, 建立出來的 KeyPair
+aws ec2 describe-key-pairs --key-names $KEY_NAME
+#KeyFingerprint: 27:39:26:0c:3f:ee:57:c4:13:f1:a9:96:55:a6:4f:f6:99:52:f6:e9
+#KeyType: rsa
+# (僅擷取部分)
+
+### 
+openssl pkcs8 -in ${KEY_NAME}.pem -inform PEM -outform DER -topk8 -nocrypt | openssl sha1 -c

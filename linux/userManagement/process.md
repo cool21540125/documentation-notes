@@ -1,6 +1,4 @@
-
 ![linuxProcess.png](./../img/linuxProcess.png)
-
 
 # 程序管理
 
@@ -9,7 +7,6 @@
 而任何的程序, 都會有它專屬的 Process ID (PID)
 
 而所有的 PID, 都是由它的 `父程序 PPID` 來作觸發
-
 
 ```bash
 ### 列出 job number (含 PID)
@@ -36,22 +33,21 @@ fg %{Job Number}  # 前景執行
 
 除了 `nohup` 以外, 也可參考 `screen` 的使用方式
 
-關於 Signal number, 常用如下表:
+關於 Unix signals 的 Signal number, 常用如下表:
 
-Code  | Name           | Note
------ | -------------- | ----------------------------------------
-1     | SIGHUP or HUP  | 啟動被終止的程序，可讓該 PID 重新讀取自己的設定檔. **reload 的概念**
-2     | SIGINT         | 相當於用鍵盤輸入 [ctrl]-c 來中斷一個程序的進行
-9     | SIGKILL        | 代表強制中斷一個程序的進行，如果該程序進行到一半， 那麼尚未完成的部分可能會有『半產品』產生，類似 vim會有 .filename.swp 保留下來。
-15    | SIGTERM        | 以正常的結束程序來終止該程序。由於是正常的終止， 所以後續的動作會將他完成。不過，如果該程序已經發生問題，就是無法使用正常的方法終止時， 輸入這個 signal 也是沒有用的。
-19    | SIGSTOP        | 相當於用鍵盤輸入 [ctrl]-z 來暫停一個程序的進行
-
+| Code | Name          | Note                                                                                                                                                                   |
+| ---- | ------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 1    | SIGHUP or HUP | 啟動被終止的程序，可讓該 PID 重新讀取自己的設定檔. **reload 的概念**                                                                                                   |
+| 2    | SIGINT        | 相當於用鍵盤輸入 [ctrl]-c 來中斷一個程序的進行                                                                                                                         |
+| 9    | SIGKILL       | 代表強制中斷一個程序的進行，如果該程序進行到一半， 那麼尚未完成的部分可能會有『半產品』產生，類似 vim 會有 .filename.swp 保留下來。                                    |
+| 15   | SIGTERM       | 以正常的結束程序來終止該程序。由於是正常的終止， 所以後續的動作會將他完成。不過，如果該程序已經發生問題，就是無法使用正常的方法終止時， 輸入這個 signal 也是沒有用的。 |
+| 19   | SIGSTOP       | 相當於用鍵盤輸入 [ctrl]-z 來暫停一個程序的進行                                                                                                                         |
 
 ## ps option format
 
 1. UNIX(POSIX) options : 「-」開頭
-2. BSD options         : 不可為「-」開頭
-3. GUN long options    : 「--」開頭
+2. BSD options : 不可為「-」開頭
+3. GUN long options : 「--」開頭
 
 ```sh
 $ ps aux        # u : 看到 user name
@@ -83,7 +79,7 @@ F S   UID   PID  PPID  C PRI  NI ADDR SZ WCHAN  TTY          TIME CMD
 # WCHAN: 若為運作中, 一般都是 「-」(Memory related)
 # TTY: 終端介面
 # TIME: 此 Process 用掉 system 多少時間
-# CMD: 
+# CMD:
 
 $#
 # --------------------------------------------------------------
@@ -117,9 +113,8 @@ Zombie
 ```sh
 $# ps aux
 xxx xxx  xxxxxx  ..... xxx <defunct>
-# 如果 ps 後看到了上面的 defunct, 表示此為 Zombie Process 
+# 如果 ps 後看到了上面的 defunct, 表示此為 Zombie Process
 ```
-
 
 ## - 行程狀態 相關指令
 
@@ -225,30 +220,29 @@ F   UID   PID  PPID PRI  NI    VSZ   RSS WCHAN  STAT TTY        TIME COMMAND
 # T  為 Stopped
 ```
 
-
-## - top(類似Windows的工作管理員)
+## - top(類似 Windows 的工作管理員)
 
 [使用 top](http://linux.vbird.org/linux_basic/0440processcontrol/0440processcontrol-fc4.php#top)
 
-內容大致如下（上半部：Resource資訊,下半部：Process資訊)
+內容大致如下（上半部：Resource 資訊,下半部：Process 資訊)
 
 <img src="../../img/top.jpg" style="width:480px; height:320px;" />
 
-- *top - 14:53:56*                 : 目前時間
-- *up 3:47*                        : 累積開機時間
-- *load average: 0.84, 0.82, 0.70* : 系統每 1, 5, 15分鐘平均執行的行程數
+- _top - 14:53:56_ : 目前時間
+- _up 3:47_ : 累積開機時間
+- _load average: 0.84, 0.82, 0.70_ : 系統每 1, 5, 15 分鐘平均執行的行程數
 
-top後操作指令 | 說明
------------- | ------------------------
-h            | Help
-P            | 依據CPU使用時間排序
-M            | 依據記憶體使用量排序
-T            | 依據執行時間排序
-N            | 依據PID大小排序
-u            | 只列出該帳號的程序
-k            | 刪除
-d            | 更新秒數
-q            | 離開
+| top 後操作指令 | 說明                  |
+| -------------- | --------------------- |
+| h              | Help                  |
+| P              | 依據 CPU 使用時間排序 |
+| M              | 依據記憶體使用量排序  |
+| T              | 依據執行時間排序      |
+| N              | 依據 PID 大小排序     |
+| u              | 只列出該帳號的程序    |
+| k              | 刪除                  |
+| d              | 更新秒數              |
+| q              | 離開                  |
 
 ```sh
 ### 除了 top, 可使用 uptime, 來擷取片段
@@ -256,10 +250,9 @@ $# uptime
  02:16:05 up 3 days,  7:41,  1 user,  load average: 0.00, 0.01, 0.05
 ```
 
-
 ## jobs 工作管理 && fg
 
-> jobs參數, `l: 顯示 PID`, `r: running process`, `s: stopped process`
+> jobs 參數, `l: 顯示 PID`, `r: running process`, `s: stopped process`
 
 > 預設, `Ctrl+z` 後, 都會暫停此 process
 
@@ -294,18 +287,18 @@ $ cat /proc/partitions
 $ cat /proc/cpuinfo
 ```
 
-
 # Process Example
 
 Terminal A
+
 ```sh
 # 建立 TCP Socket 的 MongoDB process
 $# systemctl stop mongod
 $# mongod --dbpath /tmp/qq
 ```
 
-
 Terminal B
+
 ```sh
 $ ps au | grep mongod
 USER   PID  %CPU  %MEM    VSZ    RSS  TTY     STAT START  TIME COMMAND
@@ -313,7 +306,6 @@ root  3547   0.4   1.7 1012544  67576  pts/1  SLl+ 20:16  0:04 mongod --dbpath /
 # a : 所有User
 # u : 增加顯示 Process Owner, Memory, CPU 等欄位資訊
 ```
-
 
 ## fuser
 

@@ -38,6 +38,29 @@ HTML form 提供了 3 種方法來做 encoding:
 * text/plain
 
 
+## HTTP Header
+
+- `Connection: Keep-Alive`
+  - HTTP/1.0
+    - Client Request Header `Connection: Keep-Alive` - Client 希望建立長連接
+    - Server Response Header `Connection: Keep-Alive` - Server 接受 Client 長連接
+  - HTTP/1.1
+    - 預設啟用長連接, 因此毋需額外夾帶此 Header
+    - `Connection: Close` 明確聲明, 拒絕長連接
+  - 若 Request 是發送給 Proxy
+    - `Connection: Cookie` 表示 Client 告訴 Proxy, 轉發給 Server 的話, 不要 forward `Cookie`
+      - 之所以這樣子搞, 是因為 Proxy 本身可能過於 Legacy, 不懂這個 Header, 然後把原訊息 forward 給 Server
+      - 而 Server 誤以為 Proxy 要建立長連接因而同意, Proxy 收到後, 一樣不懂, 因此在 forward 回 Client
+      - 造成了 Client -> Proxy -> Server -> Proxy -> Client 全部都有接收到 `Connection: Keep-Alive`
+      - 但是從一開始就沒有長連接
+    - `Proxy-Connection: Keep-Alive`
+      - 如果是 Legacy Proxy, 它看不懂這個, 因此也會直接 forward 給 Server (Server 當然看不懂, 至於會怎樣不重要)
+      - 如果是 Modern Proxy
+        - 因應 proxy 長連接 的問題, Client 改用這方式發給 Proxy, 而 Proxy 會有能力得知 Client 要建立長連接
+        - 因而改成 forward `Connection: Keep-Alive` 告知 Server 要做長連接
+
+
+
 # HSTS
 
 * 2021/05

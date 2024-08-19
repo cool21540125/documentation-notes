@@ -1,0 +1,100 @@
+groups:
+  - name: airflow_stg
+    rules:
+      - alert: airflow_redis_high_cpu_staging
+        expr: sum(rate(container_cpu_usage_seconds_total{name="airflow_staging-redis-1"}[5m])) > 0.7
+        for: 15m
+        labels:
+          severity: warning
+        annotations:
+          summary: "[stg]Airflow redis CPU 負載過高"
+          description: "high CPU 已達 {{ $value | humanizePercentage }}"
+
+      - alert: airflow_redis_high_memory_staging
+        expr: avg_over_time(container_memory_usage_bytes{name="airflow_staging-redis-1"}[5m]) / 2^20 > 250
+        for: 15m
+        labels:
+          severity: warning
+        annotations:
+          summary: "[stg]Airflow redis Memory 負載過高"
+          description: "high Memory 已達 {{ $value }}"
+
+  - name: airflow_stg
+    rules:
+      - alert: airflow_scheduler_high_cpu_staging
+        expr: sum(rate(container_cpu_usage_seconds_total{name="airflow_staging-airflow-scheduler-1"}[5m])) > 0.7
+        for: 15m
+        labels:
+          severity: warning
+        annotations:
+          summary: "[stg]Airflow scheduler CPU 負載過高"
+          description: "high CPU 已達 {{ $value | humanizePercentage }}"
+
+      - alert: airflow_scheduler_high_memory_staging
+        expr: avg_over_time(container_memory_usage_bytes{name="airflow_staging-airflow-scheduler-1"}[5m]) / 2^20 > 1500
+        for: 15m
+        labels:
+          severity: warning
+        annotations:
+          summary: "[stg]Airflow scheduler Memory 負載過高"
+          description: "high Memory 已達 {{ $value }}"
+
+  - name: airflow_stg
+    rules:
+      - alert: airflow_triggerer_high_cpu_staging
+        expr: sum(rate(container_cpu_usage_seconds_total{name="airflow_staging-airflow-triggerer-1"}[5m])) > 0.7
+        for: 15m
+        labels:
+          severity: warning
+        annotations:
+          summary: "[stg]Airflow trigger CPU 負載過高"
+          description: "high CPU 已達 {{ $value | humanizePercentage }}"
+
+      - alert: airflow_triggerer_high_memory_staging
+        expr: avg_over_time(container_memory_usage_bytes{name="airflow_staging-airflow-triggerer-1"}[5m]) / 2^20 > 3500
+        for: 15m
+        labels:
+          severity: warning
+        annotations:
+          summary: "[stg]Airflow trigger Memory 負載過高"
+          description: "high Memory 已達 {{ $value }}"
+
+  - name: airflow_stg
+    rules:
+      - alert: airflow_webserver_high_cpu_staging
+        expr: sum(rate(container_cpu_usage_seconds_total{name="airflow_staging-airflow-webserver-1"}[5m])) > 0.7
+        for: 15m
+        labels:
+          severity: warning
+        annotations:
+          summary: "[stg]Airflow webserver CPU 負載過高"
+          description: "high CPU 已達 {{ $value | humanizePercentage }}"
+
+      - alert: airflow_webserver_high_memory_staging
+        expr: avg_over_time(container_memory_usage_bytes{name="airflow_staging-airflow-webserver-1"}[5m]) / 2^20 > 1500
+        for: 15m
+        labels:
+          severity: warning
+        annotations:
+          summary: "[stg]Airflow webserver Memory 負載過高"
+          description: "high Memory 已達 {{ $value }}"
+
+  - name: airflow_stg
+    rules:
+      - alert: airflow_worker_high_cpu_staging
+        expr: sum(rate(container_cpu_usage_seconds_total{name="airflow_staging-airflow-worker-1"}[5m])) > 0.7
+        for: 15m
+        labels:
+          severity: warning
+        annotations:
+          summary: "[stg]Airflow worker CPU 負載過高"
+          description: "high CPU 已達 {{ $value | humanizePercentage }}"
+
+      - alert: airflow_worker_high_memory_staging
+        expr: avg_over_time(container_memory_usage_bytes{name="airflow_staging-airflow-worker-1"}[5m]) / 2^20 > 5000
+        for: 15m
+        labels:
+          severity: warning
+        annotations:
+          summary: "[stg]Airflow worker Memory 負載過高"
+          description: "high Memory 已達 {{ $value }}"

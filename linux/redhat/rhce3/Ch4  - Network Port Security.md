@@ -16,7 +16,7 @@ RHEL7(CentOS7) 的防火牆機制: `firewalld.service` 用來管理 `host-level`
 
 - OS6: 舊機制 iptables, ip6tables, ebtables
 - OS7: 新機制 firewalld
-- Ubuntu : ufw (我不懂, 問 James)
+- Ubuntu : ufw
 
 ```sh
 ### 為了避免OS7 不小心啟動 OS6 的防火牆機制 (會與 firewalld 發生衝突), 把他們 mask 掉

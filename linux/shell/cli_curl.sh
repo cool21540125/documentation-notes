@@ -30,4 +30,10 @@ DOMAIN=tonychoucc.com
 IP=1.2.3.4
 curl -sv --resolve www.${DOMAIN}:${IP} https://www.${DOMAIN}/checked
 
+### 取得 MyIP
+curl ifconfig.me # 可能拿到 IPv6
+dig @resolver1.opendns.com -t A -4 myip.opendns.com +short
+wget -t 2 -T 10 -qO- http://ipv4.icanhazip.com
+wget -t 2 -T 10 -qO- http://ip1.dynupdate.no-ip.com
+
 ###

@@ -15,7 +15,6 @@
 
 ```
 
-
 # 網路相關 CLI
 
 ## 觀察主機路由: `route`
@@ -37,7 +36,6 @@ Destination     Gateway         Genmask         Flags Metric Ref    Use Iface
 #                                         !: 此路由不會被接受(用來抵擋不安全的網域)
 ```
 
-
 ## `traceroute`
 
 路由路徑追蹤工具, 找出 icmp 封包到 目的主機 的路徑(中途節點, 可能因為安全性考量, 而無法回應)
@@ -47,6 +45,7 @@ Destination     Gateway         Genmask         Flags Metric Ref    Use Iface
 # -I : 使用 ICMP
 # -T : 使用 TCP
 # -U : (default) UDP
+# -m max_ttl : (default 30) 可自行修改  max hops
 
 ### 範例
 $# traceroute www.yahoo.com
@@ -66,7 +65,6 @@ traceroute to www.yahoo.com (98.137.246.8), 30 hops max, 60 byte packets
  # 若出現 !H, !N, !P  分別代表 (host, network, protocol  unreachable), 當然還有其他... 這邊不贅述
 ```
 
-
 ## `dnsdomainname`
 
 ```sh
@@ -81,7 +79,6 @@ tony.com
 $# hostnamectl set-hostname os7
 ```
 
-
 ## `hostname`
 
 ```sh
@@ -94,7 +91,6 @@ $# hostname -f
 os7.tony.com
 ```
 
-
 ## `mail`
 
 ```sh
@@ -104,7 +100,6 @@ $# mail -s "README" tony@tony.com
 
 EOT
 ```
-
 
 ## `dig`
 
@@ -137,10 +132,9 @@ www.pchome.com.tw.      300     IN      A       210.59.230.39   # 查詢到的�
 ;; MSG SIZE  rcvd: 62
 ```
 
-
 # socat
 
 ```bash
-### 
+###
 socat TCP-LISTEN:2375,reuseaddr,fork UNIX-CONNECT:/var/run/docker.sock
 ```

@@ -6,7 +6,7 @@
 - 只能夠 嚴格遞增 or 重設 的指標. 例如: *Total request count*
 - 常見 PromQL Functions:
     - `rate(xxx_yyy_count[5m])`
-        - rate 僅適用於計算 Counter 的變動 (無法適用於其餘 Metric Types)
+        - `rate` 僅適用於計算 Counter 的變動 (無法適用於其餘 Metric Types)
 
 
 # Gauge
@@ -31,8 +31,9 @@
 # Summary
 
 - summary 為 App Level 釋出的 metric (因此如果有 distributed instances 的話, 無法做出 summary 指標)
-- summary 為較為 cost effective 的 histogram metric
-- 可用來判斷一段時間內, 特定指標的分佈狀況. 使用此類指標時, 無需耗用額外的 Prometheus Server Side 資源 (App Level 直接釋出 metrics)
+- summary 的特色之一是, 會針對 metric 的 label 給定 分位數(quantile)
+    - 可用來判斷一段時間內, 特定指標的分佈狀況
+    - 使用此類指標時, 無需耗用額外的 Prometheus Server Side 資源 (App Level 直接釋出 metrics)
     - streaming N-quantiles : `<basename>{quantile="N"}`
     - total sum             : `<basename>_sum`
     - count of events       : `<basename>_count`

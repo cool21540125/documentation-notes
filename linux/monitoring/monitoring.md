@@ -3,10 +3,7 @@
 - [iostat 監控 I/O](https://linuxtools-rst.readthedocs.io/zh_CN/latest/tool/iostat.html)
 - [How Do I Find Out Linux CPU Utilization?](https://www.cyberciti.biz/tips/how-do-i-find-out-linux-cpu-utilization.html)
 
---------------------------
-
-
-
+---
 
 # sar
 
@@ -35,7 +32,6 @@ $# nohup sar -o sar_output 2 5 >/dev/null 2>&1 &
 $# sar -f sar_output
 ```
 
-
 # ps
 
 ```bash
@@ -52,7 +48,6 @@ $# ps -eo pcpu,pid,user,args | sort -k 1 -r | head -10
  0.0   865 chrony   /usr/sbin/chronyd
  0.0   863 rpc      /sbin/rpcbind -w
 ```
-
 
 # iostat
 
@@ -71,11 +66,11 @@ dm-1              0.00         0.03         0.00       3236          0
 dm-2              0.74         0.21        22.47      20185    2174792
 # --------------------------------------------------------------------------------------------
 #
-# %user : CPU user mode 的時間占比. 
-# %nice : CPU 處在 「帶 NICE 值的 user mode」的時間占比. 
-# %system : CPU system mode 的時間占比. 
-# %iowait : CPU 再等待 I/O 的時間占比. 
-# %steal : (VM 中才會出現) 管理程序於虛擬機中, 等候 CPU 的時間占比. 
+# %user : CPU user mode 的時間占比.
+# %nice : CPU 處在 「帶 NICE 值的 user mode」的時間占比.
+# %system : CPU system mode 的時間占比.
+# %iowait : CPU 再等待 I/O 的時間占比.
+# %steal : (VM 中才會出現) 管理程序於虛擬機中, 等候 CPU 的時間占比.
 # %idle : CPU 空閒時間占比. 若過高但回應速度慢, 可能是 cpu 等待分配內存. 若長期過低, 表示 cpu 可能成為瓶頸
 
 # tps : 設備每秒的 傳輸次數(I/O 請求次數). 多次的邏輯請求可能被合併為 一次 I/O 請求. 而每次大小未知
@@ -94,7 +89,6 @@ $# iostat -xtc 3 20
 # -m : 使用 mb/sec 的方式呈現
 ```
 
-
 # vmstat
 
 ```bash
@@ -103,7 +97,7 @@ $# vmstat
 procs -----------memory---------- ---swap-- -----io---- -system-- ------cpu-----
  r  b   swpd   free   buff  cache   si   so    bi    bo   in   cs us sy id wa st
  0  0      0 3023704   5236 3368340    0    0     1     9   37   39  0  0 100  0  0
-# 
+#
 # --- system ---
 #     in : interrupts 次數(含 clock) / sec
 #     cs : context switches 次數 / sec
@@ -119,46 +113,4 @@ procs -----------memory---------- ---swap-- -----io---- -system-- ------cpu-----
 $# vmstat -t -S M 2 600
 # -t   : 列出 time
 # -S M : MiB 為單位
-```
-
-
-# lsof
-
-list open files. 在 Linux 底下, 所有東西都是 file, 因而可以查看底下的東西:
-
-- File
-- Dir
-- NFS file
-- Device
-- pipeline
-- TCP & UDP Socket
-- Unix Socket
-
-此外, 可用來查 Process 用了哪些 file/dir/fs/dev/...
-
-```bash
-$# lsof [-aUu] [+d]
-# -a: 多項資料需要同時成立才列出
-# -U: 僅列出 Unix-like socket
-# -u <user>: 列出該使用者相關程序所開啟的檔案
-# +d <dir name>: 該目錄下, 已經被開啟的檔案
-
-
-$# lsof -i
-COMMAND  PID USER FD  TYPE  DEVICE SIZE/OFF NODE NAME
-python3 3705 root 17u IPv4 3383170      0t0  TCP *:commplex-main (LISTEN)
-python3 3705 root 19u IPv4 3387478      0t0  TCP vm-220:39544->vm-220:6379 (ESTABLISHED)
-python3 3705 root 23u IPv4 3387483      0t0  TCP vm-220:52422->vm-220:postgres (ESTABLISHED)
-python3 3705 root 24u IPv4 3387486      0t0  TCP vm-220:39548->vm-220:6379 (ESTABLISHED)
-python3 3705 root 25u IPv4 3387488      0t0  TCP vm-220:39550->vm-220:6379 (ESTABLISHED)
-python3 3705 root 26u IPv4 3387489      0t0  TCP vm-220:52428->vm-220:postgres (ESTABLISHED)
-python3 3705 root 27u IPv4 3387490      0t0  TCP vm-220:52430->vm-220:postgres (ESTABLISHED)
-python3 3705 root 28u IPv4 3387491      0t0  TCP vm-220:52432->vm-220:postgres (ESTABLISHED)
-python3 3705 root 29u IPv4 3387492      0t0  TCP vm-220:52434->vm-220:postgres (ESTABLISHED)
-python3 3705 root 30u IPv4 3387493      0t0  TCP vm-220:52436->vm-220:postgres (ESTABLISHED)
-python3 3705 root 31u IPv4 3387494      0t0  TCP vm-220:52438->vm-220:postgres (ESTABLISHED)
-python3 3705 root 32u IPv4 3387495      0t0  TCP vm-220:52440->vm-220:postgres (ESTABLISHED)
-python3 3705 root 33u IPv4 3387496      0t0  TCP vm-220:52442->vm-220:postgres (ESTABLISHED)
-python3 3705 root 34u IPv4 3387497      0t0  TCP vm-220:52444->vm-220:postgres (ESTABLISHED)
-
 ```

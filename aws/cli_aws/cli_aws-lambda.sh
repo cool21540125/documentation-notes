@@ -5,6 +5,7 @@ exit 0
 ### ======================== Easy Usage 不解釋 ========================
 aws lambda list-functions --region $AWS_REGION
 
+aws lambda list-functions --query "Functions[].{name: FunctionName, subnets: VpcConfig.SubnetIds}" --output json | jq
 
 ### ======================== 調用 ========================
 ### ------ 同步調用 ------
@@ -31,7 +32,6 @@ aws lambda invoke \
   --function-name FUNCTION_NAME \
   --invocation-type Event \
   --payload '{"x": 3, "y": "SSS"}' /dev/stdout
-
 
 ### ========================================================================================
 

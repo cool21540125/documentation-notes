@@ -1,11 +1,17 @@
 # TCP/IP
 
-- 2018/05/17
-- 一個 `非 MIS` 的觀點寫的筆記
-
-1. IPv4
-2. 子網路切割 && 子網路延伸
-3. Broadcast
+- Application & Presentation & Negotiation
+  - HTTP, TLS(SSL)
+  - DNS, RPC, SSH, NTP
+  - DHCP, SNMP, FTP, TELNET, SOAP
+  - IMAP, POP3, SMTP
+  - IRC, NNTP, P2P
+- Transport
+  - TCP, UDP, SPX
+- Network
+  - IP, IPsec, ARP, RIP, ICMP, IGMP, OSPF
+- Link & Physical
+  - Ethernet, 802.11, wifi
 
 # 1. IPv4
 
@@ -27,7 +33,7 @@ ex: `192.168.1.216` , 但其實應該寫成 `192.168.1.216/24`
 
 1. `IP Address` 轉成 2 進制
 2. `Subnet Mask` 轉成 2 進制
-3. 以上2者作 **AND** 運算
+3. 以上 2 者作 **AND** 運算
 
 ```
 Ex 1:
@@ -56,48 +62,45 @@ AND    --------
 ### 1-2. Host ID
 
 - 具備唯一性
-- bits部分 不可全為 0 -> `Network Number` 在用
-- bits部分 不可全為 1 -> `Subnet Broadcast` 在用
-
+- bits 部分 不可全為 0 -> `Network Number` 在用
+- bits 部分 不可全為 1 -> `Subnet Broadcast` 在用
 
 ## 2. IP Class (用 FF 代表 255)
 
-Class             |   A                     |   B                      |   C                      |   D                      |   E
------------------ | ----------------------- | ------------------------ | ------------------------ | ------------------------ | ------------------------
-Starts at         | 0~                      | 10~                      | 110~                     | 1110~                    | 1111
-Len(Network ID)   | 8 bits                  | 16 bits                  | 24 bits                  | X                        | X
-Len(Host ID)      | 24 bits                 | 16 bits                  | 8 bits                   | x                        | X
-IP Range          | 1.0.0.0 ~ 126.FF.FF.FF  | 128.0.0.0 ~ 191.FF.FF.FF | 192.0.0.0 ~ 223.FF.FF.FF | 224.0.0.0 ~ 239.FF.FF.FF | 240.0.0.0 ~ FF.FF.FF.FF
-Network IP range  | 1.0.0.0 ~ 126.0.0.0     | 128.0.0.0 ~ 191.FF.0.0   | 192.0.0.0 ~ 223.FF.FF.0  | X                        | X
-Host IP range     | 0.0.1 ~ FF.FF.254       | 0.1 ~ FF.254             | 1 ~ 254                  | X                        | X
-count(Network)    | 2^(8-1) - 2             | 2^(16-2)                 | 2^(24-3)                 | X                        | X
-count(Host)       | 2^24 - 2                | 2^16 - 2                 | 2^8 - 2                  | X                        | X
+| Class            | A                      | B                        | C                        | D                        | E                       |
+| ---------------- | ---------------------- | ------------------------ | ------------------------ | ------------------------ | ----------------------- |
+| Starts at        | 0~                     | 10~                      | 110~                     | 1110~                    | 1111                    |
+| Len(Network ID)  | 8 bits                 | 16 bits                  | 24 bits                  | X                        | X                       |
+| Len(Host ID)     | 24 bits                | 16 bits                  | 8 bits                   | x                        | X                       |
+| IP Range         | 1.0.0.0 ~ 126.FF.FF.FF | 128.0.0.0 ~ 191.FF.FF.FF | 192.0.0.0 ~ 223.FF.FF.FF | 224.0.0.0 ~ 239.FF.FF.FF | 240.0.0.0 ~ FF.FF.FF.FF |
+| Network IP range | 1.0.0.0 ~ 126.0.0.0    | 128.0.0.0 ~ 191.FF.0.0   | 192.0.0.0 ~ 223.FF.FF.0  | X                        | X                       |
+| Host IP range    | 0.0.1 ~ FF.FF.254      | 0.1 ~ FF.254             | 1 ~ 254                  | X                        | X                       |
+| count(Network)   | 2^(8-1) - 2            | 2^(16-2)                 | 2^(24-3)                 | X                        | X                       |
+| count(Host)      | 2^24 - 2               | 2^16 - 2                 | 2^8 - 2                  | X                        | X                       |
 
 ### 在還沒切割 Subnet 之前, 辨識 IP 的 範例 (對於非網管, 越下面越偏)
 
-* 127.0.0.1        
-* 100.256.222.222  
-* 223.255.12.2     
-* 129.255.255.254  
-* 10.138.2.88      
-* 192.168.1.255      
-* 192.168.0.133    
-* 172.16.255.98    
-* 10.131.8.231     
-* 127.132.10.138   
-* 255.255.255.255  
-* 224.0.0.1        
-* 242.98.97.96     
-
+- 127.0.0.1
+- 100.256.222.222
+- 223.255.12.2
+- 129.255.255.254
+- 10.138.2.88
+- 192.168.1.255
+- 192.168.0.133
+- 172.16.255.98
+- 10.131.8.231
+- 127.132.10.138
+- 255.255.255.255
+- 224.0.0.1
+- 242.98.97.96
 
 #### 備註 : 私有 IP 位址
 
-Class |   Definition   |              Range
------ | -------------- | --------------------------------
-A     |    10.0.0.0/8  |    10.0.0.1 ~  10.255.255.254
-B     |  172.16.0.0/12 |  172.16.0.1 ~  172.31.255.254
-C     | 192.168.0.0/16 | 192.168.0.1 ~ 192.168.255.254
-
+| Class | Definition     | Range                         |
+| ----- | -------------- | ----------------------------- |
+| A     | 10.0.0.0/8     | 10.0.0.1 ~ 10.255.255.254     |
+| B     | 172.16.0.0/12  | 172.16.0.1 ~ 172.31.255.254   |
+| C     | 192.168.0.0/16 | 192.168.0.1 ~ 192.168.255.254 |
 
 # 2. 子網路切割 && 子網路延伸
 
@@ -241,15 +244,15 @@ Network Number 為 192.168.0.0/24
 
 > CIDR 核心精神: 完全不理會當初對 Class 的定義, IP 網路的劃分全部都採用 `網路遮罩` 來決定 這些 IP Address 是否屬於 同一個網段上的主機.
 
-> 故事情境: 老闆說, 給我弄出個 800 台電腦的子網路~~~.  恩...  Class B 的網路, Host ID 可以有 好幾萬台, 但 Class C 的網路, 只有 255 台!! <br />
-這樣的話, 把 4 個 255 台的 Class C 合併起來不就好了!!!! (運用 CIDR 的精隨)
+> 故事情境: 老闆說, 給我弄出個 800 台電腦的子網路~~~. 恩... Class B 的網路, Host ID 可以有 好幾萬台, 但 Class C 的網路, 只有 255 台!! <br />
+> 這樣的話, 把 4 個 255 台的 Class C 合併起來不就好了!!!! (運用 CIDR 的精隨)
 
 #### Supernetting(速算概念)
 
 - 合併後的 `Network Number`, 就是`原 Network` 值最小的那個
 - 合併後的 `Subnet Mask`, 就是 `「原 Subnet Mask 的個數」 - n` , 其中 2^n >= Network 數量
 - 要做 subnetting 的子網域們, Network Number 必須要連續, 且可被 2 整除
-- 以「10進制」表示, 最小的 `Network Number` 最右方不為 0 的值, 是否可被 Network們 的數量整除, 若是, 則可 supernetting; 否則無法作 subnetting
+- 以「10 進制」表示, 最小的 `Network Number` 最右方不為 0 的值, 是否可被 Network 們 的數量整除, 若是, 則可 supernetting; 否則無法作 subnetting
 
 #### 範例 2-3-1 (老實的計算):
 
@@ -331,8 +334,6 @@ New Subnet Mask: 255.255.255.192/26
 192.168.9.0/24
 ```
 
-# ---------------------
-
 # 3. Broadcast 廣播
 
 ```
@@ -349,10 +350,11 @@ D: 192.168.2.1
 E: 192.168.2.2
 F: 192.168.2.3
 ```
+
 - 沒有被 `router` 隔開的 Network, "建議"只規畫一個 `IP Network`
 - 被 `router` 隔開的 Network, 必須有不同的 `IP Network`
 - 若 `192.168.1.1` 送出 ip 封包 -> `255.255.255.255`, 則 **B~F** 都會收 `Limited broadcast`
-- 若 `192.168.1.1` 送出 ip 封包 -> `192.168.2.255`  , 則 **D~F** 都會收 `Subnet broadcast`
+- 若 `192.168.1.1` 送出 ip 封包 -> `192.168.2.255` , 則 **D~F** 都會收 `Subnet broadcast`
 
 # 網卡
 
@@ -373,23 +375,19 @@ $ ip -4 addr
        valid_lft forever preferred_lft forever
 ```
 
-
 # ping 不到 win10
 
-> VM裏頭, 都ping不到Windows10, 該如何設定? <br />
-  開始 > Windows系統管理工具 > 具有進階安全性的 Windows Defender 防火牆 / 輸入規則 > `檔案及印表機共用(回應要求 - ICMPv4-In) 網域` <- 啟用規則, Subnet底下就 ping得到了!!
-
-
+> VM 裏頭, 都 ping 不到 Windows10, 該如何設定? <br />
+> 開始 > Windows 系統管理工具 > 具有進階安全性的 Windows Defender 防火牆 / 輸入規則 > `檔案及印表機共用(回應要求 - ICMPv4-In) 網域` <- 啟用規則, Subnet 底下就 ping 得到了!!
 
 # 零星片段 && 名詞
 
 - 應用程式協定的標準(Application Protocol Standards) `Socket API`
-- 非連結式封包傳遞服務(Connectionless Packet Delivery Service), ex: IP協定、UDP協定
+- 非連結式封包傳遞服務(Connectionless Packet Delivery Service), ex: IP 協定、UDP 協定
 - 端對端確認(End-to-End Acknowledgements), `TCP (three-way handshake)` (建立 Session)
 - Network: 網路 網段
 - Network Segment 網段 網路區段
-- Automatic Private IP Addressing (APIPA) : 自動私人IP定址
-
+- Automatic Private IP Addressing (APIPA) : 自動私人 IP 定址
 
 # Other
 

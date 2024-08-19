@@ -1,6 +1,4 @@
-
 install xxx on Ubuntu
-
 
 # misc
 
@@ -9,7 +7,6 @@ install xxx on Ubuntu
 vim ~/.config/user-dirs.dirs
 ```
 
-
 # Install ps
 
 ```bash
@@ -17,14 +14,12 @@ vim ~/.config/user-dirs.dirs
 apt-get install -y procps
 ```
 
-
 # Install ss
 
 ```bash
 # ss command not found
 apt-get install -y iproute2
 ```
-
 
 # Install MongoDB
 
@@ -47,7 +42,7 @@ $ cd mongodb-linux-x86_64-ubuntu1604-3.4.2
 
 # (無安裝)啟動MongoDB
 $ sudo ./mongod
-# 如果看到... 
+# 如果看到...
 # 2017-03-20T19:28:31.684+0800 I NETWORK  [thread1] waiting for connections on port 27017
 # 表示已經成功啟動MongoDB
 
@@ -65,18 +60,16 @@ $ ps -aux | grep mongo
 $ netstat -nao | grep 27017
 ```
 
+## MongoDB 設定檔修改
 
-## MongoDB設定檔修改
+| parameter | default  |
+| --------- | -------- |
+| dbpath    | /data/db |
+| logpath   | (Null)   |
+| bind_ip   | 0.0.0.0  |
+| port      | 27017    |
 
-parameter | default
---------- | -------------------
-dbpath    | /data/db
-logpath   | (Null)
-bind_ip   | 0.0.0.0
-port      | 27017
-
-
-### mongo.cfg範例
+### mongo.cfg 範例
 
 ```cfg
 bind_ip = 127.0.0.1
@@ -87,8 +80,8 @@ logappend = true
 journal = true
 ```
 
-
 # Install JDBC Driver
+
 - [安裝 MySQL JDBC](http://stackoverflow.com/questions/18128966/where-is-the-mysql-jdbc-jar-file-in-ubuntu)
 
 ```sh
@@ -97,7 +90,6 @@ $ sudo apt-get install libmysql-java
 # 如此一來, /usr/share/java/mysql.jar
 # 就會出現了!
 ```
-
 
 # Install docker
 
@@ -130,7 +122,6 @@ $# systemctl start docker
 $# systemctl enable docker
 ```
 
-
 # Install kubectl
 
 ```bash
@@ -142,7 +133,6 @@ curl -LO "https://dl.k8s.io/$(curl -L -s https://dl.k8s.io/release/stable.txt)/b
 echo "$(cat kubectl.sha256) kubectl" | sha256sum --check
 #kubectl: OK
 ```
-
 
 # Install k8s / Install kubernetes
 
@@ -163,7 +153,6 @@ sudo apt-get install -y kubeadm kubectl
 sudo apt-mark hold kubeadm kubectl
 ```
 
-
 # Install sshd
 
 Install ssh server
@@ -177,7 +166,6 @@ systemctl enable sshd
 systemctl status sshd
 ```
 
-
 # Install collectd
 
 ```bash
@@ -185,12 +173,9 @@ systemctl status sshd
 apt-get install collectd -y
 ```
 
-
-
 # Install CloudWatch Unified Agent
 
 - [Verifying the signature of the CloudWatch agent package](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/verify-CloudWatch-Agent-Package-Signature.html)
-
 
 ```bash
 ### ========================= 可省略的驗證步驟 =========================
@@ -229,7 +214,6 @@ dpkg -i -E ./amazon-cloudwatch-agent.deb
 # Main Config: /opt/aws/amazon-cloudwatch-agent/etc/common-config.toml
 ```
 
-
 # Install squid
 
 - https://ubuntu.com/server/docs/how-to-install-a-squid-server
@@ -239,9 +223,8 @@ dpkg -i -E ./amazon-cloudwatch-agent.deb
 sudo apt install squid
 
 
-### 
+###
 ```
-
 
 # Install SSM Agent on EC2
 
@@ -266,5 +249,10 @@ sudo snap stop amazon-ssm-agent
 sudo dpkg -r amazon-ssm-agent
 ```
 
+# Install ifconfig
 
-# 
+> ifconfig: command not found
+
+```bash
+apt install net-tools
+```

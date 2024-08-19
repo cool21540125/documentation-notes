@@ -1,13 +1,13 @@
 # PKI 基礎架構 - 觀念 && 實作
 
-- 2020/04/12 (使用版本: *OpenSSL 1.0.2k-fips  26 Jan 2017*)
+- 2020/04/12 (使用版本: _OpenSSL 1.0.2k-fips 26 Jan 2017_)
 - [金鑰與憑證的管理](http://ijecorp.blogspot.com/2014/03/openssl.html)
-- [OpenSSL官網](https://www.openssl.org/)
-- [實作取得CA_Bundle](https://ephrain.net/maclinux-%E7%94%A8-openssl-%E4%B8%8B%E8%BC%89-https-%E7%B6%B2%E7%AB%99%E6%86%91%E8%AD%89%EF%BC%8C%E8%A7%A3%E6%B1%BA-curl-%E6%8A%B1%E6%80%A8-self-signed-certificate-%E7%9A%84%E5%95%8F%E9%A1%8C/)
+- [OpenSSL 官網](https://www.openssl.org/)
+- [實作取得 CA_Bundle](https://ephrain.net/maclinux-%E7%94%A8-openssl-%E4%B8%8B%E8%BC%89-https-%E7%B6%B2%E7%AB%99%E6%86%91%E8%AD%89%EF%BC%8C%E8%A7%A3%E6%B1%BA-curl-%E6%8A%B1%E6%80%A8-self-signed-certificate-%E7%9A%84%E5%95%8F%E9%A1%8C/)
 - [使用 Openssl 建立憑證](https://raix852.github.io/2016/06/20/use-openssl-generate-certificate/)
 - [SSL/TLS and PKI History](https://www.feistyduck.com/ssl-tls-and-pki-history/)
 
-*****************************************************************************
+---
 
 # 自建 CA Server && 簽署公司內部使用
 
@@ -40,7 +40,7 @@ $# openssl req -x509 -new -nodes -key ${CA_DOMAIN}.key -sha256 -days 36500 -out 
 ### 只是把上面步驟弄成一個步驟而已
 $# openssl req -new -x509 -days 36500 -nodes -text -out ${CA_DOMAIN}.crt -keyout ${CA_DOMAIN}.key -subj ${CA_SUBJ}
 # -text: prints out the certificate request in text form.
-# -keyout: (同時產生私鑰 & 憑證使用) 產生的私鑰名稱 
+# -keyout: (同時產生私鑰 & 憑證使用) 產生的私鑰名稱
 
 ## APP Server - 自己製作一份憑證簽署請求(CSR), 請 CA Server 幫忙簽署
 
@@ -134,16 +134,14 @@ ETag: "53762af0-12e1"
 Accept-Ranges: bytes
 ```
 
-
 ## openssl 其他指令備註
 
 - TODO: 2020/04/28 研究 ↓
 - https://www.postgresql.org/docs/11/ssl-tcp.html
-- [Https雜七雜八](https://hackmd.io/Gbub0_EJS9eaeghyvuBj0g#PFX%E3%80%81P12)
+- [Https 雜七雜八](https://hackmd.io/Gbub0_EJS9eaeghyvuBj0g#PFX%E3%80%81P12)
 - [Navicat-SSL 設定](https://www2.navicat.com/manual/online_manual/en/navicat/mac_manual/SSLSettings.html)
 - [永久試用(破解啦)](https://github.com/cool21540125/navicat-keygen-tools)
-- [建立安全SSL连接PostgreSQL数据库服务器](https://blog.csdn.net/zhu4674548/article/details/71248365)
-
+- [建立安全 SSL 连接 PostgreSQL 数据库服务器](https://blog.csdn.net/zhu4674548/article/details/71248365)
 
 ```bash
 ### 依序產生私鑰(aa.key)(不使用passphase), 再用它來產生CSR(aa.crt)
@@ -170,7 +168,7 @@ $# openssl req $(UTF8) -new -key $(KEY) -out $(CSR)
 $# openssl req $(UTF8) -new -key $(KEY) -out $(CRT) -x509 -days $(DAYS) $(EXTRA_FLAGS)
 ```
 
-*****************************************************************************
+---
 
 # letsencrypt
 
@@ -182,31 +180,31 @@ Example: 以 Apache 為例
 
 1. DNS 設好 A 紀錄
 
-Name   | Type | Value       | TTL
------- | ---- | ----------- | ---
-`FQDN` | A    | (PUBLIC IP) | 60
+| Name   | Type | Value       | TTL |
+| ------ | ---- | ----------- | --- |
+| `FQDN` | A    | (PUBLIC IP) | 60  |
 
 2. 啟動你的 Web Server, 開防火牆, Permission, SELinux(if Enforcing)
 3. 修改你的 `/etc/hosts` (假設為 `demo`)
 4. 前往 [SSL For Free](https://www.sslforfree.com/), 填寫 FQDN (`demo.DOMAIN`)
 5. Manual Verification
-    1. Download File (檔案裏頭一堆看不懂的 `HASH`), 假設該檔名為 Zr2Q7
-    2. 放到 Web Server 站台的 {DocumentRoot}/.well-known/acme-challenge/Zr2Q7
-    3. 啟動你的 Web Server
-    4. 開防火牆, 權限, SELinux(if Enforcing)
-    5. 瀏覽器進入你的 Web Server (http://YOUR_FQDN/.well-known/acme-challenge/Zr2Q7), 應該能看到一堆 `HASH`
-    6. 點選 `Download SSL Certificate`
-        1. 將 Certificate 存成 `xxx.crt`
-        2. 將 Private Key 存成 `yyy.key`
-        3. 將 CA Bundle 存成 zzz.crt (不知道啥場合用得到它...)
-    7. yum install -y mod_ssl
-    8. 編輯 `/etc/httpd/conf.d/ssl.conf`
-        1. SSLCertificateFile 設定為 `xxx.crt` 的完整路徑
-        2. SSLCertificateKeyFile 設定為 `yyy.key` 的完整路徑
-    9. 重啟 httpd
-    10. https://YOUR_FQDN   新鮮的 https 出爐~
+   1. Download File (檔案裏頭一堆看不懂的 `HASH`), 假設該檔名為 Zr2Q7
+   2. 放到 Web Server 站台的 {DocumentRoot}/.well-known/acme-challenge/Zr2Q7
+   3. 啟動你的 Web Server
+   4. 開防火牆, 權限, SELinux(if Enforcing)
+   5. 瀏覽器進入你的 Web Server (http://YOUR_FQDN/.well-known/acme-challenge/Zr2Q7), 應該能看到一堆 `HASH`
+   6. 點選 `Download SSL Certificate`
+      1. 將 Certificate 存成 `xxx.crt`
+      2. 將 Private Key 存成 `yyy.key`
+      3. 將 CA Bundle 存成 zzz.crt (不知道啥場合用得到它...)
+   7. yum install -y mod_ssl
+   8. 編輯 `/etc/httpd/conf.d/ssl.conf`
+      1. SSLCertificateFile 設定為 `xxx.crt` 的完整路徑
+      2. SSLCertificateKeyFile 設定為 `yyy.key` 的完整路徑
+   9. 重啟 httpd
+   10. https://YOUR_FQDN 新鮮的 https 出爐~
 
-*****************************************************************************
+---
 
 # Certbot
 
@@ -216,6 +214,7 @@ Name   | Type | Value       | TTL
 - https://certbot.eff.org/lets-encrypt/centosrhel7-apache
 
 ### 1. 安裝
+
 ```sh
 yum -y install yum-utils
 yum-config-manager --enable rhui-REGION-rhel-server-extras rhui-REGION-rhel-server-optional
@@ -224,7 +223,7 @@ yum install -y python2-certbot-apache
 
 ### 2. 設定 apache && hostname && domain
 
-1. DNS  - A record (或使用 /etc/hosts)
+1. DNS - A record (或使用 /etc/hosts)
 2. hostnamectl set-hostname (這好像可以不要用...)
 3. 設定 VirtualHost `/etc/httpd/conf.d/vhost.conf`
 4. https `yum install mod_ssl`
@@ -346,8 +345,6 @@ certbot renew
 
 寫到 crontab 吧~
 
-
-
 ## 2. Nginx Letsencrypt
 
 ### 1. 安裝
@@ -379,7 +376,6 @@ server {
 }
 
 ```
-
 
 ### 3. 資源
 
@@ -419,7 +415,6 @@ crontab -e
 
 - 哪天心血來潮再來寫
 
-
 # ssl
 
 ```bash
@@ -430,7 +425,6 @@ $# openssl req -config /etc/pki/tls/openssl.cnf -x509 -days 3650 -batch -nodes -
 # -keyout private/logstash-forwarder.key 私鑰放這
 # -out certs/logstash-forwarder.crt 簽署好的憑證放這
 ```
-
 
 # certbot 指令備註
 
@@ -454,7 +448,6 @@ $# certbot certonly \
     --register-unsafely-without-email \
     --keep-until-expiring
 ```
-
 
 # 其他備註
 

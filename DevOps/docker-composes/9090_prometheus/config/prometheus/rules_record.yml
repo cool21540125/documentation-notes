@@ -1,16 +1,16 @@
-#groups:
-#  - name: example
-#    rules:
-#      - record: code:prometheus_http_requests_total:sum
-#        expr: sum by (code) (prometheus_http_requests_total)
-#      - record: tt
-#        expr: sum(up)
-#        labels:
-#          usage: poc
-#
-#  - name: docker
-#    rules:
-#    - record: airflow_webserver_cpu_usage
-#      expr: sum(rate(container_cpu_usage_seconds_total{name="airflow-airflow-webserver-1"}[5m]))
-#    - record: airflow_worker_cpu_usage
-#      expr: sum(rate(container_cpu_usage_seconds_total{name="airflow-airflow-worker-1"}[5m]))
+groups:
+  - name: example
+    rules:
+      - record: code:prometheus_http_requests_total:sum
+        expr: sum by (code) (prometheus_http_requests_total)
+      - record: tt
+        expr: sum(up)
+        labels:
+          usage: poc
+
+  - name: docker
+    rules:
+      - record: airflow_webserver_cpu_usage
+        expr: sum(rate(container_cpu_usage_seconds_total{name="airflow-airflow-webserver-1"}[5m]))
+      - record: airflow_worker_cpu_usage
+        expr: sum(rate(container_cpu_usage_seconds_total{name="airflow-airflow-worker-1"}[5m]))

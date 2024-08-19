@@ -4,7 +4,7 @@
 // use admin
 // ************************************************************************
 
-db.auth({user:'USER', pwd:'PASSWORD'});
+db.auth({ user: 'USER', pwd: 'PASSWORD' });
 //{ ok: 1 }
 
 db.serverStatus()
@@ -22,3 +22,13 @@ db.serverStatus().connections
 //  awaitingTopologyChanges: 11
 //}
 
+// ========== Create User ==========
+db.createUser(
+  {
+    user: "monitoring",
+    pwd: "password123",
+    roles: [
+      { role: "", db: "db1" },
+    ]
+  }
+)

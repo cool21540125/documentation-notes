@@ -40,3 +40,9 @@ wait -- "2 MSL timeout" --> close
 ```
 
 ---
+
+- Server `accept()` 之後 => `LISTEN`
+- Client `發送 SYN` 之後 => `SYN_SENT`
+- Server `接收 SYN` 之後, `發送 SYN, ACK` => `LISTEN`
+- Client `接收 SYN, ACK` 之後, `發送 ACK` => `ESTABLISHED`
+- Server `接收 ACK` 之後 => `ESTABLISHED`
