@@ -179,6 +179,23 @@ r2 -.- srv2["AWS Services \n (ex: S3)"];
     - 有個 Role 是總統
     - 然後你被賦予了 assume 總統這個 Role 的 Instance Profile, 你就能幹總統能幹的事情(販賣芒果乾, 買很多免稅菸等等)
 
+```jsonc
+// Trusted entities - Allow process on EC2 to assume
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "Statement1",
+      "Effect": "Allow",
+      "Principal": {
+        "AWS": "arn:aws:sts::123456789012:assumed-role/RoleToAllowDoSth/i-abcdefg1234567890"
+      },
+      "Action": "sts:AssumeRole"
+    }
+  ]
+}
+```
+
 ## 特殊權限 - iam:PassRole
 
 `iam:PassRole` 是個 special permission, 讓 **Iam User** 可以 associate an **IAM role** 到 **Resource**

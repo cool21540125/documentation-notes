@@ -1,6 +1,3 @@
-
-
-
 # Install docker
 
 - [Docker Compose version](https://docs.docker.com/compose/install/other/)
@@ -16,17 +13,16 @@ systemctl start docker
 systemctl enable docker
 ```
 
-
 # Install Amazon ECS container agent
 
 - 2022/09/03
 - [Installing the Amazon ECS container agent on an Amazon Linux 2 EC2 instance](https://docs.aws.amazon.com/AmazonECS/latest/developerguide/ecs-agent-install.html#ecs-agent-install-al2)
-    - 如果想要使用 `EC2 Launch Type 的 ECS`, 機器上面需要安裝 **ECS agent** 或稱 **Container Agent**
-    - 這篇講解各種 AMI 配置及安裝方式 (當然包含煩人的 IAM)
-        - 除非一開始 EC2 就直接使用 `Amazon ECS-optimized AMI` (否則都要來設定 ~"~)
-    - 如果 EC2 有使用 user data 來做 docker 以及 ECS, 需要留意一個 Issue!!
-        - 兩者都依賴於 `cloud-init`, 因此會形成 deadlock, 所以需要加入底下這行:
-            - `systemctl enable --now --no-block ecs.service`
+  - 如果想要使用 `EC2 Launch Type 的 ECS`, 機器上面需要安裝 **ECS agent** 或稱 **Container Agent**
+  - 這篇講解各種 AMI 配置及安裝方式 (當然包含煩人的 IAM)
+    - 除非一開始 EC2 就直接使用 `Amazon ECS-optimized AMI` (否則都要來設定 ~"~)
+  - 如果 EC2 有使用 user data 來做 docker 以及 ECS, 需要留意一個 Issue!!
+    - 兩者都依賴於 `cloud-init`, 因此會形成 deadlock, 所以需要加入底下這行:
+      - `systemctl enable --now --no-block ecs.service`
 
 ```bash
 ### 非 Amazon ECS-optimized AMI 自行安裝 ECS agent (Container Agent) 來作為 EC2 launch type 的 capacity provider
@@ -37,7 +33,6 @@ $# sudo systemctl enable --now ecs
 ### 檢查 ECS agent 是否 running
 $# curl -s http://localhost:51678/v1/metadata | python -mjson.tool
 ```
-
 
 # Install ansible
 
@@ -54,13 +49,12 @@ ansible 2.9.23
   executable location = /usr/bin/ansible
   python version = 2.7.18 (default, May 25 2022, 14:30:51) [GCC 7.3.1 20180712 (Red Hat 7.3.1-15)]
 
-$# 
+$#
 ```
-
 
 # Install stress
 
-- 壓測工具 / hich CPU / highCPU / 飆高 CPU / 
+- 壓測工具 / hich CPU / highCPU / 飆高 CPU /
 
 ```bash
 ### Install
@@ -91,14 +85,13 @@ for i in `seq 1 $(cat /proc/cpuinfo |grep "physical id" |wc -l)`; do dd if=/dev/
 dd if=/dev/zero of=/dev/null
 ```
 
-
 # Install kubernetes (install k8s)
 
 - 2023/02/07
 - [Install K8s v1.25 on AWS Amazon Linux 2](https://blog.devgenius.io/install-k8s-v1-25-on-amazon-linux-2-e2a717444736)
 - 使用 kubeadm
-    - 建立 Contral Plane: `kubeadm init ...`
-    - 加入 Cluster: `kubeadm join ...`
+  - 建立 Contral Plane: `kubeadm init ...`
+  - 加入 Cluster: `kubeadm join ...`
 
 ```bash
 ### yum repo
@@ -115,7 +108,7 @@ EOF
 
 ### 處理 SELinux
 $# setenforce 0
-$# sed -i 's/^SELINUX=enforcing$/SELINUX=permissive/' 
+$# sed -i 's/^SELINUX=enforcing$/SELINUX=permissive/'
 
 
 ### install
@@ -142,9 +135,8 @@ $# ./install
 
 
 ### Create Control Plane
-$# 
+$#
 ```
-
 
 # Install CloudWatch Agent - DEPRECATED
 
@@ -189,7 +181,6 @@ sudo /opt/aws/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent-ctl \
 # 完成以後, CloudWatch logs && CloudWatch metrics 就能看到東西了
 ```
 
-
 # Install CloudWatch Unified Agent
 
 - 2023/03/14
@@ -217,7 +208,6 @@ ls /opt/aws/amazon-cloudwatch-agent/etc/amazon-cloudwatch-agent.toml
 systemctl status amazon-cloudwatch-agent
 ```
 
-
 # Install Nginx
 
 - 2023/04/14
@@ -232,7 +222,6 @@ systemctl enable nginx
 nginx -version
 #nginx version: nginx/1.22.1  (2023/04/14)
 ```
-
 
 # Install Nodejs
 
@@ -253,4 +242,12 @@ nvm install 16
 ### Show Version
 node --version
 #v16.20.0
+```
+
+# Install aws cli v2
+
+```bash
+curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+unzip awscliv2.zip
+sudo ./aws/install
 ```

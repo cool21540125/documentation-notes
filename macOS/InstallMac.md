@@ -680,14 +680,16 @@ mysqlsh
 - https://dotnet.microsoft.com/en-us/download/dotnet
 - 到上面 URL 抓吧
 
-# Install rvm
+# Install rvm (ruby 的套件管理員)
 
 ```zsh
 ### Install rvm
 curl -L https://get.rvm.io | bash -s stable
 
-rvm --version
-#rvm 1.29.12 (latest) by Michal Papis, Piotr Kuczynski, Wayne E. Seguin [https://rvm.io]
+
+
+# Install rails (install ror)
+gem install rails --no-document
 ```
 
 # Install nvm

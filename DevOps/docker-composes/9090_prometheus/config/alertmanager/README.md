@@ -1,4 +1,3 @@
-
 # sns_configs
 
 此情境是在 EC2 上頭使用 alertmanager, 要讓 alertmanager 可以發送訊息到 SNS Topic
@@ -11,14 +10,14 @@
 
 ```jsonc
 {
-    "Version": "2012-10-17",
-    "Statement": [
-        {
-            "Effect": "Allow",
-            "Action": "sns:Publish",
-            "Resource": "*"
-        }
-    ]
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Action": "sns:Publish",
+      "Resource": "*"
+    }
+  ]
 }
 ```
 
@@ -26,20 +25,21 @@
 
 ```jsonc
 {
-    "Version": "2012-10-17",
-    "Statement": [
-        {
-            "Sid": "Statement1",
-            "Effect": "Allow",
-            "Principal": {
-              // Principal type == Role sessions
-              // "AWS": "arn:aws:sts::{Account}:assumed-role/{RoleName}/{RoleSessionName}"
-                "AWS": "arn:aws:sts::123456789012:assumed-role/Ec2InstanceProfileUsedRole/Ec2InstanceId"
-            },
-            "Action": "sts:AssumeRole"
-        }
-    ]
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "Statement1",
+      "Effect": "Allow",
+      "Principal": {
+        // Principal type == Role sessions
+        // "AWS": "arn:aws:sts::{Account}:assumed-role/{RoleName}/{RoleSessionName}"
+        "AWS": "arn:aws:sts::123456789012:assumed-role/Ec2InstanceProfileUsedRole/Ec2InstanceId"
+        // 扮演了 Ec2InstanceProfileUsedRole 這個 Role 的 Ec2InstanceId (EC2 Instance ID), 可以來 assume this Role
+      },
+      "Action": "sts:AssumeRole"
+    }
+  ]
 }
 ```
 
-而 Ec2InstanceProfileUsedRole 無需要有 AssumeRole, PassRole, 一堆讓人摸不著頭緒的權限
+而 EC2 Instance Profile 上頭的 Role, 必須要是 `Ec2InstanceProfileUsedRole`

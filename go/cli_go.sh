@@ -11,6 +11,9 @@ go get -u xxx                    # -u, update
 go get -u -v xxx                 # -v, verbose
 go get github.com/xxx/xxx@v1.0.0 # 指定版本
 
+### 列出 golang 支援的所有平台標籤
+go tool dist list
+
 ###
 go install
 # 會優先將 binary 放到 $GOBIN 底下, 如果沒有設定 GOBIN, 則會放到 $GOPATH/bin 底下
@@ -39,3 +42,7 @@ go install github.com/hairyhenderson/gomplate/v4/cmd/gomplate@latest
 gomplate --help
 
 ###
+
+# ========================================== Other ==========================================
+### go build Terraform
+go build -ldflags "-w -s -X 'github.com/hashicorp/terraform/version.dev=no'" -o ~/bin/

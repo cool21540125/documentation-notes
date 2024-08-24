@@ -26,5 +26,6 @@ keyfile
 **/demo.rest
 *ignoreme*
 
+.secret*
 secret*
 !SecretManager.md

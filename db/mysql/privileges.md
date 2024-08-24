@@ -3,8 +3,6 @@
 - 2020/12/26
 - [SHOW GRANTS Statement](https://dev.mysql.com/doc/refman/8.0/en/show-grants.html)
 
-
-
 ```sql
 --;# 查詢使用者
 select user, host from mysql.user;
@@ -13,23 +11,14 @@ select user, host from mysql.user;
 show grants for 'root'@'localhost';
 ```
 
-
-
 ## 建立 user
+
 ```sql
 > CREATE USER '<帳號>'@'<HOST>' IDENTIFIED BY '<密碼>';
 # <HOST> 只能用 'localhost', 無法使用'127.0.0.1'...
 
 > GRANT ALL ON <DB>.<Table> TO '<帳號>'@'<HOST>';
 ```
-
-
-
-移除使用者
-```sql
-DROP USER '<帳號>'@'<HOST>';
-```
-
 
 ## 更改密碼 重設密碼
 
@@ -41,15 +30,14 @@ ALTER USER 'demo'@'localhost' IDENTIFIED BY 'password123';
 ALTER USER 'root'@'127.0.0.1' IDENTIFIED BY 'myadmin';
 ```
 
-
 ## 查詢使用者資訊
+
 ```sql
 > SELECT User, Host FROM mysql.user;
 ```
 
-
-
 ### 範例
+
 ```sql
 drop database ww;
 create database ww character set utf8;

@@ -1,0 +1,2 @@
+- Account Name
+  - 完整的 Account Name 包含了 user name component 及 host name component, 例如: `tony@'%'`

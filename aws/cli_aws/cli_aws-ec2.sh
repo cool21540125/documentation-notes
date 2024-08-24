@@ -87,5 +87,20 @@ aws ec2 describe-key-pairs --key-names $KEY_NAME
 #KeyType: rsa
 # (僅擷取部分)
 
-### 
+###
 openssl pkcs8 -in ${KEY_NAME}.pem -inform PEM -outform DER -topk8 -nocrypt | openssl sha1 -c
+
+### ====================================================== Security Group, SG ======================================================
+
+### 於 VPC 裡頭建立 SG
+VPC_ID=vpc-a8d03ccc
+SG_NAME=
+SG_DESCRIPTION=
+aws ec2 create-security-group --vpc-id $VPC_ID --group-name $SG_NAME --description $SG_DESCRIPTION
+# 可以拿到 GroupId
+
+### 建立 SG rule
+aws ec2 authorize-security-group-ingress --group-id $GroupId --protocol tcp --port 443 --cidr 10.0.0.0/16
+aws ec2 authorize-security-group-ingress --group-id $GroupId --protocol tcp --port $PORT --source-group $FROM_SG_ID
+
+###
