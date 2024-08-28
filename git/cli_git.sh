@@ -22,6 +22,7 @@ git --no-pager tag
 
 ### 配置完 gpgsign 以後, 再對專案層級做啟用
 git config --local commit.gpgsign true
+git config --local user.signingkey $SIGNING_KEY_UID
 
 ### ======================= 基礎配置 =======================
 

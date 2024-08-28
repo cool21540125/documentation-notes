@@ -39,14 +39,15 @@ gpg --list-public-keys # 或 -k 或 --list-keys
 #sub   cv25519 2024-08-24 [E] [expires: 2027-08-24]
 
 ### 將外部取得的 public key, 加入到 gpg trustdb(密鑰環)當中
-gpg --import amazon-cloudwatch-agent.gpg
-#gpg: key D58167303B789C72: public key "Amazon CloudWatch Agent" imported
-#gpg: Total number processed: 1
-#gpg:               imported: 1
+gpg --import XXX.pub
+#gpg: key D58167303B789C72
 
 ### 列出 gpg key 的 fingerprint
-gpg --fingerprint $GPG_KEY_UID
+gpg --fingerprint D58167303B789C72
 # 通常用來和對方官網對答案, 看看此 GPG Public Key 是不是真的是對方的
+
+### 使用 gpg key 來做驗證
+gpg --verify XXX.tar.gz.sig XXX.tar.gz
 
 ### 調整外部匯入的 GPG Public Key 的信任等級
 gpg --edit-key $SOMEONES_KEY_UID
