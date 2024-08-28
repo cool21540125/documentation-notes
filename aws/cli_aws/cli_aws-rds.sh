@@ -45,3 +45,9 @@ RDS_IAM_TOKEN=$(aws rds generate-db-auth-token --hostname $RDS_ENDPOINT --port $
 # 假設檔名為 us-west-2-bundle.pem
 
 mysql -h$RDS_ENDPOINT -P$PORT --ssl-ca=$HOME/us-west-2-bundle.pem --user=$USER -p$RDS_IAM_TOKEN
+
+### 列出 RDS snapshots
+# https://awscli.amazonaws.com/v2/documentation/api/latest/reference/rds/describe-db-snapshots.html
+aws rds describe-db-snapshots --query "DBSnapshots[].{size: AllocatedStorage, name: DBSnapshotIdentifier, Engine: Engine}" --snapshot-type manual --output yaml | yq
+aws rds describe-db-snapshots --query "DBSnapshots[].{size: AllocatedStorage, name: DBSnapshotIdentifier}" --output yaml | yq
+aws rds describe-db-snapshots --filters engine=mariadb --query "DBSnapshots[].{size: AllocatedStorage, name: DBSnapshotIdentifier, }" --output yaml | yq
