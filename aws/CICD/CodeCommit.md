@@ -1,23 +1,27 @@
+# UPDATED - 2024/07/25 以後建立的 AWS Account, 將不再能使用 CodeCommit
+
+既有用戶仍可繼續使用, AWS 仍會做安全性更新, 但不會再有新功能
+
+https://aws.amazon.com/blogs/devops/how-to-migrate-your-aws-codecommit-repository-to-another-git-provider/
 
 # CodeCommit
 
 - CodeCommit 訪問方式, 支援下列 3 種協定:
-    - HTTPS
-    - SSH
-    - HTTPS(GRC) (這好像是 AWS 自己搞出來的東西)
+  - HTTPS
+  - SSH
+  - HTTPS(GRC) (這好像是 AWS 自己搞出來的東西)
 - 使用 CodeCommit 的 認證方式
-    - git credentials
-    - IAM user (AWS 建議)
-    - IAM role
+  - git credentials
+  - IAM user (AWS 建議)
+  - IAM role
 - 可針對 repo 設定各種 events notification(比較像是一些 description 的變更之類的), 發送到:
-    - SNS
-    - AWS Chatbot (Slack)
+  - SNS
+  - AWS Chatbot (Slack)
 - 針對 git event, 可設定對應的 trigger, 目前支援:
-    - Lambda
-    - SNS
+  - Lambda
+  - SNS
 - Charge:
-    - 5 active users free/month
-
+  - 5 active users free/month
 
 ## CodeCommit by SSH
 
@@ -34,13 +38,11 @@ Host git-codecommit.*.amazonaws.com
     IdentityFile  ~/.ssh/aws_key
 ```
 
-
 ## CodeCommit by HTTPS Git credentials for AWS CodeCommit
 
 > AWS Console > IAM > Users > USER > Security credentials > HTTPS Git credentials for AWS CodeCommit > Generate
-> 
+>
 > 可以得到一組專用的 Username & Password (此為 Git Credentials)
-
 
 # CLI
 
@@ -59,5 +61,5 @@ aws codecommit delete-repository --repository-name git-test101
 # @@ 2023/04/02 不知為何此指令執行後, 沒有任何輸出結果 && 沒錯誤 && 但也沒刪除
 
 
-### 
+###
 ```

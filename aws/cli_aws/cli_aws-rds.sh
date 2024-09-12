@@ -1,7 +1,7 @@
 #!/bin/bash
 exit 0
 # https://awscli.amazonaws.com/v2/documentation/api/latest/reference/rds/index.html
-# ----------------------------
+# ----------------------------------------------------------------------------------------------------------------
 
 ### 列出 DB Clusters | 查看 DeletionProtection 狀況
 aws rds describe-db-clusters --output yaml | yq ".DBClusters[].DeletionProtection"
@@ -36,7 +36,12 @@ aws rds describe-db-instances --output yaml | yq ".DBInstances[].MaxAllocatedSto
 aws rds describe-db-instances --query 'DBInstances[].{Db: DBInstanceIdentifier, username: MasterUsername}'
 aws rds describe-db-instances --query "DBInstances[].{Db: DBInstanceIdentifier, logs: EnabledCloudwatchLogsExports}" --output json
 
-### ------------------------ RDS IAM authentication ------------------------
+### 列出 RDS snapshots
+# https://awscli.amazonaws.com/v2/documentation/api/latest/reference/rds/describe-db-snapshots.html
+aws rds describe-db-snapshots --query "DBSnapshots[].{size: AllocatedStorage, name: DBSnapshotIdentifier, Engine: Engine}" --snapshot-type manual --output yaml | yq
+aws rds describe-db-snapshots --query "DBSnapshots[].{size: AllocatedStorage, name: DBSnapshotIdentifier}" --output yaml | yq
+
+### ============================================= RDS IAM authentication =============================================
 RDS_IAM_TOKEN=$(aws rds generate-db-auth-token --hostname $RDS_ENDPOINT --port $PORT --region $REGION --username $USERNAME)
 #(可以拿到很長一串 Token)
 
@@ -46,8 +51,4 @@ RDS_IAM_TOKEN=$(aws rds generate-db-auth-token --hostname $RDS_ENDPOINT --port $
 
 mysql -h$RDS_ENDPOINT -P$PORT --ssl-ca=$HOME/us-west-2-bundle.pem --user=$USER -p$RDS_IAM_TOKEN
 
-### 列出 RDS snapshots
-# https://awscli.amazonaws.com/v2/documentation/api/latest/reference/rds/describe-db-snapshots.html
-aws rds describe-db-snapshots --query "DBSnapshots[].{size: AllocatedStorage, name: DBSnapshotIdentifier, Engine: Engine}" --snapshot-type manual --output yaml | yq
-aws rds describe-db-snapshots --query "DBSnapshots[].{size: AllocatedStorage, name: DBSnapshotIdentifier}" --output yaml | yq
-aws rds describe-db-snapshots --filters engine=mariadb --query "DBSnapshots[].{size: AllocatedStorage, name: DBSnapshotIdentifier, }" --output yaml | yq
+### =============================================  =============================================

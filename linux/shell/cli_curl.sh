@@ -36,4 +36,6 @@ dig @resolver1.opendns.com -t A -4 myip.opendns.com +short
 wget -t 2 -T 10 -qO- http://ipv4.icanhazip.com
 wget -t 2 -T 10 -qO- http://ip1.dynupdate.no-ip.com
 
-###
+### 上傳檔案
+curl -H "Content-Type: application/json" -XPUT 127.0.0.1:9200/shakespeare --data-binary @shakes-mapping.json
+# 此範例為, 將 local file 視為 request body, Send PUT Request

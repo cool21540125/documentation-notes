@@ -9,6 +9,29 @@
 - [Github Cheat Sheet](https://metavige.github.io/2015/04/20/github-chest-sheet/#%E5%BE%9E%E5%B7%A5%E4%BD%9C%E5%8D%80%E5%8E%BB%E9%99%A4%E5%A4%A7%E9%87%8F%E5%B7%B2%E5%88%AA%E9%99%A4%E6%96%87%E4%BB%B6) 感覺值得花時間看看~ 2018/07/19 新增
 
 
+# git credential helper
+
+- 依照 OS 的不同, git 會使用不同的 credential-helper
+  - Git 內建
+    - git-credential-store : credentials 明碼儲存
+    - git-credential-cache : credentials 暫時儲存於 Memory (for Unix Like)
+  - Platform 特定
+    - git-credential-osxkeychain : 儲存在 macOS keychain (for Mac)
+    - git-credential-libsecret : 儲存在像是 GNOME keyring / KDE Wallet 等 Linux service service
+    - git-credential-wincred : 儲存在 Windows Credential Manager (for Windows)
+  - OAuth
+    - git-credential-oauth : 似乎適用於多數 Linux Distributions
+  - Storage specific
+    - git-credential-gopass
+    - git-credential-1password
+  - Other
+    - AWS CodeCommit
+      - CICD Pipeline 運行過程會去訪問 CodeCommit 的話, 需要聲明:
+        - `git config --global credential.UseHttpPath true`
+      - 並且指定要如何做認證:
+        - `git config --global credential.helper '!aws codecommit credential-helper $@'` (告訴 CodeCommit, 請使用 IAM role 做 credentials 的驗證)
+        - `git config --global credential.helper '!aws --profile CodeCommitProfile codecommit credential-helper $@'` (指定特定的 profile)
+
 
 # 底下幾個指令自己太常用... 備註到最前面
 

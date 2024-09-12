@@ -11,7 +11,7 @@ vim ~/.config/user-dirs.dirs
 
 ```bash
 # ps command not found
-apt-get install -y procps
+apt install -y procps
 ```
 
 # Install ss

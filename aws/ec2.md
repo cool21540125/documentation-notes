@@ -168,7 +168,6 @@ https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/instance-purchasing-options.
 ### 查詢 ENA mod 是否已安裝(預設 new generation EC2 Instances 都有安裝)
 modinfo ena
 
-
 ### 查看 ENI 使用的 driver
 ethtool -i eth0
 #driver: xxx  <-- 如果已啟用 Enhanced Networking, 應該看到 ena
@@ -199,20 +198,21 @@ aws ec2 describe-instances --instance-ids $INSTANCE_ID --query "Reservations[].I
 
 ```mermaid
 flowchart LR
-    ec2ib["EC2 Image Builder"];
-    bec2i["Builder EC2 Instance"];
-    ami[New AMI];
-    tec2i[Test EC2 Instance];
-    dAMI[Distribute AMI to multi-az];
+  ec2ib["EC2 Image Builder"];
+  bec2i["Builder EC2 Instance"];
+  ami[New AMI];
+  tec2i[Test EC2 Instance];
+  dAMI[Distribute AMI to multi-az];
 
-    ec2ib -- create --> bec2i;
-    bec2i -- create --> ami;
-    ami --> tec2i;
-    tec2i -- publish --> dAMI;
+  ec2ib -- create --> bec2i;
+  bec2i -- create --> ami;
+  ami --> tec2i;
+  tec2i -- publish --> dAMI;
 ```
 
 - 會依序建立 EC2 instance 來 Building, 之後還會建另一個來 Testing
 - 若要刪除 instance, 需 terminate instance && Deregister AMI && Delete EBS snapshot
+- 
 
 # EC2 - Status Check
 

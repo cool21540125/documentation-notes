@@ -1,67 +1,20 @@
-version: "3.8"
-
 services:
   es01:
-    image: elasticsearch:7.14
-    container_name: es01
-    hostname: es01
+    image: elasticsearch:8.15.1
+    container_name: es
+    hostname: es
     restart: always
     environment:
-      - node.name=es01
-      - cluster.name=es-cluster
-      - discovery.seed_hosts=es02,es03
-      - cluster.initial_master_nodes=es01,es02,es03
-      - bootstrap.memory_lock=true
-      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
-    ulimits:
-      memlock:
-        soft: -1
-        hard: -1
+      - "ES_JAVA_OPTS=-Xms512m -Xmx1024m"
+      - "discovery.type=single-node"
+      - "xpack.security.enabled=false"
+      - "xpack.security.http.ssl.enabled=false"
+      - "xpack.license.self_generated.type=trial"
+      - "ELASTIC_PASSWORD=${ELASTIC_PASSWORD}"
     volumes:
-      - elk_data01:/usr/share/elasticsearch/data
+      - vol_es:/usr/share/elasticsearch/data
     ports:
       - "9200:9200"
-      - "9300:9300"
-    networks:
-      - net_es
-  es02:
-    image: elasticsearch:7.14
-    container_name: es02
-    hostname: es02
-    restart: always
-    environment:
-      - node.name=es02
-      - cluster.name=es-cluster
-      - discovery.seed_hosts=es01,es03
-      - cluster.initial_master_nodes=es01,es02,es03
-      - bootstrap.memory_lock=true
-      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
-    ulimits:
-      memlock:
-        soft: -1
-        hard: -1
-    volumes:
-      - elk_data02:/usr/share/elasticsearch/data
-    networks:
-      - net_es
-  es03:
-    image: elasticsearch:7.14
-    container_name: es03
-    hostname: es03
-    restart: always
-    environment:
-      - node.name=es03
-      - cluster.name=es-cluster
-      - discovery.seed_hosts=es01,es02
-      - cluster.initial_master_nodes=es01,es02,es03
-      - bootstrap.memory_lock=true
-      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
-    ulimits:
-      memlock:
-        soft: -1
-        hard: -1
-    volumes:
-      - elk_data03:/usr/share/elasticsearch/data
     networks:
       - net_es
 
@@ -70,9 +23,5 @@ networks:
     name: net_es
 
 volumes:
-  elk_data01:
-    name: elk_data01
-  elk_data02:
-    name: elk_data02
-  elk_data03:
-    name: elk_data03
+  vol_es:
+    name: vol_es

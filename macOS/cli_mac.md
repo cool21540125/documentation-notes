@@ -121,3 +121,10 @@ chmod  -R +a 'tony allow write,delete,file_inherit,directory_inherit,add_subdire
 sudo dscacheutil -flushcache
 sudo killall -HUP mDNSResponder
 ```
+
+# 額外屬性 (等同於 Linux 的隱藏屬性 lsattr/chattr)
+
+```zsh
+### 列出檔案的額外屬性
+xattr -l $FILE
+```
