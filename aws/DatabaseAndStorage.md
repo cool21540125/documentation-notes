@@ -386,3 +386,9 @@ user -- direct --> ff;
 ff -- IAM Role --> S3;
 ff -- IAM Role --> EFS;
 ```
+
+
+# IOPS, input/output operations per second
+
+- IOPS 以 KiB 為單位做衡量. 硬體驅動 決定了 *a single I/O* 操作的最大資料量. SSD I/O 大小上限為 256 KiB && HHD I/O 大小上限為 1024 KiB (因為 SSD 比起 HHD 處理小型or隨機檔案更有效率)
+- 

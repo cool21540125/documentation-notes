@@ -1,19 +1,11 @@
 # [API Gateway](https://docs.aws.amazon.com/apigateway/latest/developerguide/welcome.html)
 
-- creating/publishing/maintaining/monitoring/securing ... at any scale
-  - REST
-  - HTTP
-  - WebSocket
-- 常見問題: HTTP API v.s. REST API
-  - HTTP API, 如果僅需要做 proxy, 使用這個就對了, 成本 ↓ 70% && 效率 ↑ 60%
-  - REST API, 相較於 HTTP API, 多了一些功能~ ex:
-    - cache
-    - API Keys (認證)
-    - usage plans (不知道這啥)
-- API Gateway 具備底下功能:
-  - handle Security - authentication & authorization
+- [Api Gateway 重大事項聲明](https://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-known-issues.html)
+- [Api Gateway quota 及 notes](https://docs.aws.amazon.com/apigateway/latest/developerguide/limits.html)
+- API Gateway 功能:
+  - Security - authentication & authorization
   - throttling
-  - handle different API versioning
+  - API Versioning
   - handle different environments
   - 後端可放任何 AWS Services
   - RequestValidation
@@ -22,21 +14,13 @@
     - Client 可自行聲明 `Cache-Control: max-age=0` 來告知不要使用 Cache
       - IMPORTANT: 如果以下 2 個動作都沒有做的話, client 可以自行告知不要使用 Cache:
         - 沒有在 Console 上頭 Require authorization check box
-      - 沒有配置 InvalidateCache policy
-
-```jsonc
-// Api Gateway 允許特定 Resources 讓 Client 自性決定不使用 Cache 的 Polciy setting
-{
-  "Version": "2012-10-17",
-  "Statement": [
-    {
-      "Effect": "Allow",
-      "Action": ["execute-api:InvalidateCache"],
-      "Resource": ["arn:...:API_ID/STAGE_NAME/METHOD/RESOURCE_IDENTIFIER"]
-    }
-  ]
-}
-```
+        - 沒有配置 InvalidateCache policy
+- **HTTP API Gateway** v.s. **REST API Gateway**
+  - HTTP API, 如果僅需要做 proxy, 使用這個就對了, 成本 ↓ 70% && 效率 ↑ 60%
+  - REST API, 相較於 HTTP API, 多了一些功能~ ex:
+    - cache
+    - API Keys (認證)
+    - usage plans
 
 ---
 
@@ -74,20 +58,15 @@ api <--> On-Premise
 
 # API Gateway 的 Endpoint Types:
 
-- Edge-Optimized (default) (for global clients)
+- Edge-Optimized (default) (for global clients) `$$$`
   - API Gateway 存在於一開始建立的 Region, 不過 Request 會打到 **CloudFront Edge Locations** 再回源
     - improve latency
-    - 如果想搞 global services 可考慮這個
-  - 如果使用此 Endpoint Type, 又結合 ACM, 則證書會放在 `us-east-1`
-- Regional
-  - API Gateway 存在於一開始建立的 Region && 預估 clients 也都來自於這個 Region
-    - 如果預估 service 限縮於某些地區
-    - 也可以自行結合 CloudFront 來做 caching
-      - 可自行定義 caching strategy && 將服務擴展到 「非 Global 但是多 Region」
+  - ACM 證書放在 `us-east-1`
+- Regional `$$`
+  - custom 若與 Api Gateway 來自於同一個 Region, 則使用這個就對了
+    - 另 cross-region 的部分, 可藉由 CloudFront 來做 caching. (自行設定 caching strategy && 將服務擴展到 「非 Global 但是多 Region」)
 - Private
-  - clients from VPC
-    - VPC Endpoint (ENI)
-  - 訪問權限可使用 Resource Policy 做配置
+  - 從 VPC 訪問, 藉由 VPC Endpoint(ENI), Resource Policy 配置權限
 
 # API Gateway - CloudWatch Metrics
 
@@ -126,56 +105,123 @@ api <--> On-Premise
 
 # API Gateway - Integrations:
 
-- Api Gateway 設定好 method 以後, 必須要 integrate it with an endpoint in the backend
-- Api Gateway - RestApi(不確定 HttpApi 是否也適用) 的 Integrations:
-  - Integration Request 包含了:
-    - configuring how to pass client-submitted method requests to the backend
-    - configuring how to transform the request data, if necessary, to the integration request data
-    - specifying which Lambda function to call, specifying which HTTP server to forward the incoming request to, or specifying the AWS service action to invoke
-      - 不管是 Lambda Function 也好, Http Server 也好, AWS Service action 也好, 這些都稱之為 integration endpoint
-  - Integration Response (Integration Response, 僅適用於 _non-proxy integrations_) 包含了:
-    - configuring how to pass the backend-returned result to a method response of a given status code
-    - configuring how to transform specified integration response parameters to preconfigured method response parameters
-    - configuring how to map the integration response body to the method response body according to the specified body-mapping templates
+- Api Gateway 的 integration 的 types 分為:
+  - HTTP
+  - HTTP_PROXY
+  - AWS
+  - AWS_PROXY
+  - MOCK
+- Api Gateway 的 integration 可區分為:
+  - non-proxy integration (又稱為 custom integration)
+  - proxy integration
+    - **HTTP proxy integration**
+      - 若要整合 api backend, "/" Resource path 底下, enable `proxy resource`: `{proxy+}` (ANY method 會自動建立)
+- Api Gateway 的 AWS Integration
 
-## 1. Lambda Function / AWS Service
+  - 假若自己找碴... 硬要用這方式來整合 Lambda 的話
+    - method request 依照 client 尻 API 的方法選擇 method
+    - integration request method 則要選用 POST (到 Lambda Function)
+  - Action Type 這個還沒有很清楚在做啥, 但似乎照著做就行了 Orz
+    - Use action name
+    - Use path override
+      - `2015-03-31/functions/arn:aws:lambda:ap-northeast-1:${AWS_ACCOUNT_ID}:function:Calc/invocations`
 
-- 需要自行配置 Integration Request && Integration Response
-- 需要配置 mapping templates
+- 下面這包忘了在說啥鬼= =... (先留著)
+  - Api Gateway - RestApi(不確定 HttpApi 是否也適用) 的 Integrations:
+    - Integration Request 包含了:
+      - configuring how to pass client-submitted method requests to the backend
+      - configuring how to transform the request data, if necessary, to the integration request data
+      - specifying which Lambda function to call, specifying which HTTP server to forward the incoming request to, or specifying the AWS service action to invoke
+        - 不管是 Lambda Function 也好, Http Server 也好, AWS Service action 也好, 這些都稱之為 integration endpoint
+    - Integration Response (Integration Response, 僅適用於 _non-proxy integrations_) 包含了:
+      - configuring how to pass the backend-returned result to a method response of a given status code
+      - configuring how to transform specified integration response parameters to preconfigured method response parameters
+      - configuring how to map the integration response body to the method response body according to the specified body-mapping templates
+
+## Proxy Integration
 
 ```jsonc
-// Lambda 回應給 API Gateway 的內容格式需有下列欄位(否則 API Gateway 會拋出 502):
+// Lambda/Http proxy integration 的 Response 必須符合此規範 (否則 API Gateway 502):
+// https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/sam-property-api-corsconfiguration.html
 {
     "statusCode": "${httpStatusCode}",
     "headers": {
+        // 下面這些 Access-Control, 官方文件說如果用 proxy integration, 則一定得要有
+        "Access-Control-Allow-Headers": "Content-Type",
+        "Access-Control-Allow-Origin": "www.example.com",
+        "Access-Control-Allow-Methods": "POST, GET",
         "headerName": "headerValue",
         "otherHeaderKey": "otherHeaderValue"
     },
-    "isBase64Encoded": true|false,
-    "body": "..."
+    "isBase64Encoded": true|false,  // 可以無此 key (似乎是, body 裡頭有 encoded 的話才需要用?)
+    "body": "..."  // 此為 `JSON Stringify` (並非 Object)
 }
 ```
 
-## 2. Lambda Proxy
+## Non-Proxy Integration
 
-- 將 Client Request 轉變成 Lambda 的 input
-- 因而此 Lambda 會變成 Request/Response 的處理邏輯
-- 無 mapping template, headers, query string parameters 作為輸入參數
+- Api Gateway 的 method request 需要做一層轉換 (mapping template), 轉成 integration request 給 backend
+  - 這個動作稱之為 **data transformations** - [mapping template](https://docs.aws.amazon.com/apigateway/latest/developerguide/rest-api-data-transformations.html)
+- 使用 _Velocity Template Language (VTL)_ 撰寫
 
-## 3. HTTP Proxy
+---
 
-- 無 mapping template
+原始請求:
 
-```mermaid
-flowchart LR
+```rest
+POST /Seattle?time=morning
+day:Wednesday
 
-api[API Gateway]
-Client <-- HTTP Request --> api <-- "HTTP Proxy\nproxy Request/Response" --> ALB;
+{
+    "callerName": "John"
+}
 ```
 
-- HTTP
-- Mock
-- VPC Link
+藉由 mapping template:
+
+```vtl
+#set($inputRoot = $input.path('$'))
+{
+    "city": "$input.params('city')",
+    "time": "$input.params('time')",
+    "day":  "$input.params('day')",
+    "name": "$inputRoot.callerName"
+}
+```
+
+轉換成:
+
+```json
+{
+  "name": "from request body",
+  "city": "from query string",
+  "time": "from query string",
+  "day": "from request header"
+}
+```
+
+---
+
+###### [mapping 範例 1](https://docs.aws.amazon.com/apigateway/latest/developerguide/integrating-api-with-aws-services-lambda.html#api-as-lambda-proxy-expose-get-method-with-path-parameters-to-call-lambda-function)
+
+- method request, 依照 path parameters 組合出 integration request
+- 此範例的 if 用來判斷, URL 若有 `%2F`, 則視為 `/`
+
+```vtl
+{
+   "a": "$input.params('operand1')",
+   "b": "$input.params('operand2')",
+   "op": #if($input.params('operator')=='%2F')"/"#{else}"$input.params('operator')"#end
+}
+
+{
+    "a": "$input.params('operand1')",
+    "b": "$input.params('operand2')",
+    "op": #if($input.params('operator')=='%2F')"/"#{else}"$input.params('operator')"#end
+}
+```
+
+# Api Gateway - models
 
 # API Gateway v.s.. Load Balancer
 
@@ -194,31 +240,21 @@ Client <-- HTTP Request --> api <-- "HTTP Proxy\nproxy Request/Response" --> ALB
   - SSL offloading
   - 壓縮 HTTP Compression
 
-# Api Gateway - models
+# Api Gateway 其他
 
-# Api Gateway - data transformations - [mapping template](https://docs.aws.amazon.com/apigateway/latest/developerguide/rest-api-data-transformations.html)
+關於 Api Gateway caching
 
-- 使用 _Velocity Template Language (VTL)_ 撰寫
-- RestApi Gateway 用來將 Api 與 backend 的 path/header/payload 作轉換, 再送給對方
-  - 這個 轉換(transform) 通常會依照 models 做一些修改
-  - 可能會對 Request 及 Response 做 transform
-
-```vtl
-## mapping template 範例
-## 可得知, 收到的是一包 [object], object 具備 id, type, price
-##
-#set($inputRoot = $input.path('$'))
-[
-#foreach($elem in $inputRoot)
-  {
-    "description" : "Item $elem.id is a $elem.type.",
-    "askingPrice" : $elem.price
-  }#if($foreach.hasNext),#end
-
-#end
-]
+```jsonc
+// Api Gateway 允許特定 Resources 讓 Client 自性決定不使用 Cache 的 Polciy setting
+// 忘記這包哪來的了
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Action": ["execute-api:InvalidateCache"],
+      "Resource": ["arn:...:API_ID/STAGE_NAME/METHOD/RESOURCE_IDENTIFIER"]
+    }
+  ]
+}
 ```
-
-# Api Gateway misc
-
-- [自己的 Api Gateway 學習摘要](https://tonychoucc.atlassian.net/browse/DOPS-72)

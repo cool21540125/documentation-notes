@@ -1,4 +1,16 @@
 
+# node
+
+- eslint
+    - Code 風格檢查工具
+- webpack
+    - 模組打包程式(bundler), 內有特殊的載入器設計, 可提供開發時的 熱模組替代(Hot Module Replacement, HMR) 功能
+    - 產出打包整個 App 檔案的功能
+- flow
+    - 靜態類型檢查工具
+    - coding 時, 加入靜態類型標記(方便 dev 階段檢查), 最後 comiple 時, 由 babel 相對的擴充去除這些標記
+
+
 # 套件管理
 
 關於版本號相關, 參考 Versioning.md
@@ -44,3 +56,78 @@ STUDY: 06/03 - https://blog.logrocket.com/commonjs-vs-es-modules-node-js/
     - 結構描述
         - 包含 5 種內建純量: String / Boolean / Int / Float / ID
     - 解析程式: **Query** 及 **Mutation**
+
+
+# babel
+
+- 主要用來編譯 ES6+ Code, 產出為 ES5 Code, 用來支援大多數瀏覽器.
+- 相較於 ES6/ES7/ES8/..., ES6 與 ES5 有較大的變革, 因而 ES6 以後, 可稱為 ES6
+
+```js
+// ------------- JSX 寫法 -------------
+const HelloWorld = (props) => (
+    <div>
+        <h1>{props.text}</h1>
+    </div>
+)
+// ===========================================
+
+// ------------- 經過 babel 編譯後 -------------
+"use strict";
+
+var HelloWorld = function HelloWorld(props) {
+    return React.createElement(
+        "div",
+        null,
+        React.createElement(
+            "h1",
+            null,
+            props.text
+        )
+    );
+};
+// ===========================================
+```
+
+
+## misc
+
+```js
+// 展開運算符(Spread Operator)
+const arr1 = ["hello", true, 7]  // 不被影響
+const arr2 = [1, 2, ...arr1]  // [1, 2, "hello", true, 7]
+// 做了 陣列的淺拷貝
+
+// 
+```
+
+
+## Promise
+
+- promise 通常與 future, delay, deferred 等名詞意思相近, 代表 因為計算尚未完成時, 此時結果懸而未決的代理物件
+- promise 狀態: pending / fulfilled / rejected
+    - pending promise
+        - fulfilled 狀態, 得到 value
+        - rejected 狀態, 得到 reason
+
+```js
+const pro = new Promise(function(resolve, reject) {
+    // ...
+})
+
+pro.then(function(value) {
+    // on fulfillment
+}, function(reason) {
+    // on rejection
+})
+
+fetch(url, httpOption)
+    .then(function(response) {
+        // process data
+        if (!response.ok) throw new Error(response.statusText)
+        return response.json()
+    })
+    .catch(function(err) {
+        // process error
+})
+```

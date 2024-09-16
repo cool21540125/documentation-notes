@@ -6,9 +6,9 @@
 - [strict-origin-when-cross-origin](https://site-one-dot-referrer-demo-280711.ey.r.appspot.com/stuff/detail?tag=red&p=p2)
 
 
-## 關於 same-origin
+## 關於 same-origin / same origin
 
-Url 若有相同的 scheme://hostname:port 則視為 same-origin
+Url 若有相同的 `scheme://hostname:port` 則視為 same-origin
 
 反之, Url 若有不同的 scheme://hostname:port 則視為 cross-origin
 
@@ -95,6 +95,8 @@ Cross Site Request 分成 2 種
 
 ### Step1
 
+
+
 ```mermaid
 flowchart LR;
 
@@ -105,10 +107,18 @@ Browser --> origin;
 Browser -- Preflight Request --> cross;
 ```
 ```bash
-### Preflight Request 內容
-OPTIONS /
-Host: www.other.com
-Origin: https://www.example.com
+### Preflight Request
+OPTIONS /path HTTP/1.1
+Origin: https://web.example.com
+Access-Control-Request-Method: POST
+Access-Control-Request-Headers: Content-Type, x-api-key, authorization  # 告知 Server, actual request 包含這些 headers
+
+### Pre-flight Response (不同 Servers 會有不同的響應方式)
+HTTP/1.1 204 No Content
+Access-Control-Allow-Origin: https://web.example.com                                     # Server 允許 CORS 的 Origin domain
+Access-Control-Request-Method: POST, GET, PUSH, OPTIONS                                  # Server 允許 CORS 的方法
+Access-Control-Request-Headers: Content-type, x-api-key, authorization, x-another-header # Server 允許 CORS 的 headers, 其他的麻煩稍後在 actual request 的時候別丟過來
+# 例如有的 Server 如果 origin, method, headers 都符合的話, 只會回傳 Access-Control-Request-Headers, 但如果不 Match, 則不會有任何 Access-Control-Request-Headers
 ```
 
 

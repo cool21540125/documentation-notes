@@ -2,7 +2,9 @@
 
 - 可以用來讓 VPC/On-Premise 的 AWS Services 藉由 private 的方式, 訪問其他的 AWS Services
   - 避免走 public 增加延遲 & 克金
-- PrivateLink 定義: _A technology that provides private connectivity between VPCs and services._
+- PrivateLink 定義
+  - A technology that provides private connectivity between VPCs and services.
+  - 讓 Service 與 AWS Services 做 私有訪問的技術
 - VPC Endpoint 定義: _The entry point in your VPC that enables you to connect privately to a service._
 - VPC Endpoints 分成 2 種類型:
   - Interface VPC Endpoints

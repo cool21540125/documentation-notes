@@ -25,6 +25,7 @@
             - 這裡還有些聽不是很懂的細節...
                 - *Provisioned Throughput (MiB/s)* && *Maximum Read Throughput (MiB/s)*
 - Charge
+    - FREE_TIER: 前 12 個月, 僅限 1 個 Regional Standard - 5 GB
     - Pay per use
     - Expensive (相較 gp2 貴 3 倍). 
         - 但可搭配 **EFS Lifecycle Policy** 來切換至 EFS-IA 來省錢

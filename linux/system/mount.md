@@ -1,6 +1,5 @@
 # mount 掛載
 
-- 2018/06/28
 - `掛載點` 為 `目錄`
 - `單一檔案系統` 不要重複掛載到 `不同的掛載點(目錄)`
 - `單一目錄` 不要重複掛載到 `多個檔案系統`
@@ -13,6 +12,12 @@ For CentOS7, 掛載時, 會自動到 fs 的 superblock 去分析並測試掛載,
 - `/etc/filesystems` : 系統指定的 測試掛載 fs類型 的 優先順序
 - `/proc/filesystems` : 系統已經載入的 fs類型
 - `/lib/modules/$(uname -r)/kernel/fs/` : Linux 支援的 fs 的所有驅動程式 目錄
+
+---
+
+> 用語: 將 Device 掛載到 資料夾
+
+---
 
 
 # 標準作業流程

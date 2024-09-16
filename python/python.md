@@ -5,6 +5,17 @@
 python -m doctest -v abc.py
 ```
 
+# 優雅寫法
+
+```py
+### 需求: 將「{'apple', 'grape'}」 轉成 「'{grape, apple}'」
+>>> demo = {'apple', 'grape'}
+>>> f"{{{', '.join(demo)  }}}"
+'{grape, apple}'
+
+
+```
+
 
 ## 零碎知識
 

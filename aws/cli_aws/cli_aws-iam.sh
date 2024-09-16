@@ -13,16 +13,16 @@ AWS_REGION=ap-northeast-1
 
 ### 建立 iam.Policy
 aws iam create-policy \
-    --policy-name better-developer-experience \
-    --description "Created via Aws Cli. For better develop experience." \
-    --policy-document file://_BetterDeveloperExperiencePolicy.json \
-    --tags "Key=CreatedVia,Value=cli" "Key=Usage,Value=Better for Iam User to use AWS"
+  --policy-name better-developer-experience \
+  --description "Created via Aws Cli. For better develop experience." \
+  --policy-document file://_BetterDeveloperExperiencePolicy.json \
+  --tags "Key=CreatedVia,Value=cli" "Key=Usage,Value=Better for Iam User to use AWS"
 #
 aws iam create-policy \
-    --policy-name better-sre-experience \
-    --description "Created via Aws Cli. For SRE required permissions." \
-    --policy-document file://_SreRequiredPolicy.json \
-    --tags "Key=CreatedVia,Value=cli" "Key=Usage,Value=Enlarge SRE permissions"
+  --policy-name better-sre-experience \
+  --description "Created via Aws Cli. For SRE required permissions." \
+  --policy-document file://_SreRequiredPolicy.json \
+  --tags "Key=CreatedVia,Value=cli" "Key=Usage,Value=Enlarge SRE permissions"
 #
 
 ### 建立 IAM User
@@ -31,44 +31,52 @@ aws iam create-user --user-name test-user
 ### IAM Policy definition
 cat <<EOF >test-policy.json
 {
-    "Version": "2012-10-17",
-    "Statement": [
-        {
-            "Effect": "Allow",
-            "Action": [
-                "ec2:Describe*",
-                "iam:ListRoles",
-                "sts:AssumeRole"
-            ],
-            "Resource": "*"
-        }
-    ]
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Action": [
+          "ec2:Describe*",
+          "iam:ListRoles",
+          "sts:AssumeRole"
+      ],
+      "Resource": "*"
+    }
+  ]
 }
 EOF
 # ------------------------------------
 
 ### 依照本地 trust policy json file 建立 Role
-aws iam create-role --role-name demo-role --assume-role-policy-document file://demo-trust-policy.json
+aws iam create-role \
+  --role-name demo-role \
+  --assume-role-policy-document file://demo-trust-policy.json
 # 建立一個 Role, 名為 demo-role
 # Permissions policies 會在下一步 attach
 
-aws iam put-role-policy --role-name demo-role --policy-name Perms-Policy-For-CognitoFederation --policy-document file://permspolicyforcognitofederation.json
+aws iam put-role-policy \
+  --role-name demo-role \
+  --policy-name Perms-Policy-For-CognitoFederation \
+  --policy-document file://permspolicyforcognitofederation.json
 
 ### 依照本地檔案, 建立 Policy
-aws iam create-policy --policy-name test-polich --policy-document file://test-policy.json
+aws iam create-policy \
+  --policy-name test-polich \
+  --policy-document file://test-policy.json
 
 ### 將 policy attach 給 user
+TEST_POLICY_ARN="arn:aws:iam::${ACCOUNT_ID}:policy/test-polich"
 aws iam attach-user-policy \
-    --user-name test-user \
-    --policy-arn arn:aws:iam::${AWS_ACCOUNT}:policy/test-polich
+  --user-name test-user \
+  --policy-arn ${TEST_POLICY_ARN}
 
 ### 查看 User 已有的 Policies
 aws iam list-attached-user-policies \
-    --user-name test-user
+  --user-name test-user
 
 ### 為 User 建立 Access Key
 aws iam create-access-key \
-    --user-name test-user
+  --user-name test-user
 # 可從 CLI Response 看到 AccessKeyId && SecretAccessKey
 
 ###
@@ -90,32 +98,32 @@ EOF
 ### 建立前述的 Role
 ROLE_NAME_ON_AWS="test-powerful-role"
 aws iam create-role \
-    --role-name ${ROLE_NAME_ON_AWS} \
-    --assume-role-policy-document file://test-role-trust-policy.json
+  --role-name ${ROLE_NAME_ON_AWS} \
+  --assume-role-policy-document file://test-role-trust-policy.json
 # 把 Arn 記錄下來...
 
 ###
 Arn="arn:aws:iam::${AWS_ACCOUNT}:role/${ROLE_NAME_ON_AWS}"
 aws iam attach-role-policy \
-    --role-name ${ROLE_NAME_ON_AWS} \
-    --policy-arn ${Arn}
+  --role-name ${ROLE_NAME_ON_AWS} \
+  --policy-arn ${Arn}
 # 忘了怎麼解釋...
 
 ### 賦予 AWS 內建的 `RDS ro 權限` 給 Role
 RDS_ro_Arn="arn:aws:iam::aws:policy/AmazonRDSReadOnlyAccess"
 aws iam attach-role-policy \
-    --role-name ${ROLE_NAME_ON_AWS} \
-    --policy-arn ${RDS_ro_Arn}
+  --role-name ${ROLE_NAME_ON_AWS} \
+  --policy-arn ${RDS_ro_Arn}
 # 此為 Permission policy
 
 ### 用來查看 Role 具備了哪些 Policies
 aws iam list-attached-role-policies \
-    --role-name ${ROLE_NAME_ON_AWS}
+  --role-name ${ROLE_NAME_ON_AWS}
 
 ###
 aws sts assume-role \
-    --role-arn "" \
-    --role-session-name AWSCLI-Session
+  --role-arn "" \
+  --role-session-name AWSCLI-Session
 
 ###
 aws iam get-role --role-name "AWSServiceRoleForElasticLoadBalancing" || aws iam create-service-linked-role --aws-service-name "elasticloadbalancing.amazonaws.com"

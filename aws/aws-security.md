@@ -210,3 +210,68 @@ ce -- integration --> pipeline["SNS, Lambda, ..."];
 > Report suspected AWS Resources used for abusive or illegal purposes
 
 - 用來跟 AWS 反映違規使用的 Service
+
+
+
+
+# AWS CORS - Rest Api Gateway
+
+- Browser 如果看到 **Cross-Origin Request Blocked**, 就表示遇到 CORS 議題
+- CORS 是用來限制 **cross-origin HTTP request** 的安全性機制, 可區分為 2 種 types:
+    - simple request
+    - non-simple request
+- CORS 是在 HTTP 上頭的一個 Layer, 用來宣告 Response 可以分享給 other origins
+    - 也因此, CORS 具有一系列的 headers, 都是用來告知 Response 可以安全地給怎樣的 origins
+
+## CORS - simple request
+
+滿足底下所有條件, 就表示此為 : `simple request`, 反之則為 `non-simple request`
+
+- Http methods 為: `GET` | `HEAD` | `POST`
+    - 為此方法為 POST, 則必須包含 Origin header
+- Request 並未包含 **custom headers**
+- Request payload content type 須為 : `text/plain` | `multipart/form-data` | `application/x-www-form-urlencoded`
+- 其他已被 Mozilla CORS documentation 明確定義的 simple requests
+
+```bash
+### simple request 的範例
+POST http://domain.com
+
+# 則 Response Header 必須包含此:
+Access-Control-Allow-Origin: '*'  # '*' 或 'your.origin.com'
+```
+
+
+## CORS - non-simple request
+
+- [non-simple request 的文件在這邊](https://docs.aws.amazon.com/apigateway/latest/developerguide/how-to-cors.html#apigateway-enable-cors-non-simple)
+- 如果使用 AWS 的話, 又遇到 non-simple request 的 CORS 議題, 則需要看 Integration types 來做不同的設定
+
+### CORS non-simple request 對於 non-proxy integration 的設定
+
+- 發送 non-simple request 的一方, 在發送 actual request 之前, 必須先發送 `preflight request`
+    - 上面的這個規定在 [CORS protocol](https://fetch.spec.whatwg.org/#http-cors-protocol)
+```bash
+### backend 必須實作的方法:
+
+# 需要有個 200 Mock integration, 負責回傳底下這些:
+Access-Control-Allow-Headers: 'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'
+Access-Control-Allow-Methods: '*'
+Access-Control-Allow-Origin: '*'
+```
+
+### CORS non-simple request 對於 proxy integration 的設定
+
+```py
+### non-simple request 對於 Proxy integration, backend 必須負責回傳底下 headers
+# (因為 proxy integration doesn't return an integration response)
+return {
+        'statusCode': 200,
+        'headers': {
+            'Access-Control-Allow-Headers': 'Content-Type',
+            'Access-Control-Allow-Origin': 'https://www.example.com',
+            'Access-Control-Allow-Methods': 'OPTIONS,POST,GET'
+        },
+        'body': json.dumps('Hello from Lambda!')
+    }
+```

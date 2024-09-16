@@ -10,7 +10,8 @@ cdk version
 #2.126.0 (build fb74c41)
 
 # ======================== aws identity ========================
-### 可用來取得 Account && UserId && Arn (查看 caller 身份)
+
+### 可用來取得 Account && UserId && Arn - GetCallerIdentity Api
 aws sts get-caller-identity
 
 ### 檢查 CDK 相關環境變數

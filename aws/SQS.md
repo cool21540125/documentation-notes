@@ -129,7 +129,7 @@ sqs -- Poll for messages --> asg;
 - Producer 藉由 
     - SendMessage API 發送 Message
 - Consumer 藉由 
-    - ReceiveMessage API 拉 Message
+    - `ReceiveMessage` API 拉 Message
         - 有個參數 `MaxNumberOfMessages` (範圍 1~10), default: 1
             - 也就是說一次只能拉 1 條 Message
     - DeleteMessage API 將已處理好的 Message 移除
