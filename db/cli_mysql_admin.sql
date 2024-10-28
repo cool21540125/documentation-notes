@@ -21,6 +21,11 @@ SELECT USER(), CURRENT_USER();
 CREATE USER 'app_user'@'%' IDENTIFIED BY 'init_password_that_will_be_rotate_by_secret_manager_soon';
 CREATE ROLE app_role;
 GRANT SELECT, INSERT, UPDATE, DELETE, INDEX ON *.* TO app_role;
+
+GRANT CREATE, DROP ON posserver.* TO 'app_role'@'%';  -- 可以對 table 進行增刪
+GRANT ALTER ON posserver.* TO 'app_role'@'%';  -- 可以 alter table
+FLUSH PRIVILEGES;
+
 GRANT app_role TO 'app_user'@'%';
 SET DEFAULT ROLE app_role FOR 'app_user'@'%'; -- MariaDB
 SET DEFAULT ROLE app_role TO 'app_user'@'%'; -- MySQL
@@ -76,6 +81,7 @@ GRANT SELECT, SHOW VIEW, TRIGGER, LOCK TABLES, SUPER, ALTER, INSERT, CREATE, DRO
 
 GRANT ROLE TO 'USER'@'%';
 SET DEFAULT ROLE first_role FOR 'USER'@'%';
+
 
 -- 查詢 User/Role 具備哪些 privileges
 SHOW GRANTS FOR 'USER'@'%';

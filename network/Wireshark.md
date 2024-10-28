@@ -16,7 +16,7 @@
 
 # Capture Filter 捕獲過濾器
 
-- 適用於各種網路抓包工具的解析語法, 此語法又被稱為 BPF, Berkeley Packet Filter
+- 適用於各種網路抓包工具的解析語法, 此語法又被稱為 BPF(Berkeley Packet Filter)
 - `Type: {host|port|portrange|net|...}`
 - `Dir: {src|dst|src or dst|src and dst}`
 - `Proto: {ether|ip|ip6|tcp|udp|icmp|...}`

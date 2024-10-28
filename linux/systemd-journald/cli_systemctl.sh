@@ -2,7 +2,5 @@
 exit 0
 # ----------------------------------------------------------
 
-###
-journalctl -u mysqld >/tmp/mysql_init_log
-
-journalctl -u journald
+### 查看 systemd-journald 狀態
+systemctl status systemd-journald.service

@@ -4,28 +4,25 @@
 - `掛載點` 為 `目錄`
 - `單一檔案系統` 不要重複掛載到 `不同的掛載點(目錄)`
 - `單一目錄` 不要重複掛載到 `多個檔案系統`
-- `要被掛載東西的目錄` 裏頭應該是 `空的` ((不然掛載後, 裡面的東西會`被隱藏`))  <- 卸載的時候, 會再出現
+- `要被掛載東西的目錄` 裏頭應該是 `空的` ((不然掛載後, 裡面的東西會`被隱藏`)) <- 卸載的時候, 會再出現
 - 如果哪天想為 mount 上來的裝置取名字, 可參考 `mknod` , `xfs_admin` , `tune2fs`
 
 For CentOS7, 掛載時, 會自動到 fs 的 superblock 去分析並測試掛載, 所以可以自動判斷
 檔案系統種類, 因此, 使用 `mount` 時, 可省略 `-t`
 
-- `/etc/filesystems` : 系統指定的 測試掛載 fs類型 的 優先順序
-- `/proc/filesystems` : 系統已經載入的 fs類型
+- `/etc/filesystems` : 系統指定的 測試掛載 fs 類型 的 優先順序
+- `/proc/filesystems` : 系統已經載入的 fs 類型
 - `/lib/modules/$(uname -r)/kernel/fs/` : Linux 支援的 fs 的所有驅動程式 目錄
-
 
 # 標準作業流程
 
 1. 插入空的隨身碟
 2. 先作磁區分割 ( `fdisk` or `gdisk` )
-3. 針對 *分割後的 Partition* 格式化 `mkfs`
+3. 針對 _分割後的 Partition_ 格式化 `mkfs`
 4. 手動掛載 `mount /dev/sdb1 <path>`
 5. 自動掛載 : 修改 `/etc/fstab` (有錯誤會導致無法開機! 改後記得用 `mount -a` 測試是否失敗!!)
 
-
-
-# 說明... 乾~  超大一包
+# 說明... 乾~ 超大一包
 
 簡單版的掛載指令: `mount UUID="<lskid 找到要掛載的裝置 UUID>" <要掛載的空資料夾完整路徑>`
 
@@ -33,7 +30,7 @@ For CentOS7, 掛載時, 會自動到 fs 的 superblock 去分析並測試掛載,
 
 ```sh
 # mount -a                      依照 設定檔 /etc/fstab 的資料, 把所有 未掛載 的磁碟都掛載上來
-# mount [-l Label名稱]          
+# mount [-l Label名稱]
 # mount [-t <filesystem>] LABEL='' <掛載點>
 # mount [-t <filesystem>] UUID='' <掛載點>
 # mount [-t <filesystem>] 裝置名稱='' <掛載點>
@@ -54,9 +51,7 @@ For CentOS7, 掛載時, 會自動到 fs 的 superblock 去分析並測試掛載,
 
 掛載時, 也可能因為 os 只支援英文, 但掛上來的裝置有其他語系, 所以要作其他指令才有辦法對此語系有正常解讀 `mount -o codepage=950,iocharset=utf8 UUID="xxx" <要掛載到哪裡>`
 
-
-
-# 範例1 - (把稍早前作的 sda3 掛上去)
+# 範例 1 - (把稍早前作的 sda3 掛上去)
 
 - 2018/07/10
 
@@ -105,9 +100,7 @@ sda           8:0    0 465.8G  0 disk
 sr0          11:0    1  1024M  0 rom
 ```
 
-
-
-# 範例2 - 把CentOS7的光碟 塞到電腦後~~
+# 範例 2 - 把 CentOS7 的光碟 塞到電腦後~~
 
 ```sh
 $ lsblk
@@ -142,9 +135,7 @@ $ umount /data/cdrom
 # 卸載後~ /data/cdrom/就變空了~~
 ```
 
-
-
-# 範例3 - symbolic link 的替代方式 - `mount --bind dirA dirB`
+# 範例 3 - symbolic link 的替代方式 - `mount --bind dirA dirB`
 
 某些情況下, 無法使用軟連結, 可以用 `mount` 的方式, 來把特定目錄 掛載到 另一個地方...
 
@@ -163,8 +154,6 @@ sunrpc on /var/lib/nfs/rpc_pipefs type rpc_pipefs (rw,relatime)
 /dev/mapper/cl-var on /data/var type xfs (rw,relatime,seclabel,attr2,inode64,noquota)   # 剛剛把這個掛載上來了
 ```
 
-
-
 # /etc/fstab
 
 ```sh
@@ -182,7 +171,7 @@ UUID=e6...(pass)...7e   /boot   xfs     defaults    0     0
 /dev/mapper/cl-home     /home   xfs     defaults    0     0
 /dev/mapper/cl-var      /var    xfs     defaults    0     0
 /dev/mapper/cl-swap     swap    swap    defaults    0     0
-# 
+#
 # 1.裝置/UUID等
 # 2.掛載點
 # 3.檔案系統
@@ -190,8 +179,6 @@ UUID=e6...(pass)...7e   /boot   xfs     defaults    0     0
 # 5.dump -  能否被 dump 備份指令作用
 # 6.fsck - 是否以 fsck 檢驗磁區
 ```
-
-
 
 # swap 相關
 
@@ -226,7 +213,8 @@ Filename				Type		Size	Used	Priority
 ### 永久配置
 $# vim /etc/fstab
 # ↓↓↓↓↓↓ 配置 ↓↓↓↓↓↓
-/swapfile   swap    swap    sw  0   0
+/swapfile   swap    swap    sw  0   0 # 兩者皆可
+/swapfile   none    swap    sw  0   0 # 兩者皆可
 # ↑↑↑↑↑↑ 配置 ↑↑↑↑↑↑
 
 ### 配置後記得確認

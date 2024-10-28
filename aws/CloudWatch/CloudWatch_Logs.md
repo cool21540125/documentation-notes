@@ -7,40 +7,37 @@
   - Log group 裡頭會有 _Log streams_(instance/log file/container)
   - Logs Insights, 可下查詢語法(有點類似 SQL, 但完全不同), 針對 Log group 做查詢
 - _CloudWatch Logs_ 可彙整至:
-
   - Kinesis Data Stream
   - Kinesis Data Firehose
   - AWS Lambda
   - ElasticSearch
   - S3
-
     - 非即時
       - CloudWatch Logs 藉由 `CreateExportTask` API, 匯出到 S3 (可能要等 12 hrs)
     - 即時
-
       - 可使用 _Logs Subscriptions_, 如下:
 
-      ```mermaid
-      flowchart LR
+```mermaid
+flowchart LR
 
-      cl["CloudWatch Logs"]
-      sf["Subscription Filter"]
-      kdf["Kinesis Data Firehose"]
-          awslf["Lambda \n (managed by AWS)"]
-          lf["Lambda (custom)"]
-      es["Amazon OpenSearch"]
-      kds["Kinesis Data Streams"]
+  cl["CloudWatch Logs"]
+  sf["Subscription Filter"]
+  kdf["Kinesis Data Firehose"]
+      awslf["Lambda \n (managed by AWS)"]
+      lf["Lambda (custom)"]
+  es["Amazon OpenSearch"]
+  kds["Kinesis Data Streams"]
 
-      cl --> sf;
-      sf --> awslf;
-      awslf -- Real Time --> es;
-      kdf -- Near Real Time --> es;
-      sf --> kdf;
-      kdf -- Near Real Time --> S3;
-      sf --> kds;
-      kds --> other["KDF, KDA, EC2, Lambda, ..."]
-      sf <--> lf;
-      ```
+  cl --> sf;
+  sf --> awslf;
+  awslf -- Real Time --> es;
+  kdf -- Near Real Time --> es;
+  sf --> kdf;
+  kdf -- Near Real Time --> S3;
+  sf --> kds;
+  kds --> other["KDF, KDA, EC2, Lambda, ..."]
+  sf <--> lf;
+```
 
 - _CloudWatch Logs_ Sources:
   - SDK
@@ -93,13 +90,10 @@ kdf -- Near Real Time --> S3;
   - Filter log events : search for log events
   - Live tail : interactively view your logs in real-time
 
-# CLI
+```js
+// Log events 搜尋
+{$.eventName = "UpdateService" && $.requestParameters.service = "XXX" }
+// service 帶入 ECS Service Name
 
-```bash
-### 建立 CloudWatch Log Group, 名為 /ecs/hello-server101
-aws logs create-log-group --log-group-name /ecs/hello-server101
-
-
-###
-
+//
 ```

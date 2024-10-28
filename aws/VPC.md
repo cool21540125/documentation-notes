@@ -118,6 +118,7 @@ subgraph VPC
     subnet2;
     subnet3;
 end
+
 subgraph Region
     subgraph az1
         dc1; dc2; dc3;
@@ -168,29 +169,29 @@ ec22["EC2"];
 ec23["EC2"];
 
 subgraph VPC
-    IGW;
+  IGW;
 
-    subgraph ps1["Private Subnet"]
-        direction TB
-        ec21;
-        ec22;
+  subgraph ps1["Private Subnet"]
+    direction TB
+    ec21;
+    ec22;
+  end
+
+  subgraph ps2["Private Subnet"]
+    ec23;
+  end
+
+  subgraph aaaa
+    direction TB
+    subgraph ps3["Public Subnet"]
+      ec24;
     end
 
-    subgraph ps2["Private Subnet"]
-        ec23;
-    end
-
-    subgraph
-        direction TB
-        subgraph ps3["Public Subnet"]
-            ec24;
-        end
-
-        natgw["NATGW"];
-    end
+    natgw["NATGW"];
+  end
 end
 
-ec21 <-- local --> ec24;
+ec21 <-- "local" --> ec24;
 
 ec23 --> natgw;
 ec24 --> IGW;
@@ -199,7 +200,7 @@ IGW --> Internet;
 ```
 
 ```mermaid
-graph TD;
+flowchart TB;
 
 subgraph Subnet
     EC2;

@@ -2,6 +2,8 @@
 exit 0
 # -----------------------------------------------------
 
+export AWS_CLI_AUTO_PROMPT=on-partial
+
 aws ec2 run-instances \
   --image-id ami-0b7546e839d7ace12 \
   --instance-type t2.micro \

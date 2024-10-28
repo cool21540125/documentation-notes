@@ -1,7 +1,7 @@
 #!/bin/bash
 exit 0
-# https://awscli.amazonaws.com/v2/documentation/api/latest/reference/rds/index.html
-# ----------------------------
+# https://awscli.amazonaws.com/v2/documentation/api/latest/reference/ecs/index.html
+# --------------------------------------------------------------------------------------------------------
 
 ECS_CLUSTER=
 ECS_TASK_ID=
@@ -37,7 +37,6 @@ aws ecs list-tasks --cluster $ECS_CLUSTER --service $ECS_SERVICE_NAME
 ### 詳細列出 ECS tasks 資訊
 aws ecs describe-tasks --cluster $ECS_CLUSTER --tasks $ECS_TASK_ID
 
-
 ### 列出 & 詳述 所有 ECS tasks (in Cluster)
 # https://awscli.amazonaws.com/v2/documentation/api/latest/reference/ecs/list-tasks.html
 # https://awscli.amazonaws.com/v2/documentation/api/latest/reference/ecs/describe-tasks.html
@@ -47,3 +46,13 @@ echo "$task_arns" | while IFS= read -r task_arn; do
   aws ecs describe-tasks --cluster $ECS_CLUSTER --tasks $task_arn --query 'tasks[0].{ip: containers[0].networkInterfaces[0].privateIpv4Address, name: group, IP: }' --output json | jq
 done
 # aws ecs describe-tasks --cluster $ECS_CLUSTER --tasks $task_arn | yq '.tasks[0].containers[0]'
+
+###
+# https://awscli.amazonaws.com/v2/documentation/api/latest/reference/ecs/describe-services.html
+export ECS_CLUSTER=
+export ECS_SERVICE=
+aws ecs describe-services \
+  --cluster $ECS_CLUSTER \
+  --services $ECS_SERVICE
+
+###

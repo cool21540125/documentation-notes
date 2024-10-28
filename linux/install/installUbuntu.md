@@ -195,7 +195,13 @@ gpg --fingerprint D58167303B789C72
 
 
 ### 下載 deb
-wget https://amazoncloudwatch-agent.s3.amazonaws.com/ubuntu/amd64/latest/amazon-cloudwatch-agent.deb
+# Global 下載路徑(很慢)
+wget https://amazoncloudwatch-agent.s3.amazonaws.com/ubuntu/amd64/latest/amazon-cloudwatch-agent.deb # x86_64
+wget https://amazoncloudwatch-agent.s3.amazonaws.com/ubuntu/arm64/latest/amazon-cloudwatch-agent.deb # arm
+
+# Regional 下載路徑
+wget https://amazoncloudwatch-agent-us-west-2.s3.us-west-2.amazonaws.com/ubuntu/amd64/latest/amazon-cloudwatch-agent.deb
+
 
 ### 下載 deb.sig
 wget https://amazoncloudwatch-agent.s3.amazonaws.com/ubuntu/amd64/latest/amazon-cloudwatch-agent.deb.sig
@@ -209,7 +215,7 @@ gpg --verify amazon-cloudwatch-agent.deb.sig amazon-cloudwatch-agent.deb
 ### 下載 deb (上面下載過了的話則可免)
 wget https://amazoncloudwatch-agent.s3.amazonaws.com/ubuntu/amd64/latest/amazon-cloudwatch-agent.deb
 
-dpkg -i -E ./amazon-cloudwatch-agent.deb
+sudo dpkg -i -E ./amazon-cloudwatch-agent.deb
 # Config Path: /opt/aws/amazon-cloudwatch-agent/etc/
 # Main Config: /opt/aws/amazon-cloudwatch-agent/etc/common-config.toml
 ```

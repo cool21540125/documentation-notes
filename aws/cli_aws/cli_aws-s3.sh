@@ -1,3 +1,25 @@
+#!/bin/bash
+exit 0
+#
+# aws s3 ... 此為 High Level API
+#  --page-size VALUE
+#
+# aws s3api ... 此為 Low Level API
+#  --page-size VALUE
+#  --starting-token VALUE
+#  --max-items VALUE
+# --starting-token TOKEN
+#
+# Pagination
+#   Server Side
+#     --no-paginate
+#     --page-size
+#     --starting-token
+#     --max-items
+#
+#   Client Side
+#     --query JMESPATH
+#
 ### =================== 好用的設定(一定要配的啦~) ===================
 
 ### AWS CLI settings

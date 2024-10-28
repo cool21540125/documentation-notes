@@ -106,3 +106,10 @@ aws ec2 authorize-security-group-ingress --group-id $GroupId --protocol tcp --po
 ### ENI 反查出他的 Public IP
 ENI=eni-0ba04ba3a91828d8d
 aws ec2 describe-network-interfaces --network-interface-ids $ENI --output yaml | yq '.NetworkInterfaces[0].Association.PublicIp'
+
+### ==================
+
+### 查看 VPCE 的 DNS names
+# https://awscli.amazonaws.com/v2/documentation/api/latest/reference/ec2/describe-vpc-endpoints.html
+VPCE=
+aws ec2 describe-vpc-endpoints --vpc-endpoint-ids ${VPCE} --output json --query "VpcEndpoints[*].DnsEntries"

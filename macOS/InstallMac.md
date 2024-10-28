@@ -489,6 +489,9 @@ ls -l
 #amazon-corretto-17.jdk
 #amazon-corretto-8.jdk
 
+export JAVA_HOME=/Library/Java/JavaVirtualMachines/amazon-corretto-17.jdk/Contents/Home
+export PATH="$JAVA_HOME/bin:$PATH"
+
 
 # -------------------- 別用了 --------------------
 #brew install java11

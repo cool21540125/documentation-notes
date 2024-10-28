@@ -1,20 +1,18 @@
-
 # 常見系統環境變數
 
- env variables  | description
- -------------- | -----------------
- $HOSTNAME      | tonynb
- $HOME          | /home/tony
- $PWD           | 目前位置
- $PATH          | ...(一大堆)...
- $USER          | tony
- $UID           | 1000
- $LANG          | en_US.UTF-8
- $RANDOM        | 0~32767整數亂數
- $?             | 上次指令結束後的狀態碼 (0:true, 1:false)
- $EUID          | 系統決定用戶對系統資源的訪問權限, 通常等同於 RUID
- $RUID          | 系統用來辨識用戶是誰. 用戶登入到 Unix 以後, 就確定了目前的 RUID
-
+| env variables | description                                                     |
+| ------------- | --------------------------------------------------------------- |
+| $HOSTNAME     | tonynb                                                          |
+| $HOME         | /home/tony                                                      |
+| $PWD          | 目前位置                                                        |
+| $PATH         | ...(一大堆)...                                                  |
+| $USER         | tony                                                            |
+| $UID          | 1000                                                            |
+| $LANG         | en_US.UTF-8                                                     |
+| $RANDOM       | 0~32767 整數亂數                                                |
+| $?            | 上次指令結束後的狀態碼 (0:true, 1:false)                        |
+| $EUID         | 系統決定用戶對系統資源的訪問權限, 通常等同於 RUID               |
+| $RUID         | 系統用來辨識用戶是誰. 用戶登入到 Unix 以後, 就確定了目前的 RUID |
 
 # Linux 時間
 
@@ -44,15 +42,13 @@ date "+%Y-%m-%d %H:%M:%S" --date=@1565596800
 #2019-08-12 16:00:00
 ```
 
+# shell 內
 
-# shell內
-
-hotkey | description
------- | -----------
-Ctrl+C | 中斷目前工作 ; 終止目前命令
-Ctrl+D | 送出eof or 輸入結束特殊字元
-Ctrl+Z | 暫停目前工作, 利用 `fg` 指令, 可以取得暫停的工作
-
+| hotkey | description                                      |
+| ------ | ------------------------------------------------ |
+| Ctrl+C | 中斷目前工作 ; 終止目前命令                      |
+| Ctrl+D | 送出 eof or 輸入結束特殊字元                     |
+| Ctrl+Z | 暫停目前工作, 利用 `fg` 指令, 可以取得暫停的工作 |
 
 ## 測試硬碟讀取效能
 
@@ -66,8 +62,6 @@ $ sudo hdparm -Tt /dev/sda
  Timing buffered disk reads: 344 MB in  3.01 seconds = 114.20 MB/sec
 # 至於, 這數字實際代表意義是啥... 我目前沒概念= =
 ```
-
-
 
 ## 顯示年曆
 
@@ -110,7 +104,6 @@ Su Mo Tu We Th Fr Sa   Su Mo Tu We Th Fr Sa   Su Mo Tu We Th Fr Sa
 $#
 ```
 
-
 ## 誰在線上
 
 ```sh
@@ -128,8 +121,6 @@ tony     pts/0    :0               13:58   18:13   2.76s  2.69s top
 tony     pts/2    :0               14:06   18:13   0.26s  0.12s bash
 # 可以多看使用者停頓時間, 佔用CPU運算資源時間, 正在執行的工作名稱...
 ```
-
-
 
 # chown
 
@@ -173,7 +164,6 @@ $ sudo updatedb &
 $ locate ifconf # 要查詢的東西, 檔名可以不完整
 ```
 
-
 # su 這東西
 
 - 2018/07/08
@@ -193,17 +183,17 @@ $ locate ifconf # 要查詢的東西, 檔名可以不完整
 [tony@tonynb ~]$
 ```
 
-
-
 # sshd (CentOS 7 已內建 && 預設啟動)
 
-1. 安裝sshd
+1. 安裝 sshd
+
 ```sh
 $ sudo yum -y install openssh-server
 $ systemctl start sshd
 ```
 
 2. 檢查看看(應該要有下面兩個)
+
 ```sh
 $ ps -e | grep ssh
 xxxx ? 00:00:00 sshd
@@ -212,6 +202,7 @@ xxxx ? 00:00:00 ssh-agent
 ```
 
 3. 若出現下列狀況
+
 ```sh
 $ ssh localhost
 ssh: connect to host localhost port 22: Connection refused
@@ -220,35 +211,31 @@ $ sudo service sshd restart
 $ sudo systemctl enable sshd(這個還不是非常確定是否可行)
 ```
 
-
-## 若發現無法啟動, 可能原因如下 (應該不會有 sys-admin這樣作吧?)
+## 若發現無法啟動, 可能原因如下 (應該不會有 sys-admin 這樣作吧?)
 
 1. sshd 被砍了~
 2. sshd 被關閉了~
 3. 防火牆擋住了~
 
-
-
 # SSH 概念說明
 
 每次作 ssh 連線時, 會作 2 件事情 :
+
 1. 建立加密連線通道 (set up the secure encryption for the communication channel)
 2. 對 Server 作驗證 (authenticate the server)
 
 > Client 使用 `ssh-keygen` 時, 比較明智的做法是使用 passphrase(密語), 但如此一來, 每每要動到 `private key` 時, 都得輸入 `passphrase`, 相當麻煩, 因此有了 `ssh-agent` 幫忙作代理, 只需要首次使用時, 輸入 passphrase, 日後就不再需要輸入 passphrase 了!
 
-> 客戶端 **每次** ssh 到 Server 時, Server 都會給客戶端它的 `public key`; 客戶端再找出自己的 `~/.ssh/known_hosts` 裏頭該 Server 的 `public key` 來比對看看是否 public key 有改變過, 若改變過(可能客戶端 restart sshd 或者 網路遭到劫持...), 則無法 ssh. [解法: 砍掉該 Server 的 known_hosts 裏頭的 public key, 再重連(假設沒遭到crack入侵的話)] ; 而客戶端會把自己的 `public key` 丟到 Server端的 `~/.ssh/authorized_keys`
+> 客戶端 **每次** ssh 到 Server 時, Server 都會給客戶端它的 `public key`; 客戶端再找出自己的 `~/.ssh/known_hosts` 裏頭該 Server 的 `public key` 來比對看看是否 public key 有改變過, 若改變過(可能客戶端 restart sshd 或者 網路遭到劫持...), 則無法 ssh. [解法: 砍掉該 Server 的 known_hosts 裏頭的 public key, 再重連(假設沒遭到 crack 入侵的話)] ; 而客戶端會把自己的 `public key` 丟到 Server 端的 `~/.ssh/authorized_keys`
 
 > 然而每次 Client ssh 到 Server 都得打密碼太麻煩了, 所以乾脆直接讓 Server 認識 Client 就好了啊!! 因此 Client 可以使用 `ssh-copy-id <remote user id>@<remote host>` 把自己的 `public key` 都給 Server(預設會 Copy `~/.ssh/id_rsa.pub`), 日後 ssh 到 Server 後, Server 會主動將該 Client 的 public key 從 Server 的 `~/.ssh/authorized_keys` 取出來, 去要求 Client 作 公私鑰比對認證,
 
-
 ### 權限部分
-- *private key*                    : 600
-- *public key*                     : 644
-- *~/.ssh(Client)*                 : 700
-- *~/.ssh/authorized_keys(Server)* : 600
 
-
+- _private key_ : 600
+- _public key_ : 644
+- _~/.ssh(Client)_ : 700
+- _~/.ssh/authorized_keys(Server)_ : 600
 
 ## ※安全觀點 : sshd 組態 /etc/ssh/sshd_config
 
@@ -264,7 +251,6 @@ PasswordAuthentication yes              # (預設) 未禁止 使用密碼來作 
 # ↑ 很重要! 作這之前, 記得先丟 ssh-copy-id 阿~~ 不然登出後就進不來了
 ```
 
-
 ## SSH 若關閉密碼驗證
 
 ```sh
@@ -274,7 +260,6 @@ $ ssh -i <私鑰憑證> user@IP
 # 對於僅能使用 key 登入的機器(禁止密碼驗證), 可用此方式來傳遞 public key
 $ cat ~/.ssh/id_rsa.pub | ssh -i <私鑰憑證> user@IP "cat - >> ~/.ssh/authorized_keys"
 ```
-
 
 # 查看誰登入
 
@@ -291,17 +276,15 @@ tony     pts/0    192.168.124.101  18:46    3.00s  0.19s  0.02s w
 
 ```
 
-
-
-
-# 開啟 port並設定防火牆
+# 開啟 port 並設定防火牆
 
 - 2018/02/19
 - [CentOS 7 設定防火牆允許特定 PORT 連線](https://blog.yowko.com/2017/09/centos-7-firewall.html?m=1)
 
-> 語法: `firewall-cmd --zone=public --add-port=3333/tcp --permanent`  對外永久開放 3333 port, 支援 TCP連線
+> 語法: `firewall-cmd --zone=public --add-port=3333/tcp --permanent` 對外永久開放 3333 port, 支援 TCP 連線
 
-> `firewall-cmd --reload` 重新讀取 firewall設定
+> `firewall-cmd --reload` 重新讀取 firewall 設定
+
 ```sh
 # 看看 FirewallD是否執行中
 $ firewall-cmd --state
@@ -353,23 +336,26 @@ public (active)
 ```
 
 #### 防火牆嚴謹度, 由高到低
-ser | zone名稱 | desc
---- | -------- | -----
-1   | public   | 不信任網域內的所有主機, 只有被允許的連線才能進入
-2   | external | 同 public, 但用於 IP偽裝的 NAT環境
-3   | dmz      | 主機位於 DMZ區域, 對外部為開放狀態, 對內部網路存取有限制的網路環境, 只有被允許的連線才能進入
-4   | work     | 工作場合(信任大多數同網域的主機), 只有被允許的才能連入
-5   | home     | 家用場合(信任同網域的主機), 只有被允許的才能連入
-6   | internal | 內部網路(信任同網域的主機), 只有被允許的才能連入
-7   | trusted  | 允許所有網路連線
+
+| ser | zone 名稱 | desc                                                                                          |
+| --- | --------- | --------------------------------------------------------------------------------------------- |
+| 1   | public    | 不信任網域內的所有主機, 只有被允許的連線才能進入                                              |
+| 2   | external  | 同 public, 但用於 IP 偽裝的 NAT 環境                                                          |
+| 3   | dmz       | 主機位於 DMZ 區域, 對外部為開放狀態, 對內部網路存取有限制的網路環境, 只有被允許的連線才能進入 |
+| 4   | work      | 工作場合(信任大多數同網域的主機), 只有被允許的才能連入                                        |
+| 5   | home      | 家用場合(信任同網域的主機), 只有被允許的才能連入                                              |
+| 6   | internal  | 內部網路(信任同網域的主機), 只有被允許的才能連入                                              |
+| 7   | trusted   | 允許所有網路連線                                                                              |
 
 #### 有關封包處置的 zone
-ser | zone名稱 | desc
---- | -------- | -----
-1   | drop     | 丟棄所有 incoming的封包(不回應任何資訊), 只會有 outgoing的連線
-2   | block    | 阻擋所有 incoming的封包, 並以 `icmp`回覆對方, 只有從本機發出的連線是被允許的
+
+| ser | zone 名稱 | desc                                                                          |
+| --- | --------- | ----------------------------------------------------------------------------- |
+| 1   | drop      | 丟棄所有 incoming 的封包(不回應任何資訊), 只會有 outgoing 的連線              |
+| 2   | block     | 阻擋所有 incoming 的封包, 並以 `icmp`回覆對方, 只有從本機發出的連線是被允許的 |
 
 > 永久套用設定的語法: `firewall-cmd --permanent --zone=dmz --change-interface=ens0s3`
+
 ```sh
 $ firewall-cmd --get-active-zone
 public
@@ -389,10 +375,11 @@ public
 $ firewall-cmd --permanent --zone=dmz --change-interface=ens0s3
 ```
 
-Service服務在 FirewallD中代表 1~多個 port所組成的一個服務.
-(一個 service可包含多個 port或 protocal)
+Service 服務在 FirewallD 中代表 1~多個 port 所組成的一個服務.
+(一個 service 可包含多個 port 或 protocal)
 
 > ex: `ssh服務代表 22/TCP`; `mysql服務代表 3306/TCP`
+
 ```sh
 # 取得所有已通過防火牆的服務
 $ firewall-cmd --get-services
@@ -401,9 +388,11 @@ dns docker-registry ftp https mysql smtp ssh telnet ...(略)...
 ```
 
 ### 允許通過防火牆 FirewallD
-> service可過防火牆, 語法: `firewall-cmd --zone=<zone名稱> --add-service=<服務名稱>`
 
-> port可通過防火牆, 語法: `firewall-cmd --zone=<zone名稱> --add-port=<port>/<協定>`
+> service 可過防火牆, 語法: `firewall-cmd --zone=<zone名稱> --add-service=<服務名稱>`
+
+> port 可通過防火牆, 語法: `firewall-cmd --zone=<zone名稱> --add-port=<port>/<協定>`
+
 ```sh
 # 查看 public的防火牆設定
 $ firewall-cmd --zone=public --list-all
@@ -436,11 +425,12 @@ public (active)
   ...(略)...
 ```
 
-
-
 ---
+
 ## 目前使用者
+
 [Get current user name in bash](https://stackoverflow.com/questions/19306771/get-current-users-username-in-bash)
+
 ```sh
 $ echo $USER
 tonynb
@@ -469,17 +459,20 @@ tonynb
 ```
 
 呼叫目前使用者群組 user group
+
 ```sh
 $ id -g -n
 tonynb
 ```
 
-
 ---
+
 ## source 與 bash
+
 - [鳥哥 - bash 與 source](http://linux.vbird.org/linux_basic/0340bashshell-scripts.php#script_run)
 
 1. 建立一個檔案, 名為 urname.sh, 內容如下 :
+
 ```sh
 #!/bin/bash
 PATH=/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin:/usr/local/sbin:~/bin
@@ -491,6 +484,7 @@ echo "Your full name and age : ${name} ${age}" # 結果由螢幕輸出
 ```
 
 2. 執行看看~
+
 ```sh
 # 使用 sh 執行
 $ echo ${name} ${age}
@@ -513,10 +507,12 @@ $ echo ${firstname} ${age}
 tony 30                         # 東西出現啦~~~~  只要此 terminal沒關, 這環境變數會一直存在
 ```
 
-
 ---
+
 ## 寫 shell script / bash script
-範例1
+
+範例 1
+
 ```sh
 # 寫 script
 $ vi ex1.sh
@@ -530,7 +526,8 @@ $ echo $?
 1
 ```
 
-範例2
+範例 2
+
 ```sh
 # 寫 script
 $ vi ex2.sh
@@ -548,7 +545,8 @@ $ echo $?
 0
 ```
 
-範例3
+範例 3
+
 ```sh
 $ vi ex3.sh
 n1=$1
@@ -565,7 +563,8 @@ $ ./ex3.sh 30 40
 n1:30 is not bigger than n2:40
 ```
 
-範例4
+範例 4
+
 ```sh
 $ vi ex4.sh
 for n in `seq 1 3`  # 重音符號「``」內, 優先執行
@@ -575,7 +574,8 @@ done
 # (後略)
 ```
 
-範例5
+範例 5
+
 ```sh
 $ vi ex5.sh
 for n in `ls`
@@ -585,10 +585,10 @@ done
 # (後略)
 ```
 
-
 ## 其他不知道怎嚜分類
 
 > `/proc`內部幾乎都是虛擬檔案(唯獨), 少數系統設定值可修改
+
 ```sh
 $ cat /proc/sys/kernel/hostname
 localhost.localdomain
@@ -599,6 +599,7 @@ $ echo "tonynb" > /proc/sys/kernel/hostname     # 要進到 su才可, 無法 sud
 ```
 
 ### less 與 more
+
 ```sh
 $ ll /dev | more
 # more只能往下頁
@@ -606,17 +607,17 @@ $ ll /dev | more
 $ ll /dev | less
 # less可搜尋, 到第幾行, 往上頁, 往下頁
 ```
+
 > 語法: `less <options> <file>`
 
-options | description
-------- | --------------
--m      | 顯示類似 more的百分比
--N      | 顯示 line number
-/\<str> | 搜尋特定文字(向下找)
-n       | 使用 / 後, 向下找
-N       | 使用 / 後, 向上找
-h       | 顯示 help介面
-
+| options | description            |
+| ------- | ---------------------- |
+| -m      | 顯示類似 more 的百分比 |
+| -N      | 顯示 line number       |
+| /\<str> | 搜尋特定文字(向下找)   |
+| n       | 使用 / 後, 向下找      |
+| N       | 使用 / 後, 向上找      |
+| h       | 顯示 help 介面         |
 
 ### 計數(word count) - wc
 
@@ -628,6 +629,7 @@ $ wc .bashrc
 ```
 
 ### 取代/刪除字元 - tr
+
 ```sh
 $ echo "ABCDEFG"
 ABCDEFG
@@ -656,6 +658,7 @@ $ scp tony@192.168.124.81:/home/tony/tmp/requirement.txt .
 ```
 
 ### 產生序列數字 - seq
+
 ```sh
 $ seq 1 2 7
 1
@@ -672,6 +675,7 @@ $ seq -w 1 2 7
 ```
 
 ### 排序 - sort
+
 ```sh
 $ cat doc1
 031
@@ -695,13 +699,13 @@ $ sort -g doc1
 ```
 
 ### 過濾重複 - uniq
+
 > 將檔案中, `相鄰且重複`的多行資料, 取 set, 確保唯一 <br>
 > 搭配 `sort`, 語法: `sort <檔案> | uniq`
 
-
 ### 同行拆解 && 擷取子字串 - cut (對不特定多空白格很沒輒...)
 
-> 預設處理以「tab分隔」的檔案, 用 `-d` 指定分隔符號, `-f` 指定要取出的欄位
+> 預設處理以「tab 分隔」的檔案, 用 `-d` 指定分隔符號, `-f` 指定要取出的欄位
 
 ```sh
 $ cut -d '分隔字元' -f NN /home/tony/file1
@@ -725,7 +729,6 @@ $ cut -d ',' -f2 doc2
 $ echo ${PATH} | cut -d ':' -f3
 ```
 
-
 ### 模式搜尋 - grep
 
 ```sh
@@ -741,9 +744,10 @@ $ grep --color=auto tony /home/tony/user
 
 ```
 
-
 ### 主機名稱 - hostname
+
 > 設定主機名稱, 重新登入後開始生效, 語法: `set-hostname <新的 hostname名稱>`
+
 ```sh
 $ hostname
 tony
@@ -753,7 +757,9 @@ $ hostnamectl
 ```
 
 ### 別名 - alias
+
 > 底下的設定, 登出後就無效了, 因此可將別名設到 `.bashrc` 或 `/etc/profile(不建議)` 之中.
+
 ```sh
 $ alias
 alias ll='ls -alF'
@@ -767,8 +773,8 @@ $ unalias dv
 # 刪除別名
 ```
 
-
 ### type - 查指令特性
+
 ```sh
 # type 主要在找出 執行檔 (而非一般檔案名稱)
 $ type ls
@@ -805,9 +811,8 @@ $# echo -e "${GREEN}印出的字會是綠色的"
 印出的字會是綠色的  # <-- 綠色的
 ```
 
-
-
 ### 互動式 input - read
+
 ```sh
 # read [-pt] variable
 # -p xxx: 提示字元
@@ -821,7 +826,9 @@ $ echo $n
 ```
 
 ### ls
-[ls查看目錄內容](http://blog.xuite.net/altohorn/linux/17259902-ls+%E5%88%97%E5%87%BA%E7%9B%AE%E9%8C%84%E5%85%A7%E5%AE%B9)
+
+[ls 查看目錄內容](http://blog.xuite.net/altohorn/linux/17259902-ls+%E5%88%97%E5%87%BA%E7%9B%AE%E9%8C%84%E5%85%A7%E5%AE%B9)
+
 > 語法: `ls [options] <檔案or資料夾>`
 
 ```sh
@@ -864,11 +871,9 @@ iNODEFILE=
 find . -inum $iNODEFILE -exec rm -rfi {} \;
 ```
 
-
 ### mail
 
 - `mail`(指令) 會去取得 MAIL(變數), 依照當時的使用者, 開啟 `/var/spool/mail/USER`
-
 
 ### ncftpget ncftpput
 
@@ -876,14 +881,13 @@ find . -inum $iNODEFILE -exec rm -rfi {} \;
 ncftpput -u <帳號> -p <密碼> <host>:~/ upload <標的檔案>
 ```
 
-
 ### substring
+
 ```sh
 $ a='12345678'
 $ echo ${a:2:3}
 345
 ```
-
 
 ### 測試 - test
 
@@ -963,8 +967,7 @@ test -z "$NonExistingVariable"
 # 上述的 「test -z $name」 也可用 「[[ -z $name ]]」 來代替
 ```
 
-
-# Locale - Linux語系編碼
+# Locale - Linux 語系編碼
 
 ```sh
 $ locale
@@ -1010,7 +1013,6 @@ $ locale -a | wc
 # zh_TW.utf8 : 萬國碼的中文編碼
 ```
 
-
 ```sh
 # umask : 讓目前使用者 建立 檔案 or 目錄 時的權限設定值
 # 預設上, 檔案 最多應為 666
@@ -1026,7 +1028,6 @@ $ umask -S    # 以符號類型的方式, 顯示(如上例, umask 0002)
 u=rwx,g=rwx,o=rx
 ```
 
-
 ```bash
 ### /etc/resolv.conf 用途
 $# cat /etc/resolv.conf
@@ -1038,26 +1039,6 @@ search       tonychoucc.local
 # search Domain 可以同時有多個, ex:
 search       tonychoucc.com  tony123.com  tony456.cc
 ```
-
-
-# mail
-
-站內寄信, 使用 `mail`, 所有使用者都有個 mailbox, 會寄到別人那邊 (`/var/spool/mail/<user>`)
-
-```sh
-### 寄信方式1: 互動式介面寄信
-$ mail -s "主題1" tony
-Hello~~~  I am GOD!!
-.   # 輸入「.」代表結束
-EOT
-
-### 寄信方式2: 使用資料劉重導向
-$ mail -s "主題2" tony < ~/content2tony
-
-### 寄信方式3: 使用管線
-$ ls -al ~ | mail -s "主題3" tony
-```
-
 
 # 其他
 
@@ -1135,6 +1116,6 @@ grep 'processor' /proc/cpuinfo
 # 我有一顆 4 核心的 CPU
 
 
-### 
+###
 
 ```
