@@ -48,7 +48,7 @@ Host git-codecommit.*.amazonaws.com
 
 ```bash
 ### 使用 CLI 快速建立一個 AWS CodeCommit Repository, 名為 git-test101
-repo_url=$(aws codecommit create-repository --repository-name git-test101 --query repositoryMetadata.cloneUrlHttp --output text)
+repo_url=$(aws codecommit create-repository --repository-name web --query repositoryMetadata.cloneUrlHttp --output text)
 echo $repo_url
 
 

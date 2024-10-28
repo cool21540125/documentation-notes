@@ -2,6 +2,7 @@
 # [CloudFront](https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/Introduction.html)
 
 - [深入討論為何 ACM 只能在 us-east-1](https://ithelp.ithome.com.tw/articles/10242264)
+- CloudFront points of presence (也就是 POPs or edge locations)
 - 有超過 200+ 個 Edge Locations
     - file cached for TTL
 - Security 安全性方面, 結合了:
@@ -46,18 +47,20 @@
     - 這個和 [S3 Pre-Signed URL](./S3.md#s3-pre-signed-urls) 很容易搞混
         - 可用來 filter by IP, path, date, expiration
             - 相較於 S3 Pre-Signed URL, 只能用來限定特定 URL 有效期限
-    ```mermaid
-    flowchart TB
 
-    cdn["CloudFront \n Edge location"];
+```mermaid
+flowchart TB
 
-    Client -- "1.Authentication \n Authorization" --> App;
-    App -- "2.SDK gen Signed URL/cookie" --> cdn;
-    cdn <-- "3.OAI" --> S3;
-    cdn -- "4.取得 Signed URL/cookie" --> App;
-    App -- "5.return URL" --> Client;
-    Client -- "6.訪問 Signed URL/cookie 爽看片" --> cdn;
-    ```
+cdn["CloudFront \n Edge location"];
+
+Client -- "1.Authentication \n Authorization" --> App;
+App -- "2.SDK gen Signed URL/cookie" --> cdn;
+cdn <-- "3.OAI" --> S3;
+cdn -- "4.取得 Signed URL/cookie" --> App;
+App -- "5.return URL" --> Client;
+Client -- "6.訪問 Signed URL/cookie 爽看片" --> cdn;
+```
+
 - CloudFront Signed URL 
     - private key 用來給 APP/EC2, sign URLs
     - public key 用來給 CloudFront verify URLs

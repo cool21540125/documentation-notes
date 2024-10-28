@@ -54,6 +54,12 @@
 - 常見 Issue:
   - 如果 access 機器, 發生 timeout, 必定是 Security Group Issue!!
   - 如果 access 機器, 發生 connection refused, 可能是 APP Error 或 機器沒開
+- 從 local 連到 AWS VPC 的 2 種方式:
+  - IPSec VPN gateway
+    - local 需要一個能支援 route-based IPSec VPN 的 gateway (此為 Customer Gateway)
+      - 此 VPN connection 被視為「路由協定及正常用戶流量可以 traverse 的連接」 (AWS 建議使用 BGP 來交換路由)
+    - VPC 需要將特定 Subnet 路由到 VPG(Virtual Private Gateway)
+  - Direct Connect
 
 # Subnet
 

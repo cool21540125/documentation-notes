@@ -1,11 +1,12 @@
-version: '3.8'
+version: '3'
+
 services:
   dynamodb70:
     image: "amazon/dynamodb-local:latest"
     container_name: dynamodb70
     restart: always
     ports:
-      - "28000:8000"
+      - "8000:8000"
     volumes:
       - "vol_dynamodb:/home/dynamodblocal/data"
     networks:

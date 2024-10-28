@@ -43,7 +43,7 @@ export AWS_ACCESS_KEY_ID=
 ### 可用來查看目前下的 CLI 指令是用 哪個設定檔/環境變數/命令選項
 aws configure list
 
-### AWS ACCOUNT_ID
+### AWS ACCOUNT_ID (GetCallerIdentity Api)
 export ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output text)
 
 ### (僅限 EC2 內使用), 取得 instance 所在 AWS_REGION

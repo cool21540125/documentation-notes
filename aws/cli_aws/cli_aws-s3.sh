@@ -46,3 +46,8 @@ aws s3 ls --summarize --human-readable --recursive s3://${BUCKET_NAME}
 ### 列出 all Buckets (建立時間 & 名稱)
 # https://awscli.amazonaws.com/v2/documentation/api/latest/reference/s3api/list-buckets.html
 aws s3api list-buckets
+
+### 同步本地檔案到 S3 Bucket
+FILE_PATH=
+S3_URI=
+aws s3 cp $FILE_PATH s3://$S3_URI

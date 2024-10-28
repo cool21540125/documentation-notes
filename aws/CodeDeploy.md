@@ -1,15 +1,14 @@
 
-# AWS CodeDeploy
+# [AWS CodeDeploy](https://docs.aws.amazon.com/codedeploy/latest/userguide/welcome.html)
 
-- [What is CodeDeploy?](https://docs.aws.amazon.com/codedeploy/latest/userguide/welcome.html)
 - CodeDeploy 目標如下:
     - EC2/On-Premise Server (需安裝 *CodeDeploy Agent*)
     - Lambda
     - ECS
 - 不依賴於 CloudFormation && Beanstalk
-- Deploy 會需要 `appspec.yml` (等同於 `.drone.yml`) (避免與 `buildspec.yml` 搞混)
-    - buildspec.yaml 理解 Dockerfile
-    - appspec.yaml 理解成 CI/CD pipeline yaml
+- Deploy 會需要 `appspec.yml` 
+    - 這個 `appspec.yml` 為 CI/CD pipeline yaml
+    - 此外 `buildspec.yml` 理解成 Dockerfile
     - [AppSpec File structure](https://docs.aws.amazon.com/codedeploy/latest/userguide/reference-appspec-file-structure.html)
     - 其中幾個重要階段
         - ValidateService : deploy 以後的 verify 流程
@@ -20,8 +19,6 @@
     - EC2 Instance Profile(Role) if Use EC2
         - 要讓 EC2 能夠 read S3 (ReadOnly 即可)
 - CodeDeploy 的 Source Code 來源, 目前(2022Q3) 只能是 S3 或 GitHub
-- [IAM instance Profile](./IAM.md#tips)
-- [Service Role](./IAM.md#tips), 等同於 *IAM Role*
     - Deployed APP access 相關 AWS Resources 的相關必要權限
 - Application Revision
     - APP Code + `appspec.yml` = APP Revision
