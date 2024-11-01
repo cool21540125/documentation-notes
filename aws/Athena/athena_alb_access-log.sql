@@ -36,22 +36,12 @@ CREATE EXTERNAL TABLE IF NOT EXISTS alb_access_logs (
   classification string,
   classification_reason string,
   conn_trace_id string
-) PARTITIONED BY (day STRING) ROW FORMAT SERDE 'org.apache.hadoop.hive.serde2.RegexSerDe'
+) ROW FORMAT SERDE 'org.apache.hadoop.hive.serde2.RegexSerDe'
 WITH
   SERDEPROPERTIES (
     'serialization.format' = '1',
-    'input.regex' = '([^ ]*) ([^ ]*) ([^ ]*) ([^ ]*):([0-9]*) ([^ ]*)[:-]([0-9]*) ([-.0-9]*) ([-.0-9]*) ([-.0-9]*) (|[-0-9]*) (-|[-0-9]*) ([-0-9]*) ([-0-9]*) \"([^ ]*) (.*) (- |[^ ]*)\" \"([^\"]*)\" ([A-Z0-9-_]+) ([A-Za-z0-9.-]*) ([^ ]*) \"([^\"]*)\" \"([^\"]*)\" \"([^\"]*)\" ([-.0-9]*) ([^ ]*) \"([^\"]*)\" \"([^\"]*)\" \"([^ ]*)\" \"([^\\s]+?)\" \"([^\\s]+)\" \"([^ ]*)\" \"([^ ]*)\" ?([^ ]*)?( .*)?'
-  ) LOCATION 's3://BUCKET/PREFIX/AWSLogs/AWS_REGION_NUMBER_NOT_ACCOUNT_ID/elasticloadbalancing/REGION/' TBLPROPERTIES (
-    "projection.enabled" = "true",
-    "projection.day.type" = "date",
-    "projection.day.range" = "2024/07/16,NOW",
-    "projection.day.format" = "yyyy/MM/dd",
-    "projection.day.interval" = "1",
-    "projection.day.interval.unit" = "DAYS",
-    "storage.location.template" = "s3://BUCKET/PREFIX/AWSLogs/AWS_REGION_NUMBER_NOT_ACCOUNT_ID/elasticloadbalancing/REGION/${day}"
-  )
-
-
+    'input.regex' = '([^ ]*) ([^ ]*) ([^ ]*) ([^ ]*):([0-9]*) ([^ ]*)[:-]([0-9]*) ([-.0-9]*) ([-.0-9]*) ([-.0-9]*) (|[-0-9]*) (-|[-0-9]*) ([-0-9]*) ([-0-9]*) \"([^ ]*) (.*) (- |[^ ]*)\" \"([^\"]*)\" ([A-Z0-9-_]+) ([A-Za-z0-9.-]*) ([^ ]*) \"([^\"]*)\" \"([^\"]*)\" \"([^\"]*)\" ([-.0-9]*) ([^ ]*) \"([^\"]*)\" \"([^\"]*)\" \"([^ ]*)\" \"([^\\s]+?)\" \"([^\\s]+)\" \"([^ ]*)\" \"([^ ]*)\" ?([^ ]*)?'
+  ) LOCATION 's3://BUCKET/PREFIX/AWSLogs/AWS_REGION_NUMBER_NOT_ACCOUNT_ID/elasticloadbalancing/REGION/'
 ----------------------------------------------------------------------------------------
 -- 
 ---------------------------------------------------------------------------------------- 

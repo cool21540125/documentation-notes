@@ -1,5 +1,6 @@
 # VPC Endpoint Services / PrivateLink(Private Link)
 
+- `PrivateLink(Private Link)` 與 `VPC Endpoint`, 兩者並非一樣的東西
 - 可以用來讓 VPC/On-Premise 的 AWS Services 藉由 private 的方式, 訪問其他的 AWS Services
   - 避免走 public 增加延遲 & 克金
 - PrivateLink 定義
@@ -26,6 +27,9 @@
 - 可讓 private subnet 內的 Resources, 藉由 _VPC Endpoint Gateway_ 來連接外部 Resources
   - ex: S3, DynamoDB
 - PrivateLink 的兩端必須是 NLB/GLB 及 ENI
+- Soft Limit
+  - 一個 Account 在每個 Region 最多有 20 Gateway Endpoints
+  - 一個 Account 在每個 VPC 最多有 255 Gateway Endpoints
 
 ---
 
@@ -59,3 +63,13 @@ veg <-- only --> limited["S3, DynamoDB"]
 vei <-- all --> aws["AWS Resources"]
 end
 ```
+
+# Endpoint for S3
+
+- 必要配置
+  - VPC 需要啟用 DNS resolution
+  - Endpoint Gateway 與 S3 Region 需要一樣
+  - Instance 使用的 SG 需要允許 S3 Prefix List
+  - Instance 所在的 NACL 需要允許 S3 Prefix List
+
+# Endpoint for DynamoDB
