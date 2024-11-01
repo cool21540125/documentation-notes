@@ -1,20 +1,22 @@
+# CloudWatch metrics - retention period
 
+- Prometheus 擷取 CloudWatch Metrics 的時候, 這些 metrics 的保存期限:
+  - 每個 data points 保存 15 months, 並且適度的做 aggregate:
+    - 3 hrs 以內, 可以查看 60 secs 以內的 data points
+    - 15 days 以內, 可以查看 1 min 的 data points
+    - 63 days 以內, 可以查看 5 min 的 data points
+    - 15 months 以內, 可以查看 1 hr 的 data point
 
-# StatsD protocol (for Linux & Windows)
+# CloudWatch Agent 蒐集 metrics 的 protocol
 
-- c for counter
-- g for gauge
-- ms for timer
-- h for histogram
-- s for set
-
-
-
-# collectd protocol (for Linux)
-
-- 僅支援 Linux
-
-
+- StatsD protocol (for Linux & Windows)
+  - c for counter
+  - g for gauge
+  - ms for timer
+  - h for histogram
+  - s for set
+- collectd protocol (for Linux)
+  - 僅支援 Linux
 
 # Search expression
 
