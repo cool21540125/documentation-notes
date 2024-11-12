@@ -262,3 +262,29 @@ sudo dpkg -r amazon-ssm-agent
 ```bash
 apt install net-tools
 ```
+
+# Install neo4j
+
+https://neo4j.com/docs/operations-manual/current/installation/linux/debian/
+
+```bash
+wget -O - https://debian.neo4j.com/neotechnology.gpg.key | sudo gpg --dearmor -o /etc/apt/keyrings/neotechnology.gpg
+# echo 'deb [signed-by=/etc/apt/keyrings/neotechnology.gpg] https://debian.neo4j.com stable 5' | sudo tee -a /etc/apt/sources.list.d/neo4j.list
+echo 'deb [signed-by=/etc/apt/keyrings/neotechnology.gpg] https://debian.neo4j.com stable latest' | sudo tee -a /etc/apt/sources.list.d/neo4j.list
+sudo apt-get update
+
+apt list -a neo4j
+
+sudo add-apt-repository universe
+
+sudo apt-get install neo4j=1:5.25.1
+
+sudo vim /etc/neo4j/neo4j.conf
+#server.default_listen_address=0.0.0.0
+
+sudo systemctl start neo4j
+sudo systemctl enable neo4j
+systemctl status neo4j
+```
+
+#
