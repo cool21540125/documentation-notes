@@ -1,4 +1,4 @@
-# Ch9  - Configuring and Securing OpenSSH Service
+# Ch9 - Configuring and Securing OpenSSH Service
 
 1. 遠端連線
 2. 設定檔
@@ -7,7 +7,7 @@
 ## 1. 遠端連線
 
 - telnet(明文)
-- ssh   (密文)
+- ssh (密文)
 
 ```sh
 # 遠端電腦 IP 為 192.168.124.133
@@ -44,7 +44,6 @@ $ ll ~/.ssh
 -rw-r--r--. 1 tony tony 1690  9月 30 00:09 known_hosts      # 別人的公鑰
 ```
 
-
 ## 2. 設定檔
 
 ```sh
@@ -57,7 +56,6 @@ PermitRootLogin             yes
 PermitRootLogin             without-password
 # 比較重要的幾個欄位 -----------
 ```
-
 
 ## 3. 跳板(進階)
 
