@@ -24,6 +24,10 @@ aws cloudwatch put-metric-data \
     --dimensions InstanceId=i-1234567890abcdef0,InstanceType=t2.micro
 # publishes a Buffers metric with two dimensions : InstanceId & InstanceType
 
+### 寫 log
+# https://awscli.amazonaws.com/v2/documentation/api/latest/reference/logs/put-log-events.html
+aws logs put-log-events --log-group-name /sre/demo --log-stream-name 1004 --log-events file://JSONFileName
+
 ### 建立 CloudWatch Alarm
 # https://awscli.amazonaws.com/v2/documentation/api/latest/reference/cloudwatch/put-metric-alarm.html
 # https://docs.aws.amazon.com/AmazonCloudWatch/latest/APIReference/API_PutMetricAlarm.html
