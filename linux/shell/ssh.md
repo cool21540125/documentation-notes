@@ -1,20 +1,16 @@
-與 ssh 有關的大小事
-
 # ssh agent
 
 ```bash
 ssh -T git@github.com  # default use ~/.ssh/id_rsa
 ssh -i Another_ssh_private_key -T git@github.com
-# 除非有自己去配置 ~/.ssh/config 
+# 除非有自己去配置 ~/.ssh/config
 # Host github.com
 #  ForwardAgent yes
 #  IdentityFile another_key
 
 
-### 
+###
 ```
-
-
 
 # SSH Server
 
@@ -69,7 +65,6 @@ UsePAM yes
 
 OpenSSH 也允許 forwarded remote port 到 0 (遇到再說了~)
 
-
 # SSH Client
 
 查詢 SSH Client 目前套用的配置檔, 語法:
@@ -100,8 +95,19 @@ ssh-add -k $SSH_PEM_NAME
 ssh-add -L
 ```
 
+# SSH Tunneling (SSH Port Forwarding)
 
-# SSH Tunnel
+SSH Port Forwarding 分成 3 種模式:
+
+1. Local Port Forwarding
+2. Remote Port Forwarding
+3. Dynamic Port
+
+Port Forwarding 角色定義:
+
+1. Client : Your PC
+2. SSH Server : Client 可 ssh 的 Host
+3. Target Server : 要訪問的標的 (通常是藏在 private 的 Service)
 
 ## Part 1.Local Forwarding
 
@@ -124,7 +130,7 @@ $ ssh -N -L 8088:169.254.10.10:80 tony@169.254.10.20
 # -N: 單純只給 forwarding ports 使用(不執行 remote command)
 # -L: Local Port Forwarding
 # 瀏覽器~~ 「localhost:8088」 就看到網頁了~~
-# 但是不知道為什麼　curl會出現 「curl: (7) Failed to connect to localhost port 8088: Connection refused」
+# 但是不知道為什麼 curl會出現 「curl: (7) Failed to connect to localhost port 8088: Connection refused」
 
 ### 或者, 可以更嚴格的限定, 只能由 localhost:8888 來做 Tunneling
 $ ssh -N -L 127.0.0.1:8088:169.254.10.10:80 tony@169.254.10.20
@@ -132,16 +138,14 @@ $ ssh -N -L 127.0.0.1:8088:169.254.10.10:80 tony@169.254.10.20
 # 也可藉由修改 ssh config 的 「LocalForward」來做限定
 ```
 
-
 ## Part 2.Remote Forwarding
 
 ```bash
 ### Remote Port Forwarding
 $ ssh -R 8080:localhost:80 public.example.com
-# 
+#
 # -R: 處理 Remote Port Forwarding
 ```
-
 
 # SSH Server 改 非正規 Port
 
@@ -167,7 +171,6 @@ $# firewall-cmd --add-port=6868/tcp
 $# firewall-cmd --add-port=6868/tcp --permanent
 ```
 
-
 # 製作本機端管控遠端登入的組態檔 (可免改 /etc/hosts 或 DNS)
 
 - [SSH](https://stackoverflow.com/questions/4565700/how-to-specify-the-private-ssh-key-to-use-when-executing-shell-command-on-git)
@@ -178,7 +181,7 @@ $ vim ~/.ssh/config
 # --------- 內容如下 ---------
 #!/bin/bash
 Host vm8                        # Remote Server 名稱
-    StrictHostKeyChecking   no              
+    StrictHostKeyChecking   no
     # 忽略 known_hosts 的檢查 (登入遠端機器, 不做檢查是否是以前登入過的機器)
     # 不過似乎好像也是 首次登入時, 不要詢問 Yes/No
 
@@ -202,7 +205,6 @@ Host aws
 $ ssh tony@vm8
 tony@172.20.61.210's password:
 ```
-
 
 # CLI
 
