@@ -1,34 +1,18 @@
-
 # [AWS CodeBuild](https://docs.aws.amazon.com/codebuild/latest/userguide/welcome.html)
 
 - build artifacts / compile / test / generate packages
 - Charge: 只對 Build Time 收 $$
 - 預設使用 `/buildspec.yml`
 - CodeBuild Container
-    - 因安全性因素(ex: 未必很清楚 Image 究竟幹了些啥), Container 跑在 VPC 外部
-    - 但如果要做整合測試 或需要授權訪問 AWS Resources, 則可做底下配置, 便可讓 *CodeBuild Container* 跑在 VPC 裡頭:
-        - VPC ID
-        - Subnet IDs
-        - Security Group IDs
+  - 因安全性因素(ex: 未必很清楚 Image 究竟幹了些啥), Container 跑在 VPC 外部
+  - 但如果要做整合測試 或需要授權訪問 AWS Resources, 則可做底下配置, 便可讓 _CodeBuild Container_ 跑在 VPC 裡頭:
+    - VPC ID
+    - Subnet IDs
+    - Security Group IDs
 
-```mermaid
-flowchart LR;
+# CodeBuild Environment Variables
 
-subgraph bp[Build Project]
-    env[Build environment]
-end
-
-aws["Web Console / CLI / SDKs / CodePipeline"];
-
-aws -- 1 & 6 --> cb[CodeBuild]
-cb -- 2 --> bp;
-src[Source Code] -- 3 --> bp;
-bp -- 4 --> platform["SNS / S3"];
-aws -- 5 --> cw[CloudWatch Logs];
-bp -- 5 --> cw;
-```
-
-
+- CODEBUILD_RESOLVED_SOURCE_VERSION
 
 # CodeBuild Agent
 

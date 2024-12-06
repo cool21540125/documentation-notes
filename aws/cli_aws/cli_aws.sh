@@ -1,5 +1,15 @@
 #!/bin/bash
 exit 0
+# CLI 讀取環境變數的優先順序
+# 1. cli 的 --XXX, 例如: aws s3 ls --profile dev
+# 2. cli 專屬的環境變數, 例如: AWS_PROFILE=dev aws s3 ls
+# 3. AssumeRole
+# 4. AssumeRoleWithWebIdentity (沒實驗過)
+# 5. ~/.aws/credentials
+# 6. Custom process (我不知道這啥...)
+# 7. ~/.aws/config
+# 8. ECS task definition IAM role
+# 9. EC2 instance profile
 # -----------------------------------------------------
 
 export AWS_CLI_AUTO_PROMPT=on-partial
@@ -26,13 +36,8 @@ aws sts decode-authorization-message --encoded-message ${EncodedErrorMessage}
 ### =================== 環境變數 ===================
 
 ### 使用不同的設定檔
-export AWS_PROFILE=tonychoucc
-# 需配置好 ~/.aws/config 及 ~/.aws/credentials
-
-### 除了 AWS_PROFILE 以外, 可用 AWS_REGION 來動態切換 Region
-export AWS_REGION=ap-northeast-1
-# ex: Tokyo : ap-northeast-1
-# ex: Osaka : ap-northeast-3
+export AWS_PROFILE=
+export AWS_DEFAULT_REGION=
 
 ### 變數優先級優先於 CLI 的 --region 及 SDK 的 AWS_REGION
 export AWS_DEFAULT_REGION=ap-northeast-1
