@@ -2,8 +2,6 @@
 
 - 2018/12/03
 
-
-
 ### DNS dump cache
 
 ```sh
@@ -16,26 +14,25 @@ $# unbound-control flush google.com.tw
 
 ### DNS Return Code
 
-Code     | Description
--------- | -------------------------------------------------
-SERVFAIL | (常見)DNS Server 無法與 要查詢的名稱權威伺服器 進行通信; NS Query 時遇到問題
-NXDOMAIN | queried name 不在 zone 內; 找不到資源紀錄; 
-REFUSED  | 因 DNS 政策限制, NS 無法執行 client DNS request OR client 無權使用 `recursive query` 及 `zone transfer request`
-
+| Code     | Description                                                                                                     |
+| -------- | --------------------------------------------------------------------------------------------------------------- |
+| SERVFAIL | (常見)DNS Server 無法與 要查詢的名稱權威伺服器 進行通信; NS Query 時遇到問題                                    |
+| NXDOMAIN | queried name 不在 zone 內; 找不到資源紀錄;                                                                      |
+| REFUSED  | 因 DNS 政策限制, NS 無法執行 client DNS request OR client 無權使用 `recursive query` 及 `zone transfer request` |
 
 ## 1. 名詞解釋
 
 DNS 區域保存的資料, 稱為 `資源紀錄 (Resource records, RRs)`
 
 - DNS(Domain Name Server) : 網際網路通訊協定名稱, 也稱 NS
-- hint (root)             : 頂層 DNS「.」 啦!!  紀錄 「.」的 zone 的類型, 稱為 `hint 類型`
-- TLD (Top Level Domain)  : 頂層領域 「.」 這個 DNS 啦
-- gTLD                    : 一般最上層領域名稱
-- ccTLD                   : 國碼最上層領域名稱
-- DNS resolution          : IP -> Domain Name
-- DNS resolution          : Domain Name -> IP
+- hint (root) : 頂層 DNS「.」 啦!! 紀錄 「.」的 zone 的類型, 稱為 `hint 類型`
+- TLD (Top Level Domain) : 頂層領域 「.」 這個 DNS 啦
+- gTLD : 一般最上層領域名稱
+- ccTLD : 國碼最上層領域名稱
+- DNS resolution : IP -> Domain Name
+- DNS resolution : Domain Name -> IP
 
-* RR格式: `Domain [TTL]   IN  [RR type]   value`
+* RR 格式: `Domain [TTL]   IN  [RR type]   value`
 
 ```sh
 # DNS resource records 範例
@@ -43,18 +40,18 @@ owner-name          TTL     class       type    data
 www.example.com     300     IN          A       192.168.1.10
 ```
 
-RR type | Description                       | Format                    | Example
-------- | --------------------------------- | ------------------------  | -------------------------------------------------------
-A       | IPv4                              | HOST  TTL  IN A     IP4   | www.tonychoucc.com 3600 IN A 54.87.59.78
-CNAME   | NS Alias (Canonical Name)         | ALIAS TTL  IN CNAME HOST  | orz.tonychoucc.com 3600 IN CNAME www.tonychoucc.com
-NS      | DNS Server(Name Server)           | 記錄我這台 DNS 的 DNS      | ns-670.awsdns-19.net.<br>ns-474.awsdns-59.com.<br>ns-1669.awsdns-16.co.uk.<br>ns-1080.awsdns-07.org.
-SOA     | Due Date                          |                           | ns-1669.awsdns-16.co.uk. awsdns-hostmaster.amazon.com. 1 7200 900 1209600 86400
-TXT     | Text records                      |                           | 
-AAAA    | IPv6                              |                           | 
-SRV     | service                           |                           | 
-MX      | 郵件伺服器的主機                   | N HOST.XXX.DOMAIN         | google.com. 451 IN MX 10 aspmx.l.google.com.
-PTR     | IP 對應的 Domain Name             | Reverse IP.in-addr.arpa.  | 87.124.168.192 (IP倒過來寫啦!)
-HINFO   | 主機使用的硬體和作業系統的參考資料   |                           | 
+| RR type | Description                        | Format                   | Example                                                                                              |
+| ------- | ---------------------------------- | ------------------------ | ---------------------------------------------------------------------------------------------------- |
+| A       | IPv4                               | HOST TTL IN A IP4        | www.tonychoucc.com 3600 IN A 54.87.59.78                                                             |
+| CNAME   | NS Alias (Canonical Name)          | ALIAS TTL IN CNAME HOST  | orz.tonychoucc.com 3600 IN CNAME www.tonychoucc.com                                                  |
+| NS      | DNS Server(Name Server)            | 記錄我這台 DNS 的 DNS    | ns-670.awsdns-19.net.<br>ns-474.awsdns-59.com.<br>ns-1669.awsdns-16.co.uk.<br>ns-1080.awsdns-07.org. |
+| SOA     | Due Date                           |                          | ns-1669.awsdns-16.co.uk. awsdns-hostmaster.amazon.com. 1 7200 900 1209600 86400                      |
+| TXT     | Text records                       |                          |
+| AAAA    | IPv6                               |                          |
+| SRV     | service                            |                          |
+| MX      | 郵件伺服器的主機                   | N HOST.XXX.DOMAIN        | google.com. 451 IN MX 10 aspmx.l.google.com.                                                         |
+| PTR     | IP 對應的 Domain Name              | Reverse IP.in-addr.arpa. | 87.124.168.192 (IP 倒過來寫啦!)                                                                      |
+| HINFO   | 主機使用的硬體和作業系統的參考資料 |                          |
 
 ```sh
 $ dig tonychoucc.com
@@ -72,15 +69,17 @@ tonychoucc.com.         3600    IN      SOA     ns-1669.awsdns-16.co.uk. awsdns-
 ```
 
 ###### CNAME 指向 `A 記錄` or 指向 `不屬於自己的Domain, 但額外加 TXT 紀錄`
+
 ###### SOA : 如果有很多台 DNS Server 共同管理一個 Domain 時, 較佳的方式是採用 master/slave 的方式. 這樣做的話, 就得宣告被管理的 zone file 是如何進行傳輸, 此時就需要 SOA record 了.
+
 ###### MX : 通常 一個特定的 Domain, 都會設定一個 MX, 也就是 寄信給這個 Domain 的信件, 都會送到這台 EMail Server 主機裏頭.
+
 ###### PTR: 把 ip 倒過來寫, 然後後面緊接著加上「.in-addr.arpa.」
 
 ### DNS Server 細部設定
 
-* 架設 `DNS`, 需要 `上層 DNS` 的授權才可以成為合法的 `DNS` (否則只能自己玩)
-* `DNS` 查詢時, 若 DB 內找不到, 會前往 `root(.)` 或 `forwarders(ex:168.95.1.1)` 查詢
-
+- 架設 `DNS`, 需要 `上層 DNS` 的授權才可以成為合法的 `DNS` (否則只能自己玩)
+- `DNS` 查詢時, 若 DB 內找不到, 會前往 `root(.)` 或 `forwarders(ex:168.95.1.1)` 查詢
 
 ## 環境 - 3 台 VM
 
@@ -139,16 +138,16 @@ $# vim /etc/unbound/unbound.conf
 interface: 0.0.0.0
 # 2 允許作 recursive query 的客戶端
 access-control: 172.25.0.0/24 allow
-# 3 
+# 3
 domain-insecure: "example.com"
-# 4 
+# 4
 forward-zone:
-    name: "." 
+    name: "."
     forward-addr: 172.25.254.254
-# 
+#
 
 # Check Config
-$# unbound-checkconf 
+$# unbound-checkconf
 unbound-checkconf: no errors in /etc/unbound/unbound.conf
 
 $# systemctl start unbound
@@ -283,21 +282,6 @@ It provides 3 IP addresses.
 192.168.2.117           rto 18 msec, ttl 766, ping 2 var 4 rtt 50, tA 0, tAAAA 0, tother 0, EDNS 0 probed.
 ```
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 # OLD
 
 ## 環境
@@ -359,8 +343,8 @@ yum install bind bind-chroot bind-utils bind-libs
     /named.rfc1912.zones        # DNS Server 的管轄網域定義檔 ## 註3
     /nsswitch.conf              # `/etc/hosts` 或 `/etc/resolv.conf` 的順序. ## 註1
     /resolv.conf                # ISP 的 DNS Server IP記錄處
-    /sysconfig/                 # 
-        /named                      # 
+    /sysconfig/                 #
+        /named                      #
 /usr/
     /sbin/
         /named                  # 系統服務執行檔
@@ -369,29 +353,32 @@ yum install bind bind-chroot bind-utils bind-libs
         /named.log                  # DNS Log
     /named/                     # 管轄網域的資源紀錄
         /chroot/                    # 安裝了 bind-chroot 套件了的 name server(bind套件) 安全機制
-            /etc/                       # 
+            /etc/                       #
                 /named/                     # 同 /etc/named/
-                /pki/                       
-            /var/                       # 
-                /named/                     # 
-        /named.localhost            # 
-        /named.ca                   # 
-        /named.loopback             # 
+                /pki/
+            /var/                       #
+                /named/                     #
+        /named.localhost            #
+        /named.ca                   #
+        /named.loopback             #
         /named.tony                 # 自訂的 RR ## 註2
     /run/
-        /named                  # 
-## 註1 : 「hosts: files dns myhostname」→ 先用 /etc/hosts 再用 /etc/resolv.conf, 最後看 myhostname(這啥...)
+        /named                  #
+## 註1
+#    「hosts: files dns myhostname」→ 先用 /etc/hosts 再用 /etc/resolv.conf, 最後看 myhostname(這啥...)
+#    不要直接改它!! 早期 Linux 版本直接改 OK, 比較新的版本會藉由 `systemd-resolved` 來管控它. 因而它只是個軟連結
+#    systemd-resolve --status 可查詢 systemd-resolved 使用情況, 進而研判 /etc/resolv.conf 的身世
 ## 註2 : 要在 /etc/named.rfc1912.zones 定義一個 zone 區塊, file 指名「file "named.tony"」 且為 root:named 擁有
 ## 註3 : 裡頭定義許多 `zone block`(參考 /var/named/named.xxx)
 ```
 
-* 如果使用 DHCP 自動取得 IP, 取得的資料, 會去複寫 `/etc/resolv.conf`(原本就設定好了, 還是會被蓋掉)
-    * 若不想要這事情發生, 必須到 `/etc/sysconfig/network-scripts/ifcfg-CONN` 增加 `PEERDNS=no`, 並 restart network
-* `bind` 因使用了 `/etc` 與 `/var/named` 來放置資源紀錄, 且 `named service` 對外開放, 因而產生安全性隱憂
-    * 使用 `bind-chroot` 套件, 將 `bind` 的根目錄由 `/` → `/var/named/chroot`, 故:
-        * `/etc`        →  `/var/named/chroot/etc`
-        * `/var/named`  →  `/var/named/chroot/var/named`
-* 
+- 如果使用 DHCP 自動取得 IP, 取得的資料, 會去複寫 `/etc/resolv.conf`(原本就設定好了, 還是會被蓋掉)
+  - 若不想要這事情發生, 必須到 `/etc/sysconfig/network-scripts/ifcfg-CONN` 增加 `PEERDNS=no`, 並 restart network
+- `bind` 因使用了 `/etc` 與 `/var/named` 來放置資源紀錄, 且 `named service` 對外開放, 因而產生安全性隱憂
+  - 使用 `bind-chroot` 套件, 將 `bind` 的根目錄由 `/` → `/var/named/chroot`, 故:
+    - `/etc` → `/var/named/chroot/etc`
+    - `/var/named` → `/var/named/chroot/var/named`
+-
 
 ## 啟用
 
@@ -416,7 +403,7 @@ $ dig [options] FQDN [@server]
 # 若不以 /etc/resolv.conf 指定的 DNS查詢時, 可自行指定 DNS
 # 常用的 options為:
 # +trace  : 從 root 開始追蹤
-# -t type : 
+# -t type :
 # -x      : DNS 反解 IP
 
 # 使用 Default DNS 查詢 google.com 對應的 IP
@@ -429,22 +416,19 @@ $ dig @168.95.1.1 google.com
 $ dig google.com ns
 ```
 
-
 # Domain
 
-> `man hostname` : 別用 `hostname` or `dnsdomainname` 來改變FQDN. 
-  更改 `FQDN` 較佳的方式, 去編輯 `/etc/hosts` : `127.0.0.1  www.tonychoucc.com www`
-  
+> `man hostname` : 別用 `hostname` or `dnsdomainname` 來改變 FQDN.
+> 更改 `FQDN` 較佳的方式, 去編輯 `/etc/hosts` : `127.0.0.1  www.tonychoucc.com www`
 
 - [How to set the fully qualified hostname on CentOS 7.0?](https://unix.stackexchange.com/questions/239920/how-to-set-the-fully-qualified-hostname-on-centos-7-0)
 
 ```sh
-# 
+#
 $ dnsdomainname
 example.com
 
 ```
-
 
 # 其它
 
@@ -496,7 +480,7 @@ portwell.com.tw.        600     IN      A       192.168.2.116
 ;; MSG SIZE  rcvd: 92
 
 
-### 公司外部查詢 
+### 公司外部查詢
 $# host -a wellwell.com.tw
 Trying "wellwell.com.tw"
 ;; ->>HEADER<<<- opcode: QUERY, status: NOERROR, id: 17385
@@ -550,7 +534,6 @@ ex1.wellwell.com.tw.    1200    IN  A   192.168.2.56
 Received 477 bytes from 192.168.2.115#53 in 0 ms
 ```
 
-
 ```sh
 # dig [options] FQDN [@server]
 $ dig wellwell.com.tw
@@ -588,5 +571,5 @@ google.com.tw mail is handled by 20 alt1.aspmx.l.google.com.
 google.com.tw mail is handled by 30 alt2.aspmx.l.google.com.
 #             ↑↑↑↑ 此為 MX
 
-$# 
+$#
 ```

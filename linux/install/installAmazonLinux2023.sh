@@ -29,10 +29,19 @@ docker --version
 sudo curl -L https://github.com/docker/compose/releases/latest/download/docker-compose-$(uname -s | tr '[:upper:]' '[:lower:]')-$(uname -m) -o /usr/bin/docker-compose && sudo chmod 755 /usr/bin/docker-compose && docker-compose --version
 
 ### ================== Install nvm ==================
-# https://linux.how2shout.com/how-to-install-nvm-on-amazon-linux-2023/
-sudo dnf update
-curl https://raw.githubusercontent.com/creationix/nvm/master/install.sh | bash
+# https://docs.aws.amazon.com/sdk-for-javascript/v2/developer-guide/setting-up-node-on-ec2-instance.html
+curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash
+# 隨時上網看最新版
+
 source ~/.bashrc
-nvm --version
+nvm install 22
+
+### ================== Install yq ==================
+# https://github.com/mikefarah/yq - 查看版本
+VERSION=v4.44.5
+BINARY=yq_linux_amd64
+BINARY=yq_linux_arm64
+sudo wget https://github.com/mikefarah/yq/releases/download/${VERSION}/${BINARY} -O /usr/bin/yq
+sudo chmod +x /usr/bin/yq
 
 ###
