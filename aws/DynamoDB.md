@@ -7,25 +7,18 @@
     - DynamoDB 專用的快取
     - DynamoDB fully managed in-memory cache
     - 10x performance improvement
-- Cost
+- pricing
   - 儲存容量計費
   - 流量計費
   - WCU & RCU 計費
 
 ---
 
-| Cost                  | RCU               | WCU               |
-| --------------------- | ----------------- | ----------------- |
-| Eventually consistent | 8 KB / per unit   | 1 KB / per unit   |
-| Strongly consistent   | 4 KB / per unit   | 1 KB / per unit   |
-| Transactional request | 4 KB / per 2 unit | 1 KB / per 2 unit |
-
----
-
 - Table Class 分成 2 種:
   - Standard Table Class
   - Infrequent Access(IA) Table Class
-    - 雖說 Storage Cost 較低, 不過 throughput cost 較高. 因此使用尚須留意, 此較適合真的很少 r/w 的 data 才能真的省錢
+    - 雖說 Storage Cost 較低, 不過 throughput cost 較高
+    - 較適合真的很少 r/w 的 data 才能真的省錢
 - store documents, key-value
   - max: 一筆 400 KB
 - 常見查詢
@@ -42,12 +35,6 @@
     - 如果要查詢特定 Range Key, 但是不知道 Partition Key, 則需要借助 GSI
     - Performance 為 O(1)
   - GetItem API
-- RCU(Read Capacity Unit)
-  - 1 單位的 RCU, 表示每秒鐘的讀取量能為:
-    - Strongly consistent 讀取 1 個 4 KB 物件
-    - Eventually consistent 讀取 2 個 4 KB 物件 (預設查詢)
-- WCU(Write Capacity Unit)
-  - 1 單位的 WCU, 表示每秒鐘能寫入 1 KB
 - 多人同時寫入的問題
   - 如果發生 multiple users 同時寫入到 DynamoDB
     - 預設寫入 DynamoDB(`PutItem`, `UpdateItem`, `DeleteItem`) 為 unconditional 操作
@@ -76,6 +63,60 @@
         - Filter expression
           - 針對查詢到的 items 做 refine (並不會降低 consumed capacity)
   - PartiQL for DynamoDb (也可以使用在 AWS CLI/API 的情境)
+- RCU(Read Capacity Unit)
+  - 1 單位的 RCU, 表示每秒鐘的讀取量能為:
+    - Strongly consistent 讀取 1 個 4 KB 物件
+    - Eventually consistent 讀取 2 個 4 KB 物件 (預設查詢)
+- WCU(Write Capacity Unit)
+  - 1 單位的 WCU, 表示每秒鐘能寫入 1 KB
+
+# WCU & RCU 計算
+
+- DynamoDb Table 的每個 Partition 的 Max Capacity 為 `3000 RCU/sec` 及 `1000 WCU/sec`
+- 每個 RCU 等同於:
+  - 1 strongly consistent read operation (4 KiB) / sec
+  - 2 eventually consistent read operations (4 KiB) / sec
+- 每個 WCU 等同於:
+  - 1 write operation ( 1 KiB) / sec
+- Table 中的 all partitions 的 total throughput 則可在事先規劃成:
+  - Provisioned mode
+  - on-demand mode
+
+| Pricing               | RCU               | WCU               |
+| --------------------- | ----------------- | ----------------- |
+| Eventually consistent | 8 KB / per unit   | 1 KB / per unit   |
+| Strongly consistent   | 4 KB / per unit   | 1 KB / per unit   |
+| Transactional request | 4 KB / per 2 unit | 1 KB / per 2 unit |
+
+---
+
+- DynamoDb WCU / RCU 計算範例:
+  - Item 為 20 KB, 則 一次的強一致性讀取 消耗 5 RCU
+    - 也就是說, 在還沒達到 Table partition 限制以前, 最多可併發達到 600 次 / sec 的 強一致性讀取
+
+# DynamoDB 有 2 種 Key
+
+## DynamoDB 的 Primary Key
+
+## DynamoDB 的 Secondary Index
+
+DynamoDB 的 Secondary Index 有 2 種
+
+- Global secondary index, GSI
+  - 概念上, GSI 是個 Shadow Table
+  - GSI 會建立一個 Index. 資料獨立於 Base Table, 儲存在它自己的 partition space
+  - GSI 可在 Table 建立以後增減, **每個 Table 軟限 20 個 GSI**
+  - GSI 可使用截然不同的 Partition Key (+ Sort Key)
+    - 由於會使用不同的 Partition Key, 因此只能使用 `Eventually Consistency Read`
+  - GSI 並無大小限制. 使用獨立的 Provisioned throughput settings
+- Local secondary index, LSI
+  - 概念上, LSI 在各個 Partition 裏頭, 建立一個功能等同於 Sort Key 的 Index 來作為查詢依據
+  - LSI 會基於 Base Table 使用相同的 Partition Key, 然後可將其他 attributes 晉升為 LSI
+  - LSI 必須在 Create Table 時就需要定義好, **每個 Table 硬限 5 個 LSI**
+  - LSI 更像是 hot partition
+  - LSI 資料位於相同的 base table, 相同 Partition, 可選擇 `Strongly Consistency Read` 或 `Eventually Consistency Read`
+  - LSI + Item 限制為 400KB (需要留意, Ddb Item 每筆最大為 400 KB)
+  - Item collections 無法被切割, 因而有 10GB 大小限制 (1000 WCU && 3000 RCU) <- 不是很懂
 
 # DynamoDb Global Table
 
@@ -83,29 +124,6 @@
   - multi-active database
   - localized read and write performance
 - 可作 active-active r/w replication
-
-# DynamoDB Index 另有 2 種 Secondary Index
-
-## Global secondary index, GSI
-
-> An index with a partition key and a sort key that can be different from those on the base table. A global secondary index is considered "global" because queries on the index can span all of the data in the base table, across all partitions. A global secondary index is stored in its own partition space away from the base table and scales separately from the base table.
-
-- Shadow Table
-- 可使用截然不同的 Partition Key (+ Sort Key)
-- 可在 Create Table 之後隨時增減 GSI, 每張 Table 軟限 20 個 GSI
-- 因為會使用不同的 Partition Key, 因此只能使用 Eventually Consistency Read
-
-## Local secondary index, LSI
-
-> An index that has the same partition key as the base table, but a different sort key. A local secondary index is "local" in the sense that every partition of a local secondary index is scoped to a base table partition that has the same partition key value.
-
-- 使用既有 Partition Key, 可另外設定其他 attribute 升格為 LSI
-- Create Table 時就需要定義好, 且每個 Table 硬限 5 個, 無法事後異動
-- 位於既有 Partition, 因而有下列限制需要知道:
-  - LSI 更像是 hot partition
-  - Item collections 無法被切割, 因而有 10GB 大小限制 (1000 WCU && 3000 RCU) <- 不是很懂
-  - Item + LSIs 限制為 400KB (需要留意, Ddb Item 每筆最大為 400 KB)
-  - 強一致性 (資料位於相同的 base table, 相同 Partition)
 
 # DynamoDB backup
 
@@ -136,3 +154,15 @@
   - Insert (PutItem API is used to create a new item or to replace existing items completely with a new item)
 - UpdateItem API :
   - Update (UpdateItem API is used to create a new item or to replace existing items completely with a new item)
+
+# 其他未整理
+
+> https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/bp-partition-key-design.html
+>
+> You should design your application for uniform activity across all partition keys in the table and its secondary indexes.
+>
+> 應為 DynamoDb App 設計來實現 table 裡頭所有 partition keys 及 secondary indexes 的統一活動
+>
+> You can determine the access patterns that your application requires, and read and write units that each table and secondary index requires.
+
+> 應該要將相關的東西放在同一個 table 來達到查詢的效率. 此外, 可藉由 `sort key` 來有效率的查詢一些經常按照某種排序來做查詢的欄位們 (index 的概念)

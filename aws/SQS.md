@@ -10,22 +10,6 @@
 - Cloudwatch Alarm metrics:
   - `ApproximateNumberOfMessagesNotVisible` : Queue 裡頭, 無法被立即 read 的 messages 數量
 
-```mermaid
-flowchart BT
-
-sqs["SQS Queue"]
-subgraph asg["ASG"]
-    ec2["EC2 Instances"]
-end
-cwm["CloudWatch Metric \n Queue Length"]
-cwa["CloudWatch Alarm"]
-
-cwm -- monitoring --> sqs;
-cwm -- Alarm for breach --> cwa;
-cwa -- scaling --> asg;
-sqs -- Poll for messages --> asg;
-```
-
 ## SQS - Queue Types
 
 1. Standard Queues

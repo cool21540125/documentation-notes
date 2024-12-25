@@ -1,0 +1,25 @@
+AWSTemplateFormatVersion: '2010-09-09'
+
+Resources:
+  SrePocQueue:
+    Type: AWS::SQS::Queue
+    Properties:
+      QueueName: SrePoc202412Queue
+
+Outputs:
+  QueueName:
+    Description: The name of the queue
+    Value:
+      Fn::GetAtt:
+      - SrePocQueue
+      - QueueName
+  QueueURL:
+    Description: The URL of the queue
+    Value:
+      Ref: SrePocQueue
+  QueueARN:
+    Description: The ARN of the queue
+    Value:
+      Fn::GetAtt:
+      - SrePocQueue
+      - Arn

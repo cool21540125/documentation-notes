@@ -60,7 +60,7 @@ aws ecs update-service \
   --service $ECS_SERVICE \
   --enable-execute-command true
 
-### Step2. 遠端 ssh ECS (Task 需有 Public IP && ECS 須先 EnableExecuteCommand)
+### Step2. 遠端 ssh ECS (ECS Task 須先 EnableExecuteCommand)
 # https://awscli.amazonaws.com/v2/documentation/api/latest/reference/ecs/execute-command.html
 # 進入 ECS Container 的前提是, 需要有 enableExecuteCommand
 aws ecs execute-command \
@@ -68,3 +68,26 @@ aws ecs execute-command \
   --task $ECS_TASK_ARN_OR_ID \
   --container $ECS_CONTAINER \
   --interactive --command "/bin/sh"
+
+### ======================================================================= 設定 ASG  =======================================================================
+
+### 設定 ECS ASG scheduled scaling
+# https://awscli.amazonaws.com/v2/documentation/api/latest/reference/application-autoscaling/put-scheduled-action.html
+aws application-autoscaling put-scheduled-action \
+  --service-namespace ecs \
+  --resource-id "service/$ECS_CLUSTER/$ECS_SERVICE" \
+  --scheduled-action-name SrePocScheduledScaling \
+  --scalable-dimension "ecs:service:DesiredCount" \
+  --schedule "cron(30 14 * * ? *)" \
+  --timezone "Asia/Taipei" \
+  --scalable-target-action MinCapacity=1,MaxCapacity=3
+
+### 刪除 ECS ASG scheduled scaling
+# https://awscli.amazonaws.com/v2/documentation/api/latest/reference/application-autoscaling/delete-scheduled-action.html#examples
+aws application-autoscaling delete-scheduled-action \
+  --service-namespace ecs \
+  --resource-id "service/$ECS_CLUSTER/$ECS_SERVICE" \
+  --scheduled-action-name SrePocScheduledScaling \
+  --scalable-dimension "ecs:service:DesiredCount"
+
+###

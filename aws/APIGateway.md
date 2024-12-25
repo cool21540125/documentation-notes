@@ -1,4 +1,4 @@
-# [API Gateway](https://docs.aws.amazon.com/apigateway/latest/developerguide/welcome.html)
+# API Gateway
 
 - [Api Gateway 重大事項聲明](https://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-known-issues.html)
 - [Api Gateway quota 及 notes](https://docs.aws.amazon.com/apigateway/latest/developerguide/limits.html)
@@ -144,17 +144,17 @@ api <--> On-Premise
 // Lambda/Http proxy integration 的 Response 必須符合此規範 (否則 API Gateway 502):
 // https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/sam-property-api-corsconfiguration.html
 {
-    "statusCode": "${httpStatusCode}",
-    "headers": {
-        // 下面這些 Access-Control, 官方文件說如果用 proxy integration, 則一定得要有
-        "Access-Control-Allow-Headers": "Content-Type",
-        "Access-Control-Allow-Origin": "www.example.com",
-        "Access-Control-Allow-Methods": "POST, GET",
-        "headerName": "headerValue",
-        "otherHeaderKey": "otherHeaderValue"
-    },
-    "isBase64Encoded": true|false,  // 可以無此 key (似乎是, body 裡頭有 encoded 的話才需要用?)
-    "body": "..."  // 此為 `JSON Stringify` (並非 Object)
+  "statusCode": "${httpStatusCode}",
+  "isBase64Encoded": true|false,  // 可以無此 key (似乎是, body 裡頭有 encoded 的話才需要用?)
+  "headers": {
+      // 下面這些 Access-Control, 官方文件說如果用 proxy integration, 則一定得要有
+      "Access-Control-Allow-Headers": "Content-Type",
+      "Access-Control-Allow-Origin": "www.example.com",
+      "Access-Control-Allow-Methods": "POST, GET",
+      "headerName": "headerValue",
+      "otherHeaderKey": "otherHeaderValue"
+  },
+  "body": "..."  // 此為 `JSON Stringify` (並非 Object)
 }
 ```
 

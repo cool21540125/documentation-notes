@@ -1,52 +1,56 @@
-
-# [X-Ray](https://docs.aws.amazon.com/xray/latest/devguide/aws-xray.html)
+# AWS X-Ray
 
 ![X-Ray graph](./img/x-ray_graph.png)
 
+- 使用 X-Ray 的話, 需要使用底下方式:
+  - X-Ray SDKs
+  - X-Ray APIs
+  - ADOT, AWS Distro for OpenTelemetry
+  - CloudWatch Application Signals
 - 視覺化 Request 近來到 APP 以後, 整個後端的資料流
-    - Tracing && Visual analysis for APP
-    - 對於 Distributed System 排查很有幫助
-        - 可對 分散式系統的 log 彙整, 並提供 UI, 可在 **X-Ray** Console 看到 Service Performance Status
-    - 它會在我們的 Request 塞 `trace` 這神奇的東西
-        - Trace: segments collected together to form an end-to-end trace
-            - trace 裡頭由一系列的 `segments` 所構成
-                - segment 又由一系列的 `subsegments` 所構成
-        - X-Ray 並不會接收來自 ELB 的資料
-            - ELB 會在 Request Header 塞 `X-Amzn-Trace-Id`
-    - Request 發送到 AWS Resources 上頭, Resources 可針對 trace 做一些識別, 最終得出一個 Service Map
+  - Tracing && Visual analysis for APP
+  - 對於 Distributed System 排查很有幫助
+    - 可對 分散式系統的 log 彙整, 並提供 UI, 可在 **X-Ray** Console 看到 Service Performance Status
+  - 它會在我們的 Request 塞 `trace` 這神奇的東西
+    - Trace: segments collected together to form an end-to-end trace
+      - trace 裡頭由一系列的 `segments` 所構成
+        - segment 又由一系列的 `subsegments` 所構成
+    - X-Ray 並不會接收來自 ELB 的資料
+      - ELB 會在 Request Header 塞 `X-Amzn-Trace-Id`
+  - Request 發送到 AWS Resources 上頭, Resources 可針對 trace 做一些識別, 最終得出一個 Service Map
 - Charge
-    - 針對送到 X-Ray 的資料計費
+  - 針對送到 X-Ray 的資料計費
 - X-Ray 的各種需求牽扯到的關鍵字
-    - sampling
-        - 因為 X-Ray 收了一大堆數據, 用這個可以僅收集你感興趣的欄位
-        - X-Ray Sampling Rules(採樣規則) - 協助節省傳送到 X-Ray 的流量
-        - 預設 X-Ray SDK 會紀錄:
-            - 每秒鐘第一筆 Request
-            - 該秒內其餘 5% 的 Request
-        - Custom Sampling Rules
-            - 可自行配置 (in Web Console, 改後無需重啟服務, 無需動 Code)
-                - reservoir(池, 水庫) : ex: 10, 則表示每秒鐘蒐集前十筆
-                - rate               : ex: 50%, 表示蒐集該秒內 幫我蒐集一半的請求
-                    - 會花很多錢... 不過對於排查很有幫助
-                - (還有其他...)
-    - annotations
-        - Key Value pairs used to index traces and use with filters
-        - 方便搜尋及篩選效率
-    - interceptors
-    - filters
-        - X-Ray Filter expression
-        - Use filter expressions to view a service map or traces for a specific request, service, connection between two services (an edge), or requests that satisfy a condition.
-        - 此與節省流量啥的無關... 地位好像是跟 PromQL 一樣, 用來篩選而已?
-    - handlers
-    - middleware
-    - subsegments 
-        - 如果想要 segments 裡頭有更多細節的話參考這個
+  - sampling
+    - 因為 X-Ray 收了一大堆數據, 用這個可以僅收集你感興趣的欄位
+    - X-Ray Sampling Rules(採樣規則) - 協助節省傳送到 X-Ray 的流量
+    - 預設 X-Ray SDK 會紀錄:
+      - 每秒鐘第一筆 Request
+      - 該秒內其餘 5% 的 Request
+    - Custom Sampling Rules
+      - 可自行配置 (in Web Console, 改後無需重啟服務, 無需動 Code)
+        - reservoir(池, 水庫) : ex: 10, 則表示每秒鐘蒐集前十筆
+        - rate : ex: 50%, 表示蒐集該秒內 幫我蒐集一半的請求
+          - 會花很多錢... 不過對於排查很有幫助
+        - (還有其他...)
+  - annotations
+    - Key Value pairs used to index traces and use with filters
+    - 方便搜尋及篩選效率
+  - interceptors
+  - filters
+    - X-Ray Filter expression
+    - Use filter expressions to view a service map or traces for a specific request, service, connection between two services (an edge), or requests that satisfy a condition.
+    - 此與節省流量啥的無關... 地位好像是跟 PromQL 一樣, 用來篩選而已?
+  - handlers
+  - middleware
+  - subsegments
+    - 如果想要 segments 裡頭有更多細節的話參考這個
 - Old way for debugging in production
 - 可直接在 local test, 並 log -> anywhere
 - Use Cases:
-    - 用來對 Performance 做 troubleshooting(bottlenecks)
-    - pinpoint service issue
-    - review request behavior
+  - 用來對 Performance 做 troubleshooting(bottlenecks)
+  - pinpoint service issue
+  - review request behavior
 
 ```mermaid
 flowchart LR;
@@ -67,15 +71,13 @@ daemon <--> other;
 daemon <--> cdk;
 ```
 
-
 # X-Ray Usage
 
-## 1. import SDK in Code 
+## 1. import SDK in Code
 
 ### ex1. Django
 
 - 需在 settings.py 增加 X-Ray 配置, 參考 [Configuring the X-Ray SDK for Python](https://docs.aws.amazon.com/xray/latest/devguide/xray-sdk-python-configuration.html)
-
 
 ### ex2. Beanstlk
 
@@ -84,7 +86,7 @@ daemon <--> cdk;
 
 ```yaml
 option_settings:
-    aws:elasticbeanstalk:xray:XRayEnabled: true
+  aws:elasticbeanstalk:xray:XRayEnabled: true
 ```
 
 ### ex3. ECS (有 3 種模式可使用)
@@ -93,7 +95,6 @@ option_settings:
 - ECS Cluster EC2 Type, 裡頭運行的 Container, 都要有 `X-Ray Sidecar`
 - Fargate Cluster, ECS Cluster 裡頭, 每個 `Fargate Task` 裡頭的 `APP Container` 都需要再掛一個 `X-Ray Sidecar`
 - 上述的這些 sidecar, 都使用 Container 裡頭的 2000 port UDP 來做通訊
-
 
 ## 2. Enable X-Ray
 
