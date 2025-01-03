@@ -30,7 +30,7 @@
       - 可參考 parallel scans using multi-threading (可加速作業)
     - 一次只能回傳 1 MB (需要 pagination)
   - Query
-    - 可藉由使用 Partition Key 或 Partition Key + Range Key 來做查詢
+    - 可藉由使用 `Partition Key` 或 `Partition Key + Sort Key` 來做查詢
       - 藉由使用 RangeKey 的 **ConditionExpressions** 做進一步過濾
     - 如果要查詢特定 Range Key, 但是不知道 Partition Key, 則需要借助 GSI
     - Performance 為 O(1)
@@ -45,6 +45,27 @@
     - 這只會減少 ResultSet 的數量, Query 本身也是一樣耗費了原本查詢的資料筆數, 只是回傳的資料量能有效減少(類似 SQL 的 where clauses)
   - [ProjectionExpression](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/Expressions.ProjectionExpressions.html)
     - To read data from a table, you use operations such as GetItem, Query, or Scan. Amazon DynamoDB returns all the item attributes by default. To get only some, rather than all of the attributes, use a projection expression.
+
+# DynamoDb 的 Key
+
+索引是找到資料的唯一方式, 否則就只能使用 Scan
+
+### Primary Key : 主索引
+
+- `Partition key(又稱為 Hash key)` 及 `Sort key(又稱為 Range key)`
+- DynamoDb Table 的 Primary Key 可以有 2 種方式:
+  - 單純使用 `Partition key`
+  - 複合使用 `Partiton key + Sort key`
+
+### Secondary Key : 次要索引
+
+- `Global secondary index, GSI` 及 `Local secondary index, LSI`
+- 主要用途是, 可以藉由不同的 key 取得資料
+  - 建立次要索引以後, 會基於原本的 table(稱為 BaseTable), 建立出 Index (其實變相的建立出一個新的欄位, 用作搜尋依據)
+- GSI
+  - GSI
+- LSI
+  - LSI 是一種使用相同的 `partition key`, 及不同的 `sort key` 的 index
 
 # DynamoDb 的 Read & Write
 
@@ -124,6 +145,29 @@ DynamoDB 的 Secondary Index 有 2 種
   - multi-active database
   - localized read and write performance
 - 可作 active-active r/w replication
+
+# DynamoDB Index 另有 2 種 Secondary Index
+
+## Global secondary index, GSI
+
+> An index with a partition key and a sort key that can be different from those on the base table. A global secondary index is considered "global" because queries on the index can span all of the data in the base table, across all partitions. A global secondary index is stored in its own partition space away from the base table and scales separately from the base table.
+
+- Shadow Table
+- 可使用截然不同的 Partition Key (+ Sort Key)
+- 可在 Create Table 之後隨時增減 GSI, 每張 Table 軟限 20 個 GSI && 每張 Table 5 個 LSI
+- 因為會使用不同的 Partition Key, 因此只能使用 Eventually Consistency Read
+
+## Local secondary index, LSI
+
+> An index that has the same partition key as the base table, but a different sort key. A local secondary index is "local" in the sense that every partition of a local secondary index is scoped to a base table partition that has the same partition key value.
+
+- 使用既有 Partition Key, 可另外設定其他 attribute 升格為 LSI
+- Create Table 時就需要定義好, 且每個 Table 硬限 5 個, 無法事後異動
+- 位於既有 Partition, 因而有下列限制需要知道:
+  - LSI 更像是 hot partition
+  - Item collections 無法被切割, 因而有 10GB 大小限制 (1000 WCU && 3000 RCU) <- 不是很懂
+  - Item + LSIs 限制為 400KB (需要留意, Ddb Item 每筆最大為 400 KB)
+  - 強一致性 (資料位於相同的 base table, 相同 Partition)
 
 # DynamoDB backup
 
