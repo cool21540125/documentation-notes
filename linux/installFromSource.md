@@ -32,8 +32,6 @@ go build
 # build released version
 go build -ldflags "-w -s -X 'github.com/hashicorp/terraform/version.dev=no'" -o ~/bin/
 
-mv dist/terraform ~/bin/
-
 ### Terraform tab completion
 terraform -install-autocomplete
 ```

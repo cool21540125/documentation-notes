@@ -1,41 +1,18 @@
 - 2022/09/03
 - [Tutorial: Creating a cluster with an EC2 task using the AWS CLI](https://docs.aws.amazon.com/AmazonECS/latest/developerguide/ECS_AWSCLI_EC2.html)
-    - (這篇是使用 EC2 Launch Type)
-
+  - (這篇是使用 EC2 Launch Type)
 
 ```bash
 aws ecs list-clusters
 
 ### Step 1: Create a Cluster
 aws ecs create-cluster --cluster-name $CLUSTER_NAME
-#{
-#    "cluster": {
-#        "clusterArn": "arn:aws:ecs:ap-northeast-1:xxxxxxxxxxxx:cluster/MyCluster0903",
-#        "clusterName": "MyCluster0903",
-#        "status": "ACTIVE",
-#        "registeredContainerInstancesCount": 0,
-#        "runningTasksCount": 0,
-#        "pendingTasksCount": 0,
-#        "activeServicesCount": 0,
-#        "statistics": [],
-#        "tags": [],
-#        "settings": [
-#            {
-#                "name": "containerInsights",
-#                "value": "disabled"
-#            }
-#        ],
-#        "capacityProviders": [],
-#        "defaultCapacityProviderStrategy": []
-#    }
-#}
-
 
 ### Step 2: Launch an Instance with the Amazon ECS AMI
 # run task 之前, 必須先有 「Amazon ECS container instance in your cluster」
 # 先建立一台 EC2, 需要具備 ECS 必要的 Roles
 # 為了方便 lab 進展, VPC 要與 ECS Service 一樣 && Security Group 開 80
-# 
+#
 # Tutorial: https://docs.aws.amazon.com/AmazonECS/latest/developerguide/launch_container_instance.html
 
 ### Step 3: List Container Instances
@@ -49,7 +26,7 @@ aws ecs list-container-instances --cluster ${CLUSTER_NAME}
 #        "arn:aws:ecs:us-east-1:aws_account_id:container-instance/container_instance_ID"
 #    ]
 #}
-# 
+#
 
 
 ### Step 4: Describe your Container Instance
@@ -62,7 +39,7 @@ $# aws ecs describe-container-instances \
 
 ### Step 5: Register a Task Definition
 $# aws ecs register-task-definition \
-    --cli-input-json file://sleep360.json
+    --cli-input-json file://taskdef-sleep360.json
 # 想在 Cluster 里頭 run task, 必須先定義 Task Definition
 
 
@@ -73,7 +50,7 @@ $# aws ecs list-task-definitions
 ### Step 7: Run a Task
 $# aws ecs run-task \
     --cluster ${CLUSTER_NAME} \
-    --task-definition sleep360:1 \
+    --task-definition taskdef-sleep360:1 \
     --count 1
 # Output 參考 example-run-ecs-task-output.jsonc
 

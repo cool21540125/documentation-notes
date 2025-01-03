@@ -15,6 +15,10 @@ jobs -lr  # 列出 running jobs
 jobs -ls  # 列出 stopped jobs
 
 
+### 移除 jobs (先用 jobs -l 找出要砍的 bg job)
+kill %1
+
+
 ### 前景程序 (Terminal Blocking)
 #「Ctrl + z」丟入 背景暫停 (Running → stopped)
 

@@ -1,3 +1,17 @@
+# ECS Events
+
+- ECS 會追蹤 tasks / services 的 state, 若 state 異動, 則可觸發 EventBridge. 而這些 event-type(event type) 可以分為:
+  - ECS container instance state change event
+  - ECS task state change event
+  - ECS service deployment state change event
+  - ECS service action event
+
+### task state change event
+
+- 觸發原因
+  - `StartTask` / `RunTask` / `StopTask` API
+  - `SubmitTaskStateChange` API
+
 # ECS metrics
 
 - CPUReservation

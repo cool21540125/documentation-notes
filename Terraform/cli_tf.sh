@@ -7,12 +7,10 @@ terraform version
 #Terraform v1.7.5
 #on darwin_amd64
 
-
 ### 切換 terraform workspace
 terraform workspace show
 terraform worksapce list
 terraform workspace select $ENV
-
 
 ### 初始化 Terraform
 terraform init
@@ -23,23 +21,20 @@ terraform plan --var-file="terraform-$ENV.tfvars"
 
 terraform apply
 terraform apply --var-file="terraform-$ENV.tfvars"
+terraform apply -auto-approve
 
 terraform destroy
 terraform destroy --var-file="terraform-$ENV.tfvars"
-
 
 ### 移除特定資源
 terraform destroy -target="RESOURCE.NAME"
 # 使用 tf state list 查詢 targets
 
-
 ### 列出所有資源
 terraform state list | grep xxx
 
-
 ### 檢查當前資料夾下的 .terraform.tfstate
 terraform show
-
 
 ### ============ Terraform Workspace ============
 ### 可用來切不同環境, ex: dev / stg / prd
@@ -55,7 +50,6 @@ tf workspace delete pre
 
 # state 會被保存在
 # ./terraform.tfstate.d/${terraform.workspace}/terraform.tfstate
-
 
 ### 載入變數
 tf plan -var="foo=bar"

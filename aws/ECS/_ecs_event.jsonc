@@ -1,0 +1,19 @@
+{
+  "version": "0",  // main body version 永遠都是 0
+  "id": "ddca6449-b258-46c0-8653-e0e3a6EXAMPLE",
+  "detail-type": "ECS Task State Change",
+  "source": "aws.ecs",
+  "account": "123456789012",
+  "time": "2024-12-30T16:31:14Z",
+  "region": "us-west-2",
+  "resources": ["arn:aws:ecs:us-west-2:123456789012:task/sre_poc_cluster/xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"],
+  "detail": {
+    "eventType": "INFO",
+    "eventName": "SERVICE_DEPLOYMENT_IN_PROGRESS",
+    "deploymentId": "ecs-svc/123",
+    "updatedAt": "2024-12-30T17:00:00Z",
+    "reason": "ECS deployment deploymentId in progress.",
+    // 相同的 event 在不同的 detail-type, 會有相同的 detail version
+    "version": "1"  // detail object version 則會與 resource 的狀態版本有關聯, 0, 1, 2, ... 事件變化後遞增
+  }
+}

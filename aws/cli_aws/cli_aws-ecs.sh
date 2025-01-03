@@ -41,6 +41,17 @@ done
 # https://awscli.amazonaws.com/v2/documentation/api/latest/reference/application-autoscaling/describe-scaling-policies.html
 aws application-autoscaling describe-scaling-policies --service-namespace ecs --query 'ScalingPolicies[].{svc: ResourceId, policy: PolicyType}' --output json | jq
 
+###
+# https://awscli.amazonaws.com/v2/documentation/api/latest/reference/ecs/list-task-definitions.html
+aws ecs list-task-definitions
+
+### 註冊 Task Definition
+TASK_DEFINITION_FILE=TaskDefinition.json
+aws ecs register-task-definition --cli-input-json file://${TASK_DEFINITION_FILE}
+# containerPort : port that container exposes
+# hostPort      : port that you want to map it to on the host
+# 這檔案長得一副就是 docker-compose 的樣子
+
 ### ======================================================================= 查詢 ECS Public IP =======================================================================
 
 ### 查詢 ECS Task Public IP
@@ -55,10 +66,13 @@ echo $PUBLICIP
 
 ### Step1. 遠端 ssh ECS (Task 需有 Public IP) # NOTE: 還沒驗證指令可行性
 # https://awscli.amazonaws.com/v2/documentation/api/latest/reference/ecs/update-service.html
+ECS_CLUSTER=ServerAPI
+ECS_SERVICE=authServiceStaging
 aws ecs update-service \
   --cluster $ECS_CLUSTER \
   --service $ECS_SERVICE \
-  --enable-execute-command true
+  --enable-execute-command \
+  --force-new-deployment
 
 ### Step2. 遠端 ssh ECS (ECS Task 須先 EnableExecuteCommand)
 # https://awscli.amazonaws.com/v2/documentation/api/latest/reference/ecs/execute-command.html
@@ -89,5 +103,34 @@ aws application-autoscaling delete-scheduled-action \
   --resource-id "service/$ECS_CLUSTER/$ECS_SERVICE" \
   --scheduled-action-name SrePocScheduledScaling \
   --scalable-dimension "ecs:service:DesiredCount"
+
+### ======================================================================= 全部掃一次 =======================================================================
+
+### 列出 所有 ECS Deployment failure detection
+aws ecs list-clusters --output text | awk '{print $2}' | while IFS= read -r ECS_CLUSTER; do
+  aws ecs list-services --cluster $ECS_CLUSTER --output text | awk '{print $2}' | while IFS= read -r ECS_SERVICE; do
+    aws ecs update-service \
+      --cluster $ECS_CLUSTER \
+      --service $ECS_SERVICE \
+      --deployment-configuration "deploymentCircuitBreaker={enable=true,rollback=true}"
+    echo "${ECS_CLUSTER}::${ECS_SERVICE} -- DONE"
+  done
+done
+
+### Deployment failure - Circuit breaker
+aws ecs update-service \
+  --cluster $ECS_CLUSTER \
+  --service $ECS_SERVICE \
+  --deployment-configuration "deploymentCircuitBreaker={enable=true,rollback=true}"
+
+### Deployment failure - Alarm action
+# https://docs.aws.amazon.com/AmazonECS/latest/developerguide/deployment-alarm-failure.html
+ALARM_NAME_01=
+aws ecs update-service \
+  --cluster $ECS_CLUSTER \
+  --service $ECS_SERVICE \
+  --desired-count 1 \
+  --deployment-configuration "alarms={alarmNames=[${ALARM_NAME_01}],enable=true,rollback=true}" \
+  --force-new-deployment
 
 ###
