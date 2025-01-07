@@ -27,11 +27,9 @@
   - ALB 會藉由 _Dynamic Host Port Mapping_ 來找到對應的 port
   - 也因此, EC2 的 SG 需要 allow ALL from ELB
 - ECS `Sidecar container`
-  - ECS 的 `task definition JSON` 裏頭(定義 Container 的地方), 會有個 `essential` 的變數, default 為 true
-    - 則表示此為此 task definition 的主要容器
-    - 若沒聲明 or 聲明為 false, 則此 container 為 sidecar container
-  - 建立 _Task Definition_ 的時候, 如果裡頭定義了 multiple container, 指 _Essential Container = No_ 的這些
-    - 如果 Sidecar container 關掉了, 並不會讓 ECS Task 關掉
+  - ECS 的 `task definition JSON` 的 essential 欄位:
+    - true(Default) : 該 Container 為 Task 的 主要容器 (Task 裡頭起碼要有一個 essential container)
+    - false : 該 Container 為 Task 的 sidecar container
 
 # ECS - Auto Scaling
 
