@@ -26,7 +26,12 @@
   - pinpoint service issue
   - review request behavior
 
-## 2. Enable X-Ray
+# X-Ray 概念
+
+- X-Ray 會以 `segments` 的單位從 Service 接收到資料, X-Ray 再將它們組合成 `traces`, 最終再將這些 traces 組合成 `service graph`
+-
+
+# X-Ray Usage
 
 - EC2 Type - 需要 `install && run X-Ray Daemon`
 - Farget Type - 需要 `enable X-Ray AWS Integration`

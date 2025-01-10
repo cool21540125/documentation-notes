@@ -46,6 +46,10 @@
   - [ProjectionExpression](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/Expressions.ProjectionExpressions.html)
     - To read data from a table, you use operations such as GetItem, Query, or Scan. Amazon DynamoDB returns all the item attributes by default. To get only some, rather than all of the attributes, use a projection expression.
 
+# DynamoDB - Good Example
+
+- https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/data-modeling-online-shop.html
+
 # DynamoDb 的 Key
 
 索引是找到資料的唯一方式, 否則就只能使用 Scan

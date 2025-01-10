@@ -67,6 +67,10 @@ docker system df
 #Local Volumes   24        23        62.2kB    0B (0%)
 #Build Cache     0         0         0B        0B
 
+### 檢查 Docker Image 的 Digest
+docker manifest inspect --verbose ${IMAGE}:${TAG} | jq '.[0].Descriptor.digest'
+# 用來跟 Registry 的 Image Digest 比對
+
 ###############################################################################################
 # export / import / save / load
 ###############################################################################################
