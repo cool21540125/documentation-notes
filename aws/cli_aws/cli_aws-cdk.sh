@@ -1,6 +1,14 @@
 #!/bin/env bash
 exit 0
+# cdk 的 context 來源
+# 1. 由 AWS account
+# 2. 藉由 cdk --context
+# 3. 藉由 cdk.context.json
+# 4. 藉由 cdk.json
+# 5. 藉由 ~/.cdk.json
+# 6. 藉由 CDK app 的 construct.node.setContext()
 # -------------------------------------------------------------------------------------
+
 # ======================== Install cdk ========================
 
 # 須先安裝 nodejs, 然後再裝 cdk
@@ -43,15 +51,17 @@ cdk bootstrap aws://$ACCOUNT_NUMBER/$REGION \
 ### 初始化 CDK(特定語言) project
 cdk init NewCdkProject --language python
 
+# ======================== Context ========================
+cdk context    # 列出目前 cdk project 的 context
+cdk context -j # json 呈現
+
 # ======================== Usage ========================
 ### 初始化專案
 cdk init app --language typescript
 
 ### 生成 CloudFormation Template
-cdk synth -q
+cdk synth -q # 不要 print 出來
 cdk synth $StackName
-# -q (不確定)
-# 生成 CloudFormation Template
 
 ### 與 deployed stacks 或 local CloudFormation Template 做比較
 cdk diff

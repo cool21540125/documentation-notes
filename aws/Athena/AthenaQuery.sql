@@ -128,6 +128,7 @@ PARTITIONED BY (
     `delivered_timestamp` string)
 ROW FORMAT SERDE 'org.openx.data.jsonserde.JsonSerDe'
 STORED AS INPUTFORMAT 'com.amazon.emr.cloudtrail.CloudTrailInputFormat'
+-- STORED AS INPUTFORMAT 'org.apache.hadoop.mapred.TextInputFormat'
 OUTPUTFORMAT 'org.apache.hadoop.hive.ql.io.HiveIgnoreKeyTextOutputFormat'
 LOCATION
     's3://aws-cloudtrail-logs-換成你的AWS_ACCOUNT_ID-45ae7317/AWSLogs/換成你的AWS_ACCOUNT_ID/'

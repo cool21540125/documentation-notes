@@ -1,6 +1,8 @@
 # VPC Endpoint Services / PrivateLink(Private Link)
 
 - `PrivateLink(Private Link)` 與 `VPC Endpoint`, 兩者並非一樣的東西
+  - PrivateLink 只是個 AWS Resources 走內網互相訪問的概念
+  - VPC Endpoint 則是用來提供給 AWS Resources 走內網互相訪問的東西(又分為 Gateway/Interface)
 - 可以用來讓 VPC/On-Premise 的 AWS Services 藉由 private 的方式, 訪問其他的 AWS Services
   - 避免走 public 增加延遲 & 克金
 - PrivateLink 定義

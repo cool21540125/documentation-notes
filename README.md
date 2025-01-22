@@ -28,6 +28,10 @@ find . -name '*' \
 - [隨機 User](https://jsonplaceholder.typicode.com/users)
 - [Live Webhook](https://webhook.site)
 
+## Open Data
+
+- [Registry of Open Data on AWS](https://registry.opendata.aws/)
+
 by TonyCC
 
 - https://blog.tonychoucc.com

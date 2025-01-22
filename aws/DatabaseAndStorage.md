@@ -209,36 +209,40 @@ AWS Database && Storage related
 
   - KDF -> Redshift
 
-    ```mermaid
-    flowchart LR
+  ```mermaid
+  flowchart LR
 
-    src["Data Source \n ex: S3"]
-    kdf["KDF, Kinesis Data Firehose"]
-    redshift["RedShift Cluster \n (執行 S3 COPY Command)"]
-    src --> kdf;
-    kdf -- load data --> redshift
-    ```
+  src["Data Source \n ex: S3"]
+  kdf["KDF, Kinesis Data Firehose"]
+  redshift["RedShift Cluster \n (執行 S3 COPY Command)"]
+  src --> kdf;
+  kdf -- load data --> redshift
+  ```
 
-  - [S3, DynamoDB, DMS, other DB] -> Redshift
-    ```mermaid
-    flowchart LR
-    rc["Redshift Cluster"]
-    S3 -- Internet --> rc;
-    S3 -- "through VPC \n Enhanced VPC Routing" --> rc;
-    ```
-    - 由 Redshift 裡頭執行 `COPY Command`
-    ```
-    copy customer
-    from 's3://my_bucket/my_data'
-    iam_role 'arn:aws:iam::123456887123:role/MyRedshiftRole'
-    ```
+- [S3, DynamoDB, DMS, other DB] -> Redshift
+
+  ```mermaid
+  flowchart LR
+  rc["Redshift Cluster"]
+  S3 -- Internet --> rc;
+  S3 -- "through VPC \n Enhanced VPC Routing" --> rc;
+  ```
+
+  - 由 Redshift 裡頭執行 `COPY Command`
+
+  ```
+  copy customer
+  from 's3://my_bucket/my_data'
+  iam_role 'arn:aws:iam::123456887123:role/MyRedshiftRole'
+  ```
+
   - EC2 Instance, JDBC driver
 
-    ```mermaid
-    flowchart LR
+  ```mermaid
+  flowchart LR
 
-    EC2 -- "jdbc \n (建議 batch 寫入)" --> rc["Redshift Cluster"]
-    ```
+  EC2 -- "jdbc \n (建議 batch 寫入)" --> rc["Redshift Cluster"]
+  ```
 
 # AWS Glue
 
@@ -252,7 +256,7 @@ AWS Database && Storage related
     - catalog of databases
     - 可整合 Athena, RedShift, EMR
 
-### Glue
+---
 
 ```mermaid
 flowchart LR;
@@ -263,7 +267,11 @@ RDS -- Extract --> Glue;
 Glue -- load --> Redshift;
 ```
 
+---
+
 ### Glue Data Catalog
+
+- `AWS Glue Data Catalog` 協助將 S3 的 Schema 保留了一致性的 metadata store
 
 ```mermaid
 flowchart LR;
@@ -393,8 +401,7 @@ ff -- IAM Role --> S3;
 ff -- IAM Role --> EFS;
 ```
 
-
 # IOPS, input/output operations per second
 
-- IOPS 以 KiB 為單位做衡量. 硬體驅動 決定了 *a single I/O* 操作的最大資料量. SSD I/O 大小上限為 256 KiB && HHD I/O 大小上限為 1024 KiB (因為 SSD 比起 HHD 處理小型or隨機檔案更有效率)
-- 
+- IOPS 以 KiB 為單位做衡量. 硬體驅動 決定了 _a single I/O_ 操作的最大資料量. SSD I/O 大小上限為 256 KiB && HHD I/O 大小上限為 1024 KiB (因為 SSD 比起 HHD 處理小型 or 隨機檔案更有效率)
+-

@@ -181,8 +181,6 @@ CLF-C01
   - Memcache
 - 需 run on EC2 (非 Serverless)
 
-## [DynamoDB](./DynamoDB.md)
-
 ## RedShift
 
 - RedShift 為 _Columnar Storage_ (非 row based)
@@ -215,16 +213,14 @@ CLF-C01
 
 ## DocumentDB
 
-- 相對於 Aurora 是 AWS 魔改了 PostgreSQL/MySQL
-- DocumentDB 則是 AWS 發布的 MongoDB 的魔改版本
+- AWS 魔改了 PostgreSQL/MySQL 產出 Aurora
+- AWS 魔改了 MongoDB 產出 DocumentDB
 - 儲存
   - 每次擴增儲存的單位是 10 GB
   - 最大可控增到 64 TB
 - 吞吐量
   - 可處理 百萬量級 / sec 的請求
-- MongoDB
 - Replication 為 Cross 3 AZ
-  - HA
 
 ## AWS Keyspaces
 
@@ -275,18 +271,6 @@ src["Source DB"] -- DMS --> db["AWS Target DB"];
 
 # Other Compute Services: ECS, Lambda, Batch, Lightsail
 
-## ECS, Elastic Container Service
-
-- [ECS](./ECS.MD)
-- 用來 Launch Container
-  - 需自行維護 EC2, ECS 則用來 start/stop Container
-- 可整合至 ALB(Application Load Balancer)
-
-## Fargate
-
-- Serverless
-- 同 ECS 用來 Launch Container, 但不需要自行維護 Infra
-
 ## Lambda
 
 - 最初最初, 雲服務最早的 Serverless 為 AWS Lambda, 當時是 `Serveless == FaaS`
@@ -306,13 +290,6 @@ src["Source DB"] -- DMS --> db["AWS Target DB"];
 - Use Case
   - User 上傳 png -> S3, 背後 trigger 把 png 縮小後, 另外儲存, 可用 Lambda
   - Serverless CRON Job. 藉由 **CloudWatch** 或 **EventBridge** Event 來 trigger Lambda FN
-
-## API Gateway
-
-- [API Gateway](./APIGateway.md)
-- Serverless & Scalable
-  - RESTful API
-  - WebSocket API
 
 ## API Batch
 
@@ -455,27 +432,27 @@ S3 -- $0.04 / GB --> repl["cross-region Replication"]
 - 其中一個功能可做 DDoS Protection
 - by using CloudFront's _Origin Access Identity(OAI)_ to enhance security
 
-  ```mermaid
-  flowchart LR;
+```mermaid
+flowchart LR;
 
-  User --> Edge;
-  Edge -- private --> S3;
-  S3 -- OAI --> oia["Origin Access Identity + S3 Bucket Policy"]
-  ```
+User --> Edge;
+Edge -- private --> S3;
+S3 -- OAI --> oia["Origin Access Identity + S3 Bucket Policy"]
+```
 
 - Cloudfront 可作為 ingress(入口), 來上傳 file -> S3
 
-  ```mermaid
-  flowchart LR;
+```mermaid
+flowchart LR;
 
-  subgraph origin
-  S3;
-  http["HTTP Server"];
-  end
+subgraph origin
+S3;
+http["HTTP Server"];
+end
 
-  client --> cloudfront["Cloudfron(Local Cache)"];
-  cloudfront --> origin;
-  ```
+client --> cloudfront["Cloudfron(Local Cache)"];
+cloudfront --> origin;
+```
 
 ## S3TA, S3 Transfer Acceleration
 

@@ -1,34 +1,15 @@
-# [ELB, Elastic Load Balancer](https://docs.aws.amazon.com/elasticloadbalancing/latest/application/introduction.html)
+# ELB, Elastic Load Balancer
 
-![ELB](./img/LB.png)
-
-- 一個 **Load Balancer** 可有多個 Listeners
-  - 一個 **Listener** 起碼要有一個 Rule (作為 Default Rule)
-    - Rule 用來決定將流量發到哪個 **Target Group**
-      - Rule 裡頭設定 Redriction Rule
-      - Rule 裡頭會有 priority, actions, conditions
-        - action
-          - Forward to Target Groups
-          - Redirect to URL
-          - Return fixed response
-- 同一個 **Target** 可重複出現在不同的 **Target Group**
-- 可在 **Target Group** 有他自己的 **Health Check**
 - ELB - Cross Zone Load Balancing
-  - CLB (已棄用)
-  - ALB
-    - 預設 enabled, 且無法 disabled (always on)
-    - AZ 內資料傳輸免錢
-  - NLB
-    - 預設 disabled
-    - 若啟用, AZ 內傳輸要課金
-  - GWLB
+  - ALB - 預設啟用 Cross Zone Load Balancing, 相同 AZ 內傳輸免錢
+  - NLB - 預設關閉 Cross Zone Load Balancing, 相同 AZ 內傳輸要錢
+  - GWLB - (尚未了解)
 - ELB 有固定的 DNS Name :
   - `{ElbName}-{Account}.{Region}.elb.amazonaws.com`
 
 # ELB 的 Sticky Session / Session Affinity
 
-- Sticky 的問題要在 **Target Group** 裡頭處理
-- 分成 2 種 Cookies (有效期限皆為 1 sec ~ 7 days):
+- Sticky 的問題要在 **Target Group** 裡頭處理, 分成 2 種 Cookies (有效期限皆為 1 sec ~ 7 days):
   - Application-based Cookie
     - 有 2 個地方可以產生此 Cookie:
       - Custom cookie
@@ -77,31 +58,6 @@
   - 如果打算啟用 _Access Logs_, 則這些 log 每隔 5 mins 會被送往 S3, 並以下列格式儲存:
     - `bucket[/prefix]/AWSLogs/aws-account-id/elasticloadbalancing/region/yyyy/mm/dd/aws-account-id_elasticloadbalancing_region_app.load-balancer-id_end-time_ip-address_random-string.log.gz`
   - 這些 _Access Logs_ 包含: client's IP address / latencies / request paths / server responses
-
----
-
-```mermaid
-flowchart LR
-
-subgraph tg1["Target Group"]
-    direction LR
-    t1["EC2"]
-    t2["ECS Target"]
-    t3["Lambda"]
-    t4["IP Address"]
-end
-
-subgraph SG["SG (不要忘了我)"]
-    ALB
-end
-
-client -- SG1 --> ALB;
-ALB -- SG2 --> tg1;
-```
-
-- 實作:
-  - SG1 allow 0.0.0.0/0
-  - SG2 allow from SG1
 
 ---
 
