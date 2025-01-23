@@ -1,9 +1,7 @@
-
 - [為什麼使用 Kubernetes](https://blog.gcp.expert/kubernetes-gke-introduction/)
 - [Learn Kubernetes Basics](https://kubernetes.io/docs/tutorials/kubernetes-basics/)
-- [k8s-30天](https://ithelp.ithome.com.tw/articles/10192401)
-- [raft演算法(去中心化)-超簡明解說](http://thesecretlivesofdata.com/raft/)
-
+- [k8s-30 天](https://ithelp.ithome.com.tw/articles/10192401)
+- [raft 演算法(去中心化)-超簡明解說](http://thesecretlivesofdata.com/raft/)
 
 # K8s Interface
 
@@ -12,7 +10,6 @@ k8s 只有制定了 3 個介面
 - CRI, 容器運行介面
 - CNI, 容器網路介面
 - CSI, 容器儲存介面
-
 
 # 一些必要名詞之間的定義 && 釐清
 
@@ -28,15 +25,13 @@ K8s 平台的選擇:
   - VMware Tanzu
   - Rancher : 三者中較為便宜
 
-
 # 架構
 
 ![Learn Kubernetes Basics](./img/k8s_arch-1024x437.png)
 
-
 - Kubernetes Master
   - etcd
-    - 儲存一堆元件的資訊及狀態: Nodes, Pods, Configs, Secrets, Accounts, Roles, Bindings, 
+    - 儲存一堆元件的資訊及狀態: Nodes, Pods, Configs, Secrets, Accounts, Roles, Bindings,
       - 像是使用 `kubectl get ...` 便是從中取得
     - k8s 儲存在 etcd 裡頭的結構, 會以 `/registry` 為 root directory
       - 而底下會有像是: minions, pods, replicasets, deployments, roles, secrets, ...
@@ -56,8 +51,7 @@ K8s 平台的選擇:
   - kube-proxy
     - 對外提供 service
 
-------------------------------------------------------------
-
+---
 
 # kubernetes CRI 架構演進圖
 
@@ -82,19 +76,16 @@ kubelet -> CRI-O                                                                
   - 包含 2 個規範:
     - Buntime Specification(runtime-spec)
       - The Runtime Specification outlines how to run a “filesystem bundle” that is unpacked on disk
-    - Image Specification(image-spec)
-      - 
+    - ## Image Specification(image-spec)
 
-------------------------------------------------------------
-
+---
 
 # k3s
 
 - 內建 Ingress
 - 內建 Dynamic Volume Provision
 
-------------------------------------------------------------
-
+---
 
 # k8s - monitoring
 
@@ -115,18 +106,17 @@ kubelet -> CRI-O                                                                
       - Deployment 排程了多少 Pod 備份
       - 多少 Pod 是 running, stopped, terminated
       - Pod 重啟了多少次
-- v1.11版發布以後 - **metrics-server**
+- v1.11 版發布以後 - **metrics-server**
   - 主要關注於 Resource 度量 Api 的實現, ex:
     - CPU, File Descriptor, Memory, Request Delay ms, ...
-  - `Metrics-Server` 使用 *Metrics API* 來將 metrics expose 給 APIServer
+  - `Metrics-Server` 使用 _Metrics API_ 來將 metrics expose 給 APIServer
     - 像是使用 `kubectl top`, 就是去尻 Metrics API
     - Metric Server 適合用於 Horizontal Pod Autoscaler and Vertical Pod Autoscaler.
     - 此指標 不適合用於 non-autoscaling purposes. 不建議用來作為監控使用!!
       - 取而代之, 可使用 kubelet 上頭的 `/metrics/resource` Endpoint
   - 藉由 Aggregated API, ex: metrics.k8s.io, custom.metrics.k8s.io, external.metrics.k8s.io
 
-
-------------------------------------------------------------
+---
 
 # 未整理
 
@@ -135,7 +125,7 @@ kubelet -> CRI-O                                                                
   - The key difference between kubectl apply and create is that apply creates Kubernetes objects through a declarative syntax, while the create command is imperative.
   - kubectl apply : declarative syntax, 可用來改變已 deploy 的規格 && 也可用來首次建立
   - kubectl create : imperative, 只能用來首次建立
-- HPA Controller, Horizontal Pod Autoscaler
+- HPA Controller(Horizontal Pod Autoscaling), Horizontal Pod Autoscaler
   - 用來實現以 CPU 為基礎的 自動 Pod 容量調整機制
     - 可以讓 k8s auto-scaling Pods 啦
   - 細節

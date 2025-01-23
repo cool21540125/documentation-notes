@@ -103,6 +103,10 @@ aws ec2 create-security-group --vpc-id $VPC_ID --group-name $SG_NAME --descripti
 aws ec2 authorize-security-group-ingress --group-id $GroupId --protocol tcp --port 443 --cidr 10.0.0.0/16
 aws ec2 authorize-security-group-ingress --group-id $GroupId --protocol tcp --port $PORT --source-group $FROM_SG_ID
 
+### 列出 SG/SecurityGroup 的 associations
+SG_ID=sg-0872a8a14cb5eac03
+aws ec2 describe-network-interfaces --filters Name=group-id,Values=$SG_ID
+
 ### ENI 反查出他的 Public IP
 ENI=eni-0ba04ba3a91828d8d
 aws ec2 describe-network-interfaces --network-interface-ids $ENI --output yaml | yq '.NetworkInterfaces[0].Association.PublicIp'

@@ -2,6 +2,11 @@
 exit 0
 # ------------------------------------------------------------
 
+### ======================= 常見問題 =======================
+
+### git 拉取 aws private registry 的驗證問題
+git config --local credential.helper '!aws codecommit credential-helper $@'
+
 ### ======================= 常用 =======================
 
 ### ======================= 同一個 Git Server, 使用不同的 Key =======================
@@ -152,7 +157,7 @@ git submodule update --init --recursive
 cd ${SubModule}
 git pull
 
-### 移除 submodule
+### ======================= 移除 submodule =======================
 SM=xxx
 git submodule deinit -f $SM
 rm -rf .git/modules/$SM

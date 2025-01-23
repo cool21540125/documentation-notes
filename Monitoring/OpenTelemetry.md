@@ -1,0 +1,3 @@
+- OpenTelemetry, OTel
+  - 觀測性框架
+  - 用來建立及管理 traces / metrics / logs 的 toolkit

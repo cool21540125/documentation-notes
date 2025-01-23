@@ -1,36 +1,35 @@
+#!/bin/bash
+exit 0
+# -----------------------------------------------------------------
 
-# helm CLI
+### =========== Settings ===========
+export KUBECONFIG=~/.kube/XXX.yaml
 
-```bash
 ### 新建一個 Chart (可理解成 git init NewGitProjectFromScratch)
 helm create ${NewChartFromScratch}
-
 
 ### 增加訂閱 add Helm Repo
 helm repo add stable https://charts.helm.sh/stable
 helm repo add bitnami https://charts.bitnami.com/bitnami
-
+helm repo add grafana https://grafana.github.io/helm-charts
 
 helm repo add nfs-subdir-external-provisioner https://kubernetes-sigs.github.io/nfs-subdir-external-provisioner/
 #"nfs-subdir-external-provisioner" has been added to your repositories
 #(增加 Dynamic Volume Provider)
 
-
 ### 列出 helm client 以追蹤的 helm repository
 helm repo list
 #NAME    URL
-#stable  https://charts.helm.sh/stable     
+#grafana https://grafana.github.io/helm-charts
+#stable  https://charts.helm.sh/stable
 #bitnami https://charts.bitnami.com/bitnami
-
 
 ### 搜尋 特定 helm repo
 helm search repo ${Helm_Repo_Name}
 
-
 ### 排除特定
 helm search repo ${Helm_Repo_Name} | grep -v DEPRECATED
 ### 2021/11 的現在, 會有一大堆 DEPRECATED (推測是大型贊助者不贊助了)
-
 
 ### 確保可以抓到 latest charts (同 apt-get update)
 helm repo update
@@ -40,32 +39,27 @@ helm repo update ${Helm_Repo_Name}
 #...Successfully got an update from the "stable" chart repository
 #Update Complete. ⎈Happy Helming!⎈
 
-
 ### 由本地的 Helm Charts 部署 Release
 helm install ${Installed_Release_Name} ${Local_Helm_Repo_Name}/${Chart_Name_From_Helm_Repo}
 helm install -f values.yaml ${ReleaseName} ${PATH_to_ChartDir}
 helm install -f values.yaml ${Local_Helm_Repo_Name}/${Chart_Name_From_Helm_Repo}
 
-
 ### 列出 chart 的 information
 helm show chart
 helm show chart -n $NS
 
-
 ### 列出 releases
 helm list
 helm list -n $NS
-helm list -d       # sort by release date
+helm list -d # sort by release date
 helm list --all
 helm list --uninstalled
 helm list uninstalled --failed
 
-
 helm upgrade -f values.yaml ${ReleaseName} ${PATH_to_ChartDir}
-### 
+###
 helm upgrade ${ChartName}
 #應該等同於 kubectl apply 吧?!
-
 
 ### 安裝 nfs-subdir-external-provisioner, 並設定幾個值覆寫預設
 helm install nfs-subdir-external-provisioner nfs-subdir-external-provisioner/nfs-subdir-external-provisioner \
@@ -80,7 +74,6 @@ helm install nfs-subdir-external-provisioner nfs-subdir-external-provisioner/nfs
 #REVISION: 1
 #TEST SUITE: None
 
-
 ### install helm pkgs && 指定特定變數值(來自自訂 yaml file)
 helm install --values=${MyYamlFile} ${ChartName}
 # 預設會吃 values.yaml, 但裡頭的值會被 ${MyYamlFile} 的值覆蓋
@@ -92,49 +85,35 @@ helm install --set ${KEY}=${Value}
 # 不管是 --values=xxx 或 --set xx=xx
 #     最終都會產生出 「.Values object」
 
-
 ### 僅測試(語法驗證等), 但不保證可行
 helm install --debug --dry-run ${ReleaseName} ${Release_Definition_Source}
 # ex: helm install --debug --dry-run goodly-guppy ./mychart
 
-
-### 
+###
 helm rollback ${ChartName}
-
 
 ### 列出 Release 所有的 k8s resources
 helm get manifest ${ReleaseName}
 
-
-### 
+###
 kubectl get storageclass
 #NAME                   PROVISIONER                                     RECLAIMPOLICY   VOLUMEBINDINGMODE   ALLOWVOLUMEEXPANSION   AGE
 #nfs-client (default)   cluster.local/nfs-subdir-external-provisioner   Delete          Immediate           true                   21s
 
-
-### 
+###
 kubectl get deployment
 #NAME                              READY   UP-TO-DATE   AVAILABLE   AGE
 #nfs-subdir-external-provisioner   1/1     1            1           37s
 # 說穿了, dynamic volume provision 也是個 pod
 
-
-### 
+###
 helm search $Keyword
-```
-
 
 # Without install helm locally
 
-```bash
 ### 本地不安裝 helm CLI 的情況下, 使用 helm docker container 來操作 k8s
 docker run -it --rm \
     --net host \
     -v "$PWD/.kube:/root/.kube" \
     -v "$PWD:/config" \
     dtzar/helm-kubectl
-
-
-### ------- 進入 Container ------
-export KUBECONFIG="/root/.kube/XXX.yaml"
-```
