@@ -61,3 +61,12 @@ SELECT * FROM pg_roles WHERE rolname = 'app_role'
 
 ### 切換 ROLE (可用來測試權限)
 SET ROLE $EXISTED_ROLE
+
+### 於 psql command 先做此設定後, 後續的查詢可以模擬 mysql 的 \G 列出查詢結果
+\set G '\\set QUIET 1\\x\\g\\x\\set QUIET 0'
+# 或 SQL Query 結束的結尾加上 \gx (好像有問題) ex: select * from tbl \gx
+
+### 查看 database 連線狀況
+SELECT * FROM pg_stat_activity WHERE state = 'active' \gx
+
+###

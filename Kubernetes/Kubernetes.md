@@ -1,6 +1,4 @@
-- [為什麼使用 Kubernetes](https://blog.gcp.expert/kubernetes-gke-introduction/)
 - [Learn Kubernetes Basics](https://kubernetes.io/docs/tutorials/kubernetes-basics/)
-- [k8s-30 天](https://ithelp.ithome.com.tw/articles/10192401)
 - [raft 演算法(去中心化)-超簡明解說](http://thesecretlivesofdata.com/raft/)
 
 # K8s Interface
@@ -26,8 +24,6 @@ K8s 平台的選擇:
   - Rancher : 三者中較為便宜
 
 # 架構
-
-![Learn Kubernetes Basics](./img/k8s_arch-1024x437.png)
 
 - Kubernetes Master
   - etcd

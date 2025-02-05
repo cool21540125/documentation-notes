@@ -36,9 +36,12 @@ openssl pkcs8 -in  ~/.ssh/${PRIVATE_KEY_NAME}.pem -inform PEM -outform DER -topk
     - R, C, M, I, ...
     - Instance Family
       - M5, M6, T2, T3, ...
-- 製作 EC2 的 image
-  - 強烈建議, Termination 以前都做這個.
-  - AWS 會為製作 image 的 EC2 一併製作 image 及 snapshot
+- (強烈建議) EC2 Termination 以前都做 snapshot 或 CreateImage
+- EC2 backup
+  - 針對 EBS 做 backup (take EBS snapshot)
+  - 針對 EC2 做 Create AMI
+    - 其實底層是先建立 AMI, 然後再建立 EBS snapshot (然後關聯到 AMI)
+    - 若要移除 AMI, 要先 Deregister AMI, 再來砍 snapshot
 
 ## Instance Type
 
@@ -210,7 +213,6 @@ flowchart LR
 
 - 會依序建立 EC2 instance 來 Building, 之後還會建另一個來 Testing
 - 若要刪除 instance, 需 terminate instance && Deregister AMI && Delete EBS snapshot
--
 
 # EC2 - Status Check
 

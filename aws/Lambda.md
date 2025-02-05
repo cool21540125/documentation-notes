@@ -1,3 +1,5 @@
+- [Serverless Land](https://serverlessland.com/patterns)
+
 # AWS Lambda
 
 - 常見 Lambda Function 的 Execution Roles:

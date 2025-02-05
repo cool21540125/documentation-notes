@@ -1,10 +1,5 @@
-# [Cloud Development Kit, CDK](https://docs.aws.amazon.com/cdk/v2/guide/home.html)
-
-- [cdktf](https://developer.hashicorp.com/terraform/cdktf)
-- [cdk8s](https://cdk8s.io/)
 - [Former2](https://former2.com/#section-outputs-cdkv2)
-- [Youtube - CDK](https://www.youtube.com/watch?v=uFZjj9QnvQs&list=PLD6e3vg1Inj9qvHFkvHUJXWBuTFKcI9J_)
-- [cdk 筆記](https://www.ernestchiang.com/zh/notes/aws/cdk/)
+- [Construct Hub](https://constructs.dev/)
 
 # CDK 名詞 & 主要元件
 

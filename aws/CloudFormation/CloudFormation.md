@@ -1,3 +1,8 @@
+- [CloudFormation cheet sheet](https://theburningmonk.com/cloudformation-ref-and-getatt-cheatsheet/)
+- [CloudFormation 的所有 Resources & Property types 名稱參照](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-template-resource-type-ref.html)
+- [CloudFormation Schema](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/template-anatomy.html)
+- [AWS resource and property types reference](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-template-resource-type-ref.html)
+
 # CloudFormation - 基礎
 
 - CloudFormation Drift 機制
@@ -53,10 +58,3 @@
   - `DeletionPolicy=Delete`
     - 除了上述兩者以外, 預設都是 Delete
     - ex: 由 CloudFormation 刪除 S3 Bucket 前, 須先將 S3 Bucket 內容清空
-
-# CloudFormation References
-
-- [CloudFormation cheet sheet](https://theburningmonk.com/cloudformation-ref-and-getatt-cheatsheet/)
-- [CloudFormation 的所有 Resources & Property types 名稱參照](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-template-resource-type-ref.html)
-- [CloudFormation Schema](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/template-anatomy.html)
-- [AWS resource and property types reference](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-template-resource-type-ref.html)
