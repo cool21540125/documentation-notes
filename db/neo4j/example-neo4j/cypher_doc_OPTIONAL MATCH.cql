@@ -1,5 +1,5 @@
 // https://memgraph.com/docs/querying/clauses/optional-match
-// OPTIONAL MATCH
+// OPTIONAL MATCH (等同於 SQL 的 Outer Join)
 
 // ========================================== raw data ==========================================
 MATCH (n)
