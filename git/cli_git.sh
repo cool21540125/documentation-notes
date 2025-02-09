@@ -77,7 +77,9 @@ ssh -vT git@${GIT_SERVER_DOMAIN} -p ${PORT}
 # GIT_SERVER_DOMAIN, ex: gitlab.com
 # 永遠使用 git user 來測
 
-# Usage
+### 重新釘選 Local Branch 到遠端 (ignore all local changes)
+git reset --hard origin/BRANCH
+# 常用於 Remote 做過 force push 的直接暴力追蹤
 
 ### 重新 Commit
 git commit --amend -m "<Commit String>"

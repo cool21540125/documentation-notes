@@ -133,4 +133,15 @@ aws ecs update-service \
   --deployment-configuration "alarms={alarmNames=[${ALARM_NAME_01}],enable=true,rollback=true}" \
   --force-new-deployment
 
-###
+### ECS 變更 Subnets 及 SecurityGroup (變更 SG)
+# https://docs.aws.amazon.com/AmazonECS/latest/developerguide/deployment-alarm-failure.html
+SubnetId1=
+SubnetId2=
+SgId=
+ECS_SERVICE=
+ECS_CLUSTER=
+
+aws ecs update-service \
+  --cluster $ECS_CLUSTER \
+  --service $ECS_SERVICE \
+  --network-configuration '{"awsvpcConfiguration": {"subnets": ["subnet-0000000"], "securityGroups": ["sg-111111111"], "assignPublicIp": "DISABLED"}}'
