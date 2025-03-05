@@ -6,8 +6,9 @@ exit 0
 go run -race xx.go
 
 ### 下載 src 放到 $GOPATH/src 底下
-go get
-go get -u xxx                    # -u, update
+go get                           # 更新現有依賴, 但排除所依賴的其他模組
+go get -u xxx                    # 更新現有依賴, 會強制更新它所依賴的其他全部模組, 但不包含本身
+go get -u -t xxx                 # 更新所有直接 & 間接依賴 (包含 unittest 用到的)
 go get -u -v xxx                 # -v, verbose
 go get github.com/xxx/xxx@v1.0.0 # 指定版本
 
@@ -15,10 +16,16 @@ go get github.com/xxx/xxx@v1.0.0 # 指定版本
 go tool dist list
 
 ###
-go install
-# 會優先將 binary 放到 $GOBIN 底下, 如果沒有設定 GOBIN, 則會放到 $GOPATH/bin 底下
+go install github.com/swaggo/swag/cmd/swag
+# 會優先將  放到 $GOBIN 底下, 如果沒有設定 GOBIN, 則會放到 $GOPATH/bin 底下 (也就是 $HOME/go/bin 底下)
+# 使用時, 記得再做:
+export PATH="$HOME/go/bin:$PATH"
+# 才可正常使用 cmd
 
 # `Go routine` 是個輕量版的 thread, Golang 用它來 enable `concurrency`
+
+### 列出 go Env
+go env
 
 ### go module 出來以前, 修改 GOPATH 的用法
 go env -w GOPATH=$(pwd)
@@ -27,11 +34,20 @@ go env -w GOPATH=$(pwd)
 ###
 go mod init PackageName
 
-### 自動下載相依檔, 並更新到 go.mod
-go mod tidy
+### 下載 go.mod 所指名的所有依賴
+go mod download
 
-### 有點類似 python 的 venv , 自動下載到 local 的 vendor/ (裡面會有相依檔)
-go mod vendor
+### 列出現有的依賴結構
+go mod graph
+
+### 檢視模組是否被篡改過
+go mod verify
+
+### 顯示依賴的原因
+go mod why
+
+### 自動下載相依檔, 並更新到 go.mod (整理 Dependencies)
+go mod tidy
 
 ### Change go version in go.mod
 go mod edit -go 1.21
