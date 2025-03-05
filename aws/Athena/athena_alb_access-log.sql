@@ -1,7 +1,7 @@
 ----------------------------------------------------------------------------------------
 -- Create Athena Table - Load Balancer - access log
 ---------------------------------------------------------------------------------------- 
-CREATE EXTERNAL TABLE IF NOT EXISTS alb_OfficialService (
+CREATE EXTERNAL TABLE IF NOT EXISTS __YOUR_ALB_TABLE_NAME__ (
     type string,
     time string,
     elb string,
@@ -46,7 +46,7 @@ WITH SERDEPROPERTIES (
         'input.regex' = '([^ ]*) ([^ ]*) ([^ ]*) ([^ ]*):([0-9]*) ([^ ]*)[:-]([0-9]*) ([-.0-9]*) ([-.0-9]*) ([-.0-9]*) (|[-0-9]*) (-|[-0-9]*) ([-0-9]*) ([-0-9]*) \"([^ ]*) (.*) (- |[^ ]*)\" \"([^\"]*)\" ([A-Z0-9-_]+) ([A-Za-z0-9.-]*) ([^ ]*) \"([^\"]*)\" \"([^\"]*)\" \"([^\"]*)\" ([-.0-9]*) ([^ ]*) \"([^\"]*)\" \"([^\"]*)\" \"([^ ]*)\" \"([^\\s]+?)\" \"([^\\s]+)\" \"([^ ]*)\" \"([^ ]*)\" ?([^ ]*)?'
     ) 
 LOCATION 
-    's3://alb-log-303053866824-us-west-2/OfficialService/AWSLogs/303053866824/elasticloadbalancing/us-west-2/'
+    's3://__BUCKET_NAME__/__BUCKET_PREFIX__/access/AWSLogs/__ACCOUNT_ID__/elasticloadbalancing/__REGION__/'
 TBLPROPERTIES (
     "projection.enabled" = "true",
     "projection.day.type" = "date",
@@ -54,29 +54,5 @@ TBLPROPERTIES (
     "projection.day.format" = "yyyy/MM/dd",
     "projection.day.interval" = "1",
     "projection.day.interval.unit" = "DAYS",
-    "storage.location.template" = "s3://alb-log-303053866824-us-west-2/OfficialService/AWSLogs/303053866824/elasticloadbalancing/us-west-2/${day}/"
+    "storage.location.template" = "s3://__BUCKET_NAME__/__BUCKET_PREFIX__/access/AWSLogs/__ACCOUNT_ID__/elasticloadbalancing/__REGION__/${day}/"
 );
---
---  ----------------------------------------------------------------------------------------
---  -- Create Athena Table - CloudFront - access log - cloudfront_logs
---  ---------------------------------------------------------------------------------------- 
--- 
-    CREATE EXTERNAL TABLE IF NOT EXISTS cloudfront_logs (
-        `Date` DATE,
-        Time STRING,
-        Location STRING,
-        Bytes INT,
-        RequestIP STRING,
-        Method STRING,
-        Host STRING,
-        Uri STRING,
-        Status INT,
-        Referrer STRING,
-        ClientInfo STRING
-    ) ROW FORMAT DELIMITED FIELDS TERMINATED BY '\t' LINES TERMINATED BY '\n' LOCATION 's3://BUCKET_NAME/cloudfront/plaintext/';
-
--- 如果 Table 裡頭不包含 nested 欄位, 基本上都可以使用像這樣的方式來做欄位解析 (\t 及 \n 並搭配 LazySimpleSerDe)
--- ROW FORMAT DELIMITED : 使用 LazySimpleSerDe 這個 default library 來解析資料
-----------------------------------------------------------------------------------------
--- 
-----------------------------------------------------------------------------------------
