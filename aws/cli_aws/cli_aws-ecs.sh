@@ -64,23 +64,25 @@ echo $PUBLICIP
 
 ### ======================================================================= Remote ECS Container ssh =======================================================================
 
-### Step1. 遠端 ssh ECS (Task 需有 Public IP) # NOTE: 還沒驗證指令可行性
+### Step0. ECS 需先 Enable Execute Command
 # https://awscli.amazonaws.com/v2/documentation/api/latest/reference/ecs/update-service.html
-ECS_CLUSTER=ServerAPI
-ECS_SERVICE=authServiceStaging
+ECS_CLUSTER=
+ECS_SERVICE=
 aws ecs update-service \
   --cluster $ECS_CLUSTER \
   --service $ECS_SERVICE \
   --enable-execute-command \
-  --force-new-deployment
+  --force-new-deployment # 會強制重啟, 慎用!
 
-### Step2. 遠端 ssh ECS (ECS Task 須先 EnableExecuteCommand)
+### Step1. remote execute command
 # https://awscli.amazonaws.com/v2/documentation/api/latest/reference/ecs/execute-command.html
 # 進入 ECS Container 的前提是, 需要有 enableExecuteCommand
+TASK_ID=
+CONTAINER_NAME=
 aws ecs execute-command \
   --cluster $ECS_CLUSTER \
-  --task $ECS_TASK_ARN_OR_ID \
-  --container $ECS_CONTAINER \
+  --task $TASK_ID \
+  --container $CONTAINER_NAME \
   --interactive --command "/bin/sh"
 
 ### ======================================================================= 設定 ASG  =======================================================================
@@ -133,14 +135,10 @@ aws ecs update-service \
   --deployment-configuration "alarms={alarmNames=[${ALARM_NAME_01}],enable=true,rollback=true}" \
   --force-new-deployment
 
-### ECS 變更 Subnets 及 SecurityGroup (變更 SG)
+### E=========================================================== CS 變更 Subnets 及 SecurityGroup (變更 SG) ===========================================================
 # https://docs.aws.amazon.com/AmazonECS/latest/developerguide/deployment-alarm-failure.html
-SubnetId1=
-SubnetId2=
-SgId=
-ECS_SERVICE=
 ECS_CLUSTER=
-
+ECS_SERVICE=
 aws ecs update-service \
   --cluster $ECS_CLUSTER \
   --service $ECS_SERVICE \

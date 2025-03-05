@@ -120,6 +120,12 @@
   - SendMessage, DeleteMessage, ChangeMessageVisibility
   - 可有效減少 API call, 減少 cost
 
+# SQS pricing (Oregon 為例)
+
+- 每月 100w SQS requests 免費
+- 100w ~ 100b, 每百萬 $0.4 USD - Standard Queue
+- 100w ~ 100b, 每百萬 $0.5 USD - FIFO Queue
+
 # SQS Metrics
 
 - ApproximateAgeOfOldestMessage
