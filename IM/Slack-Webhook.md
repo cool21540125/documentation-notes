@@ -1,5 +1,6 @@
-這篇裡頭預計會分成很多個部分來說明 Slack 的用途 & 使用方式
+# Slack
 
+- [Sending messages using incoming webhooks](https://api.slack.com/messaging/webhooks)
 - [Setup & Sending Messages](#i-setup--sending-messages)
   - Slack 最最最基本的 POST Message
 - [Handling Events (Event API)](#ii-handling-events-event-api)
@@ -82,10 +83,6 @@ backend -- "Signing Secret\n將 Request 加密" --> slack;
 > **Reinstall to Workspace**
 >
 > Enjoy~
-
-### Source Code
-
-https://github.com/cool21540125/learning_slack/blob/slashCommand/main.py
 
 ### Slack 配置
 

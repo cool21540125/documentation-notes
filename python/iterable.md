@@ -4,22 +4,28 @@
 - python 3.7
 - [What does the “yield” keyword do?](https://stackoverflow.com/questions/231767/what-does-the-yield-keyword-do/231855#231855)
 
-
-
 # 摘要
 
 要懂 yield 以前, 必須先懂 generator; 而要懂 generator 前, 必須先懂 iterable 及 iterator
 
 ![generator_iterator_iterable](../img/iterator_generator.png)
 
-
-
 # 名詞定義
 
 ## 1. Iterable (可被迭代的東西)
 
+- Iterable 實作了 `__iter__()` && `__getitem__()`, 所以它可以被一個一個讀取出來
+  - Iterable 範例:
+    - Iterable 包含了但不限於 Sequence
+    - Iterable 包含了實作了 `__iter__()` && `__getitem__()` 的 objects
 - Sequence 實作了 `__len__()` && `__getitem__()`, 所以它是個 Iterable
-  - List, Set, Dictionary, ...
+  - Sequence 可藉由 int index 取得 Element, 並藉由 len 取得序列數量
+  - Sequence 範例:
+    - list
+    - str
+    - tuple
+    - bytes
+  - dict 歸屬於 mapping 而非 Sequence, 因為它尋找的並非 index, 而是 hashable keys
 - 當你建立了一個 list, 你可以 '一個接一個' 讀取它內部的物件.
 - '一個接一個' 讀取的過程, 稱之為 iteration(迭代).
 - 可以被 '一個接一個' 讀取的東西, 就是個 Iterable.
@@ -34,14 +40,13 @@ for ii in mylist:   # 任何可以使用 for in 來逐一取值的東西, 就是
 
 使用上述範例的缺點就是, mylist 裡頭的東西需要載入到記憶體(他們可能非常非常非常的大...)
 
-
 ## 2. Iterator (迭代器物件)
 
 - 假設 obj 是個 Iterable , 使用 `iter(obj)` 就可以取得 Iterator.
 - Iterator 是個 Iterable.
 - Iterator 之所以可以被 `iter(obj)`, 是因為它實作了 `__next__()`.
-    - 將指標指向下一個, 讓下次可以繼續調用.
-    - 返回當前結果.
+  - 將指標指向下一個, 讓下次可以繼續調用.
+  - 返回當前結果.
 
 ## 3. Generator (產生器)
 
@@ -78,7 +83,6 @@ for ii in mm:
   print(ii)  # 依序印出 0 1 2
 ```
 
-
 ## 彙整基礎範例
 
 ```python
@@ -108,10 +112,9 @@ next(e)  # Exception StopIteration
 ```
 
 `for a in b` 的原理, 其實就是先調用 `iter(b)`, 取得 Iterator. 如此便可使用 next 方法, 一個一個叫出來處理, 直到 StopIteration. 另一種理解方式是, Python 會在 高層次上面去檢查 2 件事情:
+
 - object 有無 `__next__()` or `__iter__()` 其中一種方法
 - object 是不是 sequence && 同時擁有 `__len__()` and `__getitem__()`
-
-
 
 ## 再論 Generator (產生器, 生成器)
 
@@ -142,7 +145,6 @@ g = fib()  # <generator object fib at 0x10b842850>
 
 因為 generator 就是個 iterator (得實作 `__iter__()` 與 `__next()__`). 但是 generator 只需要使用 `yield`, 它幫忙實現了 generator 的 `__next()__`.
 
-
 ```python
 from typing import Generator, Iterable
 # Generator 與 Iterator
@@ -164,15 +166,10 @@ isinstance(f, Iterable)   # True
 isinstance(f, Generator)  # True
 ```
 
-`generator` 在遇到了 yield 就將程式的`執行流程返回給了呼叫端` & `返回當前的值`. 下次進入的時候, 會接在上次中斷的地方繼續...  這樣的概念就如同 generator 的 `將指標指向下一個, 方便下次迭代` & `返回當前的值`
+`generator` 在遇到了 yield 就將程式的`執行流程返回給了呼叫端` & `返回當前的值`. 下次進入的時候, 會接在上次中斷的地方繼續... 這樣的概念就如同 generator 的 `將指標指向下一個, 方便下次迭代` & `返回當前的值`
 
 generator 的 yield 可理解成 `中斷服務子程序的斷點`. 爾後每次對 generator 調用 `next()` 時, 就會回到斷點之後繼續執行
-
-
 
 # Itertools
 
 - itertools 模組內, 有些特別的 function 可以用來方便操作 iterable.
-
-
-

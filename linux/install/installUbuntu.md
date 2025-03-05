@@ -233,6 +233,7 @@ sudo dpkg -i -E ./amazon-cloudwatch-agent.deb
 # Install squid
 
 - https://ubuntu.com/server/docs/how-to-install-a-squid-server
+- 使用 CodeBuild proxy server - squid - https://docs.aws.amazon.com/codebuild/latest/userguide/use-proxy-server-transparent-components.html
 
 ```bash
 ### Install

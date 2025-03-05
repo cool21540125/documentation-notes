@@ -185,37 +185,41 @@ UUID=e6...(pass)...7e   /boot   xfs     defaults    0     0
 
 ```bash
 ### 先查看 Disk 的 Block Size
-$# fdisk -l
+fdisk -l
 # 假設 「Units = sectors of 1 * 512 = 512 bytes」
 # 則 底下 dd 的 bs, 盡可能為 512 的倍數, 以優化讀寫效能
 # (會造成一定程度的浪費, 不過可盡量降低磁碟的搜尋成本)
 
 ### 配置 4 GB 的 swap
-$# dd if=/dev/zero of=/swapfile count=2097152 bs=4KiB
+dd if=/dev/zero of=/swapfile count=2097152 bs=4KiB
 
 ### 安全性問題, 務必使用 root read only
-$# chmod 600 /swapfile
+chmod 600 /swapfile
 
 ### 讓系統 setup up swap space
-$# mkswap /swapfile
-Setting up swapspace version 1, size = 4194300 KiB
-no label, UUID=6ec8f68c-f6cf-43ae-96e9-6e15294c563d
+mkswap /swapfile
+#Setting up swapspace version 1, size = 4194300 KiB
+#no label, UUID=6ec8f68c-f6cf-43ae-96e9-6e15294c563d
 
 ### 掛載使用 swap
-$# swapon /swapfile
+swapon /swapfile
 
 ### 確認 swap 的使用
-$# swapon -s
-Filename				Type		Size	Used	Priority
-/swapfile                              	file	4194300	0	-2
+swapon -s
+#Filename				Type		Size	Used	Priority
+#/swapfile                              	file	4194300	0	-2
 
 ### 永久配置
-$# vim /etc/fstab
+vim /etc/fstab
 # ↓↓↓↓↓↓ 配置 ↓↓↓↓↓↓
-/swapfile   swap    swap    sw  0   0 # 兩者皆可
-/swapfile   none    swap    sw  0   0 # 兩者皆可
+#/swapfile   swap    swap    sw  0   0 # 兩者皆可
+#/swapfile   none    swap    sw  0   0 # 兩者皆可
 # ↑↑↑↑↑↑ 配置 ↑↑↑↑↑↑
 
 ### 配置後記得確認
-$# mount -a
+mount -a
+
+### 關閉 swap
+swapoff -av
+rm -f /swapfile
 ```
