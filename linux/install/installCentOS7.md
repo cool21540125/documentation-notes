@@ -1,4 +1,3 @@
-
 # CentOS7 release
 
 - 即將於 2023/06 EOL
@@ -91,7 +90,7 @@ yum repolist
 
 ### yum list - 列出 (遠端)YUM Server 上的「所有」套件資訊, 套件名稱, 版本...
 # 列出 YUM Server 的 packages
-yum list available 
+yum list available
 yum list
 yum list 'http*'
 # 可查有哪些東西(但是得給完全相同的名字才能查(可用regex))
@@ -105,7 +104,7 @@ yum search all 'web server'
 yum info httpd
 
 
-### yum provides - 
+### yum provides -
 # 到 YUM Server 查 安裝在哪個位置的工具叫啥 or 該工具相關的套件
 yum provides /var/www/html
 yum provides semanage
@@ -119,56 +118,59 @@ yum provides semanage
 # yum searcn <套件名稱>  # 搜尋 YUM Server上的特定套件
 ```
 
-
-## Linux安裝軟體方式 - 原始碼編譯 && 安裝
+## Linux 安裝軟體方式 - 原始碼編譯 && 安裝
 
 1. 取得原始碼
-  - 大多為 `tar.gz`, 可用 `tar zxvf`解開
+
+- 大多為 `tar.gz`, 可用 `tar zxvf`解開
+
 2. 觀看 README 與 INSTALL
-  - README: 軟體的介紹
-  - INSTALL: 編譯與安裝的方法及步驟
+
+- README: 軟體的介紹
+- INSTALL: 編譯與安裝的方法及步驟
+
 3. 設定組態
-  - 使用 `./configure`, 並給予必要參數及選項
-  - 產生 `Makefile`編譯腳本
+
+- 使用 `./configure`, 並給予必要參數及選項
+- 產生 `Makefile`編譯腳本
+
 4. 編譯與安裝
-  - 使用 `make`進行編譯
-  - 無誤後, 使用 `sudo make install`開始安裝
 
+- 使用 `make`進行編譯
+- 無誤後, 使用 `sudo make install`開始安裝
 
-## Linux的軟體管理員 - rpm
+## Linux 的軟體管理員 - rpm
 
 ### - rpm v.s. dpkg
 
-distribution 代表 | 軟體管理機制 | 使用指令 | 線上升級機制(指令)
---- | --- | --- | ---
-Red Hat/Fedora | RPM | rpm, rpmbuild | YUM (yum)
-Debian/Ubuntu | DPKG | dpkg | APT (apt-get)
-
+| distribution 代表 | 軟體管理機制 | 使用指令      | 線上升級機制(指令) |
+| ----------------- | ------------ | ------------- | ------------------ |
+| Red Hat/Fedora    | RPM          | rpm, rpmbuild | YUM (yum)          |
+| Debian/Ubuntu     | DPKG         | dpkg          | APT (apt-get)      |
 
 ### - rpm v.s. srpm
 
-檔案格式 | 檔名格式 | 直接安裝與否 | 內含程式類型 | 可否修改參數並編譯
---- | --- | --- | --- | ---
-RPM | xxx.rpm | 可 | 已編譯 | 不可
-SRPM | xxx.src.rpm | 不可 | 未編譯之原始碼 | 可
+| 檔案格式 | 檔名格式    | 直接安裝與否 | 內含程式類型   | 可否修改參數並編譯 |
+| -------- | ----------- | ------------ | -------------- | ------------------ |
+| RPM      | xxx.rpm     | 可           | 已編譯         | 不可               |
+| SRPM     | xxx.src.rpm | 不可         | 未編譯之原始碼 | 可                 |
 
-rpm套件管理的語法: `rpm -<options> <xxx.rpm>`
-
+rpm 套件管理的語法: `rpm -<options> <xxx.rpm>`
 
 ### - options
 
-options     | description
------------ | ------------
--i          | 安裝套件
--v          | 安裝時, 顯示細部的安裝資訊
--h          | 安裝時, 顯示安裝進度
--e          | 移除套件
--U          | 更新套件
--q          | 查詢套件資訊
--qa         | - 已安裝套件清單
--qi         | - 特定套件安裝資訊
--ql         | - 套件安裝了哪些東西
--qf         | - 某個東西是被哪個套件安裝的 (與 -ql相反)
+| options | description                                |
+| ------- | ------------------------------------------ |
+| -i      | 安裝套件                                   |
+| -v      | 安裝時, 顯示細部的安裝資訊                 |
+| -h      | 安裝時, 顯示安裝進度                       |
+| -e      | 移除套件                                   |
+| -U      | 更新套件                                   |
+| -q      | 查詢套件資訊                               |
+| -qa     | - 已安裝套件清單                           |
+| -qi     | - 特定套件安裝資訊                         |
+| -ql     | - 套件安裝了哪些東西                       |
+| -qf     | - 某個東西是被哪個套件安裝的 (與 -ql 相反) |
 
 ```sh
 # 可以反查某個檔案被哪個套件所安裝
@@ -184,23 +186,21 @@ setup-2.8.71-4.el7.noarch   <---安裝包
   適用平台: noarch
 ```
 
-
 ### - sub options
-sub options | description
------------ | ------------
---test      | 僅測試模擬安裝過程, 不會真正安裝`(移除時, 可嘗試用此搭配)`
---nodeps    | 忽略安裝前的相依性檢查
---force     | 強制安裝(若已安裝, 會覆蓋掉前次安裝)
 
+| sub options | description                                                |
+| ----------- | ---------------------------------------------------------- |
+| --test      | 僅測試模擬安裝過程, 不會真正安裝`(移除時, 可嘗試用此搭配)` |
+| --nodeps    | 忽略安裝前的相依性檢查                                     |
+| --force     | 強制安裝(若已安裝, 會覆蓋掉前次安裝)                       |
 
 ### 常用選項
-options     | description
------------ | ------------
--Uvh        | if 未安裝, then 直接安裝<br />if 安裝過舊版, then 版本升級
--Fvh        | if 未安裝, then 不動作<br />if 安裝過舊版, then 版本升級
--ivh        | 最常用的安裝方式, 安裝時, 顯示安裝資訊
 
-
+| options | description                                                |
+| ------- | ---------------------------------------------------------- |
+| -Uvh    | if 未安裝, then 直接安裝<br />if 安裝過舊版, then 版本升級 |
+| -Fvh    | if 未安裝, then 不動作<br />if 安裝過舊版, then 版本升級   |
+| -ivh    | 最常用的安裝方式, 安裝時, 顯示安裝資訊                     |
 
 # Install kafka
 
@@ -243,20 +243,20 @@ EOF
 sudo -u kafka cat <<EOF | sudo -u kafka tee /data/kafka/config/server.properties
 ############################# Server Basics #############################
 
-# The id of the broker. This must be set to a unique integer for each broker.                                 
-broker.id=$(hostname -s | sed "s/.*\([^0-9]\)//g")                                                                                                                              
+# The id of the broker. This must be set to a unique integer for each broker.
+broker.id=$(hostname -s | sed "s/.*\([^0-9]\)//g")
 
 ############################# Socket Server Settings #############################
 
-# The address the socket server listens on. It will get the value returned from                                                          
-# java.net.InetAddress.getCanonicalHostName() if not configured.     
-#   FORMAT:                                                                                                                              
-#     listeners = listener_name://host_name:port                                                                                                                                                                                                                                  
-#   EXAMPLE:                                                                                                                             
-#     listeners = PLAINTEXT://your.host.name:9092                                                                                        
-listeners=PLAINTEXT://:9092                                                                                                                                                                                                                                                      
+# The address the socket server listens on. It will get the value returned from
+# java.net.InetAddress.getCanonicalHostName() if not configured.
+#   FORMAT:
+#     listeners = listener_name://host_name:port
+#   EXAMPLE:
+#     listeners = PLAINTEXT://your.host.name:9092
+listeners=PLAINTEXT://:9092
 
-# Hostname and port the broker will advertise to producers and consumers. If not set,                                           
+# Hostname and port the broker will advertise to producers and consumers. If not set,
 # it uses the value for "listeners" if configured.  Otherwise, it will use the value
 # returned from java.net.InetAddress.getCanonicalHostName().
 advertised.listeners=PLAINTEXT://$(hostname -f):9092
@@ -366,7 +366,7 @@ EOF
 cat <<EOF | tee /usr/lib/systemd/system/zookeeper.service
 [Unit]
 Description=ZooKeeper Service
-After=network-online.target 
+After=network-online.target
 Requires=network-online.target
 
 [Service]
@@ -389,7 +389,7 @@ EOF
 cat <<EOF | tee /usr/lib/systemd/system/kafka.service
 [Unit]
 Description=kafka Service
-After=network-online.target 
+After=network-online.target
 Requires=network-online.target
 
 [Service]
@@ -409,7 +409,6 @@ WantedBy=multi-user.target
 EOF
 ```
 
-
 # Install DotNet Core
 
 - 2019/01/03
@@ -421,7 +420,6 @@ yum install dotnet-sdk-2.2
 
 dotnet --version
 ```
-
 
 # Install Ansible
 
@@ -436,7 +434,6 @@ ansible --version
 # ansible 2.9.27
 ```
 
-
 # Install Ansible Tower
 
 - 2019/01/12
@@ -444,7 +441,6 @@ ansible --version
 - 2G+ RAM (建議 4G+)
 - 20G Disk
 - 64 bits os
-
 
 ```sh
 ### 1. Download && Install
@@ -485,13 +481,13 @@ $# ssh -i ~/.ssh/tower_rsa <RemoteUser>@<RemoteIP>
 # 將來便可使用 Public Key 方式連線
 ```
 
-
 # Install Google Chrome
 
 - 2017/11/25
 - [老灰鴨的筆記本](http://oldgrayduck.blogspot.tw/2016/04/linuxcentos-7-google-chrome.html)
 
 1. repo
+
 ```
 $ sudo touch /etc/yum.repos.d/google-chrome.repo
 
@@ -504,17 +500,15 @@ gpgkey=https://dl.google.com/linux/linux_signing_key.pub
 ```
 
 2. Install
+
 ```
 sudo yum -y install google-chrome-stable
 ```
-
-
 
 # Install Docker CE
 
 - 2021/01/29
 - [Official Docker](https://docs.docker.com/engine/installation/linux/docker-ce/centos/#install-using-the-//repository)
-
 
 ```sh
 ### install
@@ -533,7 +527,6 @@ docker compose version
 ### normal user usage
 sudo usermod -aG docker $USER
 ```
-
 
 # Install Docker-compose (DEPRECATED)
 
@@ -555,8 +548,8 @@ source /etc/profile
 docker-compose --version
 ```
 
-
 ## Docker-machine
+
 - [Install Docker Machine](https://docs.docker.com/machine/install-machine/)
 - 2020/04/01
 
@@ -590,7 +583,6 @@ $# vim ~/.bashrc
 PS1='[\u@\h \W$(__docker_machine_ps1)]\$ '
 # 內容如上 ----------------------------------
 ```
-
 
 # Install Podman
 
@@ -653,7 +645,6 @@ Go Version:         go1.12.12
 OS/Arch:            linux/amd64
 ```
 
-
 # Install bridge-utils
 
 ```bash
@@ -665,7 +656,6 @@ bridge name   bridge id           STP enabled   interfaces
 docker0       8000.02428b91c08f   no
 ```
 
-
 # Install mlocate
 
 ```bash
@@ -674,18 +664,16 @@ yum install -y mlocate
 updatedb
 ```
 
-
 # Install bash_completion
 
- - 2020/04/08
- - [How to Install and Enable Bash Auto Completion in CentOS/RHEL](https://www.tecmint.com/install-locate-command-to-find-files-in-centos/)
+- 2020/04/08
+- [How to Install and Enable Bash Auto Completion in CentOS/RHEL](https://www.tecmint.com/install-locate-command-to-find-files-in-centos/)
 
 ```bash
 $# yum install -y bash-completion bash-completion-extras
 $# locate bash_completion.sh   # 如果出現 locate command not found, 參考底下解法
 $# source /etc/profile.d/bash_completion.sh
 ```
-
 
 # Install ELK - elasticsearch
 
@@ -735,7 +723,6 @@ $# systemctl start elasticsearch
 $# systemctl enable elasticsearch
 $# systemctl status elasticsearch
 ```
-
 
 # Install ELK - kibana
 
@@ -858,7 +845,6 @@ mysql -uroot -p
 ALTER USER 'root'@'localhost' IDENTIFIED BY '<new password>';
 ```
 
-
 # Install MySQL Community 5.7
 
 - 2018/09/14
@@ -915,7 +901,6 @@ create user 'demo'@'localhost' identified by '00';
 grant all on *.* to 'demo'@'localhost';
 ```
 
-
 # Install MongoDB CE
 
 - 2017/11/26
@@ -954,7 +939,6 @@ ps auxw | grep -v grep | grep mongod
 # ↑ 已經啟動了~                                               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ systemctl 預設的啟動方式
 ```
 
-
 # Install Percona-Backup MongoDB
 
 - 2021/08/19
@@ -963,8 +947,7 @@ ps auxw | grep -v grep | grep mongod
 
 不然如果透過 yum 安裝的話, 會再安裝 `percona-release` 的 CLI <-- 功能雖強大, 但使用複雜度較高
 
-
-### 法1. 直接安裝 binary
+### 法 1. 直接安裝 binary
 
 - [不同版本的 percona-Backup Binary 下載頁](https://www.percona.com/downloads/percona-backup-mongodb/)
 
@@ -977,15 +960,13 @@ mkdir -p /data/mongodbbackup
 chown -R pbm.pbm /data/mongodbbackup/
 ```
 
-
-### 法2. 使用 yum
+### 法 2. 使用 yum
 
 - [Installing Percona Backup for MongoDB](https://www.percona.com/doc/percona-backup-mongodb/installation.html#install-pbm-on-red-hat-enterprise-linux-and-centos)
 
 ```bash
 
 ```
-
 
 # Install Visual Studio Code
 
@@ -1011,13 +992,12 @@ code        Visual Studio Code       44
 $# yum -y install code
 ```
 
-
 # Install Redis
 
 - 2017/11/26 (2018/05/15, 2018/09/02 update)
 - [Official Redis](https://redis.io/download)
-- [cc not found 解法1](https://stackoverflow.com/questions/35634795/no-acceptable-c-compiler-found-in-path-while-installing-the-c-compiler)
-- [cc not found 解法2](https://unix.stackexchange.com/questions/287913/cc-command-not-found-when-compiling-a-pam-module-on-centos?utm_medium=organic&utm_source=google_rich_qa&utm_campaign=google_rich_qa)
+- [cc not found 解法 1](https://stackoverflow.com/questions/35634795/no-acceptable-c-compiler-found-in-path-while-installing-the-c-compiler)
+- [cc not found 解法 2](https://unix.stackexchange.com/questions/287913/cc-command-not-found-when-compiling-a-pam-module-on-centos?utm_medium=organic&utm_source=google_rich_qa&utm_campaign=google_rich_qa)
 - [jemalloc not found 的解法](https://www.cnblogs.com/oxspirt/p/11392437.html)
 - [Linode - Install and Configure Redis on CentOS 7](https://www.linode.com/docs/databases/redis/install-and-configure-redis-on-centos-7/)
 
@@ -1028,15 +1008,13 @@ $ sudo yum install redis
 $ sudo systemctl start redis
 ```
 
-
 # Install Git (CentOS7 default repo -> git v-1.8 太舊了~~)
 
 - 2022/04/06
 - [install_git2.x_on_centos.md](https://gist.github.com/nhahv/7077a638b57f7d91ebe9a3c6caebbe4f)
 - [How To Install Git on CentOS 7](https://blacksaildivision.com/git-latest-version-centos)
-- [Choose a version](https://github.com/git/git/releases) ( 以2.14.3版為例 )
-- [Choose a version 有時候Github會掛掉...](https://mirrors.edge.kernel.org/pub/software/scm/git/)
-
+- [Choose a version](https://github.com/git/git/releases) ( 以 2.14.3 版為例 )
+- [Choose a version 有時候 Github 會掛掉...](https://mirrors.edge.kernel.org/pub/software/scm/git/)
 
 ### I. 預設 repo yum install (只會安裝舊版-v1.8)
 
@@ -1046,7 +1024,6 @@ $# yum install -y autoconf libcurl-devel expat-devel gcc kernel-headers openssl-
 # 上頭的 gettext-devel 會安裝 git 1.8.3
 # 其實可以不安裝它... 只是最後, git 會被安裝在 /usr/local/bin/git
 ```
-
 
 ### II. 第三方 yum install (裝新版)
 
@@ -1061,7 +1038,6 @@ yum -y install git
 git --version
 # git version 2.39.2
 ```
-
 
 ### III. 編譯安裝 (可裝最新版)
 
@@ -1088,7 +1064,6 @@ $# git --version
 git version 2.19.1
 ```
 
-
 # Install net-tools
 
 - 2017/11/26
@@ -1105,8 +1080,6 @@ $ ifconfig
 success!
 ```
 
-
-
 # Install VLC
 
 - 2017/11/26
@@ -1115,12 +1088,14 @@ success!
 - [install vlc on CentOS7](https://stackoverflow.com/questions/29443096/how-to-install-vlc-on-centos7-from-terminal)
 
 1. Install EPEL
+
 ```
 $ wget http://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
 $ sudo rpm -ivh epel-release-latest-7.noarch.rpm
 ```
 
 2. Install
+
 ```
 $ sudo rpm -Uvh http://li.nux.ro/download/nux/dextop/el7/x86_64/nux-dextop-release-0-1.el7.nux.noarch.rpm
 
@@ -1131,8 +1106,6 @@ VLC media player 2.2.5.1 Umbrella (revision 2.2.5-70-gaeea04d843)
 vlc: unknown option or missing mandatory argument `-V'
 Try `vlc --help' for more information
 ```
-
-
 
 # Install teamviewer
 
@@ -1154,13 +1127,13 @@ $ uname -m
 x86_64
 ```
 
-
-
 # Install 7zip
+
 - 2017/11/26
 - [e Learning](http://elearning.wsldp.com/pcmagazine/extract-7zip-centos-7/)
 
 1. Dependancy && Install
+
 ```
 $ sudo yum install -y epel-release
 
@@ -1168,12 +1141,11 @@ $ sudo yum install -y p7zip
 ```
 
 2. Unzip
+
 ```
 $ 7za x <fileName>
 <password>
 ```
-
-
 
 # Install Nginx
 
@@ -1237,7 +1209,6 @@ EOF
 
 ```
 
-
 # Install tcping
 
 - 2019/08/16
@@ -1261,7 +1232,6 @@ $# tcping -t 5 www.google.com 80
 www.google.com port 80 open.
 ```
 
-
 # Install conntrack
 
 ```bash
@@ -1275,7 +1245,7 @@ $# conntrack -L
 # Install Apache
 
 - 2018/02/27
-- [安裝Apache, MySQL, PHP](https://www.phpini.com/linux/redhat-centos-7-setup-apache-mariadb-php)
+- [安裝 Apache, MySQL, PHP](https://www.phpini.com/linux/redhat-centos-7-setup-apache-mariadb-php)
 
 ```sh
 $ sudo yum install -y httpd
@@ -1287,8 +1257,8 @@ $ httpd -v
 Server version: Apache/2.4.6 (CentOS)
 Server built:   Oct 19 2017 20:39:16
 ```
-進入瀏覽器, 「localhost」就可以看到網頁了~
 
+進入瀏覽器, 「localhost」就可以看到網頁了~
 
 # Install Postgresql
 
@@ -1323,7 +1293,6 @@ DB=# \dn+
 DB=# \t
 ```
 
-
 # Install Postgre-Client
 
 - 2020/05/05
@@ -1341,12 +1310,10 @@ psql (PostgreSQL) 9.2.24
 $# psql
 ```
 
-
-
 # Install Python3
 
 - 2022/01/04
-- [官方Python下載](https://www.python.org/downloads/)
+- [官方 Python 下載](https://www.python.org/downloads/)
 
 ```sh
 ### 必要套件
@@ -1390,11 +1357,9 @@ make && make install
 python3 --version
 ```
 
-
 # Install Scala 2.13
 
 - 2021/01/11
-
 
 ```bash
 ### 此非官方建議安裝方式, 自己純手動安裝的~
@@ -1409,7 +1374,6 @@ Scala code runner version 2.13.7 -- Copyright 2002-2021, LAMP/EPFL and Lightbend
 $# which scala
 /bin/scala
 ```
-
 
 # Install Java 11
 
@@ -1432,7 +1396,6 @@ javac --version
 #javac 11.0.13
 ```
 
-
 # Install Java 8
 
 - 2021/12/27
@@ -1452,12 +1415,11 @@ javac -version
 #javac 1.8.0_302
 ```
 
-
 # Install KVM
 
 - 2018/04/22
 - [Install KVM Hypervisor](https://www.linuxtechi.com/install-kvm-hypervisor-on-centos-7-and-rhel-7/)
-- CentOS用的 VirtualBox....
+- CentOS 用的 VirtualBox....
 
 ```sh
 # 檢測 CPU是否支援 硬體虛擬化
@@ -1478,12 +1440,11 @@ $ sudo systemctl start libvirtd
 $ sudo virt-manager
 ```
 
-
 # Install VirtualBox
 
 - 2018/08/19
 - [官網](https://www.virtualbox.org/wiki/Linux_Downloads)
-- [RPM Resource libSDL-1.2.so.0](https://rpmfind.net/linux/rpm2html/search.php?query=libSDL-1.2.so.0()(64bit))
+- [RPM Resource libSDL-1.2.so.0](<https://rpmfind.net/linux/rpm2html/search.php?query=libSDL-1.2.so.0()(64bit)>)
 
 ```sh
 # 授權
@@ -1506,8 +1467,6 @@ Creating group 'vboxusers'. VM users must be member of that group!
 $ systemctl status vboxautostart-service
 ```
 
-
-
 # Install `Development Tools`(gcc, make)
 
 - 2018/06/16
@@ -1524,8 +1483,6 @@ $ sudo yum groupinstall "Development Tools"
 # Note : "build-essential" => apt Ubuntu
 ```
 
-
-
 # Install unrar
 
 - [Linux rar](https://www.phpini.com/linux/linux-extract-rar-file)
@@ -1539,8 +1496,6 @@ $ unrar l <file.rar>    # 列出壓縮黨內的目錄
 $ unrar t <file.rar>    # 測試壓縮檔是否完整
 # 有密碼的話, 後面在接著輸入
 ```
-
-
 
 # Install Node.js
 
@@ -1566,8 +1521,6 @@ $ node --version
 v8.11.3
 ```
 
-
-
 # Install PhantomJS
 
 - [Install PhantomJS on CentOS](https://www.bonusbits.com/wiki/HowTo:Install_PhantomJS_on_CentOS)
@@ -1588,8 +1541,6 @@ $ ln -s /opt/phantomjs/bin/phantomjs ~/bin/phantomjs
 #         ^^^^^ 可以連到這裡             ^^^^^ 藉由這裡
 ```
 
-
-
 # Install golang
 
 - 2018/09/14
@@ -1605,7 +1556,6 @@ $ echo "export PATH=/home/${USER}/go/bin:\$PATH" >> ~/.bashrc
 $ go version
 go version go1.11 linux/amd64
 ```
-
 
 # Install Jenkins
 
@@ -1626,7 +1576,6 @@ systemctl enable jenkins
 systemctl status jenkins
 ```
 
-
 # Install supervisor
 
 - 2019/05/02
@@ -1638,7 +1587,6 @@ $# systemctl start supervisord
 $# vim /etc/supervisord.conf
 # 裏頭的 [unix_http_server] 段, chown 改成 0777 會比較好做事情... 但安全性就不曉得了@_@
 ```
-
 
 # Install psmisc(fuser)
 
@@ -1666,7 +1614,6 @@ Zabbix, 只是個統稱, 它包含了底下三個元件:
   - monitor GUI(php, apache)
 - front-end
 
-
 ### Part 1. 安裝
 
 ```bash
@@ -1678,7 +1625,7 @@ yum clean all
 # 會去清空 /var/cache/yum/.../*.rpm
 # 此為 yum install 時, 所下載的暫存快取目錄
 
-yum install -y zabbix-get zabbix-agent zabbix-server-mysql zabbix-web-mysql 
+yum install -y zabbix-get zabbix-agent zabbix-server-mysql zabbix-web-mysql
 
 yum install -y mariadb-server  # 或是使用 Oracle MySQL, 但要留意會有一點點點點點點點不同@@!
 
@@ -1743,7 +1690,6 @@ $# vim /etc/zabbix/zabbix_server.conf
 $# systemctl start zabbix-server
 ```
 
-
 # Install zabbix-proxy 4.0
 
 前置步驟幾乎同 zabbix-server, 略
@@ -1764,7 +1710,6 @@ zcat /usr/share/doc/zabbix-proxy-mysql-*/schema.sql.gz | mysql zabbix_proxy
 sed -i 's/# DBPassword=/DBPassword=zabbix/' /etc/zabbix/zabbix_proxy.conf
 # 修改組態
 ```
-
 
 # Install zabbix-agent 4.0
 
@@ -1792,7 +1737,6 @@ $# systemctl start zabbix-agent
 ### 防火牆, SELinux...
 ```
 
-
 # Install php72 && php-fpm 7.2
 
 ```bash
@@ -1816,7 +1760,6 @@ PHP 7.2.34 (cli) (built: Jun 28 2021 11:21:49) ( NTS )
 Copyright (c) 1997-2018 The PHP Group
 Zend Engine v3.2.0, Copyright (c) 1998-2018 Zend Technologies
 ```
-
 
 # Install zabbix-server 5.0
 
@@ -1864,8 +1807,8 @@ zcat /usr/share/doc/zabbix-server-mysql*/create.sql.gz | mysql -uzabbix zabbix -
 vim /etc/zabbix/zabbix_server.conf
 
 ### 法一, 使用 zabbix-server 外掛的 Nginx
-#systemctl start rh-nginx116-nginx 
-#systemctl enable rh-nginx116-nginx 
+#systemctl start rh-nginx116-nginx
+#systemctl enable rh-nginx116-nginx
 
 ### 法二, 自行維護 Nginx
 cp /etc/opt/rh/rh-nginx116/nginx/conf.d/zabbix.conf /etc/nginx/conf.d/zabbix.conf
@@ -1876,7 +1819,6 @@ systemctl enable rh-php72-php-fpm
 systemctl start zabbix-server
 systemctl enable zabbix-server
 ```
-
 
 # Install Zabbix Agent 5.0
 
@@ -1914,7 +1856,6 @@ systemctl enable zabbix-agent2
 systemctl status zabbix-agent2
 ```
 
-
 # Install Zabbix-Percona
 
 - [Installing Percona Server for MySQL on Red Hat Enterprise Linux and CentOS](https://www.percona.com/doc/percona-server/LATEST/installation/yum_repo.html)
@@ -1944,7 +1885,6 @@ vim /etc/zabbix/agent_bin/get_mysql_stats_wrapper.sh
 vim /etc/zabbix/agent_bin/ss_get_mysql_stats.php
 ```
 
-
 # Install squid
 
 - 2019/12/30
@@ -1955,7 +1895,6 @@ yum install -y squid
 
 systemctl start squid
 ```
-
 
 # Install snapd
 
@@ -1973,7 +1912,6 @@ systemctl status snapd
 ln -s /var/lib/snapd/snap /snap
 # ↑ 不知道這在幹嘛的...
 ```
-
 
 # Install Redis GUI
 
@@ -1998,13 +1936,11 @@ $# chronyc sources -v
 # 以上是透過 time server 作校時, 視情況用手動
 ```
 
-
 # Install k8s / install kubernetes
 
 - 2023/08
 - ![Install Kubernetes](./installK8s.md)
 - [CRI-O Installation Instructions](https://github.com/cri-o/cri-o/blob/main/install.md)
-
 
 ## 1. Install container runtime (未完整)
 
@@ -2021,7 +1957,6 @@ curl -L -o /etc/yum.repos.d/devel:kubic:libcontainers:stable:cri-o:$VERSION.repo
 yum install cri-o
 # (找不到東西安裝QQ)
 ```
-
 
 ## 2. Install && config
 
@@ -2055,7 +1990,6 @@ VERSION="1.24.6" yum install -y kubelet-${VERSION} kubeadm-${VERSION} kubectl-${
 systemctl enable --now kubelet
 ```
 
-
 ## 3. config
 
 ```bash
@@ -2074,7 +2008,7 @@ modprobe br_netfilter
 
 # 再次檢查, 應該就能看到了
 lsmod | grep br_netfilter
-#br_netfilter           22256  0 
+#br_netfilter           22256  0
 #bridge                151336  1 br_netfilter
 # --- 如上 ---
 
@@ -2101,7 +2035,6 @@ EOF
 sudo sysctl --system
 ```
 
-
 ## 4. cgroup drivers 的選擇及配置 (未完整)
 
 - k8s 可選擇使用下列其中一種方式來管理容器資源:
@@ -2116,11 +2049,10 @@ sudo sysctl --system
       - 系統程序的資源管理使用 systemd 管控, 而 container 資源管理使用 cgroup 管控, 在資源匱乏時, 容易造成不穩定的狀況!!
       - 因此才建議使用 systemd
   - systemd
-    -  如果選擇此種方式作為 **cgroup manager**, 則需要做以下配置:
-      - 修改 kubelet 的 cgroup driver 為 systemd
-      - 修改 container runtime 的 cgroup driver 為 systemd
-      - 修改 KubeletConfiguration 配置黨裡頭的 `cgroupDriver` 為 systemd
- 
+    - 如果選擇此種方式作為 **cgroup manager**, 則需要做以下配置:
+    - 修改 kubelet 的 cgroup driver 為 systemd
+    - 修改 container runtime 的 cgroup driver 為 systemd
+    - 修改 KubeletConfiguration 配置黨裡頭的 `cgroupDriver` 為 systemd
 
 # Install iptables
 
@@ -2136,7 +2068,6 @@ systemctl status iptables
 
 ```
 
-
 # Install ip CLI
 
 - 2020/11/02
@@ -2146,7 +2077,6 @@ systemctl status iptables
 $# yum install -y epel-release
 $# yum install -y iproute
 ```
-
 
 # Install htpasswd
 
@@ -2158,7 +2088,6 @@ $# yum install -y iproute
 $# yum install -y httpd-tools
 ```
 
-
 # Install nmap
 
 - 2021/01/30
@@ -2166,7 +2095,6 @@ $# yum install -y httpd-tools
 ```bash
 yum install -y nmap
 ```
-
 
 # Install acme.sh
 
@@ -2180,7 +2108,6 @@ $ MAIL=cool21540125@gmail.com
 $ curl https://get.acme.sh | sh -s email=${MAIL}
 ### ↑ 先安裝完 scoat 再來弄這個
 ```
-
 
 # Install socat
 
@@ -2201,14 +2128,12 @@ $# yum install -y sysstat
 # The cifsiostat command reports I/O statistics for CIFS file systems.
 ```
 
-
 # Install nfs-utils
 
 ```bash
 ### 許多 NFS 的 CLI
 $# yum install -y nfs-utils
 ```
-
 
 # Install dos2unix
 
@@ -2217,7 +2142,6 @@ $# yum install -y nfs-utils
 ```bash
 yum install -y dos2unix
 ```
-
 
 # Install RabbitMQ
 
@@ -2300,7 +2224,6 @@ $# systemctl enable rabbitmq-server
 $# systemctl status rabbitmq-server
 ```
 
-
 # Install jq && Install yq
 
 ```bash
@@ -2308,11 +2231,10 @@ yum install -y epel-release
 yum install -y jq yq
 ```
 
-
 # Install gcc
 
 - 2022/01/04
-- [[Centos7] 升級gcc/gcc-c++ 由5.8版升級到9.3版](http://n.sfs.tw/content/index/14840)
+- [[Centos7] 升級 gcc/gcc-c++ 由 5.8 版升級到 9.3 版](http://n.sfs.tw/content/index/14840)
 
 還沒 k 文件, 改天補上
 
@@ -2330,7 +2252,6 @@ warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 ### Update gcc
 待補充
 ```
-
 
 # Install jsonnet
 
@@ -2379,15 +2300,13 @@ $# which jsonnet
 /var/lib/snapd/snap/bin/jsonnet
 ```
 
-
 # Install Taskfile
 
 - 2022/03/28
 - [Install Taskfile](https://taskfile.dev/#/installation?id=installation)
 - [Github release binary](https://github.com/go-task/task/releases)
 
-
-### 法1 - 腳本安裝最新版
+### 法 1 - 腳本安裝最新版
 
 ```bash
 ###### ============ 法1 直接安裝 binary ============
@@ -2403,7 +2322,6 @@ sudo sh -c "$(curl --location https://taskfile.dev/install.sh)" -- -d -b /usr/lo
 go install github.com/go-task/task/v3/cmd/task@latest
 ```
 
-
 # Install pstree
 
 - 2023/05/19
@@ -2412,7 +2330,6 @@ go install github.com/go-task/task/v3/cmd/task@latest
 ### pstree command not found
 yum install psmisc
 ```
-
 
 # Install protobuf
 
@@ -2439,23 +2356,21 @@ protoc --version
 #libprotoc 3.21.12 (2023Q1)
 ```
 
-
 # Install maven / Install mvn
 
 - 2023/07/11
 - [Download Apache Maven](https://maven.apache.org/download.cgi)
 
 ```bash
-mkdir -p $HOME/pkgs
+mkdir -p $HOME/mvn_pkgs
 
 ### Step2. 下載完 maven 以後解壓縮到上述路徑
-export MVN_HOME="$HOME/pkgs/apache-maven-3.9.3"
+export MVN_HOME="$HOME/mvn_pkgs/apache-maven-3.9.3"
 export PATH="$PATH:$MVN_HOME/bin:$JAVA_HOME/bin"
 
 mvn -v
 #Apache Maven 3.9.5 (僅節錄)
 ```
-
 
 # 語言套件
 
@@ -2465,7 +2380,6 @@ mvn -v
 # 想要輸入中文的話, 裝這些吧
 $# yum install ibus* cjk*
 ```
-
 
 # 備註
 
