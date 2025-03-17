@@ -436,14 +436,19 @@ $# brew install socat
 $# brew install openldap
 ```
 
-# Install java (install OpenJDK)
+# Install java 21
 
-- 2022/11/11
 - 要安裝 Oracle Java 的話請另尋其他文件...
-- [Downloads for Amazon Corretto 17](https://docs.aws.amazon.com/corretto/latest/corretto-17-ug/downloads-list.html)
+- 直接裝 AWS Corretto 吧~
+  - https://docs.aws.amazon.com/corretto/latest/corretto-17-ug/downloads-list.html
 
 ```zsh
-### Install (愛惜電腦, 請遠離 homebrew)
+# -------------------- 別用了 --------------------
+### 愛惜電腦, 請遠離 homebrew
+#brew install java11
+#brew install openjdk@17
+# -------------------- 別用了 --------------------
+
 ### 直接去抓 AWS 版本的 java 吧...
 # 東西會安裝到
 cd /Library/Java/JavaVirtualMachines/
@@ -455,9 +460,7 @@ export JAVA_HOME=/Library/Java/JavaVirtualMachines/amazon-corretto-17.jdk/Conten
 export PATH="$JAVA_HOME/bin:$PATH"
 
 
-# -------------------- 別用了 --------------------
-#brew install java11
-#brew install openjdk@17
+
 #
 #
 #### env PATH
