@@ -1,5 +1,6 @@
 # Slack
 
+- [Slack Block Kit Builder](https://app.slack.com/block-kit-builder/T011LMHN2MA#%7B%22blocks%22:%5B%5D%7D)
 - [Sending messages using incoming webhooks](https://api.slack.com/messaging/webhooks)
 - [Setup & Sending Messages](#i-setup--sending-messages)
   - Slack 最最最基本的 POST Message
@@ -63,12 +64,6 @@ c2[Client] <-- message --> slack;
 slack -- Webhook URL --> backend;
 backend -- "Signing Secret\n將 Request 加密" --> slack;
 ```
-
-### Example Code
-
-看這個範例吧 https://github.com/cool21540125/learning_slack/tree/webhook
-
-本地 Expose 出一個 Webhook URL
 
 ### 配置
 

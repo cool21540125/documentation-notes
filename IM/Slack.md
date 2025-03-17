@@ -63,12 +63,6 @@ slack -- Webhook URL --> backend;
 backend -- "Signing Secret\n將 Request 加密" --> slack;
 ```
 
-### Example Code
-
-看這個範例吧 https://github.com/cool21540125/learning_slack/tree/webhook
-
-本地 Expose 出一個 Webhook URL
-
 ### 配置
 
 > Your App 頁面 > **Event Subscriptions** > Enable Events
