@@ -310,12 +310,6 @@ end
 - Performance
 - Cost: Pay per node provisioned (類似 RDS)
 
-# AWS DMS, Data Migration Service
-
-- [saa-DMS](./cert-SAA_C02.md#database-migration-service-dms)
-- Data Migration Service
-- 地端 DB 上雲端
-
 # OpenSearch
 
 - 可適用於 Big Data

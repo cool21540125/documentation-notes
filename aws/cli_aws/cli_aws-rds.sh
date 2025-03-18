@@ -52,3 +52,7 @@ RDS_IAM_TOKEN=$(aws rds generate-db-auth-token --hostname $RDS_ENDPOINT --port $
 mysql -h$RDS_ENDPOINT -P$PORT --ssl-ca=$HOME/us-west-2-bundle.pem --user=$USER -p$RDS_IAM_TOKEN
 
 ### =============================================  =============================================
+
+### 列出 Aurora MySQL8.0 可以使用的 Aurora 版本
+# https://aws.amazon.com/blogs/database/key-considerations-in-moving-to-graviton2-for-amazon-rds-and-amazon-aurora-databases/
+aws rds describe-db-engine-versions --engine aurora-mysql --engine-version 8.0 --query 'DBEngineVersions[].ValidUpgradeTarget[?IsMajorVersionUpgrade == `true`]'
