@@ -94,14 +94,10 @@ $ sudo apt-get install libmysql-java
 # Install docker
 
 ```bash
-### Set up repository
-# $# apt-get remove docker docker-engine docker.io containerd runc
-$# apt-get update
-$# apt-get install \
-    ca-certificates \
-    curl \
-    gnupg \
-    lsb-release
+### Amazon Ubuntu24.04
+apt update
+
+apt install docker.io
 
 ### official GPG key
 $# mkdir -p /etc/apt/keyrings
@@ -298,4 +294,4 @@ sudo systemctl enable neo4j
 systemctl status neo4j
 ```
 
-#
+# Install CloudWatch Agent

@@ -53,6 +53,16 @@ cli -- "2. output CloudFormation" --> cfn;
 
 ---
 
+# CDK Context
+
+- 將 環境變數(Context values) 塞入到 CDK app 有 6 種方式:
+  - 自動從 AWS account 取得
+  - 藉由 `cdk -c option`
+  - 藉由 `cdk.context.json`
+  - 藉由 `cdk.json`
+  - 藉由 `~/.cdk.json`
+  - 於 CDK app 使用 `construct.node.setContext()`
+
 # CDK 底層概念結構
 
 - cdk App 由 1~N 個 Stakcs 構成

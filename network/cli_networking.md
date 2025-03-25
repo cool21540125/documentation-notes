@@ -65,32 +65,6 @@ traceroute to www.yahoo.com (98.137.246.8), 30 hops max, 60 byte packets
  # 若出現 !H, !N, !P  分別代表 (host, network, protocol  unreachable), 當然還有其他... 這邊不贅述
 ```
 
-## `dnsdomainname`
-
-```sh
-$# dnsdomainname
-tony.com
-
-# 而 DNS Domain 建議作法是設在(如果不用 DNS 的話...)
-# /etc/hosts
-# xxx.xxx.xxx.xxx   os7.tony.com    os7    XXXXX    .....
-# IP                FQDN            HOST1  HOST2    ...
-# 外加
-$# hostnamectl set-hostname os7
-```
-
-## `hostname`
-
-```sh
-# 可查 Domain
-$# hostname
-os7
-
-# 可查 FQDN
-$# hostname -f
-os7.tony.com
-```
-
 ## `mail`
 
 ```sh

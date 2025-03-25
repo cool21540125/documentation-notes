@@ -744,18 +744,6 @@ $ grep --color=auto tony /home/tony/user
 
 ```
 
-### 主機名稱 - hostname
-
-> 設定主機名稱, 重新登入後開始生效, 語法: `set-hostname <新的 hostname名稱>`
-
-```sh
-$ hostname
-tony
-
-$ hostnamectl
-
-```
-
 ### 別名 - alias
 
 > 底下的設定, 登出後就無效了, 因此可將別名設到 `.bashrc` 或 `/etc/profile(不建議)` 之中.

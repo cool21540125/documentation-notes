@@ -25,7 +25,7 @@ go install github.com/hairyhenderson/gomplate/v4/cmd/gomplate@latest
 gomplate --help
 
 ### go install swagger
-go install github.com/swaggo/swag/cmd/swag
+GOBIN=~/bin go install github.com/swaggo/swag/cmd/swag
 # 會優先將  放到 $GOBIN 底下, 如果沒有設定 GOBIN, 則會放到 $GOPATH/bin 底下 (也就是 $HOME/go/bin 底下)
 # 使用時, 記得再做:
 export PATH="$HOME/go/bin:$PATH"

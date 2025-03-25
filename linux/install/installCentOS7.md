@@ -8,16 +8,6 @@
 uname -a
 #Linux tonynb 3.10.0-514.el7.x86_64 \#1 SMP Tue Nov 22 16:42:41 UTC 2016 x86_64 x86_64 x86_64 GNU/Linux
 
-#hostnamectl
-#   Static hostname: tonynb
-#         Icon name: computer-laptop
-#           Chassis: laptop
-#        Machine ID: 6e935c5d22124158bd0a6ebf9e086b24
-#           Boot ID: 3262e51d23a9478dbc268f562556a74c
-#  Operating System: CentOS Linux 7 (Core)
-#       CPE OS Name: cpe:/o:centos:centos:7
-#            Kernel: Linux 3.10.0-514.el7.x86_64
-#      Architecture: x86-64
 
 
 cat /proc/version
@@ -26,8 +16,6 @@ cat /proc/version
 ### 不一定會有此 CLI
 lsb_release -a
 
-### 不一定會有此 CLI
-hostnamectl
 
 ### 查看 Kernel
 uname -a

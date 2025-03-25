@@ -97,22 +97,7 @@ sudo kill -9 XXXX
 grep DEVELOPMENT_TEAM *.xcodeproj/*.pbxproj -m 1 | sed -E 's/^[[:space:]]+//'
 #DEVELOPMENT_TEAM = ABCDE12345;
 
-
 ###
-```
-
-# ACL
-
-- 2020/10/26
-- [Set default directory and file permissions](https://discussions.apple.com/thread/4805409)
-
-macbook 至今依舊沒有 Linux 上的 `setfacl` 功能, 可用底下方式代替
-
-```zsh
-chmod -R +a "group:GroupName allow read,write,append,readattr,writeattr,readextattr,writeextattr" /Path-To-Shared-Directory
-
-chmod -R +a "group:tony allow read,write,append,readattr,writeattr,readextattr,writeextattr" /var/log
-chmod  -R +a 'tony allow write,delete,file_inherit,directory_inherit,add_subdirectory' /var/log
 ```
 
 # 清除 mac 的 DNS cache, flush DNS

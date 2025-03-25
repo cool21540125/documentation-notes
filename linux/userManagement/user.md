@@ -1,4 +1,4 @@
-# 帳戶管理 與 ACL權限
+# 帳戶管理 與 ACL 權限
 
 ```
 /etc/passwd         # 使用者帳號 與 UID, GID 之對映
@@ -7,7 +7,6 @@
 /etc/gshadow        # 使用者群組 的 群組管理員及其密碼 (幾乎被 sudo 取代了)
 ```
 
-
 ## 目錄:
 
 - [ACL](#ACL)
@@ -15,20 +14,16 @@
 - [協作目錄](#協作目錄)
 - [ACLs](#ACLs)
 
-
-
-
-
 # ACL
 
 - [ACL](http://linux.vbird.org/linux_basic/0220filemanager.php#suid)
 
-1. SUID (權限 4)    `只能用於 檔案`
-    - 非擁有者可執行此二進位檔案(runtime 期間, 擁有 owner權限)
-2. SGID (權限 2)    `可用於 檔案 or 目錄`
-    - 執行者所具備的 `secondary group` 只要符合該 檔案 or 目錄 的擁有者群組, 即 **暫時具備** 檔案擁有者的權限
-3. SBIT (權限 1)    `只能用於 目錄`
-    - (我不會... 遇到再說)
+1. SUID (權限 4) `只能用於 檔案`
+   - 非擁有者可執行此二進位檔案(runtime 期間, 擁有 owner 權限)
+2. SGID (權限 2) `可用於 檔案 or 目錄`
+   - 執行者所具備的 `secondary group` 只要符合該 檔案 or 目錄 的擁有者群組, 即 **暫時具備** 檔案擁有者的權限
+3. SBIT (權限 1) `只能用於 目錄`
+   - (我不會... 遇到再說)
 
 ```sh
 ls -ld /tmp; ls -l /usr/bin/passwd
@@ -62,12 +57,11 @@ $ chmod g+s,o+t test; ls -l test
 - `useradd` : 靜態腳本常用
 - `adduser` : 互動式新增使用者
 - `usermod` : 修改 User
-- `groupadd` : 建議明確指定 `-g "group id"` [附註1](#附註1)
-- `userdel` : 建議明確指定 `-r "user id"` [附註2](#附註2)
+- `groupadd` : 建議明確指定 `-g "group id"` [附註 1](#附註1)
+- `userdel` : 建議明確指定 `-r "user id"` [附註 2](#附註2)
 - `groupdel` : 刪除群組
 - `chown` : 改變檔案 User Owner
 - `chgrp` : 改變檔案 Group Owner
-
 
 ## 備註
 
@@ -115,8 +109,6 @@ $# echo "<密碼>" | passwd --stdin <使用者帳戶>
 $# groups <使用者帳戶>
 ```
 
-
-
 # 協作目錄
 
 - [SUID/SGID/SBIT 權限](http://linux.vbird.org/linux_basic/0220filemanager.php#suid)
@@ -134,15 +126,6 @@ $# chmod 2770 /home/shared
 $# ll -d /home/shared
 drwxrws---. 2 root shared 15  7月 14 15:41 /home/shared/
 ```
-
-
-
-# ACLs
-
-- `setfacl` : 設定 ACLs
-- `getfacl` : 查看 ACLs
-
-
 
 ## 備註
 
@@ -162,7 +145,6 @@ $# chmod -R g+rwX <dir Name>
 # 而不套用到 file (檔案不應該預設可執行)
 ```
 
-
 ## 使用 Shell Script 增加使用者
 
 ```sh
@@ -172,8 +154,6 @@ $# useradd ${uu} ; echo ${uu} | passwd --stdin ${uu}
 # 新增使用者, 名為 $uu
 # 將 $uu 丟給 passwd(需要 sudo 權限) 的標準輸入, 藉此來設定密碼
 ```
-
-
 
 # User ID && 使用者帳號 && `/etc/passwd`
 
@@ -212,16 +192,13 @@ uid=2000(tony) gid=1000(tony) groups=1000(tony),10(wheel),983(docker),1002(share
 # 使用其他帳戶登入, 去把 /etc/passwd 的 tony 的 UID改回 1000 後, 就正常了~
 ```
 
-
 ## UID range:
 
 - 0 : 系統管理員 (一般使用者把這改為 0, 利碼晉級 Linux 之神)
 - 1~999 : 系統帳號 (通常是安裝軟體後產生的)
-    - 1~200 : 由 Linux Distribution 自行產生
-    - 200~999 : 一般使用者 晉級 系統帳號 && 安裝軟體 的範圍 (我到底在寫什麼...)
+  - 1~200 : 由 Linux Distribution 自行產生
+  - 200~999 : 一般使用者 晉級 系統帳號 && 安裝軟體 的範圍 (我到底在寫什麼...)
 - 1000~非常大的數字 : 一般使用者
-
-
 
 # Group ID && 使用者群組 && `/etc/group`
 
@@ -251,12 +228,11 @@ docker:!::tony
 # 4 (同 /etc/group )
 ```
 
-
 ## 有效群組(effective group) v.s. 初始群組(initial group)
 
 有效群組, ex: Tony 加入 登山社, 口琴社, 烘焙社等 (此皆為 次要群組, 可切換 有效群組 為 其中一種 次要群組)
 
-另外, Tony 也是 Tony群組 的人 (即為 初始群組, 預設的 有效群組 = 初始群組)
+另外, Tony 也是 Tony 群組 的人 (即為 初始群組, 預設的 有效群組 = 初始群組)
 
 ```sh
 $# grep tony /etc/passwd /etc/group /etc/gshadow
@@ -292,15 +268,13 @@ $ ll a b
 $ usermod -G '' <userid>
 ```
 
-
-
 # 登入過程
 
 1. 尋找 `/etc/passwd` 是否有此帳號, 找出 `UID`
 2. 依照剛找到的帳號, 前往 `/etc/group` 尋找 `GID`
 3. 前往 `/etc/shadow`, 依照 `帳號`(還是 `UID`) 及 `輸入的密碼`, 與此 家密後的密碼 作 @^#%"^&... 換算 && 比對
 
-- su username   : 起始 non-login shell
+- su username : 起始 non-login shell
 - su - username : 起始 login shell
 
 > The main distinction is **su -** sets up the shell environment as if this were a clean login as that user, while **su** just starts a shell as that user with the current environment settings.
@@ -329,8 +303,6 @@ daemon:*:17110:0:99999:7:::
 # 9 (目前沒用到)
 ```
 
-
-
 # root 密碼忘記了@@?
 
 - 有救!
@@ -346,26 +318,21 @@ $ $ authconfig --test | grep hashing
  password hashing algorithm is sha512       # 目前密碼的加密機制
 ```
 
-
 # wheel
 
 CentOS7 開始, 任何具備 `wheel` 群組的使用者, 都可以使用 `sudo` 來執行任何指令.
 
 CentOS6 以前, 無法這麼做, 權限設定在 `/etc/sudoers`
 
-
-
 # 其他
 
 Windows 的 `User Account Control (UAC)` 與 Linux 的 `PolicyKit` 相當
 
-
-###### 附註1:
+###### 附註 1:
 
 因為新增使用者 `useradd` 時, 預設都會新增一個同名的 "group id" 當成它預設的 "primary group" (可能將來會導致 「uid number != gid number」~~~ 讓人看不爽阿 && 減少日後混淆的可能 )
 
-
-###### 附註2:
+###### 附註 2:
 
 移除 User 時, 一併刪除家目錄. 如果不這麼做, 殘存的家目錄的 Owner (原為 username), 會變成 已被刪除的 UID 所擁有(沒有 username 的 UID). 而 UID 會隨著日後增加使用者時, 被重新指派!! 新使用者, 可能會莫名其妙的得到殘存的家目錄的所有權 (超幸運的~ 得到一個有遺產的 UID)
 

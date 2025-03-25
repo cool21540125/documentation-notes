@@ -96,7 +96,6 @@ nmcli con mod demo ipv4.dns 192.168.2.115
 nmcli con mod demo +ipv4.dns 192.168.2.116
 nmcli con mod demo +ipv4.dns 192.168.2.117
 nmcli con up demo
-hostnamectl set-hostname kdc.swrd
 
 ### server
 nmcli con add con-name demo type ethernet ifname eth0 autoconnect yes
@@ -106,7 +105,6 @@ nmcli con mod demo ipv4.dns 192.168.2.115
 nmcli con mod demo +ipv4.dns 192.168.2.116
 nmcli con mod demo +ipv4.dns 192.168.2.117
 nmcli con up demo
-hostnamectl set-hostname server.swrd
 
 ### desktop
 nmcli con add con-name demo type ethernet ifname eth0 autoconnect yes
@@ -117,7 +115,6 @@ nmcli con mod demo ipv4.dns 192.168.124.222
 #nmcli con mod demo +ipv4.dns 192.168.2.116
 #nmcli con mod demo +ipv4.dns 192.168.2.117
 nmcli con up demo
-hostnamectl set-hostname desktop.swrd
 
 # 另一組連線(Default Switch 作 NAT 使用)
 nmcli con add con-name nat type ethernet ifname eth0

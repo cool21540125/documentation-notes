@@ -1,6 +1,4 @@
-
-# 下面都還很亂  還沒整理
-
+# 下面都還很亂 還沒整理
 
 ## 安裝語言套件
 
@@ -13,15 +11,13 @@ for i in $(seq 1 20) ; do
 done
 ```
 
-
 ## Xming
 
 安裝在 Windows 底下, 可以擷取 X-Window System 的桌面資訊,
 
-ex: 在 Windows 10 開啟 putty, 選項中選擇擷取 X-Windows System, 在 putty中, 使用
+ex: 在 Windows 10 開啟 putty, 選項中選擇擷取 X-Windows System, 在 putty 中, 使用
 
 gedit a.txt 之後, Xming 可以擷取開啟 gedit 開始編輯
-
 
 ## sudo
 
@@ -44,24 +40,25 @@ tony ALL=(ALL) NOPASSWD: ALL
 # 可以把 %wheel 想像成 root 群組啦!!
 ```
 
-
 Account info -> `/etc/passwd`
+
 - useradd
 - usermod
 - userdel -r : 如果使用者被刪除時, 沒有用 -r, 會使得那個被刪除的使用者留存的檔案還在, 東西會有被竊取的疑慮
 
 Group info -> `/etc/group`
+
 - groupadd
 - groupmod
 - groupdel
 
 Password info -> `/etc/shadow`
+
 - passwd
 - chage
 
-- `passwd -l <userID>`  : 鎖密碼
+- `passwd -l <userID>` : 鎖密碼
 - `usermod -U <userID>` : 鎖帳號
-
 
 # 2018/08/06
 
@@ -76,7 +73,8 @@ SetGID : /usr/bin/locate -> /var/lib/mlocate/mlocate.db
 - o+t 1
 
 rwxrwxrwx 的最後一個 x 的位置
-- x : 執行的x
+
+- x : 執行的 x
 - t : sticky + x
 - T : 僅 sticky
 
@@ -84,7 +82,6 @@ rwxrwxrwx 的最後一個 x 的位置
 $# chmod g+s <dir name>
 # 設定 目錄 為 SGID, 將來不管誰在此目錄內新增東西, 新增的檔案的 group owner 都為 <dir name> 的 Group owner
 ```
-
 
 # 2018/08/08
 
@@ -97,7 +94,6 @@ $ dd if=/dev/zero bs=1M count=200 of=/run/media/...
 # 產生200個 block size=1M的檔案 , 也就是產生一個 200M 的檔案, 丟到 /run/media/...
 ```
 
-
 ```sh
 $# ps aux | grep ssh-agent
 tony      2257  0.0  0.0  51332   584 ?        Ss   18:13   0:00 /usr/bin/ssh-agent /bin/sh -c exec -l /bin/bash -c "env GNOME_SHELL...(pass)...ome-classic"
@@ -107,7 +103,6 @@ $# kill 2257
 
 $# ps aux | grep ssh-agent
 ```
-
 
 ## Shell Script
 
@@ -138,16 +133,14 @@ $ echo -n xxx
 # echo後, 不要加上斷行字元
 ```
 
-
 ## 送訊號
 
-- kill    : 殺 job or ps
+- kill : 殺 job or ps
 - killall : 殺 job or ps or command
-- pkill   : 殺 job or ps or command && 可用額外指令
+- pkill : 殺 job or ps or command && 可用額外指令
 - pgrep
   - 使用細節忘了
-  - 列出所有與 user 相關的程序ID `pgrep -l -u user`
-
+  - 列出所有與 user 相關的程序 ID `pgrep -l -u user`
 
 ## systemctl
 
@@ -160,18 +153,15 @@ $ systemctl --type=service -l
 $ systemctl list-unit-files
 ```
 
-
-
 ## 教室上網問題
 
 ```sh
 # (電腦比老師早開機)
 # 因教室內, 講師機為 「Gateway+DNS+DHCP+...@&^%(#@!...」 虛擬機預設自動取得ip
-# 所以一開始抓到的 ip 會是無效的! 
+# 所以一開始抓到的 ip 會是無效的!
 # 等講師機開機之後, 再重新啟用連線(重新自動取得IP), 才能上網
 $ nmcli con up "System eth0"
 ```
-
 
 ## Company
 
@@ -191,12 +181,12 @@ traceroute to access.redhat.com (23.193.97.178), 30 hops max, 60 byte packets
 #      |
 #      o    對外IP 122.147.166.1
 #    Router
-#      o        GW 
-#      |   
+#      o        GW
+#      |
 #      o           192.168.2.7
-#    Router 
+#    Router
 #      o        GW 192.168.124.254
-#      | 
+#      |
 # My Computer      192.168.124.73
 ```
 
@@ -207,8 +197,7 @@ $ lftp classroom/content/courses/rh124/rhel7.0/
 $ mirror grading-sripts/
 ```
 
-
-# 
+#
 
 ```sh
 $# du / -h --max-depth=1 2> /dev/null
@@ -231,8 +220,6 @@ $# du / -h --max-depth=1 2> /dev/null
 42G	/
 ```
 
-
-
 # review
 
 ```sh
@@ -240,13 +227,11 @@ rht-vmctl reset server
 rht-vmctl reset desktop
 ```
 
-
 ## Server
 
 ```sh
 lab sa1-review setup
 ```
-
 
 ## Server
 
@@ -272,7 +257,7 @@ cp /home/student/vimfile.txt /home/student/longlisting.txt
 # vim /home/student/longlisting.txt
 # 使用 ctrl+v , ctrl+x 作編輯後, :wq 離開
 
-##### 5 
+##### 5
 sudo vim /etc/login.defs # sudo sudo sudo sudo sudo sudo sudo sudo sudo
 # 新建的使用者, 改成 60 天後到期
 
@@ -350,7 +335,6 @@ nmcli con mod "review" +ipv4.addresses 10.0.12.1/24
 nmcli con mod "review" ipv4.dns 172.25.254.254
 nmcli con up
 echo "10.0.12.1" >> /etc/hosts
-hostnamectl set-hostname server12.example.com
 
 ##### 14
 mkdir /configbackup

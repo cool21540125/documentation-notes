@@ -1,10 +1,9 @@
-# Ch2  - Managing IPv6 Networking
+# Ch2 - Managing IPv6 Networking
 
 1. nmcli 設定 IPv4
 2. 設定 hostname(主機名稱)
 3. 門外漢講 IPv6
 4. nmcli 設定 IPv6
-
 
 ## 1. nmcli 設定 IPv4
 
@@ -35,6 +34,7 @@ nmcli con show [eno2] | grep ipv4
 ### Quiz 1
 
 > 登入 root@192.168.124.129, 新增一個網路連線:
+
 - name 為 demo
 - IPv4 為 192.168.124.222/24
 - gw 為 192.168.124.254
@@ -69,26 +69,9 @@ nmcli con up demo
 ping -c2 google.com.tw
 ```
 
+## 2. 門外漢講 IPv6
 
-## 2. 設定 hostname(主機名稱)
-
-網路上會看到有一些阿貓阿狗的文章, 會講說用 `hostname` 來設定, 但是此設定可能因為啟用不同的 cmcli connection 而變動; 比較安全的作法是使用 `hostnamectl`
-
-```sh
-### 底下的設定, 作用後要 重新登入 或 重開機
-# 設定 hostname
-hostnamectl set-hostname NEWHOSTNAME
-
-# 查看 hostname 狀態
-hostnamectl status
-
-# 查看 hostname 設定檔
-cat /etc/hostname
-```
-
-## 3. 門外漢講 IPv6
-
-### 3.1 - IPv6 小知識
+### 2.1 - IPv6 小知識
 
 ~~IPv4 快分發完了 (這句話 10 年前就聽說了)~~
 
@@ -100,9 +83,9 @@ cat /etc/hostname
 - IPv4 還算夠用(這點是我猜的)
 - 早年, 美國很多學校申請了一大堆 IP4, 導致能用的 IP4 幾近枯竭, 後來經由道德勸說, 他們才歸還申請過多的 IP4
 
-目前多數電腦(像是Google, 中華電信...), 採用雙軌並行(dual-stack), 所以他們可在公網域, 同時使用 IP4 及 IP6
+目前多數電腦(像是 Google, 中華電信...), 採用雙軌並行(dual-stack), 所以他們可在公網域, 同時使用 IP4 及 IP6
 
-使用 128 bits(128個0或1), 區分為 8 組, 故每組 16 bits(16個0或1), 以 16 進位表示的話, 需 4 碼
+使用 128 bits(128 個 0 或 1), 區分為 8 組, 故每組 16 bits(16 個 0 或 1), 以 16 進位表示的話, 需 4 碼
 
     2進位      16進位
     1011        b
@@ -119,7 +102,7 @@ cat /etc/hostname
     1100110011001100        cccc
     1111111111111111        ffff
 
-### 3.2 - IPv6 寫法
+### 2.2 - IPv6 寫法
 
 ```sh
 # 8 組 16 進位 (7個分號) 都用小寫!
@@ -152,12 +135,11 @@ Q2
 2001:db8:0:1::1
 ```
 
-## 4. nmcli 設定 IPv6
+## 3. nmcli 設定 IPv6
 
-* server22 ipv6: `fe80::97f9:62ec:f9d5:ea49/64` (自動取得)
-* desktop22 ipv6: `fe80::97f9:62ec:f9d5:ea50/64` (改成這個)
-* Host ipv6: `fe80::80f5:8c6f:43f9:dd4f%23` (桌機外部交換器)
-
+- server22 ipv6: `fe80::97f9:62ec:f9d5:ea49/64` (自動取得)
+- desktop22 ipv6: `fe80::97f9:62ec:f9d5:ea50/64` (改成這個)
+- Host ipv6: `fe80::80f5:8c6f:43f9:dd4f%23` (桌機外部交換器)
 
 ```sh
 $# nmcli con add con-name demo6 ifname eth0 type ethernet autoconnect yes
@@ -181,7 +163,7 @@ $# ip a
        valid_lft forever preferred_lft forever
     inet6 fe80::e15a:db6b:41ed:e8ab/64 scope link   # link local
        valid_lft forever preferred_lft forever
-    inet6 fe80::5054:ff:fe00:80a/64 scope link 
+    inet6 fe80::5054:ff:fe00:80a/64 scope link
        valid_lft forever preferred_lft forever
 
 # ping6
@@ -196,7 +178,6 @@ $# ssh root@fe80::97f9:62ec:f9d5:ea49%eth0
 # Host 可以透過 ipv6 進到 desktop22 了
 $# ssh root@fe80::e15a:db6b:41ed:e8ab%23
 ```
-
 
 ### Quiz 2
 
@@ -218,10 +199,9 @@ nmcli con show
 
 # IPv6 其他
 
-* `::1/128`  (localhost)              : 等同 `127.0.0.1/8` on loopback interface
-* `::`       (unspecified address)    : 等同 `0.0.0.0`, 可能是 ip 衝突, 另此設定可能會 listening on all configured IP addresses.
-* `::/0`     (default route)          : 等同 `0.0.0.0/0`. 
-* `2000::/3` (Global unicast address) : 此由 IANA 發布. 範圍為 [`2000::/16`, `3fff::/16`]
-* `fd00::/8` (Unique local addresses) : private routable IP address. 通常是 `/48` or `/64` (我到底在寫三小我也看不懂)
-* `fe80::/64`(Link-local addresses)   : 所有 IPv6 介面, 都會自動設定 link-local address. 而這些 local link 只能在同網段內使用.
-
+- `::1/128` (localhost) : 等同 `127.0.0.1/8` on loopback interface
+- `::` (unspecified address) : 等同 `0.0.0.0`, 可能是 ip 衝突, 另此設定可能會 listening on all configured IP addresses.
+- `::/0` (default route) : 等同 `0.0.0.0/0`.
+- `2000::/3` (Global unicast address) : 此由 IANA 發布. 範圍為 [`2000::/16`, `3fff::/16`]
+- `fd00::/8` (Unique local addresses) : private routable IP address. 通常是 `/48` or `/64` (我到底在寫三小我也看不懂)
+- `fe80::/64`(Link-local addresses) : 所有 IPv6 介面, 都會自動設定 link-local address. 而這些 local link 只能在同網段內使用.

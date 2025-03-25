@@ -9,12 +9,11 @@
 
 詳 [TCP/IP](https://github.com/cool21540125/documentation-notes/blob/master/network/tcpip.md)
 
-
 ## 2. 網卡命名
 
 `wlp2s0`, `enp1s0`, `eth0`, `eth1`, ... 到底是啥挖歌
 
-CentOS6 以前 及 虛擬機 : **eth0**, **eth1**, **eth2** . 命名依據則是 `網卡插在電腦上的哪個 port(硬體上的那個洞啦!!), 就會給予 該 port 的編號. 簡單的說, 插在第一個洞=eth0, 插在第二個洞=eth1, ...`; 而虛擬機裏頭, 因為是 `虛擬作業系統`, 透過 #@)*^!#... 的機制, 抓取實體作業系統的網卡, 所以一樣會看到 `eth0` 這東西
+CentOS6 以前 及 虛擬機 : **eth0**, **eth1**, **eth2** . 命名依據則是 `網卡插在電腦上的哪個 port(硬體上的那個洞啦!!), 就會給予 該 port 的編號. 簡單的說, 插在第一個洞=eth0, 插在第二個洞=eth1, ...`; 而虛擬機裏頭, 因為是 `虛擬作業系統`, 透過 #@)\*^!#... 的機制, 抓取實體作業系統的網卡, 所以一樣會看到 `eth0` 這東西
 
 ex: `wlp2s0`, `enp1s0`
 
@@ -27,14 +26,14 @@ ex: `wlp2s0`, `enp1s0`
 #### 第 3 碼(可能多碼)
 
 - o : `on-board` 主機板上的網卡
-- s : `hotplug slot` USB網卡
-- p : `PCI geographic location` PCI介面網卡
+- s : `hotplug slot` USB 網卡
+- p : `PCI geographic location` PCI 介面網卡
 - x : `MAC address`
 
 #### 第 4 碼
 
-- 1 : PCI介面第 1 孔
-- 2 : PCI介面第 2 孔
+- 1 : PCI 介面第 1 孔
+- 2 : PCI 介面第 2 孔
 
 #### 第 5~6 碼
 
@@ -71,8 +70,7 @@ tonyCJ           ef896290-e66a-4968-b38e-4ce6104d78df    wifi        --
 wifi383-13       d5097dd9-b0db-4201-9ab0-df79b7219bd3    wifi        --
 ```
 
-
-指令提示: 善用 <kbd>tab</kbd> 
+指令提示: 善用 <kbd>tab</kbd>
 
 ```sh
 # 查看 connection 細節 (通常會用 | grep xxx 來找關鍵字)
@@ -101,7 +99,6 @@ $# nmcli con mod eth0 autoconnect no
 $# nmcli con up wahaha
 ```
 
-
 ## Common Usage
 
 ```bash
@@ -120,40 +117,19 @@ $# nmcli con mod ${OLD_CONN} autoconnect no
 $# nmcli con up auto
 ```
 
-
 網卡連線檔, 放在 `/etc/sysconfig/network-scripts/ifcfg-*`
-
 
 ## 4. 主機名稱 && 名稱解析
 
 #### 名詞定義:
 
-* 名稱解析: 用 網址 查找 IP
-* 名稱反查: 用 IP 查找 網址
-
+- 名稱解析: 用 網址 查找 IP
+- 名稱反查: 用 IP 查找 網址
 
 #### 釐清 URI, URL, URN
 
-* [Uniform Resource Identifier (URI): Generic Syntax](http://www.ietf.org/rfc/rfc3986.txt)
-* [What is the difference between a URI, a URL and a URN?](https://stackoverflow.com/questions/176264/what-is-the-difference-between-a-uri-a-url-and-a-urn?page=1&tab=active#tab-top)
+- [Uniform Resource Identifier (URI): Generic Syntax](http://www.ietf.org/rfc/rfc3986.txt)
+- [What is the difference between a URI, a URL and a URN?](https://stackoverflow.com/questions/176264/what-is-the-difference-between-a-uri-a-url-and-a-urn?page=1&tab=active#tab-top)
 
-- 本機名稱定義檔, 放在 `/etc/hostname`, 使用 `hostnamectl` 會去查找此定義檔, 若該檔案不存在, 則會前往 DNS 作名稱反查(用 IP 查 hostname)
-- 名稱查找定義檔, 放在 `/etc/resolv.conf`, 
-
-```sh
-# (不建議使用)
-$ hostname      # 顯示 or 暫時修改 主機名稱(會因為使用的 nmcli 連線而改變)
-vm75
-
-$ hostnamectl
-   Static hostname: vm75
-         Icon name: computer-vm
-           Chassis: vm
-        Machine ID: 2faa581727224f3892f5bdaac58ac50e
-           Boot ID: 3ebb40b808744459827f9022932d8bd3
-    Virtualization: microsoft
-  Operating System: CentOS Linux 7 (Core)
-       CPE OS Name: cpe:/o:centos:centos:7
-            Kernel: Linux 3.10.0-862.11.6.el7.x86_64
-      Architecture: x86-64
-```
+* 本機名稱定義檔, 放在 `/etc/hostname`, 使用 `hostnamectl` 會去查找此定義檔, 若該檔案不存在, 則會前往 DNS 作名稱反查(用 IP 查 hostname)
+* 名稱查找定義檔, 放在 `/etc/resolv.conf`,

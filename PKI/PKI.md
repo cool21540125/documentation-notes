@@ -224,9 +224,8 @@ yum install -y python2-certbot-apache
 ### 2. 設定 apache && hostname && domain
 
 1. DNS - A record (或使用 /etc/hosts)
-2. hostnamectl set-hostname (這好像可以不要用...)
-3. 設定 VirtualHost `/etc/httpd/conf.d/vhost.conf`
-4. https `yum install mod_ssl`
+2. 設定 VirtualHost `/etc/httpd/conf.d/vhost.conf`
+3. https `yum install mod_ssl`
 
 ### 3. vhost
 

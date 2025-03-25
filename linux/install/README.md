@@ -22,8 +22,6 @@ Linux version 5.10.104-linuxkit (root@buildkitsandbox) (gcc (Alpine 10.2.1_pre1)
 ### 不一定會有此 CLI
 $# lsb_release -a
 
-### 不一定會有此 CLI
-$# hostnamectl
 
 ### 查看 Kernel
 $# uname -a
@@ -32,13 +30,12 @@ Linux 4450648556ba 5.10.104-linuxkit #1 SMP Thu Mar 17 17:08:06 UTC 2022 x86_64 
 
 ## 個別套件
 
-- yum list 'httpd*' :
+- yum list 'httpd\*' :
 - `yum search '用關鍵字查'` : 用來前往 yum server 尋找有沒有關鍵字描述的軟體
 - yum search search all 'key words' : 同上, 但會額外找 軟體備註欄位有描述到的關鍵字的軟體
 - yum info httpd : info 後面的東西, 名字得完全符合
 - `yum provides /var/www/html` : 不管電腦內有沒有, 只要 `/etc/yum.repos.d/*.repo` 查得到東西, 就可以查到相關資訊
 - yum install XXX
-
 
 ## 群組套件
 
@@ -51,18 +48,11 @@ Linux 4450648556ba 5.10.104-linuxkit #1 SMP Thu Mar 17 17:08:06 UTC 2022 x86_64 
 - yum remove
 - yum groups remove
 
-
-
-
-
-
 ```sh
 $# yum clean all
 # 會去清空 /var/cache/yum/.../*.rpm
 # 此為 yum install 時, 所下載的暫存快取目錄
 ```
-
-
 
 ```sh
 # 設定光碟為 Repository
@@ -78,7 +68,6 @@ gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-7
 $ yum repolist
 ```
 
-
 ```sh
 $ rpm -qa | grep httpd
 
@@ -87,8 +76,6 @@ $ rpm -ql httpd
 $ rpm -qpc xxx
 # -c : 路徑
 ```
-
-
 
 # 移除 Line
 
@@ -103,7 +90,6 @@ libpipeline-1.2.3-3.el7.x86_64
 $# rpm -qi line
 套件 line 尚未安裝
 ```
-
 
 ```sh
 # 本地 rpm 安裝

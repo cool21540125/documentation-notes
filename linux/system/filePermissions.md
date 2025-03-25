@@ -2,8 +2,6 @@
 
 - 2018/06/09
 
-
-
 # 檔案權限
 
 > 檔案是實際含有資料的地方
@@ -14,25 +12,22 @@
 
 僅針對「檔案的內容」, 與檔案名稱的存在與否無關
 
-
-
 # 目錄權限
 
 > 目錄主要的內容, 在記錄檔案清單
 
 - r: 具備讀取目錄清單的權限, ex: 使用 ls 查看
 - w: 可以異動該目錄結購清單的權限(與檔名有關的異動啦)
-    - 建立新的 檔案 && 目錄
-    - 刪除已經存在的 檔案 && 目錄(不論該檔案的權限為何)
-    - 移動檔案位置(更改名字)
+
+  - 建立新的 檔案 && 目錄
+  - 刪除已經存在的 檔案 && 目錄(不論該檔案的權限為何)
+  - 移動檔案位置(更改名字)
 
 - x: 目錄具備 x 權限, 表示使用者可以 cd 進入
-
 
 ## 範例 - ACLs
 
 RH 134 Ch6 p110
-
 
 ```sh
 ### 環境設定 (su)
@@ -63,6 +58,9 @@ cd /shares/
 setfacl -Rm u:james:-,g:sodor:rwX,o::- /shares/steamies/
 setfacl -m d:g:sodor:rwx,d:u:james:-,d:o::- /shares/steamies/
 
+setfacl -Rm u:node_exporter:rwx,u:ubuntu:rwx,g:node_exporter:rwX,o::- /srv/node_exporter
+setfacl -m d:g:node_exporter:rwx,d:u:ubuntu:rwx,d:u:node_exporter:-,d:o::- /srv/node_exporter
+
 getfacl /shares/steamies
 
 ### 還原
@@ -74,7 +72,7 @@ groupdel sodor
 groupdel controller
 ```
 
-## 範例2 - ACLs
+## 範例 2 - ACLs
 
 RH134 Ch6 p114
 
