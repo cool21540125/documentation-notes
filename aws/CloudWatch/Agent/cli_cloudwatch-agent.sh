@@ -43,6 +43,7 @@ tail -f /opt/aws/amazon-cloudwatch-agent/logs/amazon-cloudwatch-agent.log # logs
 # 啟動 CloudWatch Unified Agent (必須要有 Configuration)
 
 sudo systemctl start amazon-cloudwatch-agent.service
+sudo systemctl stop amazon-cloudwatch-agent.service
 
 sudo systemctl enable amazon-cloudwatch-agent.service
 
@@ -57,6 +58,7 @@ ps aux | grep -v grep | grep "USER\|amazon-cloudwatch-agent"
 sudo /opt/aws/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent-ctl -a stop
 
 sudo /opt/aws/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent-ctl -a fetch-config -m ec2 -s -c file:/opt/aws/amazon-cloudwatch-agent/bin/config.json
+sudo /opt/aws/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent-ctl -a fetch-config -m ec2 -s -c ssm:AmazonCloudWatch-linux
 # -a ACTION
 #    fetch-config: apply config for agent (必須再額外聲明 -c CONFIG_FILE)
 #    start
