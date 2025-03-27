@@ -1,0 +1,43 @@
+annotations:
+  artifacthub.io/changes: "- kind: added\n  description: \"typo + WEBHOOK_URL fix.
+    Added missing ingress routes for webhooks-. Parametric RollingUpdate, update image
+    to 1.22.3 \"\n  links:\n    - name: \"GitHub PR #59 - typo + WEBHOOK_URL fix\"\n
+    \     url: https://github.com/8gears/n8n-helm-chart/pull/59\n    - name: \"GitHub
+    PR #60 - added missing ingress routes for webhooks\"\n      url: https://github.com/8gears/n8n-helm-chart/pull/60\n
+    \   - name: \"GitHub PR #61 - Parametric RollingUpdate\"\n      url: https://github.com/8gears/n8n-helm-chart/pull/61\n-
+    kind: changed\n  description: \"Using now latest Redis 18.6.1\"\n- kind: added\n
+    \ description: \"Chart 0.13.0 adds support for app version 1.7.1\"\n- kind: changed\n
+    \ description: \"Correctly perform semantic version comparison\"\n  links:\n    -
+    name: \"GitHub PR\"\n      url: https://github.com/8gears/n8n-helm-chart/pull/54
+    \   \n- kind: changed\n  description: \"Fixed secret volume mnt for existing secret\"\n
+    \ links:\n    - name: \"GitHub PR\"\n      url: https://github.com/8gears/n8n-helm-chart/pull/51\n-
+    kind: changed\n  description: \"Updated App Version to 1.5.1\"\n- kind: added\n
+    \ description: \"Added support for specifying initContainers and probes\"\n- kind:
+    changed\n  description: \"Updated App Version to 0.236.3\"\n- kind: added\n  description:
+    \"Support Kubernetes 1.25\"\n  links:\n    - name: \"GitHub PR\"\n      url: https://github.com/8gears/n8n-helm-chart/pull/46\n"
+apiVersion: v2
+appVersion: 1.22.3
+dependencies:
+- condition: redis.enabled
+  name: redis
+  repository: https://charts.bitnami.com/bitnami
+  version: 18.6.1
+description: A Kubernetes Helm chart for n8n a free and open fair-code licensed node
+  based Workflow Automation Tool. Easily automate tasks across different services.
+home: https://github.com/8gears/n8n-helm-chart
+icon: https://avatars1.githubusercontent.com/u/45487711?s=200&v=4
+keywords:
+- Workflow Automation
+- Workflow
+- iPaaS
+- integration-framework
+- low-code-plattform
+- low-code
+maintainers:
+- name: Vadim Bauer
+name: n8n
+sources:
+- https://github.com/n8n-io/n8n
+- https://n8n.io/
+type: application
+version: 0.20.0
