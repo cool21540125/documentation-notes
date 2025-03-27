@@ -29,3 +29,5 @@ keyfile
 .secret*
 secret*
 !SecretManager.md
+
+**/charts/*.tgz

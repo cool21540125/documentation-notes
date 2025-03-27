@@ -6,7 +6,9 @@ exit 0
 export KUBECONFIG=~/.kube/XXX.yaml
 
 ### 新建一個 Chart (可理解成 git init NewGitProjectFromScratch)
-helm create ${NewChartFromScratch}
+helm create NewChartFromScratch
+# 有點像是使用 docker-compose 建立整個 compose file 的起手式
+# 連帶建立整個 values.yaml / Chart.yaml / templates / charts/
 
 ### 增加訂閱 add Helm Repo
 helm repo add stable https://charts.helm.sh/stable
@@ -43,6 +45,8 @@ helm repo update ${Helm_Repo_Name}
 helm install ${Installed_Release_Name} ${Local_Helm_Repo_Name}/${Chart_Name_From_Helm_Repo}
 helm install -f values.yaml ${ReleaseName} ${PATH_to_ChartDir}
 helm install -f values.yaml ${Local_Helm_Repo_Name}/${Chart_Name_From_Helm_Repo}
+
+helm install my-n8n oci://8gears.container-registry.com/library/n8n --version 0.20.0
 
 ### 列出 chart 的 information
 helm show chart
