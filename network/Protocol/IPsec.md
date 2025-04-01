@@ -2,6 +2,21 @@
 - [Understanding VPN IPSec Tunnel Mode And IPSec Transport Mode](https://www.firewall.cx/networking/network-protocols/ipsec-modes.html)
 - [Github - hwdsl2 / setup-ipsec-vpn](https://github.com/hwdsl2/setup-ipsec-vpn)
 
+# 名詞解釋
+
+- L2TP
+  - 相當於一個 地下通道, 可用來傳輸資料. 但是並未對通道本身的私密性做關注
+  - 遊走通道的資料需要搭配其他機制才能加密啦
+  - 常常與 IPsec 一起使用, 稱為 `L2TP/IPsec`
+- IPsec
+  - 安全的通訊協議 / 安全性機制. 可以對資料作加密解密, 以確保資料的完整性及私密性
+  - IPsec 加密這動作本身, 可以改用 SSL/TLS 替代
+- IKEv2
+  - IKEv2 為 IPsec 的金鑰交換方法
+  - IKEv2 的替代方案有:
+    - ISAKMP(前一代的 IKE 啦)
+    - DTLS
+
 # IPSec, Internet Protocol Security
 
 - IPsec VPN 表示是遵從 IPsec Protocol 來實作的一種 VPN

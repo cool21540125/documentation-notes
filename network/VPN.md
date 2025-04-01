@@ -1,7 +1,7 @@
 # VPN
 
 - iOS 大概在 2020 年(2024 的現在我不曉得), 只支援了 IPsec vpn 及 openvpn
-  - 而更早之前, 還有支援 PPTP, 不過似乎已經被視為不安全了?
+  - 而更早之前, 還有支援 PPTP, 不過已經被視為不安全了 (可改用 L2TP)
 - VPN 區分成 2 種:
   - Site-to-Site VPN / VPN Tunnel
     - 網段 對 網段
