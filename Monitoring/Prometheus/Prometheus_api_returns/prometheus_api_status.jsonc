@@ -1,0 +1,79 @@
+// GET http://localhost:9090/api/v1/targets?state=active 得到這包 JSON
+{
+  "status": "success",
+  "data": {
+    "activeTargets": [
+      {
+        "discoveredLabels": {
+          "__address__": "localhost:9090",
+          "__metrics_path__": "/metrics",
+          "__scheme__": "http",
+          "__scrape_interval__": "15s",
+          "__scrape_timeout__": "3s",
+          "job": "EC2-TkoMongoDB__prometheus"
+        },
+        "labels": {
+          "instance": "localhost:9090",
+          "job": "EC2-TkoMongoDB__prometheus"
+        },
+        "scrapePool": "EC2-TkoMongoDB__prometheus",
+        "scrapeUrl": "http://localhost:9090/metrics",
+        "globalUrl": "https://sre-prometheus.weibyapps.com/metrics",
+        "lastError": "",
+        "lastScrape": "2025-03-26T05:58:39.099447642Z",
+        "lastScrapeDuration": 0.00576368,
+        "health": "up",
+        "scrapeInterval": "15s",
+        "scrapeTimeout": "3s"
+      },
+      {
+        "discoveredLabels": {
+          "__address__": "docker_host:9100",
+          "__metrics_path__": "/metrics",
+          "__scheme__": "http",
+          "__scrape_interval__": "15s",
+          "__scrape_timeout__": "3s",
+          "job": "EC2_TkoMongoDB__node_exporter"
+        },
+        "labels": {
+          "instance": "docker_host:9100",
+          "job": "EC2_TkoMongoDB__node_exporter"
+        },
+        "scrapePool": "EC2_TkoMongoDB__node_exporter",
+        "scrapeUrl": "http://docker_host:9100/metrics",
+        "globalUrl": "http://docker_host:9100/metrics",
+        "lastError": "",
+        "lastScrape": "2025-03-26T05:58:44.869655286Z",
+        "lastScrapeDuration": 0.018711474,
+        "health": "up",
+        "scrapeInterval": "15s",
+        "scrapeTimeout": "3s"
+      },
+      {
+        "discoveredLabels": {
+          "__address__": "cadvisor:8080",
+          "__metrics_path__": "/metrics",
+          "__scheme__": "http",
+          "__scrape_interval__": "10s",
+          "__scrape_timeout__": "3s",
+          "job": "cadvisor"
+        },
+        "labels": {
+          "instance": "cadvisor:8080",
+          "job": "cadvisor"
+        },
+        "scrapePool": "cadvisor",
+        "scrapeUrl": "http://cadvisor:8080/metrics",
+        "globalUrl": "http://cadvisor:8080/metrics",
+        "lastError": "",
+        "lastScrape": "2025-03-26T05:58:40.935766135Z",
+        "lastScrapeDuration": 0.125689597,
+        "health": "up",
+        "scrapeInterval": "10s",
+        "scrapeTimeout": "3s"
+      }
+    ],
+    "droppedTargets": [],
+    "droppedTargetCounts": null
+  }
+}

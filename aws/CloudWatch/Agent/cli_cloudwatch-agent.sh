@@ -16,6 +16,12 @@ exit 0
 /opt/aws/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent --version
 #CWAgent/1.300041.0b681 (go1.22.3; linux; amd64)
 
+### ================================= 直接從 SSM Paramater Store 抓取 Configuration =================================
+
+### 直接從遠端拉配置, 套用後重啟
+sudo /opt/aws/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent-ctl -a fetch-config -m ec2 -c ssm:AmazonCloudWatch-linux -s
+/opt/aws/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent-ctl -a status
+
 ### ================================= 初始化 Configuration =================================
 ### ------------------------ 法1. 使用 Wizard ------------------------
 sudo /opt/aws/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent-config-wizard
@@ -53,12 +59,9 @@ systemctl status amazon-cloudwatch-agent.service
 ps aux | grep -v grep | grep "USER\|amazon-cloudwatch-agent"
 
 ### 啟動服務 (並生成 systemd service)
-/opt/aws/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent-ctl -a status
-
 sudo /opt/aws/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent-ctl -a stop
 
 sudo /opt/aws/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent-ctl -a fetch-config -m ec2 -s -c file:/opt/aws/amazon-cloudwatch-agent/bin/config.json
-sudo /opt/aws/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent-ctl -a fetch-config -m ec2 -s -c ssm:AmazonCloudWatch-linux
 # -a ACTION
 #    fetch-config: apply config for agent (必須再額外聲明 -c CONFIG_FILE)
 #    start
@@ -77,5 +80,7 @@ sudo /opt/aws/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent-ctl -a fetch-c
 #
 # -s
 #    僅適用於 -a [ fetch-config / append-config / remove-config ], 表示套用後重啟 agent
+
+/opt/aws/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent-ctl -a status
 
 ### =================================  =================================

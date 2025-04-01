@@ -74,6 +74,11 @@ aws dynamodb scan \
 # max return to 1MB, 會做 pagination
 # UNKNOWN
 
+### Get item
+aws dynamodb get-item \
+  --table-name $TABLE_NAME \
+  --key "{\"userid\": {\"S\": \"$QUERY_KEY_STRING_ID\"}}"
+
 ###
 aws dynamodb scan \
   --table-name MovieHistoryProject \

@@ -67,6 +67,9 @@ api <--> On-Premise
     - 另 cross-region 的部分, 可藉由 CloudFront 來做 caching. (自行設定 caching strategy && 將服務擴展到 「非 Global 但是多 Region」)
 - Private
   - 從 VPC 訪問, 藉由 VPC Endpoint(ENI), Resource Policy 配置權限
+- Api Gateway 可以設定 Resource policy 來限制來源 IPs
+  - https://docs.aws.amazon.com/apigateway/latest/developerguide/apigateway-resource-policies.html
+  - https://repost.aws/knowledge-center/api-gateway-resource-policy-access
 
 # API Gateway - CloudWatch Metrics
 

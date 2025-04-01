@@ -295,3 +295,20 @@ systemctl status neo4j
 ```
 
 # Install CloudWatch Agent
+
+# Install golang
+
+```bash
+# 24.04 已經無須再安裝額外的 repo 可直接安裝
+sudo apt update
+sudo apt install golang-go
+```
+
+# Install nvm
+
+```bash
+curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash
+nvm --version
+
+nvm install 22
+```
