@@ -15,6 +15,7 @@ exit 0
 ### ================================= 版本 =================================
 /opt/aws/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent --version
 #CWAgent/1.300041.0b681 (go1.22.3; linux; amd64)
+#CWAgent/1.300054.0b1074 (go1.23.7; linux; amd64)
 
 ### ================================= 直接從 SSM Paramater Store 抓取 Configuration =================================
 
