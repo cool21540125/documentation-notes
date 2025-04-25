@@ -56,3 +56,18 @@ dms -- insert/update/delete --> rds;
 ```
 
 ---
+
+# MySQL - DMS
+
+- mysql 如果要啟用作為 Endpoints, 則需要配置:
+
+```sql
+-- 如果是自己的 MySQL
+SET GLOBAL binlog_format = 'ROW';
+SET GLOBAL binlog_row_image = 'FULL';
+
+-- 如果是 RDS MySQL
+call mysql.rds_set_configuration('binlog retention hours', 24);
+CALL mysql.rds_set_configuration('binlog_format', 'ROW');
+
+```

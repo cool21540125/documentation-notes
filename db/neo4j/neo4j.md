@@ -1,3 +1,6 @@
+- The Power of the Path - Part1
+  - https://neo4j.com/blog/developer/the-power-of-the-path-1/
+
 # Neo4j
 
 - Neo4j Graph Data Science (GDS)

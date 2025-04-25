@@ -209,11 +209,9 @@ kubectl config set-cluster
 
 ### 顯示目前有哪些 context
 kubectl config get-contexts
-#CURRENT   NAME                  CLUSTER               AUTHINFO   NAMESPACE
-#*         str                   str                   str
-#          str-demo-k8s-str-02   str-demo-k8s-str-02   str
-#          str-demo-k8s-str-03   str-demo-k8s-str-03   str
-#          str-demo-k8s-str01    str-demo-k8s-str01    str
+#CURRENT   NAME             CLUSTER          AUTHINFO         NAMESPACE
+#*         docker-desktop   docker-desktop   docker-desktop
+## 上面這兩行是因為我跑在 Macbook 的 Docker Desktop
 
 ### 查看合併後的 kubeconfig 設定
 kubectl config view

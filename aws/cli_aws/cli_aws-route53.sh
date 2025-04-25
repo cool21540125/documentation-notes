@@ -25,3 +25,12 @@ TARGET_ACCOUNT_ID=
 aws route53domains transfer-domain-to-another-aws-account --domain-name ${YOUR_DOMAIN} --account-id ${TARGET_ACCOUNT_ID}
 
 # ======================================== 把 domain 轉到 Cloudflare ========================================
+
+### ======================================== 設定解析 ========================================
+
+aws route53 list-hosted-zones
+
+### 查看目前的 ZONE 有哪些 Records
+aws route53 list-resource-record-sets --hosted-zone-id $ZONE_ID
+
+###
