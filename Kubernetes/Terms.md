@@ -1,36 +1,34 @@
 # 容器化相關名詞簡介、說明與應用
 
-- CRI(Container Runtime)
-    - 容器執行環境
 - runc
-    - golang 寫的
-    - Container runtime 的一種實作
-    - 早期被 k8s 使用, 但後期已被 crun 取代
-        - crun 用 C 寫的
+  - golang 寫的
+  - Container runtime 的一種實作
+  - 早期被 k8s 使用, 但後期已被 crun 取代
+    - crun 用 C 寫的
 - slirp4netns
-    - podman 用它來做 rootless container 的網路.
-    - a tool which helps networking work in unprivileged containers
+  - podman 用它來做 rootless container 的網路.
+  - a tool which helps networking work in unprivileged containers
 - conmon
-    - Docker 的必要元件之一
-    - OCI container runtime monitor
-    - conmon process(PID1) 監控它所在的 container 
-    - 處理 container logging && 對 container process 紀錄 exit code
+  - Docker 的必要元件之一
+  - OCI container runtime monitor
+  - conmon process(PID1) 監控它所在的 container
+  - 處理 container logging && 對 container process 紀錄 exit code
 - containerd-shim
-    - Docker Container 的墊片程序. Docker 藉由這東西來呼叫 runc, 藉以建立 Docker Container
-    - 用這東西的好處是, Docker Daemon 升級或是掛掉時, 不會影響到 Docker Container
+  - Docker Container 的墊片程序. Docker 藉由這東西來呼叫 runc, 藉以建立 Docker Container
+  - 用這東西的好處是, Docker Daemon 升級或是掛掉時, 不會影響到 Docker Container
 - kubelet
-    - Node 上的管理員, 負責與 Pods 及 Master 溝通
-    - 安裝在 Node 上面的管理員(daemon), 負責與 Pods 及 Master 溝通
-    - 用來啟動 pods && containers (與 API Server 溝通), 可理解成是 Node 上頭的 Container 代理
+  - Node 上的管理員, 負責與 Pods 及 Master 溝通
+  - 安裝在 Node 上面的管理員(daemon), 負責與 Pods 及 Master 溝通
+  - 用來啟動 pods && containers (與 API Server 溝通), 可理解成是 Node 上頭的 Container 代理
 - kube-proxy
-    - 讓其他 Nodes 上的其他物件可以與此 Node 內的 Pods 溝通 (處理 iptables)
+  - 讓其他 Nodes 上的其他物件可以與此 Node 內的 Pods 溝通 (處理 iptables)
 - K8S CNI 實作:
-    - Flannel
-    - Calico
-    - Cilium
-    - ...
+  - Flannel
+  - Calico
+  - Cilium
+  - ...
 - CRI-O
-    - OCI-based implementation of Kubernetes Container Runtime Interface
+  - OCI-based implementation of Kubernetes Container Runtime Interface
 - K8s Cluster
   - k8s 架構下的所有 Workers && Masters
 - Worker Node
@@ -44,44 +42,35 @@
   - 內有 4 個元件:
     - Etcd : 存放所有叢集相關的資料
     - kube-apiserver : 使用 kubectl 所下的指令, 都會跑到這裡; Workers 之間溝通的橋樑; k8s 內的身分認證&&授權
-        - 6443 port
-        - HA : 可運行 A/A 模式
+      - 6443 port
+      - HA : 可運行 A/A 模式
     - kube-scheduler : 對資源的調度, 負責分配任務到到 Nodes 上頭的 Pod 來執行
     - kube-controller-manager : 負責監控 Cluster 內的一個 Process(對於各個資源的管理器)
-        - HA : 僅能運行 A/S 模式
-            - 藉由 leader election process 選出 Active 
+      - HA : 僅能運行 A/S 模式
+        - 藉由 leader election process 選出 Active
     - DNS: 紀錄啟動 Pods 的位址
 - API Server
-    - 所有 REST commands 訪問的 Entrypoint, 用來控制整個 cluster
+  - 所有 REST commands 訪問的 Entrypoint, 用來控制整個 cluster
 - etcd storage
-    - Distributed & Key-Value Store
-    - 共享組態配置
-    - Service Discovery (CoreDNS)
-    - 提供 RESTful API 來對特定 WorkerNodes 更新組態, 並且告知其於 Cluster Nodes 相關配置已改變
-    - Meta Store, 用來儲存整個 k8s 的資訊區
-    - Deployment object
-      - 裏頭會有 `Replicaset Controller`
+  - Distributed & Key-Value Store
+  - 共享組態配置
+  - Service Discovery (CoreDNS)
+  - 提供 RESTful API 來對特定 WorkerNodes 更新組態, 並且告知其於 Cluster Nodes 相關配置已改變
+  - Meta Store, 用來儲存整個 k8s 的資訊區
+  - Deployment object
+    - 裏頭會有 `Replicaset Controller`
 - kubectl: 安裝在 k8s master 上面的 CLI, 用來與 cluster 溝通使用
 - Scheduler
 - service: 為 k8s 分散式叢集架構的核心
-    - 擁有唯一的指定名稱
-    - 擁有一組 IP:port, 提供遠端服務能力. 每個服務處理程序都有獨立的 Endpoint(IP+Port), 但 k8s 讓我們可透過 Service (Cluster IP+Service Port) 連接到 Service
-    - 被對應到提供這種服務能力的一組容器應用上
-- Pod : k8s 運作的最小單位, 一個 Pod 對應一個服務, ex: API Server
-    - 每個 Pod 都有個專屬的定義, 也就是 `yml` 檔
-    - 一個 Pod 可有 1~N 個 Container, 但有 [文章](https://medium.com/@C.W.Hu/kubernetes-basic-concept-tutorial-e033e3504ec0) 寫說最好只有一個
-    - Pod 內的 Containers 共享資源 && 網路, 理解成一個家庭提供單一服務, 但家庭成員之間共享家庭內的一切.
-- kubeadm : 建立&管理 k8s cluster 的最佳實務; 本地測試可使用 minikube
-    - `kubeadm init` 做初始化; `kubeadm join` 來 Join Cluster
-- kind(非必要, Deprecated) : 用來運行 local computer 的 k8s
-- minikube(用來取代 kind): 用來運行 single-node 的 k8s cluster
+  - 擁有唯一的指定名稱
+  - 擁有一組 IP:port, 提供遠端服務能力. 每個服務處理程序都有獨立的 Endpoint(IP+Port), 但 k8s 讓我們可透過 Service (Cluster IP+Service Port) 連接到 Service
+  - 被對應到提供這種服務能力的一組容器應用上
 - Pod : k8s 運作的最小單位, 一個 Pod 對應一個服務, ex: API Server
   - 每個 Pod 都有個專屬的定義, 也就是 `yml` 檔
   - 一個 Pod 可有 1~N 個 Container, 但有 [文章](https://medium.com/@C.W.Hu/kubernetes-basic-concept-tutorial-e033e3504ec0) 寫說最好只有一個
   - Pod 內的 Containers 共享資源 && 網路, 理解成一個家庭提供單一服務, 但家庭成員之間共享家庭內的一切.
-- Cluster
-  - k8s 架構下的所有 Workers && Masters
+- kind(非必要, Deprecated) : 用來運行 local computer 的 k8s
 - inner-loop
-    - code, build, run, test
+  - code, build, run, test
 - outer-loop
-    - push change, CI build, CI test, deployment
+  - push change, CI build, CI test, deployment

@@ -1,5 +1,8 @@
 #!/bin/bash
 exit 0
+#
+# Helm 主要工作 : 在 Repository 找到所需要的 Chart, 然後將 Chart 以 Release 的形式安裝到 k8s
+#
 # -----------------------------------------------------------------
 
 ### =========== Settings ===========
@@ -40,6 +43,9 @@ helm repo update ${Helm_Repo_Name}
 #...Successfully got an update from the "nfs-subdir-external-provisioner" chart repository
 #...Successfully got an update from the "stable" chart repository
 #Update Complete. ⎈Happy Helming!⎈
+
+### 如果要安裝的 Helm Charts 有不同版本(並不是要裝 latest), 先看看人家有哪些版本吧
+helm search repo ${Helm_Repo_Name} --versions
 
 ### 由本地的 Helm Charts 部署 Release
 helm install ${Installed_Release_Name} ${Local_Helm_Repo_Name}/${Chart_Name_From_Helm_Repo}

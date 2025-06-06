@@ -61,6 +61,7 @@ kubectl get pods -n kube-system -o wide
 #kube-proxy-m4vz7            1/1    Running  4         20d  192.168.152.6  w1    <none>          <none>
 #kube-scheduler-m1           1/1    Running  9         20d  192.168.152.4  m1    <none>          <none>
 
+### =============================================== port-forward ===============================================
 ### (前景方式)啟用 ip-forward (port forwarding)
 ### kubectl port-forward --address $IP pod/${PodName} ${FORWARD_PORT}:${POD_SERVICE_PORT}
 ### $# kubectl port-forward ${PodName} ${LocalPort}:${PodPort}
@@ -168,6 +169,11 @@ kubectl create configmap ${ConfigMapName} \
 
 ### 查詢 ConfigMap 內容
 kubectl get configmap -o yaml
+
+### ===================================== k8s Node =====================================
+
+### 如果是 Standalone Cluster 的測試環境, 用來將此 Worker Node(Controller Node) 移除 taint (好讓 Pod 可以做部署)
+kubectl taint nodes MY_K8S_NODE_NAME node-role.kubernetes.io/control-plane-
 
 ### ===================================== k8s System =====================================
 
