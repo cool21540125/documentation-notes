@@ -55,10 +55,17 @@ export ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output text)
 export AWS_REGION=$(curl -s 169.254.169.254/latest/dynamic/instance-identity/document | jq -r '.region')
 
 ### 底下這堆都還沒實驗過 (不確定就是了)
-export AWS_SECRET_ACCESS_KEY
-export AWS_DEFAULT_OUTTPUT
-export AWS_MAX_ATTEMPTS
-export AWS_RETRY_MODE
+export AWS_SECRET_ACCESS_KEY=
+export AWS_DEFAULT_OUTTPUT=
+export AWS_MAX_ATTEMPTS=
+export AWS_RETRY_MODE=
+export AWS_SESSION_TOKEN=
+
+ROLE_TO_ASSUME=
+creds=$(aws sts assume-role --role-arn $ROLE_TO_ASSUME --role-session-name SreDemoTest --no-cli-pager)
+export AWS_ACCESS_KEY_ID=$(echo $creds | jq -r '.Credentials.AccessKeyId')
+export AWS_SECRET_ACCESS_KEY=$(echo $creds | jq -r '.Credentials.SecretAccessKey')
+export AWS_SESSION_TOKEN=$(echo $creds | jq -r '.Credentials.SessionToken')
 
 # =================== 首次配置 ===================
 ### REPL 僅配置預設
