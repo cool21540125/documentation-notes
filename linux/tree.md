@@ -1,13 +1,14 @@
 # 主要目錄
 
-Linux各大 dictribution 都有自己的 `文件存放位置`, 但幾乎都遵照 `Filesystem Hierarchy Standard (FHS)`, 重點在於規範 `每個特定的目錄下應該要放置什麼樣子的資料`
+Linux 各大 dictribution 都有自己的 `文件存放位置`, 但幾乎都遵照 `Filesystem Hierarchy Standard (FHS)`, 重點在於規範 `每個特定的目錄下應該要放置什麼樣子的資料`
 
-.        | Non-SysAdmin Usable            | SysAdmin Use Only
--------- | ------------------------------ | ---------------
-static   | /usr <br> /opt                 | /etc <br> /boot
-variable | /var/mail <br> /var/spool/news | /var/run <br> /var/lock
+| .        | Non-SysAdmin Usable            | SysAdmin Use Only       |
+| -------- | ------------------------------ | ----------------------- |
+| static   | /usr <br> /opt                 | /etc <br> /boot         |
+| variable | /var/mail <br> /var/spool/news | /var/run <br> /var/lock |
 
 下面的目錄樹結構, 是經年累月慢慢補上去的...(大致上按 英文 排序, 部分依 功能別 放在一起)
+
 ```sh
 /bin/                           # 單人維護模式還能用的可執行檔; (os7後, 連結至 /usr/bin/)
 /boot/                          # 開機時使用的核心檔案目錄.
@@ -40,6 +41,7 @@ variable | /var/mail <br> /var/spool/news | /var/run <br> /var/lock
     /cron.weekly/*                      # 每週　 要被驅動執行的 Shell Script 放這
     /crontab                        # 如果有明確指名幾點幾分的排程工作, 建議放這裡
     /default/                       #
+        /xxx                            # 對於 Debian 來說, 就是 /etc/init.d/xxx 啟動前 & 關閉前, 會先來做 source /etc/default/xxx
         /useradd                        # 使用 useradd 後, 預設的 新使用者 建立相關初始設定
         /grub                           # 開機程序的組態設定(中介)檔(修改此檔可經由指令檢查, 在放到真正的開機組態執行位置)
     /drone-runner-exec/
@@ -126,7 +128,7 @@ variable | /var/mail <br> /var/spool/news | /var/run <br> /var/lock
         /sshd_config                    # SSH Server 組態
     /sssd/                          # 集中驗證相關
         /sssd.conf                      # System Security Services Daemon; 網路不通時, 從 cache 作 Login 驗證
-    /subuid                         # 
+    /subuid                         #
     /sudoers                        # 定義 sudo, wheel... 相關事項(使用 "visudo" 來取代 "vim /etc/sudoers" 的愚蠢操作!)
     /sudoers.tmp                    # 使用 visudo 指令來更改 /etc/sudoers 的安全中介檔
     /supervisord.conf               # supervisord 設定主檔 (USE supervisorctl)
@@ -157,7 +159,7 @@ variable | /var/mail <br> /var/spool/news | /var/run <br> /var/lock
 /proc/                          # 虛擬檔案系統(virtual filesystem), 東西都存在於 memory, 不占用 disk; 行程資訊目錄
     /1/                             # 開機時所執行的第一支程式 systemd 的 PID=1
     /<XX PID>/                     # 某個開機後被執行的程式(or服務)
-        /cgroup                         # 可得知, 
+        /cgroup                         # 可得知,
         /cmdline                        # 啟動這個程序的指令, ex: python manage.py runserver
         /cwd                            # 很特別! 指向「完全獨立的 /」, 進程運行目錄 (獨立的運行空間, 裡面有/bin, /boot, /dev, /etc, ...) (chroot 的概念?)
         /exe                            # 指向上面 /cmdline 所指的 python (可執行程式) (binary)
@@ -290,5 +292,3 @@ len(pids)
 $# cat /proc/cmdline
 BOOT_IMAGE=/vmlinuz-3.10.0-862.el7.x86_64 root=/dev/mapper/centos-root ro crashkernel=auto rd.lvm.lv=centos/root rd.lvm.lv=centos/swap rhgb quiet LANG=en_US.UTF-8
 ```
-
-

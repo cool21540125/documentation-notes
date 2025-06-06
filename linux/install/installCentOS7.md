@@ -1924,7 +1924,7 @@ $# chronyc sources -v
 # 以上是透過 time server 作校時, 視情況用手動
 ```
 
-# Install k8s / install kubernetes
+# DEPRECATED: Install k8s / install kubernetes
 
 - 2023/08
 - ![Install Kubernetes](./installK8s.md)

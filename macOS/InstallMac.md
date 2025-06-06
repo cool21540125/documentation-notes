@@ -600,26 +600,25 @@ $# cd /usr/local/var/log/rabbitmq
 
 # Install protoc
 
-- 2023/04/13
+- 2025/05/19
 - [到這邊找要安裝的版本](https://github.com/protocolbuffers/protobuf/releases)
 
 ```zsh
-### 法1. 使用 brew
-brew install protobuf
-
-
-### 法2. 安裝 binary
-PB_VERSION="21.12"
+### 安裝 protoc
+PB_VERSION="31.0"
 PB_REL="https://github.com/protocolbuffers/protobuf/releases"
+# ARCH=x86_64
+ARCH=aarch_64
 
+curl -LO ${PB_REL}/download/v${PB_VERSION}/protoc-${PB_VERSION}-osx-${ARCH}.zip
+unzip protoc-${PB_VERSION}-osx-${ARCH}.zip -d ${HOME}/bin/protoc-${PB_VERSION}-osx-${ARCH}
 
-curl -LO ${PB_REL}/download/v${PB_VERSION}/protoc-${PB_VERSION}-osx-x86_64.zip
-unzip protoc-${PB_VERSION}-osx-x86_64.zip -d ${HOME}/bin
-mv ${HOME}/bin/bin/protoc ${HOME}/bin && rmdir ${HOME}/bin/bin && mv ${HOME}/bin/include ${HOME}/
+ln -s ${HOME}/bin/protoc-${PB_VERSION}-osx-${ARCH}/bin/protoc $HOME/bin/protoc
+# include 資料夾忘了需不需要處理了...
 
 ### 2023Q1
 protoc --version
-#libprotoc 3.21.12
+#libprotoc 31.0
 ```
 
 # Install MySQL
@@ -864,7 +863,7 @@ info: kotlinc-jvm 1.9.10 (JRE 11.0.20.1+0)
 $ kotlinc
 ```
 
-# Install bazelisk / Install bazel
+# Install bazelisk / Install bazel(不要直接安裝 bazel)
 
 ```zsh
 ###

@@ -93,29 +93,25 @@ $ sudo apt-get install libmysql-java
 
 # Install docker
 
+- Amazon Ubuntu24.04
+
 ```bash
-### Amazon Ubuntu24.04
-apt update
-
-apt install docker.io
-
 ### official GPG key
-$# mkdir -p /etc/apt/keyrings
-$# curl -fsSL https://download.docker.com/linux/ubuntu/gpg | gpg --dearmor -o /etc/apt/keyrings/docker.gpg
+sudo mkdir -p /etc/apt/keyrings
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
 
 ### Set up repository
-$# echo \
-  "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu \
+echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu \
   $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
 
-### install docker latest
-$# sudo apt-get install docker-ce docker-ce-cli containerd.io docker-compose-plugin
+sudo apt update
+sudo apt install -y docker-ce
 
-# 如果要安裝特定版本, 參考:
-#    https://docs.docker.com/engine/install/ubuntu/
+sudo systemctl start docker
+sudo systemctl enable docker
+sudo usermod -aG docker $USER
 
-$# systemctl start docker
-$# systemctl enable docker
+docker version
 ```
 
 # Install kubectl
@@ -128,6 +124,13 @@ curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stabl
 curl -LO "https://dl.k8s.io/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl.sha256"
 echo "$(cat kubectl.sha256) kubectl" | sha256sum --check
 #kubectl: OK
+
+### Ubuntu arm64
+curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/arm64/kubectl"
+curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/arm64/kubectl.sha256"
+echo "$(cat kubectl.sha256)  kubectl" | sha256sum --check
+chmod u+x kubectl
+mkdir -p ~/bin && mv kubectl ~/bin/
 
 ### Macbook(M1) install kubectl
 # https://kubernetes.io/docs/tasks/tools/install-kubectl-macos/#install-kubectl-binary-with-curl-on-macos
@@ -311,4 +314,15 @@ curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash
 nvm --version
 
 nvm install 22
+```
+
+# Install psql
+
+```bash
+sudo apt install postgresql-client-common
+
+echo "deb http://apt.postgresql.org/pub/repos/apt/ `lsb_release -cs`-pgdg main" | sudo tee /etc/apt/sources.list.d/pgdg.list
+
+sudo apt update
+sudo apt install postgresql-client
 ```
