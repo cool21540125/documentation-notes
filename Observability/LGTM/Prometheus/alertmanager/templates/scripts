@@ -1,0 +1,4 @@
+amtool template render \
+  --template.glob 'SlackWarning.tmpl' \
+  --template.text '{{ template "descriptions" . }}' \
+  --template.data alert_data.json

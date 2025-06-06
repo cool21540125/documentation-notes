@@ -12,4 +12,4 @@
 
 # Reference
 
-- [ ] [How To Use Grafana’s Query Inspector to troubleshoot issues](https://community.grafana.com/t/how-to-use-grafanas-query-inspector-to-troubleshoot-issues/2630)
+- [How To Use Grafana’s Query Inspector to troubleshoot issues](https://community.grafana.com/t/how-to-use-grafanas-query-inspector-to-troubleshoot-issues/2630)

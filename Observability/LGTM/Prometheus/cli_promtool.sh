@@ -24,7 +24,5 @@ docker exec prometheus promtool check rules /etc/prometheus/rules.yml
 promtool test rules /PATH/TO/rule.yml
 promtool test rules /PATH/TO/test_rule1.yml /PATH/TO/test_rule2.yml /PATH/TO/test_rule3.yml
 
-###
-
+### live reload
 curl -X POST http://localhost:29090/-/reload -u admin
-curl -X POST http://localhost:29093/-/reload

@@ -1,11 +1,11 @@
 # Targets and Targets Labels come from Service Discovery -- relabel_configs
 
-------------------------------------------------------------------------------------------------
+---
 
 ```mermaid
 flowchart TB
 
-sd(("Target from Service Discovery"))
+sd(("Target from SD"))
 
 param("Set __param_* labels based on config")
 sd --> param
@@ -49,4 +49,4 @@ instance -- Yes --> created
 copy --> created
 ```
 
-------------------------------------------------------------------------------------------------
+---

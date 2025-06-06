@@ -1,0 +1,9 @@
+{{/* 這個是 Mastering Prometheus 對於 Slack template 的定義 */}}
+{{ define "description" }}
+{{- range .Alerts.Firing }}
+    [FIRING] - {{ .Annotations.description }}
+{{- end }}
+{{- range .Alerts.Resolved }}
+    [RESOLVED] - {{ .Annotations.description }}
+{{- end }}
+{{ end }}

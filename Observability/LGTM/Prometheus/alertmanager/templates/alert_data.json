@@ -1,0 +1,30 @@
+[
+  {
+    "status": "firing",
+    "annotations": {
+      "summary": "Instance instance1 has been down for more than 5 minutes"
+    },
+    "labels": {
+      "alertname": "InstanceDown",
+      "instance": "instance1"
+    },
+    "startsAt": "2025-05-22T03:17:35.424Z",
+    "endsAt": "2025-05-23T03:22:35.424Z",
+    "fingerprint": "a5331f0d5a9d81d4",
+    "generatorURL": "http://grafana.com/alerting/grafana/cdeqmlhvflz40f/view"
+  },
+  {
+    "status": "resolved",
+    "annotations": {
+      "summary": "CPU usage above 90%"
+    },
+    "labels": {
+      "alertname": "CpuUsage",
+      "instance": "instance1"
+    },
+    "startsAt": "2025-05-22T23:17:35.424Z",
+    "endsAt": "2025-05-23T03:17:35.424Z",
+    "fingerprint": "b77d941310f9d381",
+    "generatorURL": "http://grafana.com/alerting/grafana/oZSMdGj7z/view"
+  }
+]
