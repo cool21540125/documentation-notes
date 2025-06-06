@@ -86,3 +86,6 @@ go test -bench=. -bench
 
 ### go build Terraform
 go build -ldflags "-w -s -X 'github.com/hashicorp/terraform/version.dev=no'" -o ~/bin/
+# 縮小二進位檔案, 可使用 go build -ldflags "-w -s"
+# -w 去除 DWARF 偵錯資訊. 副作用: 可能會導致 panic 拋出 & stack trace 沒有檔案名稱及行號
+# -s 去除符號資訊. 副作用: 無法使用 gdb 偵錯
