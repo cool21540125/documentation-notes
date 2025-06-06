@@ -127,25 +127,6 @@ ACM <-- certs --> apigw["API Gateway"];
 ALB --> ASG;
 ```
 
-## AWS Cloud Map, CloudMap
-
-- [What Is AWS Cloud Map?](https://docs.aws.amazon.com/cloud-map/latest/dg/what-is-cloud-map.html)
-  - ![WithCloudMap](./img/WithCloudMap.png)
-  - 因為會主動探索服務位置, 因此也有監控功能
-  - 也可協助做 CICD, 做不同版本的切換
-  - 讓 APP 能夠藉由 AWS SDK, API call, DNS query 等各種方式, 去 discover Web-based service
-- [AWS Cloud Map FAQs](https://aws.amazon.com/cloud-map/faqs/)
-- Cloud Map 已與 ECS 及 EKS 做了深度整合. 因此使用這兩種服務時, 會自動使用 CloudMap
-- Serverless, Resource Discovery or Service Discovery
-- 用來建立 需要依賴於 後端 services/resources 的一層類似轉接器/窗口 的服務
-  - 讓 Frontend 不用依賴於後端特定版本, 而是藉由訪問 **Cloud Map**, 來取得後端 服務位置(URL)
-  - developer 使用 api -> Cloud Map, 來更新版本. ex: v1 -> v2
-  - frontend 便會 動態的查找(Dynamic lookup) v2 location. 之後再直接連到 v2
-    - 免改 frontend code
-- 服務本身會做 Health check, 避免發送到後端不健康的 endpoint
-- 可使用 SDK, API, DNS query
-  - 與 Route53 做整合
-
 ## AWS Fault Injection Simulator, FIS
 
 - Based on Chaos Engineering

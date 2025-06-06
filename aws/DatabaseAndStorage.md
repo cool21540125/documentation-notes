@@ -112,8 +112,6 @@ AWS Database && Storage related
 
 # AWS Redshift
 
-- [clf-Redshift](./cert-CLF_C01.md#redshift)
-- [Getting started with Amazon Redshift](https://docs.aws.amazon.com/redshift/latest/gsg/getting-started.html)
 - based on PostgreSQL, use SQL query
   - 不適用於 OLTP, 此為 OLAP
     - Analytics / BI / Data Warehouse

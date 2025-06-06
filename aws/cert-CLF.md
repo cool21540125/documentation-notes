@@ -184,7 +184,7 @@ CLF-C01
 ## RedShift
 
 - RedShift 為 _Columnar Storage_ (非 row based)
-- Data WareHoust
+- Data WareHouse
   - OLAP
 - 基於 PostgreSQL 的 DB, 但非 OLTP(Online Transaction Processing)
   - Note: OLAP(Online Analytical Processing)
