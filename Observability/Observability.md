@@ -22,17 +22,6 @@ https://event.ithome.com.tw/itplus/upload-slide/2024/8/21/3e747970-b99c-40bd-aea
   - 觀測性框架
   - 用來建立及管理 traces / metrics / logs 的 toolkit
     - `metrics 及 traces` can be correlated via `exemplars`, and metrics attributes can be enriched via `Baggage` and `Context`.
-- Splunk
-  - splunk 是早期的企業級,商業化,大一統 觀測解決方案
-  - splunk 是一套以 收集/儲存/搜尋/分析 machine data 為核心的商業及 Observability 與 SIEM(威脅偵測與安全監控) 平台
-  - splunk 包含但不限於 Dashboards / Alerting / Reporting
-  - 早期以 logs 為主, 後來陸續整合了 metrics/traces
-- Cortex 及 Thanos
-  - 可以在某種程度上把他們想像成是替代品, 是用來作分散式資料儲存的服務
-  - 如果資料都上雲了的話, 基本上不會需要 Cortex 及 Thanos. 這邊所說的資料是指:
-    - metrics, 保存在 AMP / CloudWatch Metrics
-    - logs, 保存在 Loki / CloudWatch Logs
-    - traces, 保存在 Tempo / X-Ray
 - 可觀測性(Observability), 並非一個學科所獨有, 早期源自於核能工程, 機器人 (有非常多非常多細節需要去關注)
   - 可觀測性(Observability) 必須透過 `metrics/logs/traces` 來實現
     - 甚至其他學派認為, `events` 也是可觀測性的重要一環 (涉及到 Design Pattern)
@@ -74,8 +63,32 @@ https://event.ithome.com.tw/itplus/upload-slide/2024/8/21/3e747970-b99c-40bd-aea
   - tracing 算得上是最昂貴的監控(App 要產生 trace, 必然會有額外開銷)
     - 因此, 針對 tracing data, 並非全部搜集, 而是會做 sampling.
 
-# Monitoring System
+# Observability solutions / Monitoring System
 
+- Alloy
+  - Grafana 開源, Written in Go
+  - 適用於蒐集 Metrics / Logs / Traces
+- Cortex
+  - 分散式資料儲存的服務 (如果東西都已經上雲了的話, 不會需要用到 Cortex)
+  - 跟 Thanos 互為替代品
+- Filebeat
+  - 由 Elastic 開源的 Collector. Written in Go
+  - 適用於蒐集 metrics / logs / network packet data
+  - 較適合用於 Elastic Stack
+  - 依賴於 elastic/beats (也就是 libbeat), 相關連的產品有底下這堆:
+    - Auditbeat / Filebeat / Heartbeat / Metricbeat / Packetbeat / Winlogbeat / Osquerybeat
+- Fluentd
+  - 開源的 Log Collector, 適合複雜的 Log Pipeline
+- Fluent Bit
+  - FluentBit 為 Fluentd 的子專案, 專注在高效能 & 低資源佔用, 講究輕量化.
+  - FluentBit 支援 metrics / logs, 也支援 OTel, 適合 Embeded / Kubernetes
+- Logstash
+  - 由 Elastic 開源的 Collector. Written in Java
+  - 適合用於複雜的過濾機制
+    - 適用於蒐集 Logs / Events
+  - 較適合用於 Elastic Stack
+- jaeger
+  - 聚焦在分散式系統的請求專宗. 聚焦在 tracing
 - Nagios
   - 老牌監控工具, 原名為 NetSaint
   - written by C
@@ -85,6 +98,28 @@ https://event.ithome.com.tw/itplus/upload-slide/2024/8/21/3e747970-b99c-40bd-aea
 - Open-Falcon
   - 小米開放原始碼的監控工具
   - written by go
+- pprof
+  - Go 語言的效能分析工具. 專注於單一應用程式的效能剖析, 聚焦在 profiling.
+- Pyroscope
+  - 開源的 profiling 工具, 專注在性能分析
+- Splunk
+  - splunk 是早期的企業級,商業化,大一統 觀測解決方案
+  - splunk 是一套以 收集/儲存/搜尋/分析 machine data 為核心的商業及 Observability 與 SIEM(威脅偵測與安全監控) 平台
+  - splunk 包含但不限於 Dashboards / Alerting / Reporting
+  - 早期以 logs 為主, 後來陸續整合了 metrics/traces
+- Telegraf
+  - Telegraf 是個開源的 Collect Agent
+  - 由 InfluxData 開發, 用於處理 metrics / logs, 階級等同於 Observability 之中的 Collector
+- Thanos
+  - 分散式資料儲存的服務 (如果東西都已經上雲了的話, 不會需要用到 Thanos)
+  - 跟 Cortex 互為替代品
+- Zabbix
+  - 老牌的 自成一體的 監控系統
+- Zipkin
+  - 分散式 tracing system
+  - 2012 年由 Twitter 開源. 年代久遠, 但相對成熟, 有自成一體的 Collector / Storage / Dashboard
+  - OTel 也支援 zipkin 格式
+    - app 藉由 zipkin sdk 生成 traceID, 再由 OTel Collector 轉發到 zipkin 或其他 backend(ex: Tempo)
 
 # Monitoring
 
@@ -131,6 +166,7 @@ https://event.ithome.com.tw/itplus/upload-slide/2024/8/21/3e747970-b99c-40bd-aea
         - MongoDB
         - OpenTSDB
         - InfluxDB
+          - 如果服務基本上都是 Cloud Native, 那就不要考慮 InfluxDB 了
   - 核心子系統
     - 資料擷取子系統 : extract, filter, process, store
     - 資料處理子系統 : analyze, display, warning, alert, notify, action
