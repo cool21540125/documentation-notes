@@ -3,6 +3,8 @@
 - Athena 相關核心名詞
   - Athena Data Source : DataSource 也被稱之為 catalog
   - Athena Database : Database 也被稱之為 schema
+- Athena 基於 Presto 引擎之上. Presto 是 distributed SQL Engine (由 FB 開發), 用於 大量資料進行快速查詢, 且不需要事先移動或轉換資料
+  - 而 Athena 背後的 distributed Storage 之一就是 S3
 - 執行 Athena query 之前, 必須要先在 Athena 裡頭註冊 Table
   - partition 與 partition projection 兩者是不一樣的東西
   - 為了要增加 query table 的效能, 可以搭配使用 partition, 有底下兩種方式可建立 partitions:

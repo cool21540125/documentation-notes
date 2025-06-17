@@ -38,13 +38,18 @@ CREATE EXTERNAL TABLE IF NOT EXISTS __YOUR_ALB_TABLE_NAME__ (
     conn_trace_id string
 )
 PARTITIONED BY (
-    `day` string
+    `day` STRING
 )
-ROW FORMAT SERDE 'org.apache.hadoop.hive.serde2.RegexSerDe'
+ROW FORMAT SERDE
+    'org.apache.hadoop.hive.serde2.RegexSerDe'
 WITH SERDEPROPERTIES (
-        'serialization.format' = '1',
-        'input.regex' = '([^ ]*) ([^ ]*) ([^ ]*) ([^ ]*):([0-9]*) ([^ ]*)[:-]([0-9]*) ([-.0-9]*) ([-.0-9]*) ([-.0-9]*) (|[-0-9]*) (-|[-0-9]*) ([-0-9]*) ([-0-9]*) \"([^ ]*) (.*) (- |[^ ]*)\" \"([^\"]*)\" ([A-Z0-9-_]+) ([A-Za-z0-9.-]*) ([^ ]*) \"([^\"]*)\" \"([^\"]*)\" \"([^\"]*)\" ([-.0-9]*) ([^ ]*) \"([^\"]*)\" \"([^\"]*)\" \"([^ ]*)\" \"([^\\s]+?)\" \"([^\\s]+)\" \"([^ ]*)\" \"([^ ]*)\" ?([^ ]*)?'
-    ) 
+    'serialization.format' = '1',
+    'input.regex' = '([^ ]*) ([^ ]*) ([^ ]*) ([^ ]*):([0-9]*) ([^ ]*)[:-]([0-9]*) ([-.0-9]*) ([-.0-9]*) ([-.0-9]*) (|[-0-9]*) (-|[-0-9]*) ([-0-9]*) ([-0-9]*) \"([^ ]*) (.*) (- |[^ ]*)\" \"([^\"]*)\" ([A-Z0-9-_]+) ([A-Za-z0-9.-]*) ([^ ]*) \"([^\"]*)\" \"([^\"]*)\" \"([^\"]*)\" ([-.0-9]*) ([^ ]*) \"([^\"]*)\" \"([^\"]*)\" \"([^ ]*)\" \"([^\\s]+?)\" \"([^\\s]+)\" \"([^ ]*)\" \"([^ ]*)\" ?([^ ]*)?'
+)
+STORED AS INPUTFORMAT
+    'org.apache.hadoop.mapred.TextInputFormat'
+OUTPUTFORMAT
+    'org.apache.hadoop.hive.ql.io.HiveIgnoreKeyTextOutputFormat'
 LOCATION 
     's3://__BUCKET_NAME__/__BUCKET_PREFIX__/access/AWSLogs/__ACCOUNT_ID__/elasticloadbalancing/__REGION__/'
 TBLPROPERTIES (
@@ -56,3 +61,4 @@ TBLPROPERTIES (
     "projection.day.interval.unit" = "DAYS",
     "storage.location.template" = "s3://__BUCKET_NAME__/__BUCKET_PREFIX__/access/AWSLogs/__ACCOUNT_ID__/elasticloadbalancing/__REGION__/${day}/"
 );
+-- NOTE: 需要留意 __BUCKET_PREFIX__, 大家放的路徑可能不同
