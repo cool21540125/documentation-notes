@@ -3,6 +3,10 @@ exit 0
 #
 # Helm 主要工作 : 在 Repository 找到所需要的 Chart, 然後將 Chart 以 Release 的形式安裝到 k8s
 #
+# Helm Repositories: Appscode / TrueCharts / Bitnami / Kubeapps / Community Operators / etc.
+# 上面這些 Repositories, 有個共通的 single location: Helm Hub, 也就是 artifacthub.io
+#
+#
 # -----------------------------------------------------------------
 
 ### =========== Settings ===========
@@ -48,11 +52,14 @@ helm repo update ${Helm_Repo_Name}
 helm search repo ${Helm_Repo_Name} --versions
 
 ### 由本地的 Helm Charts 部署 Release
-helm install ${Installed_Release_Name} ${Local_Helm_Repo_Name}/${Chart_Name_From_Helm_Repo}
+helm install ${ReleaseName} ${HelmRepo}/${ChartName}
 helm install -f values.yaml ${ReleaseName} ${PATH_to_ChartDir}
-helm install -f values.yaml ${Local_Helm_Repo_Name}/${Chart_Name_From_Helm_Repo}
+helm install -f values.yaml ${HelmRepo}/${ChartName}
 
 helm install my-n8n oci://8gears.container-registry.com/library/n8n --version 0.20.0
+
+### 依照 Values.yml 安裝 loki Helm Chart
+helm install --values values.yml loki grafana/loki -n loki --create-namespace
 
 ### 列出 chart 的 information
 helm show chart

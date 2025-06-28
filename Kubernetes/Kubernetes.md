@@ -85,9 +85,11 @@ kubelet -> CRI-O                                                                
 
 # k8s - monitoring
 
-- k8s 早期(v1.10 前) 使用 Heapster 元件來搜集 (k8s 的監控外掛程序)
 - k8s 從 v1.8 開始, 將性能資料以 Metrics API 方式提供 API
+- k8s 於 v1.10 以前使用 `Heapster` 元件來搜集 Metrics
 - k8s 於 v1.10 以後改用 `Metrics Server(metric-server)` 來搜集 Pods 的性能指標 (提供 Core Metrics)
+  - `Metrics Serrver` 只是個 In-memory solution, 它會去尻 ApiServer 抓取即時 metrics.
+    - 而 ApiServer 會去訪問位於每個 Nodes 上頭的 kubelet (內建 cAdvisor)
   - Core Metrics: Node, Pod 的 CPU, memory
   - Custom Metrics: 由 Prometheus 等元件來實現
   - 由 cAdvisor 提供 metrics

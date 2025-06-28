@@ -190,8 +190,9 @@ fdisk -l
 # 則 底下 dd 的 bs, 盡可能為 512 的倍數, 以優化讀寫效能
 # (會造成一定程度的浪費, 不過可盡量降低磁碟的搜尋成本)
 
-### 配置 4 GB 的 swap
-dd if=/dev/zero of=/swapfile count=2097152 bs=4KiB
+### 配置 swap
+dd if=/dev/zero of=/swapfile count=2097152 bs=4KiB  # 8
+dd if=/dev/zero of=/swapfile count=4194304 bs=4KiB  # 16
 
 ### 安全性問題, 務必使用 root read only
 chmod 600 /swapfile
