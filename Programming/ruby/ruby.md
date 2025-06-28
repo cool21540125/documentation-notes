@@ -29,3 +29,26 @@ class Greeter
 end
 # 修改 Greeter, 讓外界可訪問 XXX
 ```
+
+
+
+# try-catch-finally
+
+```ruby
+
+# Ruby 的 try catch finally
+begin
+
+  rescue
+
+
+
+  ensure
+
+end
+
+
+```
+
+# 
+.ruboca
