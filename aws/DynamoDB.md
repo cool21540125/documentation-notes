@@ -1,34 +1,60 @@
-# [DynamoDB](https://docs.amazonaws.cn/en_us/amazondynamodb/latest/developerguide/Introduction.html)
+# DynamoDB
 
-- Performance
-  - 毫秒等級 latency
-    - single digit millsecond performance
-  - 若要 caching, 可搭配 DynamoDB Accelerator, DAX
-    - DynamoDB 專用的快取
-    - DynamoDB fully managed in-memory cache
-    - 10x performance improvement
-- pricing
+- AWS 官方宣稱, DynamoDB 是個高效的分散式儲存, 本身為 millsecond latency, 若想進一步提高效能, 可再搭配 `DynamoDB Accelerator, DAX`
+  - 宣稱 DAX 可再提升 10x 效能
+- DynamoDB pricing
   - 儲存容量計費
   - 流量計費
   - WCU & RCU 計費
-
----
-
-- Table Class 分成 2 種:
-  - Standard Table Class
-  - Infrequent Access(IA) Table Class
-    - 雖說 Storage Cost 較低, 不過 throughput cost 較高
-    - 較適合真的很少 r/w 的 data 才能真的省錢
-- store documents, key-value
-  - max: 一筆 400 KB
-- 常見查詢
+- DynamoDB 沒有 DB 的概念, 一開始建立 Table 的時候就必須制定好一些基本設定. 而有些是必須一開始規劃好的, 少部分則是建好後可在修改.
+  - DDB 建立時, 必須事先確認選好 Table Class:
+    - Standard Table Class
+    - Infrequent Access(IA) Table Class
+      - IA 比較適用於存了一堆, 但真的不常在 read/write 的東西, 才能真的省錢 (相對於 Standard, IA 的 throughput cost 較高)
+  - 對於 DDB 來說, **索引是找到資料的唯一有效率方式**, 另一種效率不彰的方式則為 **Scan**
+  - DDB 建立時, 必須一開始就決定好 Table 的 `PK(Primary Key), 也就是 主索引`
+    - PK 組成方式 1(建表後無法再更動): `Primary Key` = `Partition Key`
+    - PK 組成方式 2(建表後無法再更動): `Primary Key` = `Partition Key` +`Sort key`
+    - `Partition Key` 又稱為 `Hash Key`
+    - `Sort Key` 又稱為 `Range Key`
+  - 每個 DDB Table 除了 `主索引(Primary Key)` 以外, 還可以建立不同的 `Secondary Index(次要索引)`
+    - 例如 客戶訂單 Table
+      - 由於我們最常查詢 何時產生了訂單, 因此可能會規劃 Primary Key 為 `order_id + order_date`
+      - 除此之外.... partA
+      - 我們也會希望查詢 訂單是哪個誰下的, 因此也會規劃 Secondary Index 為 `order_id + user_id`
+      - 我們也會希望查詢 訂單的物流資訊, 因此也會規劃 Secondary Index 為 `order_id + shipment_id`
+      - 除此之外.... partB
+      - 我們也會希望查詢 客戶何時下單, 因此也會規劃 Secondary Index 為 `user_id + order_date`
+      - 我們也會希望查詢 客戶訂單的物流資訊, 因此也會規劃 Secondary Index 為 `user_id + shipment_id`
+    - --------------------------------------------------------------------------------------------------------------
+    - `Local secondary index, LSI` (上述的 partA).  建表時就必須建立 / 每張 Table 最多  5 個 LSI / 
+      - 建立 `LSI` 以後, 會基於原本的 table(稱為 BaseTable), 建立出 Index (其實變相的建立出一個新的欄位, 用作搜尋依據)
+      - 概念上, LSI 在各個 Partition 裏頭, 建立一個功能等同於 Sort Key 的 Index 來作為查詢依據 (可理解成建立另一個欄位, 用來作 where 搜尋啦)
+      - LSI 會基於 Base Table 使用相同的 Partition Key, 然後可將其他 attributes 晉升為 LSI
+      - LSI 必須在 Create Table 時就需要定義好, **每個 Table 硬限 5 個 LSI**
+      - LSI 更像是 hot partition
+      - LSI 資料位於相同的 base table, 相同 Partition, 可選擇 `Strongly Consistency Read` 或 `Eventually Consistency Read`
+      - LSI + Item 限制為 400KB (需要留意, Ddb Item 每筆最大為 400 KB)
+      - Item collections 無法被切割, 因而有 10GB 大小限制 (1000 WCU && 3000 RCU) <- 不是很懂
+    - `Global secondary index, GSI` (上述的 partB). 可於建表後再添加 / 每張 Table 最多 20 個 GSI / 
+      - 概念上, GSI 是個 Shadow Table
+      - GSI 會建立一個 Index. 資料獨立於 Base Table, 儲存在它自己的 partition space
+      - GSI 可在 Table 建立以後增減, **每個 Table 軟限 20 個 GSI**
+      - GSI 可使用截然不同的 Partition Key (+ Sort Key)
+        - 由於會使用不同的 Partition Key, 因此只能使用 `Eventually Consistency Read`
+      - GSI 並無大小限制. 使用獨立的 Provisioned throughput settings
+- DynamoDB 使用限制:
+  - 每一筆 Table Row 稱之為 Itam, Item 大小最大僅能為 400 KB
+  - 每個 DDB Table 最多能建立 20 GSI
+  - 每個 DDB Table 最多能建立  5 LSI (並且只能在 Create Table 的階段建立)
+- 常見 DDB 議題
   - Scan
     - 應盡可能地避免, 因為會把 all data in Table 全部跑過 (耗費大量 RCU)
-      - 即使使用了 FilterExpression 也一樣
+      - 即使使用了 `FilterExpression` 也一樣
       - 等同於 `SELECT * FROM <table> WHERE xxx`, 不過一樣會把 all records 全掃過
     - 如果真的逼不得已, 像是 BatchJob (需要定期把所有 data 全跑過)
       - 可參考 parallel scans using multi-threading (可加速作業)
-    - 一次只能回傳 1 MB (需要 pagination)
+    - 一次只能回傳 1 MB (需要 pagination) (??我是在寫三小...)
   - Query
     - 可藉由使用 `Partition Key` 或 `Partition Key + Sort Key` 來做查詢
       - 藉由使用 RangeKey 的 **ConditionExpressions** 做進一步過濾
@@ -49,27 +75,6 @@
 # DynamoDB - Good Example
 
 - https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/data-modeling-online-shop.html
-
-# DynamoDb 的 Key
-
-索引是找到資料的唯一方式, 否則就只能使用 Scan
-
-### Primary Key : 主索引
-
-- `Partition key(又稱為 Hash key)` 及 `Sort key(又稱為 Range key)`
-- DynamoDb Table 的 Primary Key 可以有 2 種方式:
-  - 單純使用 `Partition key`
-  - 複合使用 `Partiton key + Sort key`
-
-### Secondary Key : 次要索引
-
-- `Global secondary index, GSI` 及 `Local secondary index, LSI`
-- 主要用途是, 可以藉由不同的 key 取得資料
-  - 建立次要索引以後, 會基於原本的 table(稱為 BaseTable), 建立出 Index (其實變相的建立出一個新的欄位, 用作搜尋依據)
-- GSI
-  - GSI
-- LSI
-  - LSI 是一種使用相同的 `partition key`, 及不同的 `sort key` 的 index
 
 # DynamoDb 的 Read & Write
 
@@ -118,30 +123,6 @@
 - DynamoDb WCU / RCU 計算範例:
   - Item 為 20 KB, 則 一次的強一致性讀取 消耗 5 RCU
     - 也就是說, 在還沒達到 Table partition 限制以前, 最多可併發達到 600 次 / sec 的 強一致性讀取
-
-# DynamoDB 有 2 種 Key
-
-## DynamoDB 的 Primary Key
-
-## DynamoDB 的 Secondary Index
-
-DynamoDB 的 Secondary Index 有 2 種
-
-- Global secondary index, GSI
-  - 概念上, GSI 是個 Shadow Table
-  - GSI 會建立一個 Index. 資料獨立於 Base Table, 儲存在它自己的 partition space
-  - GSI 可在 Table 建立以後增減, **每個 Table 軟限 20 個 GSI**
-  - GSI 可使用截然不同的 Partition Key (+ Sort Key)
-    - 由於會使用不同的 Partition Key, 因此只能使用 `Eventually Consistency Read`
-  - GSI 並無大小限制. 使用獨立的 Provisioned throughput settings
-- Local secondary index, LSI
-  - 概念上, LSI 在各個 Partition 裏頭, 建立一個功能等同於 Sort Key 的 Index 來作為查詢依據
-  - LSI 會基於 Base Table 使用相同的 Partition Key, 然後可將其他 attributes 晉升為 LSI
-  - LSI 必須在 Create Table 時就需要定義好, **每個 Table 硬限 5 個 LSI**
-  - LSI 更像是 hot partition
-  - LSI 資料位於相同的 base table, 相同 Partition, 可選擇 `Strongly Consistency Read` 或 `Eventually Consistency Read`
-  - LSI + Item 限制為 400KB (需要留意, Ddb Item 每筆最大為 400 KB)
-  - Item collections 無法被切割, 因而有 10GB 大小限制 (1000 WCU && 3000 RCU) <- 不是很懂
 
 # DynamoDb Global Table
 
