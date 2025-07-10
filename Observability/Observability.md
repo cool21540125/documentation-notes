@@ -62,6 +62,9 @@ https://event.ithome.com.tw/itplus/upload-slide/2024/8/21/3e747970-b99c-40bd-aea
     - 每個 trace 都有 1~N 個 Spans 所構成.
   - tracing 算得上是最昂貴的監控(App 要產生 trace, 必然會有額外開銷)
     - 因此, 針對 tracing data, 並非全部搜集, 而是會做 sampling.
+- `Log protocol`
+  - 用來 transmitting and storing log messages 的方法
+  - Snappy compressed protocol buffer messages
 
 # Observability solutions / Monitoring System
 
