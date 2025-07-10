@@ -1,9 +1,5 @@
 # DNS
 
-- 2018/06/12
-
-## 名詞
-
 - DDNS, 似乎可以用來幫助 Host 每 24 hrs 更新 IP 的時候, 重新導向回來. 避免 IP 換了以後就連不回來 (啥?)
 - domain apex : 就是我們買到的 domain 啦, ex: google.com, tonychoucc.com, yahoo.com
 - DNS Query, 分成:
@@ -23,7 +19,7 @@
 > Fully Qualified Domain Name(FQDN):
 > 在 DNS NameSpace 中, 節點的完整名稱. 轉換規則: 由下往上, 每層加「.」區隔
 
-## Resource Record
+# Resource Record
 
 | Zone Type            | Each Zone | Full content | Permission | Application                                                                                                 |
 | -------------------- | --------- | ------------ | ---------- | ----------------------------------------------------------------------------------------------------------- |
@@ -37,7 +33,7 @@
 - root (.)
 - forwarders
 
-## Windows 10
+## Example1. Windows 10
 
 會依照下列 1~5 的順序來作 名稱解析
 
@@ -111,7 +107,7 @@ Ping 140.137.200.141 (使用 32 位元組的資料):
 
 「Windows 開始(右鍵) > 網路連線(W) > 狀態/變更您的網路設定/變更介面卡選項 > (選取上網用的網卡) > 內容(P) > 網路功能/網際網擄通訊協定第 4 版(TCP/IPv4) > 內容(R) > 一般/`使用下列的DNS伺服器位址(E)` 或 `自動取得DNS伺服器位址(B)`」
 
-## Linux
+## Example2. Linux
 
 # GitLab page, DNS, SSL/TLS
 
@@ -128,7 +124,7 @@ Ping 140.137.200.141 (使用 32 位元組的資料):
 > 若使用 A 紀錄, 則直接把 TXT 紀錄 放在 domain 下. (Domain 還有其他用途)
 > 若使用 CNAME 紀錄, 則把 TXT 紀錄 放在 subdomain 下. (Domain 專門給 GitLab page)
 
-![AvsCNAME](../img/A與CNAME.png)
+![AvsCNAME](../../img/A與CNAME.png)
 
 ## CNAME
 
