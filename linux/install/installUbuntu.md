@@ -153,7 +153,8 @@ apt-get update
 apt-get install -y apt-transport-https ca-certificates curl
 
 
-### Google Cloud public signkey && k8s repo
+### DEPRECATED: Since 2023/09/13, apt.kubernetes.io & yum.kubernetes.io 
+# Google Cloud public signkey && k8s repo
 curl -fsSL https://dl.k8s.io/apt/doc/apt-key.gpg | sudo gpg --dearmor -o /etc/apt/keyrings/kubernetes-archive-keyring.gpg
 echo "deb [signed-by=/etc/apt/keyrings/kubernetes-archive-keyring.gpg] https://apt.kubernetes.io/ kubernetes-xenial main" | sudo tee /etc/apt/sources.list.d/kubernetes.list
 

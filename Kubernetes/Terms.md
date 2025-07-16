@@ -23,9 +23,9 @@
 - kube-proxy
   - 讓其他 Nodes 上的其他物件可以與此 Node 內的 Pods 溝通 (處理 iptables)
 - K8S CNI 實作:
-  - Flannel
-  - Calico
-  - Cilium
+  - Flannel : 最單純的 CNI 實作, 但不支援 Network Policy
+  - Calico : 提供網路政策功能
+  - Cilium : 基於 eBPF 的網路解決方案
   - ...
 - CRI-O
   - OCI-based implementation of Kubernetes Container Runtime Interface

@@ -2,11 +2,11 @@
 exit 0
 #
 # Helm 主要工作 : 在 Repository 找到所需要的 Chart, 然後將 Chart 以 Release 的形式安裝到 k8s
+# 每個 Release 都會有他目前的 Revision
 #
 # Helm Repositories: Appscode / TrueCharts / Bitnami / Kubeapps / Community Operators / etc.
 # 上面這些 Repositories, 有個共通的 single location: Helm Hub, 也就是 artifacthub.io
-#
-#
+
 # -----------------------------------------------------------------
 
 ### =========== Settings ===========
@@ -51,16 +51,6 @@ helm repo update ${Helm_Repo_Name}
 ### 如果要安裝的 Helm Charts 有不同版本(並不是要裝 latest), 先看看人家有哪些版本吧
 helm search repo ${Helm_Repo_Name} --versions
 
-### 由本地的 Helm Charts 部署 Release
-helm install ${ReleaseName} ${HelmRepo}/${ChartName}
-helm install -f values.yaml ${ReleaseName} ${PATH_to_ChartDir}
-helm install -f values.yaml ${HelmRepo}/${ChartName}
-
-helm install my-n8n oci://8gears.container-registry.com/library/n8n --version 0.20.0
-
-### 依照 Values.yml 安裝 loki Helm Chart
-helm install --values values.yml loki grafana/loki -n loki --create-namespace
-
 ### 列出 chart 的 information
 helm show chart
 helm show chart -n $NS
@@ -73,10 +63,21 @@ helm list --all
 helm list --uninstalled
 helm list uninstalled --failed
 
-helm upgrade -f values.yaml ${ReleaseName} ${PATH_to_ChartDir}
-###
-helm upgrade ${ChartName}
-#應該等同於 kubectl apply 吧?!
+### =============================================== helm install (不推) ===============================================
+# 避免使用 helm install 吧...
+# Example:
+#  (X)  helm install bitnami/redis
+#  (O)  helm pull --untar bitnami/redis && helm install demo-redis ./redis (這樣本地才會有完整的 Chart 資訊)
+
+### 由本地的 Helm Charts 部署 Release
+helm install ${ReleaseName} ${HelmRepo}/${ChartName}
+helm install -f values.yaml ${ReleaseName} ${PATH_to_ChartDir}
+helm install -f values.yaml ${HelmRepo}/${ChartName}
+
+helm install my-n8n oci://8gears.container-registry.com/library/n8n --version 0.20.0
+
+### 依照 Values.yml 安裝 loki Helm Chart
+helm install --values values.yml loki grafana/loki -n loki --create-namespace
 
 ### 安裝 nfs-subdir-external-provisioner, 並設定幾個值覆寫預設
 helm install nfs-subdir-external-provisioner nfs-subdir-external-provisioner/nfs-subdir-external-provisioner \
@@ -102,12 +103,29 @@ helm install --set ${KEY}=${Value}
 # 不管是 --values=xxx 或 --set xx=xx
 #     最終都會產生出 「.Values object」
 
+helm install --set key="value" my-release bitnami/wordpress
+
 ### 僅測試(語法驗證等), 但不保證可行
 helm install --debug --dry-run ${ReleaseName} ${Release_Definition_Source}
 # ex: helm install --debug --dry-run goodly-guppy ./mychart
 
+### =============================================== helm upgrade ===============================================
+
+helm upgrade -f values.yaml ${ReleaseName} ${PATH_to_ChartDir}
 ###
+helm upgrade ${ChartName}
+#應該等同於 kubectl apply 吧?!
+
+# 升級 Release 到指定的 Chart 版本 (可能連同裡頭的 Image 都更新)
+helm upgrade $ReleaseName $ChartName --version 1.2.3
+
+### =============================================== helm rollback 退版 ===============================================
+# NOTE: helm rollback 只會 rollback 到上個版本, 而不是某個特定的版本 (也就是 git revert 的概念)
+
 helm rollback ${ChartName}
+helm rollback ${ChartName} 3 # 指定 Revision (回到 revision 3 的狀態)
+
+### ===============================================
 
 ### 列出 Release 所有的 k8s resources
 helm get manifest ${ReleaseName}
@@ -134,3 +152,7 @@ docker run -it --rm \
     -v "$PWD/.kube:/root/.kube" \
     -v "$PWD:/config" \
     dtzar/helm-kubectl
+
+### --------------------------------- chart hooks ---------------------------------
+# Helm Chart hooks 是一種特殊的 template, 會在特定的時機點被執行
+# chart hook 好像也可以拿來做 DB restore (不確定)

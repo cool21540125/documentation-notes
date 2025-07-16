@@ -7,6 +7,7 @@ clusters:
 contexts:
 - context:
     cluster: docker-desktop
+    namespace: o11y
     user: docker-desktop
   name: docker-desktop
 current-context: docker-desktop

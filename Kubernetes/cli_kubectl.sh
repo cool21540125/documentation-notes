@@ -210,6 +210,8 @@ kubectl describe service kube-dns -n kube-system
 #Session Affinity:  None
 #Events:            <none>
 
+### ===================================== k8s config =====================================
+
 ### 設定與 cluster 的連線
 kubectl config set-cluster
 
@@ -219,8 +221,22 @@ kubectl config get-contexts
 #*         docker-desktop   docker-desktop   docker-desktop
 ## 上面這兩行是因為我跑在 Macbook 的 Docker Desktop
 
+### 查看目前 kubectl CLI 使用的是哪個 context (位於 ~/.kube/config)
+kubectl config current-context
+#docker-desktop
+
+### (永久設定) 會去修改 修改 ~/.kube/config 的內容
+kubectl config set-context --current --namespace=o11y    # 修改 ~/.kube/config 目前 context 的 namespace
+kubectl config set-context --current --namespace=default # 修改 ~/.kube/config 目前 context 的 namespace
+
+### 直接切換 context (必須事先聲明 context name 於 ~/.kube/config)
+kubectl config use-context o11y # 變更目前 context (像是 o11y 必須聲明在 ~/.kube/confg 的 contexts)
+
 ### 查看合併後的 kubeconfig 設定
 kubectl config view
+kubectl config view --minify # 不知道加了以後差在哪邊...
+
+### ===================================== k8s cluster =====================================
 
 ### 查詢 kubectl 指向了哪個 k8s cluster (可藉由 KUBECONFIG 變更)
 kubectl cluster-info

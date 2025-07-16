@@ -12,6 +12,11 @@ alias km='kubeadm'
 sudo apt update
 sudo swapoff -a
 
+### 確保 Host (即使是 VM), uuid 皆不相同
+sudo cat /sys/class/dmi/id/product_uuid
+# 多台 Host 組 Cluster 務必確認
+
+### 允許 k8s 可在不同 network interface 之間進行 ip forward (lke a simple router)
 cat <<EOF | sudo tee /etc/sysctl.d/k8s.conf
 net.ipv4.ip_forward = 1
 net.ipv4.conf.all.forwarding = 1
@@ -70,6 +75,7 @@ sudo systemctl enable --now containerd
 VERSION=1.3.0
 ARCH=arm64
 wget https://github.com/opencontainers/runc/releases/download/v${VERSION}/runc.${ARCH}
+rm -f runc.${ARCH}
 
 sudo install -m 755 "runc.${ARCH}" /usr/local/sbin/runc
 
@@ -81,6 +87,7 @@ wget https://github.com/containernetworking/plugins/releases/download/v${VERSION
 
 sudo mkdir -p /opt/cni/bin
 sudo tar Cxzvf /opt/cni/bin cni-plugins-linux-${ARCH}-v${VERSION}.tgz
+rm cni-plugins-linux-${ARCH}-v${VERSION}.tgz
 
 ### kubeadm kubectl kubelet
 K8S_VERSION=v1.33
@@ -109,7 +116,7 @@ mkdir -p $HOME/.kube
 sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
 sudo chown $(id -u):$(id -g) $HOME/.kube/config
 
-sudo kubectl apply -f https://github.com/flannel-io/flannel/releases/latest/download/kube-flannel.yml
+kubectl apply -f https://github.com/flannel-io/flannel/releases/latest/download/kube-flannel.yml
 
 k get ns
 k get po -n kube-system
