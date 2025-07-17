@@ -12,10 +12,19 @@ exit 0
 ### =========== Settings ===========
 export KUBECONFIG=~/.kube/XXX.yaml
 
-### 新建一個 Chart (可理解成 git init NewGitProjectFromScratch)
-helm create NewChartFromScratch
-# 有點像是使用 docker-compose 建立整個 compose file 的起手式
-# 連帶建立整個 values.yaml / Chart.yaml / templates / charts/
+
+### ========================================= Helm 安裝 Charts 標準操作 =========================================
+# Case1. 簡化一切, 直接使用 install
+helm show values oci://8gears.container-registry.com/library/n8n --version 1.0.0 > default-values.yaml
+cp default-values.yaml values.yaml
+# 編輯 values.yaml
+helm install n8nPoc oci://8gears.container-registry.com/library/n8n --version 1.0.0 -f values.yaml
+
+# Case2. 先下載完整 Charts, 修改後再 install (可完整控制, 但複雜)
+helm pull oci://8gears.container-registry.com/library/n8n --version 1.0.0 --untar
+# 可以拿到一整包完整的 n8n 資料夾, 裡頭會有完整的 Chart 資訊
+
+### ========================================= Helm repository 操作 =========================================
 
 ### 增加訂閱 add Helm Repo
 helm repo add stable https://charts.helm.sh/stable
@@ -26,7 +35,7 @@ helm repo add nfs-subdir-external-provisioner https://kubernetes-sigs.github.io/
 #"nfs-subdir-external-provisioner" has been added to your repositories
 #(增加 Dynamic Volume Provider)
 
-### 列出 helm client 以追蹤的 helm repository
+### 列出追蹤的 Helm repository
 helm repo list
 #NAME    URL
 #grafana https://grafana.github.io/helm-charts
@@ -51,9 +60,13 @@ helm repo update ${Helm_Repo_Name}
 ### 如果要安裝的 Helm Charts 有不同版本(並不是要裝 latest), 先看看人家有哪些版本吧
 helm search repo ${Helm_Repo_Name} --versions
 
-### 列出 chart 的 information
-helm show chart
-helm show chart -n $NS
+
+### ========================================= Helm chart 操作 =========================================
+
+### 新建一個 Chart (可理解成 git init NewGitProjectFromScratch)
+helm create NewChartFromScratch
+# 有點像是使用 docker-compose 建立整個 compose file 的起手式
+# 連帶建立整個 values.yaml / Chart.yaml / templates / charts/
 
 ### 列出 releases
 helm list
@@ -62,6 +75,10 @@ helm list -d # sort by release date
 helm list --all
 helm list --uninstalled
 helm list uninstalled --failed
+
+### 列出 chart 的 information
+helm show chart
+helm show chart -n $NS
 
 ### =============================================== helm install (不推) ===============================================
 # 避免使用 helm install 吧...
