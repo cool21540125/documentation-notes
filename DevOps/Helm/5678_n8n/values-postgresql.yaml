@@ -1,0 +1,59 @@
+# PostgreSQL Helm Chart Values
+# This file is used to deploy PostgreSQL for n8n
+# Chart: https://artifacthub.io/packages/helm/bitnami/postgresql
+
+# PostgreSQL configuration
+postgresql:
+  # PostgreSQL Authentication parameters
+  auth:
+    # PostgreSQL root user password
+    postgresPassword: "admin123"
+    # PostgreSQL custom user and database
+    username: "n8n_user"
+    password: "n8n_password"
+    database: "n8n"
+    # Enable PostgreSQL user creation
+    enablePostgresUser: true
+
+  # PostgreSQL Primary configuration
+  primary:
+    # Persistence configuration
+    persistence:
+      enabled: true
+      size: 10Gi
+      storageClass: ""  # Use default storage class
+      accessModes:
+        - ReadWriteOnce
+
+    # Resource limits
+    resources:
+      limits:
+        cpu: 1000m
+        memory: 1Gi
+      requests:
+        cpu: 250m
+        memory: 256Mi
+
+    # PostgreSQL configuration
+    pgHbaConfiguration: |
+      local all all trust
+      host all all 127.0.0.1/32 trust
+      host all all ::1/128 trust
+      host all all 0.0.0.0/0 md5
+
+    # PostgreSQL initialization scripts
+    initdb:
+      scripts:
+        01-create-extensions.sql: |
+          CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+          CREATE EXTENSION IF NOT EXISTS "pgcrypto";
+
+  # Service configuration
+  service:
+    type: ClusterIP
+    ports:
+      postgresql: 5432
+
+  # Metrics configuration (optional)
+  metrics:
+    enabled: false
