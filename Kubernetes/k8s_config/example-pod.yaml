@@ -1,0 +1,36 @@
+# top level components: 
+#   kind 及 apiVersion
+  #   - POD: v1
+  #   - Service: v1
+  #   - ReplicaSet: apps/v1
+  #   - Deployment: apps/v1
+  #   - ConfigMap: v1
+  #   - Secret: v1
+  #   - PersistentVolumeClaim: v1
+  #   - StatefulSet: apps/v1
+  #   - DaemonSet: apps/v1
+  #   - Job: batch/v1
+  #   - CronJob: batch/v1
+  #   - Ingress: networking.k8s.io/v1
+# metadata
+# spec
+
+apiVersion: v1
+kind: Pod
+metadata:
+  name: pod_name
+  labels:
+    app: pod_label
+  namespace: default
+spec:
+  containers:
+    - name: container_name
+      image: image_name:tag
+      ports:
+        - containerPort: 80
+      env:
+        - name: EXAMPLE_ENV_VAR
+          value: "example-value"
+      volumeMounts:
+        - mountPath: /usr/share/nginx/html
+          name: volume_name

@@ -42,13 +42,6 @@ helm repo list
 #stable  https://charts.helm.sh/stable
 #bitnami https://charts.bitnami.com/bitnami
 
-### 搜尋 特定 helm repo
-helm search repo ${Helm_Repo_Name}
-
-### 排除特定
-helm search repo ${Helm_Repo_Name} | grep -v DEPRECATED
-### 2021/11 的現在, 會有一大堆 DEPRECATED (推測是大型贊助者不贊助了)
-
 ### 確保可以抓到 latest charts (同 apt-get update)
 helm repo update
 helm repo update ${Helm_Repo_Name}
@@ -57,9 +50,13 @@ helm repo update ${Helm_Repo_Name}
 #...Successfully got an update from the "stable" chart repository
 #Update Complete. ⎈Happy Helming!⎈
 
+### 移除 bitnami repo
+helm repo remove ${Helm_Repo_Name}
+
 ### 如果要安裝的 Helm Charts 有不同版本(並不是要裝 latest), 先看看人家有哪些版本吧
 helm search repo ${Helm_Repo_Name} --versions
-
+helm search repo ${Helm_Repo_Name}                      # 搜尋 特定 helm repo
+helm search repo ${Helm_Repo_Name} | grep -v DEPRECATED # 排除特定
 
 ### ========================================= Helm chart 操作 =========================================
 
@@ -71,14 +68,14 @@ helm create NewChartFromScratch
 ### 列出 releases
 helm list
 helm list -n $NS
-helm list -d # sort by release date
+helm list -d       # sort by release date
 helm list --all
 helm list --uninstalled
 helm list uninstalled --failed
 
 ### 列出 chart 的 information
-helm show chart
-helm show chart -n $NS
+helm show chart ${HelmRepo}/${ChartName}
+helm show chart ${HelmRepo}/${ChartName} -n $NS
 
 ### =============================================== helm install (不推) ===============================================
 # 避免使用 helm install 吧...

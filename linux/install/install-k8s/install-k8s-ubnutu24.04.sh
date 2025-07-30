@@ -1,4 +1,9 @@
 #!/bin/bash
+exit 0
+# 
+# install k8s the hard way - https://github.com/mmumshad/kubernetes-the-hard-way/tree/master/tools (輔助工具)
+# 
+# ------------------------------------------------------------------------------------------------
 
 ### 2025/05/10
 # 從頭來過, new Ubuntu 24.04
@@ -20,6 +25,8 @@ sudo cat /sys/class/dmi/id/product_uuid
 cat <<EOF | sudo tee /etc/sysctl.d/k8s.conf
 net.ipv4.ip_forward = 1
 net.ipv4.conf.all.forwarding = 1
+net.bridge.bridge-nf-call-ip6tables = 1
+net.bridge.bridge-nf-call-iptables = 1
 EOF
 
 sudo sysctl --system
@@ -75,9 +82,9 @@ sudo systemctl enable --now containerd
 VERSION=1.3.0
 ARCH=arm64
 wget https://github.com/opencontainers/runc/releases/download/v${VERSION}/runc.${ARCH}
-rm -f runc.${ARCH}
 
 sudo install -m 755 "runc.${ARCH}" /usr/local/sbin/runc
+rm -f runc.${ARCH}
 
 ### CNI-plugin
 # https://github.com/containernetworking/plugins/releases
@@ -99,6 +106,8 @@ sudo apt-get update
 sudo apt-get install -y kubelet kubeadm kubectl
 sudo apt-mark hold kubelet kubeadm kubectl
 sudo systemctl enable --now kubelet
+# 此時的 kubelet 會不斷的 restart & crash, 因為沒有設定好 kubeadm
+
 ### --------------------------------------------------------------------------------------------------------
 
 sudo modprobe overlay
@@ -110,6 +119,7 @@ EOF
 
 ### --------------------------------------------------------------------------------------------------------
 sudo kubeadm init
+# NOTE: 需要確認 CIDR
 
 # ubuntu User 的話
 mkdir -p $HOME/.kube

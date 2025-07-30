@@ -86,3 +86,18 @@ docker save -o example_image.tar $IMAGE
 
 ### 由 tar 還原 image
 docker load <example_image.tar
+
+###############################################################################################
+# docker Security
+# Linux 當中有許多核心的功能:
+# - CHOWN/DAC/KILL/SETFCAP/SETPCAP/SETUID/SETGID/NET_BIND/NET_RAW/MAC_ADMIN/BROADCAST/NET_ADMIN/SYS_ADMIN/SYS_CHROOT/AUDIT_WRITE/...
+#
+# 如果希望 Container 當中可以使用 or 無法使用, 可以透過以下方式進行設定
+docker run --cap-add CHOWN --cap-drop KILL --cap-add NET_ADMIN ...
+# 個別放行 / 個別禁止
+# 或者更加暴力的全部授予:
+docker run --cap-add ALL ...
+docker run --privileged ...
+###############################################################################################
+
+###

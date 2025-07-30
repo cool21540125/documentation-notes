@@ -74,3 +74,28 @@
             - Container 啟動後, 進行 首次檢測 的 等待秒數
         - timeoutSeconds
             - 健康檢查發送請求後的 等待回應的逾時秒數
+
+###########################################################################################
+
+```yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: mypod
+spec:
+  # ------ Pod Security ------
+  securityContext:
+    runAsUser: 1000
+    runAsGroup: 3000
+    fsGroup: 2000
+  # ------ Pod Security ------
+  containers:
+  - name: mycontainer
+    image: myimage
+    # ------ Container Security ------
+    securityContext:
+        runAsUser: 1000
+        runAsGroup: 3000
+        fsGroup: 2000
+    # ------ Container Security ------
+```

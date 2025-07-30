@@ -55,7 +55,7 @@ K8s 平台的選擇:
 kubelet -> Dockershim              -> Docker Engine -> Containerd -> Containerd-shim -> runC/Crun  -> container
 kubelet -> CRI-Containerd          ->                  Containerd -> Containerd-shim -> runC/Crun  -> container
 kubelet -> Containerd + CRI Plugin ->                                Containerd-shim -> runC/Crun  -> container
-kubelet -> CRI-O                                                                     -> runC/Crun  -> container
+kubelet ->                                             Containerd / CRI-O            -> runC/Crun  -> container
            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^    ^^^^^^^^^
                           Container Runtime Interface, CRI                              OCI runtime
 ```

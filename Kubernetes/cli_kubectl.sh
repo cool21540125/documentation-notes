@@ -27,6 +27,12 @@ kubectl version
 kubectl run ...
 # 等同於命令式的 docker run (盡量不要這樣用)
 
+### 可查到 k8s resources 的各種 kind 的關鍵字樣
+k get api-resources
+
+
+### =============================================== 基本操作 ===============================================
+
 ### Declarative 運行 k8s
 YAML_FILE=example.yaml
 kubectl create -f $YAML_FILE # 依照配置 建立     資源
@@ -254,7 +260,14 @@ kubectl get apiservices
 #v1beta1.metrics.k8s.io            kube-system/metrics-server   True        452d  # 表示 resource metrics API 有啟用
 # 僅節錄部分
 
-###
+### ===================================== k8s CSR =====================================
+#
+# 新人加入團隊以後, 老鳥要給新的 admin權限
+#
+
+### 新人給了老鳥他的 CSR 以後, 老鳥建立 csr
+
+
 
 ### ===================================== k8s 系統維護相關 =====================================
 
@@ -264,3 +277,15 @@ kubectl cordon $NODE   # 對 NODE 設立警戒 (Pod 舊的不去新的不來)
 kubectl uncordon $NODE # 拔除 NODE 的警戒
 
 kubectl drain $NODE --ignore-daemonsets # 排水(DaemonSet 一樣滾~) + 警戒
+
+
+### ===================================== k8s 權限操作 =====================================
+
+## non-admin 使用
+kubectl auth can-i create deployment
+kubectl auth can-i delete nodes
+
+## admin 設定完權限後可用來測試
+kubectl auth can-i create deployment --as dev-user
+kubectl auth can-i create pods --as dev-user
+
