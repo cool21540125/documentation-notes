@@ -188,4 +188,3 @@ IMPORTANT: 上述加入到 HSTS preload 的作法, 是一條通往 HTTPS 的不�
    - 雖說 `Forwarded` 為標準表頭, 不過 `X-Forwarded-For`, `X-Forwarded-Host`, `X-Forwarded-Proto` 被視為是時尚的標準
 - 若確定 Client 來自 proxy, 則用 `X-Forwarded-For` 或 `Forwarded` 來取得用戶 IP
 - 若確定 Client 非來自 proxy, 則用 `REMOTE_ADDR` 來取得用戶 IP
-- 不管事 `X-Forwarded-For` 或 `Forwarded`, 都可能被 Client 到 Server 之間的任何 Proxy 竄改
