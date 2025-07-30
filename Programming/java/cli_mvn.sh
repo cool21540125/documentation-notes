@@ -30,6 +30,22 @@ mvn compile
 mvn package
 # Compile + Test + 打包成 jar
 
+### 不要測試
+mvn package -Dmaven.test.skip=true
+
 ### 安裝 package 到 Repository
 mvn install
 # 基本上等同於 package + 安裝到 $MAVEN_HOME/repository
+
+
+### ---------------------------------- 常見 ----------------------------------
+
+### 本質上就是 重新打包
+mvn clean package
+# 然而 package 其實會依序執行: compile, test, package
+
+# 如果要省略測試的話:
+mvn clean package -Dmaven.test.skip=true
+
+
+###

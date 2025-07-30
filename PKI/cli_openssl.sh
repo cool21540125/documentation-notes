@@ -43,3 +43,8 @@ openssl req -new -key admin.key -subj "/CN=admin/O=system:masters" -out admin.cs
 openssl x509 -req -in admin.csr -CA ca.crt -CAkey ca.key -CAcreateserial -out admin.crt -days 3650
 #Certificate request self-signature ok
 #subject=CN = admin, O = system:masters
+
+### 從查看 crt 資訊
+openssl x509 -in /etc/kubernetes/pki/apiserver.crt -text -noout
+
+###

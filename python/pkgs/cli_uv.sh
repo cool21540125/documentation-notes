@@ -15,6 +15,8 @@ uv venv
 
 # 此時專案底下便有了: README.md / pyproject.toml / .python-version / uv.lock
 
+## --------------------------------------------------------------------------------------
+
 ### 依照 pyproject.toml 安裝套件
 uv pip install -r pyproject.toml
 # 上下兩者差異, 在於
