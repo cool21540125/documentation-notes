@@ -26,7 +26,7 @@ image:
   repository: n8nio/n8n
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag: ""
+  tag: "1.102.4"
 imagePullSecrets: []
 
 #
@@ -48,13 +48,18 @@ ingress:
 # the main (n8n) application related configuration + Kubernetes specific settings
 # The config: {} dictionary is converted to environmental variables in the ConfigMap.
 main:
-  # See https://docs.n8n.io/hosting/configuration/environment-variables/ for all values.
-  config: {}
-  #    n8n:
-  #    db:
-  #      type: postgresdb
-  #      postgresdb:
-  #        host: 192.168.0.52
+  config:
+    db:
+      type: postgresdb
+      postgresdb:
+        host: n8n-db-postgresql.n8n.svc.cluster.local
+        port: 5432
+        database: n8n_production
+        user: n8n_user
+        ssl:
+          rejectUnauthorized: false
+    N8N_RUNNERS_ENABLED: true
+    N8N_RUNNERS_MAX_CONCURRENCY: 4
 
   # Dictionary for secrets, unlike config:, the values here will end up in the secret file.
   # The YAML entry db.postgresdb.password: my_secret is transformed DB_POSTGRESDB_password=bXlfc2VjcmV0
@@ -70,6 +75,11 @@ main:
 
   # Extra environmental variables, so you can reference other configmaps and secrets into n8n as env vars.
   extraEnv:
+    - name: DB_POSTGRESDB_PASSWORD
+      valueFrom:
+        secretKeyRef:
+          name: postgresql-secret
+          key: password
   #    N8N_DB_POSTGRESDB_NAME:
   #      valueFrom:
   #        secretKeyRef:

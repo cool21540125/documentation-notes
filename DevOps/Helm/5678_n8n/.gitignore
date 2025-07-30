@@ -1,0 +1,9 @@
+.env
+
+# Downloaded Helm Charts
+n8n/
+
+# Kubernetes secrets - contains sensitive information, should not be committed
+postgresql-secret.yaml
+*-secret.yaml
+secrets.yaml
