@@ -19,7 +19,7 @@ export OTEL_COLLECTOR_HOST=localhost
 
 export OTEL_EXPORTER_OTLP_INSECURE=true  # 使用 http 而非 https
 
-## 打算傳送到 OTel Collector 的 App 必須配置其中一種 (告知 OTel Collector 的 Endpoint)
+## 打算把 App signals 傳送到 OTel Collector 的 gRPC/HTTP (告知 OTel Collector 的 Endpoint)
 export OTEL_EXPORTER_OTLP_ENDPOINT="YOUR_OTEL_COLLECTOR_HOST:4317"  # gRPC 的 OTel Collector 端點
 export OTEL_EXPORTER_OTLP_ENDPOINT="YOUR_OTEL_COLLECTOR_HOST:4318"  # http 的 OTel Collector 端點
 
@@ -92,5 +92,8 @@ opentelemetry-instrument \
 ```
 
 # OTel overview
+
+- OpenTelemetry 的 Sementic Conventions, 用於實作 Otel 回應屬性常見的 Keys
+  - https://opentelemetry.io/docs/specs/semconv/
 
 ![OTel](./img/OTel.jpg)

@@ -77,11 +77,12 @@ helm list uninstalled --failed
 helm show chart ${HelmRepo}/${ChartName}
 helm show chart ${HelmRepo}/${ChartName} -n $NS
 
-### =============================================== helm install (不推) ===============================================
-# 避免使用 helm install 吧...
+### =============================================== helm install ===============================================
 # Example:
 #  (X)  helm install bitnami/redis
-#  (O)  helm pull --untar bitnami/redis && helm install demo-redis ./redis (這樣本地才會有完整的 Chart 資訊)
+#  (O)  helm pull --untar bitnami/redis && helm install demo-redis ./redis
+# 上面為 不建議 v.s. 建議用法. 這樣本地才會有完整的 Chart 資訊
+
 
 ### 由本地的 Helm Charts 部署 Release
 helm install ${ReleaseName} ${HelmRepo}/${ChartName}

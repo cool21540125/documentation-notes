@@ -93,9 +93,9 @@ openssl pkcs8 -in ${KEY_NAME}.pem -inform PEM -outform DER -topk8 -nocrypt | ope
 ### ====================================================== Security Group, SG ======================================================
 
 ### 於 VPC 裡頭建立 SG
-VPC_ID=vpc-a8d03ccc
-SG_NAME='private_rds_secret_rotation_lambda_sg'
-SG_DESCRIPTION='SG for Lambda Function to rotate private RDS secrets'
+VPC_ID=
+SG_NAME=
+SG_DESCRIPTION=
 aws ec2 create-security-group --vpc-id $VPC_ID --group-name $SG_NAME --description $SG_DESCRIPTION
 # 可以拿到 GroupId
 

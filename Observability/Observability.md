@@ -40,6 +40,7 @@ https://event.ithome.com.tw/itplus/upload-slide/2024/8/21/3e747970-b99c-40bd-aea
 - 未知的未知(unknown unknowns) : 不存在該指標
 - 已知的未知(known unknowns) : Something you are aware but do not know, 可以理解為, 一個已存在的指標, 直到查詢時才知道 its value
 - Metrics
+  - 最重要的 Metrics 的 4 個切入點: `traffic / errors / saturation / latency`
   - 最基本的監控類型. metric 往往與 time 有關聯, 然而並非 metrics == time series
   - metrics 往往都是 聚合(aggregated) 了某些特定指標, 因而會遺失了特定資訊 (例如聚合了 ResponseTime, 則遺失了每個 Response 挾帶的細節)
     - 這部分得由 logs 來補齊

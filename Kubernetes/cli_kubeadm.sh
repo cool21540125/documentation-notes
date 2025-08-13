@@ -2,6 +2,11 @@
 exit 0
 # -----------------------------------------------------------------
 
+### 日後的 Nodes 打算加入到既有 Cluster 的時候, 用此方式來取得 join 相關的資訊
+kubeadm token create --print-join-command
+# 這串為 worker node 加入 cluster 的指令
+
+
 ### 重設 kubeadm
 sudo kubeadm reset --force
 sudo rm -rf /var/lib/etcd
