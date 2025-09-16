@@ -1,0 +1,20 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: random-number-generator
+spec:
+  containers:
+  - image: apline
+    name: apline
+    command: ["/bin/sh", "-c"]
+    args: ["shuf -i 0-100 -n 1 >> /opt/number.out;"]
+    volumeMounts:
+    - mountPath: /opt
+      name: data-volume
+
+  volumes:
+  - name: data-volume
+    # NOTE: hostPath 已被認為有安全性議題
+    hostPath:
+      path: /data
+      type: Directory

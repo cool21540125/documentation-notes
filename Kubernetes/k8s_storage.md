@@ -1,0 +1,49 @@
+# Kubernetes 的 Storage
+
+- Kubernetes 支援了(包含但不限於)底下一系列的 Volumes:
+  - DEPRECATED: awsElasticBlockStore - 參考 `ebs.csi.aws.com` CSI driver
+  - DEPRECATED: azureDisk - 參考 `disk.csi.azure.com` CSI driver
+  - DEPRECATED: azureFile - 參考 `file.csi.azure.com` CSI driver
+  - DEPRECATED: gcePersistentDisk - 參考 `pd.csi.storage.gke.io` CSI driver
+  - DEPRECATED: hostPath
+    - 已有安全性議題, 如果真有需要, 建議改用 local PersistentVolume
+    - *hostPath volume* 把 Node 所在的 Filesystem 的 File/Directory mount 到 Pod
+    - lifecycle 同 Node, 因此除非 Node 掛了, volume 才會消失
+    - Volume 與 Node 綁定, 無法跨主機共享資料
+    - Use cases:
+        - 運行 CAdvisor, 需要把使用 `hostPath: /sys`
+        - Container 需要使用到 Node 上的 Docker root, `hostPath: /var/lib/docker`
+        - Pod 建立以前, 需要確保特定目錄已存在, `hostPath: /path/should/exist`
+  - configMap
+    - ConfigMap 只能夠被 `readOnly` mount
+    - 若使用 `subPath` volume mount 的時候, 當 ConfigMap 異動了, container 不會接收到更新資訊
+  - secret
+    - Secret 只能夠被 `readOnly` mount
+    - 若使用 `subPath` volume mount 的時候, 當 Secret 異動了, container 不會接收到更新資訊
+    - `.secret` volumes 背後為 tmpfs (a RAM-backed filesystem), 不會被儲存到 Disk
+  - emptyDir
+    - 一開始永遠會是個空資料夾. 此為 ephemeral volumes
+        - empty at Pod startup, with storage coming locally from the kubelet base directory (usually the root disk) or RAM
+    - emptyDir 會在 Pod 被分配到 Node 的時候才產生. 因此直接被 Node 上頭的 kubelet 管理
+    - lifecycle 同 Pod, 如果目前 Pod 消失, 那這個 emptyDir volume 就掰了
+        - 不過如果是 Pod 內的 Container 掛了, emptyDir volume 不受影響就是了
+        - Pod 裡頭的 Containers 可共享 emptyDir volume 裡頭的東西
+  - local
+    - local volume 象徵著 mounted local storage device, ex: disk / partition /directory
+    - local volume 僅能用於 statically created PersistentVolume. 不支援 Dynamic provisioning
+    - Lifecycle 綁定在 Node 上頭, 穩定性受限於 Node
+  - nfs
+  - persistentVolumeClaim
+- Persistent Volume Claim
+  - persistentVolumeClaim 的目的是用來 mount a PersistentVolume into a Pod
+  - ops 建 PV, dev 用 PVC
+- Persistent Volume
+  - 依照 accessModes 可以區分成底下這些:
+    - ReadWriteOnce
+    - ReadOnlyMany
+    - ReadWriteMany
+    - ReadWriteOncePod
+  - PV 可以有 2 種 provisioned ways:
+    - Static
+    - Dynamic
+  - 

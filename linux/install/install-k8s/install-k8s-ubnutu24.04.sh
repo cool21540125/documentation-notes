@@ -103,7 +103,7 @@ curl -fsSL https://pkgs.k8s.io/core:/stable:/${K8S_VERSION}/deb/Release.key | su
 echo "deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] https://pkgs.k8s.io/core:/stable:/${K8S_VERSION}/deb/ /" | sudo tee /etc/apt/sources.list.d/kubernetes.list
 
 sudo apt-get update
-sudo apt-get install -y kubelet kubeadm kubectl
+sudo apt-get install kubelet kubeadm kubectl
 sudo apt-mark hold kubelet kubeadm kubectl
 sudo systemctl enable --now kubelet
 # 此時的 kubelet 會不斷的 restart & crash, 因為沒有設定好 kubeadm
@@ -128,15 +128,18 @@ sudo chown $(id -u):$(id -g) $HOME/.kube/config
 
 kubectl apply -f https://github.com/flannel-io/flannel/releases/latest/download/kube-flannel.yml
 
-k get ns
-k get po -n kube-system
-k get po -n kube-flannel
-k get no
-
 kubeadm join 10.200.0.11:6443 --token anobmw.94o3b81h1elsmuh5 \
   --discovery-token-ca-cert-hash sha256:0f1b7b1677ba53558ad1beb0fb2d7cc9b75990d96b73b252aa8ce158fc9fbc2c
 
 ### 安裝 metrics-server
 kubectl apply -f https://github.com/kubernetes-sigs/metrics-server/releases/latest/download/components.yaml
-k
-k top
+k top nodes
+
+
+### ========================================== EC2 安裝 EFS CSI driver ==========================================
+
+# EFS CSI driver 是 Kubernetes 的 StorageClass + CSI 機制
+# Driver 會自動在需要 PVC 的 Pod 上掛載 EFS
+kubectl apply -k "github.com/kubernetes-sigs/aws-efs-csi-driver/deploy/kubernetes/overlays/stable/ecr/?ref=release-1.5"
+kubectl get pods -n kube-system | grep efs
+# 上面這做法僅適用於 EKS (自建 k8s on EC2 則無法使用, 因為 EC2 無權限 pull)
