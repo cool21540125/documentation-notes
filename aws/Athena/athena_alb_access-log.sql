@@ -35,7 +35,8 @@ CREATE EXTERNAL TABLE IF NOT EXISTS __YOUR_ALB_TABLE_NAME__ (
     target_status_code_list string,
     classification string,
     classification_reason string,
-    conn_trace_id string
+    conn_trace_id string,
+    additional_column string
 )
 PARTITIONED BY (
     `day` STRING
@@ -44,12 +45,8 @@ ROW FORMAT SERDE
     'org.apache.hadoop.hive.serde2.RegexSerDe'
 WITH SERDEPROPERTIES (
     'serialization.format' = '1',
-    'input.regex' = '([^ ]*) ([^ ]*) ([^ ]*) ([^ ]*):([0-9]*) ([^ ]*)[:-]([0-9]*) ([-.0-9]*) ([-.0-9]*) ([-.0-9]*) (|[-0-9]*) (-|[-0-9]*) ([-0-9]*) ([-0-9]*) \"([^ ]*) (.*) (- |[^ ]*)\" \"([^\"]*)\" ([A-Z0-9-_]+) ([A-Za-z0-9.-]*) ([^ ]*) \"([^\"]*)\" \"([^\"]*)\" \"([^\"]*)\" ([-.0-9]*) ([^ ]*) \"([^\"]*)\" \"([^\"]*)\" \"([^ ]*)\" \"([^\\s]+?)\" \"([^\\s]+)\" \"([^ ]*)\" \"([^ ]*)\" ?([^ ]*)?'
+    'input.regex' = '([^ ]*) ([^ ]*) ([^ ]*) ([^ ]*):([0-9]*) ([^ ]*)[:-]([0-9]*) ([-.0-9]*) ([-.0-9]*) ([-.0-9]*) (|[-0-9]*) (-|[-0-9]*) ([-0-9]*) ([-0-9]*) \"([^ ]*) (.*) (- |[^ ]*)\" \"([^\"]*)\" ([A-Z0-9-_]+) ([A-Za-z0-9.-]*) ([^ ]*) \"([^\"]*)\" \"([^\"]*)\" \"([^\"]*)\" ([-.0-9]*) ([^ ]*) \"([^\"]*)\" \"([^\"]*)\" \"([^ ]*)\" \"([^\\s]+?)\" \"([^\\s]+)\" \"([^ ]*)\" \"([^ ]*)\" ?([^ ]*)? ?(.*)?'
 )
-STORED AS INPUTFORMAT
-    'org.apache.hadoop.mapred.TextInputFormat'
-OUTPUTFORMAT
-    'org.apache.hadoop.hive.ql.io.HiveIgnoreKeyTextOutputFormat'
 LOCATION 
     's3://__BUCKET_NAME__/__BUCKET_PREFIX__/access/AWSLogs/__ACCOUNT_ID__/elasticloadbalancing/__REGION__/'
 TBLPROPERTIES (
