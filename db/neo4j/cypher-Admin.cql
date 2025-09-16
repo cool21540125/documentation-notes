@@ -3,7 +3,7 @@
 // ==================================== Help ====================================
 
 // 查看歷史 Query
-:history
+// :history
 
 // ==================================== Schema ====================================
 
@@ -12,8 +12,8 @@ CALL db.schema.visualization()
 CALL db.schema.nodeTypeProperties()
 CALL db.schema.relTypeProperties()
 
-// 
-SHOW CONSTRAINTS
+// (底下這指令忘了幹嘛的了)
+// SHOW CONSTRAINTS
 
 // SHOW all Labels
 CALL db.labels()
