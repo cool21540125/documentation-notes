@@ -43,6 +43,7 @@
   - Regional: (for prod env) Multi-AZ
   - One Zone: (for dev env) Single-AZ.
     - ex: 使用 EFS One Zone-IA, 可省下 90%
+- 每個 EFS filesystem 只能建立 1000 個 Access point.
 
 # 掛載 EFS
 

@@ -222,7 +222,14 @@ flowchart LR
 - 能夠在 EC2 裡頭查看自己的 metadata
 
 ```bash
+### 先確認 EC2 Console IMDS 屬於 v1 還是 v2
+
+# v1
 curl http://169.254.169.254/latest/meta-data/
+
+# v2 (Ubuntu24.04 預設的 Metadata options 預設是 v2)
+API_TOKEN=$(curl -X PUT -H "X-aws-ec2-metadata-token-ttl-seconds: 21600" "http://169.254.169.254/latest/api/token")
+curl -H "X-aws-ec2-metadata-token: $API_TOKEN" http://169.254.169.254/latest/meta-data/
 ```
 
 # EC2 Storage
