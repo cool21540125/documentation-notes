@@ -1,0 +1,20 @@
+modules:
+
+  endpoint_health_check:
+    prober: http
+    timeout: 5s
+    http:
+      method: GET
+      preferred_ip_protocol: "ip4"
+      ip_protocol_fallback: false
+
+  endpoint_health_check_with_auth:
+    prober: http
+    timeout: 5s
+    http:
+      method: POST
+      preferred_ip_protocol: "ip4"
+      ip_protocol_fallback: false
+      headers:
+        Content-Type: application/json
+        X-Auth-Token: abcd

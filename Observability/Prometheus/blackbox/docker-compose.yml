@@ -1,0 +1,12 @@
+services:
+  image: quay.io/prometheus/blackbox-exporter:v0.27.0
+  container_name: blackbox
+  restart: always
+  ports:
+    - "9115/tcp"
+  volumes:
+    - $(pwd):/config
+  labels:
+    - "app=monitoring"
+  command:
+    - "--config.file=/config/blackbox.yml"
