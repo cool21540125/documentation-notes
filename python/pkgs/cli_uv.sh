@@ -4,16 +4,16 @@ exit 0
 # uv 和 poetry 相比的話, 差異在: uv 是一個 CLI 工具, 而 poetry 是一個完整的 Python package 管理器
 # ------------------------------------------------------------------------
 
-### 使用 uv 起始一個專案
-uv init $PROJECT_NAME
-uv init $PROJECT_NAME --no-git # 不使用 git
-uv init $PROJECT_NAME --app
-uv init $PROJECT_NAME --lib
+### 1. 使用 uv 起始一個專案
+uv init .  # 此時專案底下便有了: README.md / pyproject.toml / .python-version / uv.lock
+#uv init $PROJECT_NAME --app
+#uv init $PROJECT_NAME --lib
 
-### 快速建立虛擬環境
+### 2. 然後確認 .python-version 裡頭的版本
+
+### 3. 建立 .venv
 uv venv
 
-# 此時專案底下便有了: README.md / pyproject.toml / .python-version / uv.lock
 
 ## --------------------------------------------------------------------------------------
 

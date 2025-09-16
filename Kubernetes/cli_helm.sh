@@ -12,24 +12,11 @@ exit 0
 ### =========== Settings ===========
 export KUBECONFIG=~/.kube/XXX.yaml
 
-
-### ========================================= Helm 安裝 Charts 標準操作 =========================================
-# Case1. 簡化一切, 直接使用 install
-helm show values oci://8gears.container-registry.com/library/n8n --version 1.0.0 > default-values.yaml
-cp default-values.yaml values.yaml
-# 編輯 values.yaml
-helm install n8nPoc oci://8gears.container-registry.com/library/n8n --version 1.0.0 -f values.yaml
-
-# Case2. 先下載完整 Charts, 修改後再 install (可完整控制, 但複雜)
-helm pull oci://8gears.container-registry.com/library/n8n --version 1.0.0 --untar
-# 可以拿到一整包完整的 n8n 資料夾, 裡頭會有完整的 Chart 資訊
-
 ### ========================================= Helm repository 操作 =========================================
 
-### 增加訂閱 add Helm Repo
+### Step 0. 增加訂閱 add Helm Repo
 helm repo add stable https://charts.helm.sh/stable
 helm repo add bitnami https://charts.bitnami.com/bitnami
-helm repo add grafana https://grafana.github.io/helm-charts
 
 helm repo add nfs-subdir-external-provisioner https://kubernetes-sigs.github.io/nfs-subdir-external-provisioner/
 #"nfs-subdir-external-provisioner" has been added to your repositories
@@ -58,24 +45,6 @@ helm search repo ${Helm_Repo_Name} --versions
 helm search repo ${Helm_Repo_Name}                      # 搜尋 特定 helm repo
 helm search repo ${Helm_Repo_Name} | grep -v DEPRECATED # 排除特定
 
-### ========================================= Helm chart 操作 =========================================
-
-### 新建一個 Chart (可理解成 git init NewGitProjectFromScratch)
-helm create NewChartFromScratch
-# 有點像是使用 docker-compose 建立整個 compose file 的起手式
-# 連帶建立整個 values.yaml / Chart.yaml / templates / charts/
-
-### 列出 releases
-helm list
-helm list -n $NS
-helm list -d       # sort by release date
-helm list --all
-helm list --uninstalled
-helm list uninstalled --failed
-
-### 列出 chart 的 information
-helm show chart ${HelmRepo}/${ChartName}
-helm show chart ${HelmRepo}/${ChartName} -n $NS
 
 ### =============================================== helm install ===============================================
 # Example:
@@ -88,8 +57,6 @@ helm show chart ${HelmRepo}/${ChartName} -n $NS
 helm install ${ReleaseName} ${HelmRepo}/${ChartName}
 helm install -f values.yaml ${ReleaseName} ${PATH_to_ChartDir}
 helm install -f values.yaml ${HelmRepo}/${ChartName}
-
-helm install my-n8n oci://8gears.container-registry.com/library/n8n --version 0.20.0
 
 ### 依照 Values.yml 安裝 loki Helm Chart
 helm install --values values.yml loki grafana/loki -n loki --create-namespace
@@ -123,6 +90,30 @@ helm install --set key="value" my-release bitnami/wordpress
 ### 僅測試(語法驗證等), 但不保證可行
 helm install --debug --dry-run ${ReleaseName} ${Release_Definition_Source}
 # ex: helm install --debug --dry-run goodly-guppy ./mychart
+
+
+### ========================================= Helm chart 操作 =========================================
+
+### 傭來查閱 Charts 有哪些 values 可用
+helm show values ${HelmRepo}/${ChartName}
+
+### 新建一個 Chart (可理解成 git init NewGitProjectFromScratch)
+helm create NewChartFromScratch
+# 有點像是使用 docker-compose 建立整個 compose file 的起手式
+# 連帶建立整個 values.yaml / Chart.yaml / templates / charts/
+
+### 列出 releases
+helm list
+helm list -n $NS
+helm list -d       # sort by release date
+helm list --all
+helm list --uninstalled
+helm list uninstalled --failed
+
+### 列出 chart 的 information
+helm show chart ${HelmRepo}/${ChartName}
+helm show chart ${HelmRepo}/${ChartName} -n $NS
+
 
 ### =============================================== helm upgrade ===============================================
 
@@ -171,3 +162,58 @@ docker run -it --rm \
 ### --------------------------------- chart hooks ---------------------------------
 # Helm Chart hooks 是一種特殊的 template, 會在特定的時機點被執行
 # chart hook 好像也可以拿來做 DB restore (不確定)
+
+
+
+
+# ===========================================================================================================================================================
+# ===========================================================================================================================================================
+# ===========================================================================================================================================================
+
+## ------------------------ metrics-server ------------------------
+helm repo add metrics-server https://kubernetes-sigs.github.io/metrics-server/
+helm repo update
+helm search repo metrics-server/metrics-server --versions
+# *** check version ***
+
+helm pull --untar metrics-server/metrics-server
+cd ./metrics-server
+
+vim values.yaml
+# defaultArgs: (加入)
+#  - --secure-port=10250
+#  - --kubelet-insecure-tls
+
+# *** edit Chart ***
+helm install metrics-server .
+
+k top nodes
+k top pods
+
+
+## ------------------------ airflow ------------------------
+helm repo add apache-airflow https://airflow.apache.org
+helm repo update
+helm search repo apache-airflow/airflow --versions
+# *** check version ***
+
+helm pull --untar apache-airflow/airflow --version 1.14.0 # 自己挑版本
+cd airflow
+# *** edit Chart ***
+helm install airflow .
+
+
+## ------------------------ grafana ------------------------
+helm repo add grafana https://grafana.github.io/helm-charts
+helm repo update
+
+# *** check version ***
+
+
+
+## ------------------------ prometheus-community ------------------------
+helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
+helm repo update
+
+# *** check version ***
+

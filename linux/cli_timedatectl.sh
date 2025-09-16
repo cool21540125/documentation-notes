@@ -2,8 +2,8 @@
 exit 0
 # ---------------------------------------------------------------------
 
-###
-timedatectl
 
 ###
-timedatectl set-timezone Asia/Taipei
+sudo timedatectl set-timezone Asia/Taipei
+
+timedatectl

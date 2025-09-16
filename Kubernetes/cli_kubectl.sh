@@ -51,21 +51,6 @@ kubectl get pod --show-labels
 #NAME            READY   STATUS    RESTARTS   AGE   LABELS
 #my-helloworld   1/1     Running   0          9s    app=helloworld
 
-### 查看 kube-system Namespace 底下 pods 的詳細資訊
-kubectl get pods -n kube-system -o wide
-#NAME                        READY  STATUS   RESTARTS  AGE  IP             NODE  NOMINATED NODE  READINESS GATES
-#coredns-78fcd69978-lp4ww    1/1    Running  4         20d  10.233.0.11    m1    <none>          <none>  # k8s 內建提供 DNS 服務的 Pods. load-balance
-#coredns-78fcd69978-ps277    1/1    Running  4         20d  10.233.0.10    m1    <none>          <none>  # k8s 內建提供 DNS 服務的 Pods. load-balance
-#etcd-m1                     1/1    Running  6         20d  192.168.152.4  m1    <none>          <none>
-#kube-apiserver-m1           1/1    Running  6         20d  192.168.152.4  m1    <none>          <none>
-#kube-controller-manager-m1  1/1    Running  8         20d  192.168.152.4  m1    <none>          <none>
-#kube-flannel-ds-7plcb       1/1    Running  4         20d  192.168.152.4  m1    <none>          <none>
-#kube-flannel-ds-j9cfb       1/1    Running  3         20d  192.168.152.6  w1    <none>          <none>
-#kube-flannel-ds-v92v4       1/1    Running  1         20d  192.168.152.7  w2    <none>          <none>
-#kube-proxy-dgcmf            1/1    Running  3         20d  192.168.152.7  w2    <none>          <none>
-#kube-proxy-fl75v            1/1    Running  6         20d  192.168.152.4  m1    <none>          <none>
-#kube-proxy-m4vz7            1/1    Running  4         20d  192.168.152.6  w1    <none>          <none>
-#kube-scheduler-m1           1/1    Running  9         20d  192.168.152.4  m1    <none>          <none>
 
 ### =============================================== port-forward ===============================================
 ### (前景方式)啟用 ip-forward (port forwarding)
@@ -180,6 +165,8 @@ kubectl get configmap -o yaml
 
 ### 如果是 Standalone Cluster 的測試環境, 用來將此 Worker Node(Controller Node) 移除 taint (好讓 Pod 可以做部署)
 kubectl taint nodes MY_K8S_NODE_NAME node-role.kubernetes.io/control-plane-
+kubectl taint nodes MY_K8S_CONTROL_PLANE_NODE node-role.kubernetes.io/control-plane:NoSchedule-  # 移除 control plane 身上的 label, 讓他可以跑 pods
+
 
 ### ===================================== k8s System =====================================
 

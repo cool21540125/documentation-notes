@@ -47,4 +47,20 @@ openssl x509 -req -in admin.csr -CA ca.crt -CAkey ca.key -CAcreateserial -out ad
 ### 從查看 crt 資訊
 openssl x509 -in /etc/kubernetes/pki/apiserver.crt -text -noout
 
+### ======================= 取得 Server Certificate =======================
+DOMAIN=blog.tonychoucc.com
+# with SNI
+openssl s_client -showcerts -connect $DOMAIN:443 -servername $DOMAIN 
+
+# without SNI
+openssl s_client -showcerts -connect $DOMAIN:443
+
+echo | openssl s_client -connect $DOMAIN:443 -servername $DOMAIN 2>/dev/null | openssl x509 -noout -issuer -subject
+# 用 echo 是因為 s_client 為互動式詢問, 利用 echo 會丟一個空白行給它, 避免 terminal pending
+# 或
+openssl s_client -connect $DOMAIN:443 -servername $DOMAIN </dev/null 2>/dev/null | openssl x509 -noout -issuer -subject
+# 也可用 「</dev/null」來達成相同效果
+
 ###
+
+### =======================  =======================
