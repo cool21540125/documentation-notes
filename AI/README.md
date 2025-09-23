@@ -48,3 +48,11 @@ https://www.youtube.com/watch?v=AVIKFXLCPY8
 - Retrieval Augmented Generation, RAG
   - 因為語言模型背後沒有 DataSet, 因此可自行到 Internet 找到 額外資訊, 連同專業問題, 一起丟給 語言模型 去詢問, 此為 RAG
   - 此機制是在不重新訓練 語言模型 的前提之下, 藉由 額外資訊 的提供, 提升 AI 正確性的很有效的方式
+
+
+# Claude
+
+```bash
+### Claude Desktop 的 mcpServers 設定檔
+code ~/Library/Application\ Support/Claude/claude_desktop_config.json
+```
