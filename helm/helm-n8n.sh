@@ -11,11 +11,12 @@ exit 0
 ## ------------------------ n8n ------------------------
 # https://artifacthub.io/packages/helm/open-8gears/n8n
 
+helm pull --untar oci://8gears.container-registry.com/library/n8n 
+helm pull --untar oci://8gears.container-registry.com/library/n8n --version 1.0.0
+
 mkdir n8n && cd n8n
-helm show values oci://8gears.container-registry.com/library/n8n > default-values.yaml
-cp default-values.yaml values.yaml
 # 編輯 values.yaml
-helm upgrade --install my-n8n oci://8gears.container-registry.com/library/n8n -f values.yaml
+helm upgrade --install my-n8n ./ -f values.yaml
 
 # Case2. 先下載完整 Charts, 修改後再 install (可完整控制, 但複雜)
 # helm pull oci://8gears.container-registry.com/library/n8n --version 1.0.0 --untar

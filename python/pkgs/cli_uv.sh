@@ -1,6 +1,12 @@
 #!/bin/bash
 exit 0
-# 似乎是個比 pip 更快的 package manager
+# 
+# 比 pip 更快的 package manager
+#
+#
+#
+#
+
 # uv 和 poetry 相比的話, 差異在: uv 是一個 CLI 工具, 而 poetry 是一個完整的 Python package 管理器
 # ------------------------------------------------------------------------
 
@@ -50,7 +56,7 @@ uv tool install ruff # 安裝 global inting for python
 # $HOME/.local/bin/ruff
 uv tool uninstall ruff
 
-### 等同於 npx
+### uvx (等同於 uvx)
 uv tool run ruff check
 #可簡寫為
 uvx ruff check

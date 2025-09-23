@@ -146,11 +146,13 @@ IMPORTANT: 上述加入到 HSTS preload 的作法, 是一條通往 HTTPS 的不�
    - 問題:
       - 如果 Client 的時間錯誤. 例如是西元 3000 年, 則每次都會跟 Server 要 Resources
 - `Cache-Control` 與 `max-age`
-   - Since HTTP/1.1
    - Client 拿到 Response 以後, 可得知 Response **還有多久過期**
    - ex, Response Header: 
       - `Cache-Control: max-age=30` : Resource 快取有效時間 30 secs
       - `Cache-Control: no-cache`   : Resource 快取有效時間 
+   - 其他情境:
+      - `Cache-Control: public`     : 此資源可被任何快取伺服器快取
+      - `Cache-Control: private`    : 只有 client Browser 可以快取
    - 問題:
       - 如果同時拿到 `max-age` 及 `Expires`, 則會以 `max-age` 為主
       - 如果 Resource 到期了, 則可藉由其他的 Response Headers 來判斷能否繼續使用

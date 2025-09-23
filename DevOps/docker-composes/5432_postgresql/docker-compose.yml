@@ -1,8 +1,7 @@
-version: "3"
 
 services:
   db:
-    image: postgres:13.3
+    image: postgres:16.10
     container_name: pg
     hostname: pg
     restart: always
@@ -11,9 +10,10 @@ services:
     ports:
       - "5432:5432"
     volumes:
-      - data_pg:/var/lib/postgresql/data
+      - vol_pg_data:/var/lib/postgresql/data
       - ./initdb.d:/docker-entrypoint-initdb.d
 
 volumes:
-  data_pg:
-    name: data_pg
+  vol_pg_data:
+    name: vol_pg_data
+    external: true
