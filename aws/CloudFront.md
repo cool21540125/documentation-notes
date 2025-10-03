@@ -2,10 +2,7 @@
 # [CloudFront](https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/Introduction.html)
 
 - [深入討論為何 ACM 只能在 us-east-1](https://ithelp.ithome.com.tw/articles/10242264)
-- CloudFront points of presence (也就是 POPs or edge locations)
-- 有超過 200+ 個 Edge Locations
-    - file cached for TTL
-- Security 安全性方面, 結合了:
+- CloudFront 因應安全性, 整合了:
     - DDoS protection
     - Shield
     - Web Application Firewall
@@ -21,21 +18,32 @@
     - Lambda function Url
     - EC2
     - CloudFront origin groups
-- CloudFront Origin:
-    - 回源到 S3 的驗證機制 (用來給 CloudFront access S3 的 IAM Role):
-        - OAC, Origin Access Control
-            - 相較於 OAI 的額外優點:
-                - 支援 all Region S3 buckets
-                - 支援 SSE-KMS
-                - 支援 Dynamic request(PUT, DELETE) to S3
-        - OAI, Origin Access Identity (legacy)
-            - Enhanced security with CloudFront OAI
-    - Custom Origin(HTTP)
-        - ALB && EC2 instance
-            - 必須要是 public && SG 要允許 AWS CloudFront IPs 來訪問
-                - https://d7uri8nf7uskq.cloudfront.net/tools/list-cloudfront-ips
-        - S3 Website (必須確保 S3 Bucket 為 static S3 Website)
-        - any HTTP backend
+- CloudFront 的 Origin Request
+    - `CloudFront edges` 接收到 `Viewer Request` 以後, 如果沒有 cache hit, 會將此 request 修剪後, forward 到 origin
+        - 而這些 forwarded 的請求, 稱之為 `Origin Request`
+    - Origin Request 的相關議題:
+        - CloudFront edge 會對 Viewer Request 做些加工後, 再做 forward:
+            - Origin Request 預設不會包含 Query String / Domain
+            - Origin Request 不會有原始的 Http Headers 及 Cookies
+            - Origin Request 會加上底下的 Http Headers:
+                - Host / User Agent / X-Amz-Cf-Id
+        - 可以藉由 **Origin Request Policy** 來控管進入到 origin 的 request 資訊含量
+            - 此 Policy 不同於 **Cache Policy**
+    - 回源相關的議題:
+        - S3 的驗證機制 (用來給 CloudFront access S3 的 IAM Role):
+            - OAC, Origin Access Control
+                - 相較於 OAI 的額外優點:
+                    - 支援 all Region S3 buckets
+                    - 支援 SSE-KMS
+                    - 支援 Dynamic request(PUT, DELETE) to S3
+            - OAI, Origin Access Identity (legacy)
+                - Enhanced security with CloudFront OAI
+        - Custom Origin(HTTP)
+            - ALB && EC2 instance
+                - 必須要是 public && SG 要允許 AWS CloudFront IPs 來訪問
+                    - https://d7uri8nf7uskq.cloudfront.net/tools/list-cloudfront-ips
+            - S3 Website (必須確保 S3 Bucket 為 static S3 Website)
+            - any HTTP backend
 - CloudFront 也可用來作為上傳 file 到 S3, 作為 Ingress 使用
 - CDN 也可設定 黑白名單 來做訪問許可
     - country 則使用 3rd Geo-IP database

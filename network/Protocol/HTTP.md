@@ -138,26 +138,59 @@ IMPORTANT: 上述加入到 HSTS preload 的作法, 是一條通往 HTTPS 的不�
 
 # HTTP cache
 
-- 參考文件 http cache - https://blog.techbridge.cc/2017/06/17/cache-introduction/
+- 參考文件
+   - https://blog.techbridge.cc/2017/06/17/cache-introduction/
+   - https://www.cloudflare.com/learning/cdn/glossary/what-is-cache-control/
 - `Expires`
    - Since HTTP/1.0
    - Client 拿到 Response 以後, 可得知 Resource **到期時間**
    - ex, Response Header: `Expires: Oct, 12 Oct 2023 13:30:00 GMT`
    - 問題:
       - 如果 Client 的時間錯誤. 例如是西元 3000 年, 則每次都會跟 Server 要 Resources
-- `Cache-Control` 與 `max-age`
-   - Client 拿到 Response 以後, 可得知 Response **還有多久過期**
-   - ex, Response Header: 
-      - `Cache-Control: max-age=30` : Resource 快取有效時間 30 secs
-      - `Cache-Control: no-cache`   : Resource 快取有效時間 
-   - 其他情境:
-      - `Cache-Control: public`     : 此資源可被任何快取伺服器快取
-      - `Cache-Control: private`    : 只有 client Browser 可以快取
+- Cache-Control
+   - 是個 HTTP Header, 用來引導 **Browser** 的快取行為
+   - Cache-Control 可能同時存在於 Request 及 Response
+   - Cache-Control 的範例:
+      - `Cache-Control: private`    : 任何中間元件, 像是 CDN or Proxy 都不可以快取, 只有 Client Browser 可以快取 (適用於 user personal information)
+      - `Cache-Control: public`     : 此資源可被 any cache 做儲存
+      - `Cache-Control: max-age=0`  : 這類請求通常由 Client 自行發起, 告知 Response 不要 Cached
+      - `Cache-Control: max-age=60` : Resource 快取有效時間 60 secs
+      - `Cache-Control: no-store`   : 完全不使用快取. 帶有此 Header 的 Response, 任何地方都不准儲存下來作為快取, 也就是所有資源請求, 都必須要回源 (適用於極端機敏資訊, 像是銀行帳戶餘額)
+      - `Cache-Control: s-maxage`   : Browser 不會鳥這個. 這僅對 CDN 具備用途. s-maxage 會覆蓋掉 max-age
+         - `Cache-Control: public, max-age=60, s-maxage=300` : 對於 Browser 快取 60 secs, 對於 CDN, 快取 300 secs
+      - `Cache-Control: no-cache`   : 快取但每次必須驗證. 每次有快取可用時, 都會比對 ETag 版本是否異動了, 若沒動, 才相信快取的內容 (並非如字面上所指的不能快取)
+         - `Cache-Control: no-cache` 等同於 `Cache-Control: no-store, max-age=0`
+         - 若存在於 Request  : Client 告知 Server, 不要給我 cached resource, 直接回源找到最新的
+         - 若存在於 Response : (如下範例)
+            - Request (Client 首次請求, 要求 Server 給我回源拿最新的. 此外, 首次請求時, 除非有重新整理, 不然通常不會自帶 **Cache-Control: no-cache**)
+               ```
+               GET /index.html
+               ```
+            - Response (此時, Client 會將 /index.html 做快取)
+               ```
+               HTTP/1.1 200 OK
+               Cache-Control: no-cache
+               ETag: "abc123"
+               ```
+            - Request (因為前面 Server 已經告知了 no-cache, 後續 Client 在對相同 Resource 發起請求時, 會去詢問是否版本有異動)
+               ```
+               GET /index.html
+               If-None-Match: "abc123"
+               ```
+            - Response (ETag 沒變)
+               ```
+               HTTP/1.1 304 Not Modified
+               ```
+            - Response (ETag 變動了)
+               ```
+               HTTP/1.1 200 OK
+               Cache-Control: no-cache
+               ETag: "xyz456"
+               ```
    - 問題:
       - 如果同時拿到 `max-age` 及 `Expires`, 則會以 `max-age` 為主
       - 如果 Resource 到期了, 則可藉由其他的 Response Headers 來判斷能否繼續使用
 - `Last-Modified` 及 `If-Modified-Since`
-   - Since HTTP/1.0
    - 如果要讓 Resource 過期時, Client 能夠繼續使用, Server 平常 Response 除了給 `Cache-Control` 以外, 還要再加上 `Last-Modified`
    - 等到真的到期了, Client Request Header 會加上 `If-Modified-Since`
       - 若 Server 沒更新 Resource, `Status code: 304 (Not Modified)` (此時, Client 可繼續使用 Cached Resource)
@@ -169,12 +202,6 @@ IMPORTANT: 上述加入到 HSTS preload 的作法, 是一條通往 HTTPS 的不�
    - 快取過期後, Client Request 發送 `If-None-Match` 詢問 Server 是否有異動 Resource
       - 有異動, 則給 new Resource
       - 無異動, 則回 304
-- 比較
-   - `Cache-Control: no-cache`  : 每次都詢問是否 Resource 有異動
-   - `Cache-Control: no-store`  : 完全不使用快取
-- 比較
-   - `Cache-Control: max-age=0` : Client 自行發起, 告知不要 cache
-   - `Cache-Control: no-cache`  : 
 - Http 快取
    - 快取儲存策略
    - 快取過期策略
