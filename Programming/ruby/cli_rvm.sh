@@ -16,10 +16,14 @@ rvm remove 3.2.2
 rvm use 3.2.2
 rvm 3.2.2
 rvm 3.2.2 --default # 設定為預設版本
-rvm system          # 切回系統預設版本
 
-# M1 Issue - https://github.com/rvm/rvm/issues/5252
+### ========================= rvm 安裝其他版本的 ruby =========================
+# 常見 Apple chip issue: https://github.com/rvm/rvm/issues/5252
+# 簡單說明, 就是 Apple chip 預設的 openssl 版本過舊, RVM 可能找不到 Homebrew 安裝的 OpenSSL, 或找到錯誤版本...
 rvm install 3.2.2 --with-openssl-dir=$(brew --prefix)/opt/openssl@3
+rvm install 3.4.1 --with-openssl-dir=$(brew --prefix openssl@3)
+
+## 移除特定版本
 rvm uninstall 2.3.2
 
 ### 列出已經安裝了哪些 ruby version
