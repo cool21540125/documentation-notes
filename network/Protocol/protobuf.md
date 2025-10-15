@@ -12,38 +12,21 @@
         - bin/protoc
         - 一堆 使用 protobuf 分發出來的 .proto 檔案
 
-```bash
-### This is for gRPC for Golang
-# https://grpc.io/docs/languages/go/quickstart/
-go install google.golang.org/protobuf/cmd/protoc-gen-go@latest
-go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@latest
-export PATH="$(go env GOPATH)/bin:${PATH}"
-# 會在 $GOPATH/bin 底下安裝好 protoc-gen-go (此為 binary)
 
+# protobuf 與 gRPC
 
-### 由 .proto 產生 protobuf
-protoc --python_out=$DST_DIR -I=$SRC_DIR $SRC_DIR/${PROTO_FILE}.proto
-# -I 等同於 --proto_path
-# SRC_DIR 為 .proto 放置的位置
+Service 是 protobuf 更加通用的概念, 並非用來做序列化, 而是用來作為通訊使用. Service 是用來定義 API 的集合.
 
+protobuf 在設計的時候, 並非被設計成可用來做網路傳輸, 因此若要網路傳輸 protobuf 的話, 主要會依賴於 gRPC framework (當然還有其他的 framework 可用來傳輸 protobuf).
 
-### Golang 如果要玩 protobuf, 一定要安裝 protoc-gen-go, 且這東西一定要在 PATH 底下
-GOBIN=$HOME/bin go install google.golang.org/protobuf/cmd/protoc-gen-go@latest
-# protoc-gen-go 是 protoc(這個 Compiler) 的 plugin
-```
+```proto
+message GetSomethingRequest {}
+message GetSomethingResponse {}
+message ListSomethingRequest {}
+message ListSomethingResponse {}
 
-
-# Proto compiler
-
-### Protoc Compiler
-
-```bash
-### 各種語言的 Protoc Compiler
-protoc --java_out=. xxx.proto
-protoc --go_out=. xxx.proto
-protoc --python_out=. xxx.proto
-# 支援的語言可查看 protoc --help
-
-
-### 
+service FooService {
+  rpc GetSomething(GetSomethingRequest) returns (GetSomethingResponse);
+  rpc ListSomething(ListSomethingRequest) returns (ListSomethingResponse);
+}
 ```

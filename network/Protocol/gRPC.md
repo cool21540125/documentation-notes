@@ -1,14 +1,3 @@
-
-# Install protoc
-
-- protocol buffer compiler, `protoc`, 用來 compile `.proto` files
-- 安裝方式分為 2 種:
-    - Install using pkg manager
-        - ex: brew install ...
-    - Install pre-compiled binaries
-        - 直接抓 binary && 設 PATH
-
-
 # gRPC
 
 - gRPC 可定義 4 種 methods:
