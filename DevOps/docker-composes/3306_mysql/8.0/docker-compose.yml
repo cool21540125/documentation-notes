@@ -7,7 +7,7 @@ services:
     ports:
       - "3306:3306"
     volumes:
-      - data-db:/var/lib/mysql
+      - vol_mysql8:/var/lib/mysql
       # - /etc/localtime:/etc/localtime:ro
     environment:
       - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
@@ -19,5 +19,6 @@ networks:
     name: net_mysql
 
 volumes:
-  data-db:
-    name: data_db
+  vol_mysql8:
+    name: vol_mysql8
+    external: true
