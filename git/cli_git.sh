@@ -39,6 +39,19 @@ git diff $COMMIT
 ### 清除 .gitignore 宣告的檔案們
 git clean -idx # 互動式詢問
 
+
+### ======================= AWS CodeCommit 常見問題 =======================
+
+### CodeCommit 的 dependencies 問題
+# 若安裝 dependencies 的時候, 來源為 private CodeCommit, 出現下列錯誤, 就用這行
+# npm ERR! command git --no-replace-objects ls-remote https://git-codecommit.us-west-2.amazonaws.com/v1/repos/MY_REPOSITORY
+# npm ERR! fatal: unable to access 'https://git-codecommit.us-west-2.amazonaws.com/v1/repos/MY_REPOSITORY/': The requested URL returned error: 403
+git config --local credential.helper '!aws codecommit credential-helper $@'
+git config --local credential.UseHttpPath true
+# 若無法
+git config --local url."ssh://git-codecommit.us-west-2.amazonaws.com/v1/repos/".insteadOf "https://git-codecommit.us-west-2.amazonaws.com/v1/repos/"
+# (或許本地使用 ssh 來做推拉, 然而 dependencies 卻使用了 https)
+
 ### ======================= 同一個 Git Server, 使用不同的 Key =======================
 
 ### 使用另一把 key 來操作相同 Git Server 底下的其他 Git Projects - How to configure a local Git repository to use a specific SSH key

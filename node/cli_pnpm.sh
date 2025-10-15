@@ -30,10 +30,16 @@ pnpm --version
 #    然而因為加上了 `--frozen-lockfile`, 導致了「不能去更新 pnpm-lock.yaml 」因而引發錯誤
 #
 
-pnpm install --frozen-lockfile
+pnpm install --frozen-lockfile  # 不要更新 pnpm-lock.yaml
 # 等同於
 pnpm install --no-frozen-lockfile
 #
+
+### (目前想不到用途)
+pnpm i --lockfile-only
+# --lockfile-only : 預設為 false, 若有此參數, 表示只更新 pnpm-lock.yaml & package.json, 不去異動到 node_modules/
+
+
 ### -------------------------------- CICD 可能遇到的問題 --------------------------------
 
 ### 適合在未上線新專案使用? (林北就是啥都要用最新的就是了)

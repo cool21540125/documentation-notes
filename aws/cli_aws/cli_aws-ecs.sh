@@ -77,6 +77,7 @@ aws ecs update-service \
 ### Step1. remote execute command
 # https://awscli.amazonaws.com/v2/documentation/api/latest/reference/ecs/execute-command.html
 # 進入 ECS Container 的前提是, 需要有 enableExecuteCommand
+ECS_CLUSTER=
 TASK_ID=
 CONTAINER_NAME=
 aws ecs execute-command \
