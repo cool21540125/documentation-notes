@@ -1,9 +1,0 @@
-default via 10.0.0.1 dev en0
-10.0.0.0/24 dev en0 scope link
-10.0.0.1/32 dev en0 scope link
-10.0.0.121/32 dev en0 scope link
-127.0.0.0/8 via 127.0.0.1 dev lo0
-127.0.0.1/32 via 127.0.0.1 dev lo0
-169.254.0.0/16 dev en0 scope link
-224.0.0.0/4 dev en0 scope link
-255.255.255.255/32 dev en0 scope link
