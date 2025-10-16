@@ -191,7 +191,8 @@ https://event.ithome.com.tw/itplus/upload-slide/2024/8/21/3e747970-b99c-40bd-aea
     - Error (請求之中失敗的次數)
     - Duration or Latency (請求所花費的時間)
   - Google SRE 監控重點 - https://sre.google/sre-book/monitoring-distributed-systems
-    - Latency
-    - Traffic
-    - Errors
-    - Saturation
+    - Latency: the amount of time it takes to serve a request
+      - 似乎只能在 `before_request` 及 `after_request` Middleware 之中計算
+    - Traffic: volume of requests handled by the system
+    - Errors: rate of failed requests
+    - Saturation: how much of a resource is being consumed at a given time
