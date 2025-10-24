@@ -158,6 +158,11 @@ IMPORTANT: 上述加入到 HSTS preload 的作法, 是一條通往 HTTPS 的不�
       - `Cache-Control: no-store`   : 完全不使用快取. 帶有此 Header 的 Response, 任何地方都不准儲存下來作為快取, 也就是所有資源請求, 都必須要回源 (適用於極端機敏資訊, 像是銀行帳戶餘額)
       - `Cache-Control: s-maxage`   : Browser 不會鳥這個. 這僅對 CDN 具備用途. s-maxage 會覆蓋掉 max-age
          - `Cache-Control: public, max-age=60, s-maxage=300` : 對於 Browser 快取 60 secs, 對於 CDN, 快取 300 secs
+      - `Cache-Control: max-age=0, private, must-revalidate`
+         - 線路不得快取, 僅 Client 可快取 (因為 private)
+         - 快取後, 下次請求時, 會額外發送 `If-None-Match: (前次的 ETag)` 到 Origin 比對:
+            - 相同, 回 304 Not Modified, Browser 用本地快取
+            - 不同, 回 200 + New Resource + New ETag
       - `Cache-Control: no-cache`   : 快取但每次必須驗證. 每次有快取可用時, 都會比對 ETag 版本是否異動了, 若沒動, 才相信快取的內容 (並非如字面上所指的不能快取)
          - `Cache-Control: no-cache` 等同於 `Cache-Control: no-store, max-age=0`
          - 若存在於 Request  : Client 告知 Server, 不要給我 cached resource, 直接回源找到最新的

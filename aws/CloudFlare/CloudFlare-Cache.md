@@ -23,3 +23,12 @@ CF 的快取行為, 基本上會遵照 origin server 的配置, 然而如果有�
   - other (不會快取)
 - CF 的「預設快取副檔名」(並非 MIME type)如下 (並且預設不會快取 HTML 及 JSON):
   - CSS / CSV / JS / PNG / JPG / ....(基本上都是常見的靜態資源副檔名)
+  
+
+cf-cache-status | Description
+----------------|-------------------------------------------------------------------------------------------------------
+HIT             | 回應由 CF 快取提供（未打到 origin）
+MISS            | CF 嘗試快取但沒有命中，打到 origin 拿資料並儲存一份副本
+DYNAMIC         | CF 偵測此內容不該快取（如 private 或 no-store），並且 custom cache rule 也沒有聲明此資源要被快取，因而回源
+BYPASS          | 因規則或 header 指示跳過快取
+EXPIRED         | 快取存在但已過期，重新向 origin 取資料

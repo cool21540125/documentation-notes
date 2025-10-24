@@ -33,6 +33,7 @@
   - '/graph'
     - GUI 介面
 - Exporter 可視為是 Service 的 Sidecar
+- Prometheus data 儲存成 `dimensional time-series`, 亦即資料有: labels / dimensions / timestamp
 
 ```mermaid
 flowchart LR
