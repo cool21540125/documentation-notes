@@ -87,6 +87,10 @@ kubelet ->                                             Containerd / CRI-O       
 
 - k8s 從 v1.8 開始, 將性能資料以 Metrics API 方式提供 API
 - k8s 於 v1.10 以前使用 `Heapster` 元件來搜集 Metrics
+  - 除了 Heapster 以外, 還可額外使用 `kube-state-metrics` 來擷取額外 metrics. 主要關注於 Cluster 的中繼資料, ex:
+    - Deployment 排程了多少 Pod 備份
+    - 多少 Pod 是 running, stopped, terminated
+    - Pod 重啟了多少次
 - k8s 於 v1.10 以後改用 `Metrics Server(metric-server)` 來搜集 Pods 的性能指標 (提供 Core Metrics)
   - `Metrics Serrver` 只是個 In-memory solution, 它會去尻 ApiServer 抓取即時 metrics.
     - 而 ApiServer 會去訪問位於每個 Nodes 上頭的 kubelet (內建 cAdvisor)
@@ -101,11 +105,6 @@ kubelet ->                                             Containerd / CRI-O       
       - OpenTSDB
       - Kafka
       - ElasticSearch
-  - 除了 Heapster 以外, 還可額外使用 `kube-state-metrics` 來擷取額外 metrics
-    - 主要關注於 Cluster 的中繼資料, ex:
-      - Deployment 排程了多少 Pod 備份
-      - 多少 Pod 是 running, stopped, terminated
-      - Pod 重啟了多少次
 - v1.11 版發布以後 - **metrics-server**
   - 主要關注於 Resource 度量 Api 的實現, ex:
     - CPU, File Descriptor, Memory, Request Delay ms, ...

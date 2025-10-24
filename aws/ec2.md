@@ -220,6 +220,10 @@ flowchart LR
   - System status checks - 硬體, ex: AWS power, networking, or software systems
   - Instance status checks - 軟體, ex: OS 是否能夠接收 traffic
 - 能夠在 EC2 裡頭查看自己的 metadata
+- EC2 IMDS(Instance Metadata Service) 是 AWS EC2 實例的一個內建服務, 運行在 `169.254.169.254`
+  - 讓 EC2 & EC2 上頭的 App 及 Pods 可以取得:
+    - 實例的元數據(ex: VPC ID、子網等)
+    - IAM temporary credentials
 
 ```bash
 ### 先確認 EC2 Console IMDS 屬於 v1 還是 v2

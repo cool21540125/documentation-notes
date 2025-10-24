@@ -13,8 +13,8 @@
 kubectl taint nodes $NODE $TAINT_KEY=$TAINT_VALUE:$TAINT_EFFECT
 # TAINT_EFFECT
 #    NoSchedule       : new Pod 別來,    old Pod 不影響
-#    PreferNoSchedule : new Pod 盡量別來, old Pod 不影響
 #    NoExecute        : new Pod 別來,    old Pod 請你搬家
+#    PreferNoSchedule : new Pod 盡量別來, old Pod 不影響
 
 
 ### 範例
