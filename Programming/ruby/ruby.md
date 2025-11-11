@@ -1,5 +1,7 @@
 # Ruby
 
+https://github.com/JuanitoFatas/ruby-style-guide/blob/master/README-zhTW.md
+
 - 有個名為 bundler 的 tool, 用來協助管理 project 的 environment
   - by tracking and installing the exact gems and versions that are needed
   - `gem install bundler`
