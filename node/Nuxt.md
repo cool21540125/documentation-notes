@@ -69,4 +69,4 @@ export default defineAppConfig({
 - static        不參與 Vue 及 Nuxt 的編譯處理
   - robots.txt          (不參與打包) 用來給爬蟲程式參考的指引
   - landing_page.html   (不參與打包) 還可放置像是 Landing Page. 直接從 `/landing_page.html` 訪問
-- store         Vue 的狀態管理, 用於套件之間的交換. Vue 內建為 Vuex(應該啦), 但常看到有人用 pinia
+- store         Vue 的狀態管理, 用於套件之間的交換. Vue 內建為 Vuex/vuex(應該啦), 但常看到有人用 pinia
