@@ -3,7 +3,10 @@
 
 - eslint
     - Code 風格檢查工具
-- webpack
+- webpack - lazy loading啦!!
+    - 前端工具的 Build tools, 例如: `vue-cli` / `create-react-app` 等等
+        - Vue 的創始人根據 webpack 寫了個 `vite`
+        - webpack 又可理解為 java 的 maven
     - 模組打包程式(bundler), 內有特殊的載入器設計, 可提供開發時的 熱模組替代(Hot Module Replacement, HMR) 功能
     - 產出打包整個 App 檔案的功能
 - flow

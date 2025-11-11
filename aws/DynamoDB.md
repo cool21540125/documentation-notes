@@ -75,6 +75,26 @@
 # DynamoDB - Good Example
 
 - https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/data-modeling-online-shop.html
+# DynamoDb 的 Key
+
+索引是找到資料的唯一方式, 否則就只能使用 Scan
+
+### Primary Key : 主索引
+
+- `Partition key(又稱為 Hash key)` 及 `Sort key(又稱為 Range key)`
+- DynamoDb Table 的 Primary Key 可以有 2 種方式:
+  - 單純使用 `Partition key`
+  - 複合使用 `Partiton key + Sort key`
+
+### Secondary Key : 次要索引
+
+- `Global secondary index, GSI` 及 `Local secondary index, LSI`
+- 主要用途是, 可以藉由不同的 key 取得資料
+  - 建立次要索引以後, 會基於原本的 table(稱為 BaseTable), 建立出 Index (其實變相的建立出一個新的欄位, 用作搜尋依據)
+- GSI
+  - GSI
+- LSI
+  - LSI 是一種使用相同的 `partition key`, 及不同的 `sort key` 的 index
 
 # DynamoDb 的 Read & Write
 
@@ -113,7 +133,7 @@
   - on-demand mode
 
 | Pricing               | RCU               | WCU               |
-| --------------------- | ----------------- | ----------------- |
+|-----------------------|-------------------|-------------------|
 | Eventually consistent | 8 KB / per unit   | 1 KB / per unit   |
 | Strongly consistent   | 4 KB / per unit   | 1 KB / per unit   |
 | Transactional request | 4 KB / per 2 unit | 1 KB / per 2 unit |
