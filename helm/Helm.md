@@ -34,3 +34,9 @@ mychart/       # 資料夾名稱(Helm Chart 名稱)
   charts/      # Chart dependencies (ex: 依賴其他 Charts, ...)
   templates/   # template files (裡頭的變數會來自 values.yaml)
 ```
+
+
+# Helm Registry / Helm Repository
+
+- ArtifactHub
+- [AWS](https://aws.github.io/eks-charts) 

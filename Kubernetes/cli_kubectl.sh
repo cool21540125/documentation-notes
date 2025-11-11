@@ -21,11 +21,9 @@ kubectl version
 #Server Version: v1.30.5
 #WARNING: version difference between client (1.32) and server (1.30) exceeds the supported minor version skew of +/-1
 
-# Basic Usage
+### 基本上這應該是第一步, 確認能對 cluster 做些什麼
+kubectl auth can-i --list
 
-### Imperative  運行 k8s
-kubectl run ...
-# 等同於命令式的 docker run (盡量不要這樣用)
 
 ### 可查到 k8s resources 的各種 kind 的關鍵字樣
 k get api-resources
@@ -107,6 +105,10 @@ kubectl logs ${PodName}
 kubectl logs ${PodName} -c ${ContainerName}
 
 ### ===================================== xxx =====================================
+
+# 針對 deployment 手動擴增 pods 數量
+kubectl scale --replicas=3 deployment/deployA
+
 ### ===================================== xxx =====================================
 ### ===================================== xxx =====================================
 
@@ -210,9 +212,10 @@ kubectl config set-cluster
 
 ### 顯示目前有哪些 context
 kubectl config get-contexts
-#CURRENT   NAME             CLUSTER          AUTHINFO         NAMESPACE
-#*         docker-desktop   docker-desktop   docker-desktop
-## 上面這兩行是因為我跑在 Macbook 的 Docker Desktop
+#CURRENT  NAME                                               CLUSTER                                            AUTHINFO                                           NAMESPACE
+#*        arn:aws:eks:us-west-2:123456789012:cluster/devops  arn:aws:eks:us-west-2:123456789012:cluster/devops  arn:aws:eks:us-west-2:123456789012:cluster/devops
+#         default                                            docker-desktop                                     docker-desktop
+#         docker-desktop                                     docker-desktop                                     docker-desktop
 
 ### 查看目前 kubectl CLI 使用的是哪個 context (位於 ~/.kube/config)
 kubectl config current-context
@@ -276,3 +279,4 @@ kubectl auth can-i delete nodes
 kubectl auth can-i create deployment --as dev-user
 kubectl auth can-i create pods --as dev-user
 
+### 
