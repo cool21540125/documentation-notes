@@ -5,7 +5,40 @@
   - 支援 gRPC(4317 port) / HTTP(4318 port)
 
 
-# OpenTelemetry environment variables
+# OpenTelemetry overview
+
+- OpenTelemetry 的 Sementic Conventions, 用於實作 Otel 回應屬性常見的 Keys
+  - https://opentelemetry.io/docs/specs/semconv/
+
+![OTel](./img/OTel.jpg)
+
+
+# OpenTelemetry - 核心元件
+
+## 1. OpenTelemetry - Receiver
+
+- 這裡有各種 OTel Receivers : https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/receiver
+- 區分為 pull-based 及 push-based
+  - `OTLPReceiver` ~ 此為 OTel 的 native format
+  - ZipkinReceiver
+  - StatsdReceiver
+  - PrometheusReceiver
+  - ...
+
+## 2. OpenTelemetry - Processor
+
+- Processor 的配置重點, 需要做底下考量:
+  - 增加 telemetry quality : 欄位屬性新增及轉換 / 新舊版本整合的欄位轉換
+  - 基於 compliance 及 governance : 把不同的 attributes 送到不同 backend
+  - 降低成本 : 移除無用的 telemetry / tail-based sampling(不是很懂)
+  - 安全性 : 移除機敏資訊
+  - 自訂 telemetry 流動方式 : batch / retry / memory limit
+
+## 3. OpenTelemetry - Exporter
+
+- 這裡有各種 OTel Exporters : https://github.com/open-telemetry/opentelemetry-collector/tree/main/exporter
+
+# OpenTelemetry 環境變數
 
 - [OpenTelemetry 官網的各種 Environment variables](https://opentelemetry.io/docs/languages/sdk-configuration/otlp-exporter/)
 
@@ -33,67 +66,3 @@ export OTEL_EXPORTER_OTLP_METRICS_ENDPOINT="localhost:4317"  # gRPC 的 OTel Col
 export OTEL_EXPORTER_OTLP_LOGS_ENDPOINT="localhost:4317"  # gRPC 的 OTel Collector 端點
 
 ```
-
-## OTel java (auto instrumentation)
-
-a. 運行方式
-
-```bash
-### 1. 先去找最新版的 OTel JavaAgent - https://github.com/open-telemetry/opentelemetry-java-instrumentation/releases
-
-wget https://github.com/open-telemetry/opentelemetry-java-instrumentation/releases/download/v2.18.1/opentelemetry-javaagent.jar
-
-### 2. Run App with OTel JavaAgent
-java -javaagent:./opentelemetry-javaagent.jar -jar target/YOUR_APP-0.0.1-SNAPSHOT.jar
-```
-
-b. 設定 OTel JavaAgent 專屬的環境變數
-
-```bash
-### 如果打算使用 auto(而非去改 Code 加上 annotation), 可用此種方式聲明後再來啟動 (便可用非侵入式的配置來實踐 OTel)
-## Example 說明:
-#     io.novatec.todobackend.TodobackendApplication 來自於 src/main/java 底下的路徑及檔名
-#     [someInternalMethod] 則是該 TodobackendApplication.java 內的 method
-
-## 使用不侵入 Code 的方式, 直接聲明哪個檔案的哪個 method 要被 OTel 監控
-export OTEL_INSTRUMENTATION_METHODS_INCLUDE=io.novatec.todobackend.TodobackendApplication[someInternalMethod]
-
-## 直接抑制 特定方法先排除在 OTel 監控之外 (縱使已有 OTel annotation)
-export OTEL_INSTRUMENTATION_OPENTELEMETRY_INSTRUMENTATION_ANNOTATIONS_EXCLUDE_METHODS=io.novatec.todobackend.TodobackendApplication[someInternalMethod]
-
-```
-
-## OTel python (auto instrumentation)
-
-- [Python OTEL SDK 環境變數](https://opentelemetry-python.readthedocs.io/en/latest/sdk/environment_variables.html)
-
-```bash
-pip install opentelemetry-distro opentelemetry-exporter-otlp
-
-opentelemetry-bootstrap --action=install
-
-# WARNING: 目前安裝的一堆東西, LinuxFoundation 說這個 lib 有 Bug (我自己跑起來也是會噴 exception), 因此先砍~
-pip uninstall opentelemetry-instrumentation-aws-lambda
-
-
-export OTEL_SERVICE_NAME=YOUR_SERVICE_NAME
-
-export OTEL_PYTHON_LOGGING_AUTO_INSTRUMENTATION_ENABLED=true
-
-### Run app with OTel auto instrumentation
-opentelemetry-instrument python app.py
-
-opentelemetry-instrument \
-  --metrics_exporter otlp \
-  --logs_exporter otlp \
-  --traces_exporter otlp \
-  --service_name YOUR_SERVICE_NAME \
-  flask run -p 5000
-```
-
-# OTel overview
-
-- OpenTelemetry 的 Sementic Conventions, 用於實作 Otel 回應屬性常見的 Keys
-  - https://opentelemetry.io/docs/specs/semconv/
-
-![OTel](./img/OTel.jpg)

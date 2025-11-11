@@ -62,10 +62,10 @@ resource "<PROVIDER>_<TYPE>" "<NAME>" {
 
 ## 遠端狀態後台 Backend
 
-    - A backend defines where Terraform stores its state data files.
-    - 用來讓團隊共同維持 **terraform.tfstate** (避免衝突), 可保存到:
-        - AWS S3 / GCP Stroage / HashiCorp Consul / Azure Blog / HashiCorp Terraform Cloud / 等等
-        - 預設使用 **local**
+- A backend defines where Terraform stores its state data files.
+- 用來讓團隊共同維持 **terraform.tfstate** (避免衝突), 可保存到:
+  - AWS S3 / GCP Stroage / HashiCorp Consul / Azure Blog / HashiCorp Terraform Cloud / 等等
+  - 預設使用 **local**
 
 ```hcl
 // Terraform Backend
@@ -94,3 +94,8 @@ terraform {
     - `[ for <KEY>, <VALUE> in <MAP> : <NAME> => <VALUE> ]` 用來掃 map
   - `for string drective`
     - 適用於 迴圈掃視 字串中的 lists && maps
+
+
+# Ref
+
+- Terraform AWS IAM 如果要建立條件是的 Policy trusted policy, 可參考: https://youtu.be/5XpPiORNy1o?si=tXmbIZ9hIHpGv6_m&t=422
