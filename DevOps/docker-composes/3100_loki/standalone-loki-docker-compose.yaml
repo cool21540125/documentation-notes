@@ -1,0 +1,19 @@
+name: demo-loki
+
+services:
+  loki:
+    image: grafana/loki:3.0.0
+    container_name: loki
+    ports:
+      - "3100:3100"
+    env_file:
+      - ./.env
+    volumes:
+      - $PWD/config/loki-config-s3.yaml:/etc/loki/local-config.yaml
+      - vol_loki_compactor:/loki
+    command: -config.file=/etc/loki/local-config.yaml
+
+volumes:
+  vol_loki_compactor:
+    name: vol_loki_compactor
+    external: true
