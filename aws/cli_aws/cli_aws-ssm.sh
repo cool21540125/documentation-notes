@@ -31,5 +31,22 @@ aws ssm send-command \
   --parameters '{"version":[""],"allowDowngrade":["false"]}'
 
 #
-### ====================================================  ====================================================
-#
+### ==================================================== 使用 SSM Parameter Store 找出 EKS optimized AMI ====================================================
+
+##
+# https://docs.aws.amazon.com/cli/latest/reference/ssm/get-parameters-by-path.html
+aws ssm get-parameters-by-path \
+  --path "/aws/service/eks/optimized-ami/1.34/" \
+  --recursive \
+  --region us-west-2 \
+  --query "Parameters[*].Name" \
+  --output yaml | grep "/standard/recommended/release_version"
+
+aws ssm get-parameters-by-path \
+  --path "/aws/service/eks/" \
+  --recursive \
+  --region us-west-2 \
+  --query "Parameters[*].Name" \
+  --max-items 100
+
+##
