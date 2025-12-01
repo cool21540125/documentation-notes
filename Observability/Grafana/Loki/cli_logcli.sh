@@ -12,7 +12,7 @@ export LOKI_PASSWORD=
 
 ### ================================================ Loki logcli 基本用法 ================================================
 logcli --version
-#logcli, version 3.5.1
+#logcli, version 3.6.1
 
 ### 列出 LOKI_ADDR 有多少 labels
 logcli labels

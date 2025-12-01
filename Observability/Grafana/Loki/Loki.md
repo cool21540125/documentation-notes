@@ -4,6 +4,12 @@
   - 接收 log HTTP request
 - Ingester
   - 從 distributor 取得 log data, 寫入到 storage
+- Compactor
+  - 資料壓縮 / 索引去重及合併 / 資料去重 / 保留期管理 / 查詢加速
+- Ruler
+  - Loki 的 自動查詢 & 告警管理員, 定期掃 log 是否有異常, 並用 API 控制及動態調整規則
+- Querier
+  - Loki 的查詢引擎, LogQL 會去尻的目標
 - logs 以 `Snappy compressed protocol buffer messages, log Proto` 的形式, 推送到 Loki 的 `HTTP API Endpoint`, 也就是 Distributors, 經處理後再送給 Ingesters
 - Loki 不像其他傳統的 log system, Loki stores logs as streams of log entries (高度壓縮的 string)
 - 有許多種方式可將 logs 發送到 Loki, 初學者的話, 最基本有 3 categories:

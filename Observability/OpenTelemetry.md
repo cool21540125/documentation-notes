@@ -9,6 +9,8 @@
 
 - OpenTelemetry 的 Sementic Conventions, 用於實作 Otel 回應屬性常見的 Keys
   - https://opentelemetry.io/docs/specs/semconv/
+- OpenTelemetry Collector 視覺化配置
+  - https://www.otelbin.io/
 
 ![OTel](./img/OTel.jpg)
 

@@ -10,10 +10,6 @@
     - *hostPath volume* 把 Node 所在的 Filesystem 的 File/Directory mount 到 Pod
     - lifecycle 同 Node, 因此除非 Node 掛了, volume 才會消失
     - Volume 與 Node 綁定, 無法跨主機共享資料
-    - Use cases:
-        - 運行 CAdvisor, 需要把使用 `hostPath: /sys`
-        - Container 需要使用到 Node 上的 Docker root, `hostPath: /var/lib/docker`
-        - Pod 建立以前, 需要確保特定目錄已存在, `hostPath: /path/should/exist`
   - configMap
     - ConfigMap 只能夠被 `readOnly` mount
     - 若使用 `subPath` volume mount 的時候, 當 ConfigMap 異動了, container 不會接收到更新資訊
@@ -21,6 +17,8 @@
     - Secret 只能夠被 `readOnly` mount
     - 若使用 `subPath` volume mount 的時候, 當 Secret 異動了, container 不會接收到更新資訊
     - `.secret` volumes 背後為 tmpfs (a RAM-backed filesystem), 不會被儲存到 Disk
+  - downwardAPI
+    - 用來讓 Pod 藉由此方式, 讓 Pod 可以取得自身的 metadata. 可藉由 Environment Variables 或 Volumes
   - emptyDir
     - 一開始永遠會是個空資料夾. 此為 ephemeral volumes
         - empty at Pod startup, with storage coming locally from the kubelet base directory (usually the root disk) or RAM
@@ -33,6 +31,9 @@
     - local volume 僅能用於 statically created PersistentVolume. 不支援 Dynamic provisioning
     - Lifecycle 綁定在 Node 上頭, 穩定性受限於 Node
   - nfs
+  - projected
+    - 用來 map 既有的 volume sources 到相同的 directory. 支援了底下的 volume types:
+      - secret, downwardAPI, configMap, serviceAccountToken, clusterTrustBundle, podCertificate
   - persistentVolumeClaim
 - Persistent Volume Claim
   - persistentVolumeClaim 的目的是用來 mount a PersistentVolume into a Pod

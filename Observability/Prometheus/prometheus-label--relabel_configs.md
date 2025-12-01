@@ -1,52 +1,45 @@
-# Targets and Targets Labels come from Service Discovery -- relabel_configs
+# relabel_configs
 
----
-
-```mermaid
-flowchart TB
-
-sd(("Target from SD"))
-
-param("Set __param_* labels based on config")
-sd --> param
-
-scheme("If job, __scheme__ or __metrics_path__ labels aren't set, set based on config")
-param --> scheme
-
-missing{"Missing __address__ label?"}
-scheme --> missing
-
-relabel("relabel_configs")
-drop(("Drop target"))
-missing -- Yes --> drop
-missing -- No --> relabel
-
-relabel -- "Drop/Keep action" --> drop
-
-missingport{"__address_ missing port number?"}
-relabel --> missingport
-
-schemeprocess["If __scheme__ https, add :443, else :80"]
-missingport -- Yes --> schemeprocess
-
-containsroot{"__address__ contains '/'"}
-missingport -- No --> containsroot
-schemeprocess --> containsroot
-
-containsroot -- Yes --> drop
-
-meta["Remove all labels beginning with '__meta_'"]
-containsroot -- No --> meta
-
-instance{"instance label present?"}
-meta --> instance
-
-copy["Copy __address__ label to instance label"]
-instance -- No --> copy
-
-created(("Target created"))
-instance -- Yes --> created
-copy --> created
+```yaml
+scrape_configs:
+  - job_name: 'kubernetes-nodes'
+    kubernetes_sd_configs:
+      - role: node
+    relabel_configs:
+      - source_labels: [__meta_kubernetes_node_label_monitoring]
+        regex: "true"
+        action: keep
 ```
 
----
+這段配置是在 **篩選 targets**,只保留有 `monitoring` label 的 node
+
+Relabel Action: keep - `action: keep` 的意思是: 只保留符合 `regex` 條件的 targets, 其他全部丟棄
+
+實務上, 常用來選擇性監控特定 node, 避免抓取不必要的 targets
+
+**Node 1:**
+
+`__meta_kubernetes_node_label_monitoring: "true"` → 符合 regex → **保留**
+```yaml
+labels:
+  kubernetes.io/hostname: worker-1
+  monitoring: "true"
+```
+
+**Node 2:**
+
+沒有 monitoring label → `__meta_kubernetes_node_label_monitoring` 不存在 → 不符合 → **丟棄**
+```yaml
+labels:
+  kubernetes.io/hostname: worker-2
+```
+
+**Node 3:**
+
+`__meta_kubernetes_node_label_monitoring: "false"` → 不符合 regex `"true"` → **丟棄**
+```yaml
+labels:
+  kubernetes.io/hostname: worker-3
+  monitoring: "false"
+```
+

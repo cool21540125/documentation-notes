@@ -74,7 +74,7 @@ https://event.ithome.com.tw/itplus/upload-slide/2024/8/21/3e747970-b99c-40bd-aea
   - 適用於蒐集 Metrics / Logs / Traces
 - Cortex
   - 分散式資料儲存的服務 (如果東西都已經上雲了的話, 不會需要用到 Cortex)
-  - 跟 Thanos 互為替代品
+  - Coretex 跟 Thanos 互為替代品
 - Filebeat
   - 由 Elastic 開源的 Collector. Written in Go
   - 適用於蒐集 metrics / logs / network packet data
@@ -116,7 +116,7 @@ https://event.ithome.com.tw/itplus/upload-slide/2024/8/21/3e747970-b99c-40bd-aea
   - 由 InfluxData 開發, 用於處理 metrics / logs, 階級等同於 Observability 之中的 Collector
 - Thanos
   - 分散式資料儲存的服務 (如果東西都已經上雲了的話, 不會需要用到 Thanos)
-  - 跟 Cortex 互為替代品
+  - Thanos 跟 Cortex 互為替代品
 - Zabbix
   - 老牌的 自成一體的 監控系統
 - Zipkin

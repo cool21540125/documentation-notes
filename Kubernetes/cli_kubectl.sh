@@ -269,6 +269,15 @@ kubectl uncordon $NODE # 拔除 NODE 的警戒
 kubectl drain $NODE --ignore-daemonsets # 排水(DaemonSet 一樣滾~) + 警戒
 
 
+### ===================================== k8s patch =====================================
+
+## 如果要移除 Ingress, 需確定它的 finalizers 為空 (此外, ALB 需要額外獨立移除)
+ing=
+kubectl patch ing $ing -p '{"metadata":{"finalizers":[]}}' --type=merge
+
+
+
+
 ### ===================================== k8s 權限操作 =====================================
 
 ## non-admin 使用

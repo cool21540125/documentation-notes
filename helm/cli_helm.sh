@@ -204,9 +204,11 @@ helm install airflow .
 
 
 ## ------------------------ grafana ------------------------
+# https://grafana.com/docs/grafana/latest/setup-grafana/installation/helm/
 helm repo add grafana https://grafana.github.io/helm-charts
 helm repo update
-
+helm install my-grafana grafana/grafana -n ob --create-namespace
+helm upgrade my-grafana -f my-values.yaml -n ob
 # *** check version ***
 
 
