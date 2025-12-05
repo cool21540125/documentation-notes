@@ -152,9 +152,3 @@ spec:
             secretName: app-secret
       # ...
 ```
-
-## ConfigMap 及 Secret
-
-- IMPORTANT: Secrets 並非 Encrypted, 僅 encoded
-  - k8s 的 Secret 真的是誤導!! 一點都不 Secret
-  - 不要將 Secrets 推到 Git Repo

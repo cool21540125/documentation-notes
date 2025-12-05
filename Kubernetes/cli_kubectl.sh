@@ -205,6 +205,14 @@ kubectl describe service kube-dns -n kube-system
 #Session Affinity:  None
 #Events:            <none>
 
+
+### ===================================== k8s kustomize =====================================
+
+## 參考 kustomize CLI
+kubectl apply -k ${DIR_TO_kustomization_yaml}
+kustomize build ${DIR_TO_kustomization_yaml} | kubectl apply -f -
+# 上面兩者基本上同樣用途, 但需要留意 kubectl 與 kustomize 版本問題
+
 ### ===================================== k8s config =====================================
 
 ### 設定與 cluster 的連線
