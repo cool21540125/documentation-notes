@@ -35,3 +35,11 @@ https://www.youtube.com/watch?v=AVIKFXLCPY8
 
 - kiro - sdd
 - github - speckit
+
+
+# MCP
+
+- MCP market place
+    - [MCP Market](https://mcpmarket.com)
+    - [MCP.so](https://mcp.so)
+    - [Smithery](https://smithery.ai)
