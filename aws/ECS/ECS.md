@@ -1,5 +1,6 @@
 # ECS, Elastic Container Service
 
+- 運行在 Fargate Platform (也就是使用 awsvpc) 的 ECS Task, 可以藉由 `curl http://169.254.170.2/v4/metadata` 來取得自己的 metadata (Container 自己的區網 ip 等 metadata)
 - 有 2 種的 Launch Types, 但都可用 EFS 作為儲存:
   - EC2 Launch Type
     - 需自行維護 EC2, 裡頭需要有 `ECS Agent`

@@ -256,10 +256,6 @@ STOPSIGNAL signal
         - *shell command*, ex: `HEALTHCHECK CMD /bin/check-running`
         - *exec array*(其他的 dockerfile commands), ex: `ENTRYPOINT`
             - 乾... 這邊看不懂, 遇到再說
-    - command 的 exit status 表示 Container 的健康狀態:
-        - 0: success
-        - 1: unhealthy
-        - 2: reserved: 並沒有使用 exit code (蝦小啦)
 
 ```dockerfile
 # 5m 檢測1次, 3s timeout

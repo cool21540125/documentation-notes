@@ -1,5 +1,6 @@
 #!/bin/bash
 exit 0
+# Grafana Loki CLI
 #
 # 目前這邊的指令範例, 都是來自於:
 #    https://grafana.com/docs/loki/latest/query/logcli/logcli-tutorial/
