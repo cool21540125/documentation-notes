@@ -1,12 +1,13 @@
 # Grafana Alloy
 
-![](./img/alloy_diagram_v2.svg)
+![alloy](./img/alloy_diagram_v2.svg)
 
 - Alloy 是個 `OTeL Collector` 的 distribution
-  - 支援 metrics/logs/traces/profiles
-  - Alloy 也是個 `OTel Proxy`
-- 可實現一連串的功能: collect, process, export telemetry signals
-- 原生支援 telemetry signals, ex: Prometheus, OpenTelemetry, Loki, Pyroscope
+  - Alloy 是個 `OTel Proxy`
+- Alloy 支援
+  - Alloy 支援了 metrics/logs/traces/profiles
+  - 可實現一連串的功能: collect, process, export telemetry signals
+  - 原生支援 telemetry signals, ex: Prometheus, OpenTelemetry, Loki, Pyroscope
 - 由於 Alloy 本身屬於 Grafana 體系, 然後又同時為 OTel Collector, 因此可同時適用於:
   - Loki pipeline
   - OTel pipeline

@@ -49,4 +49,13 @@ aws ssm get-parameters-by-path \
   --query "Parameters[*].Name" \
   --max-items 100
 
-##
+#
+### ==================================================== 查詢 SSM Parameter ====================================================
+
+## 取得 Parameter Store 上頭的 Alloy Config
+PARAMETER_STORE_PARA_NAME=
+aws ssm get-parameter \
+  --name $PARAMETER_STORE_PARA_NAME \
+  --query 'Parameter.Value' --output text
+
+## 

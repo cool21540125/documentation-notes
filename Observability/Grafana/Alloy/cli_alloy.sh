@@ -8,4 +8,7 @@ alloy fmt -w config.alloy
 ALLOY_ENDPOINT=http://localhost:12345
 curl -X POST ${ALLOY_ENDPOINT}/-/reload
 
+LOKI_ENDPOINT=http://loki.ob.ec2.istore:3100
+curl -X GET ${LOKI_ENDPOINT}/ready
+
 ## 

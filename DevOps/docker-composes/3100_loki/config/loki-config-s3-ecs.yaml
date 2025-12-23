@@ -1,0 +1,90 @@
+## 運行在 ECS Task 的 Loki
+# Task 最少需要為 2
+# made by AI
+
+auth_enabled: false
+
+server:
+  http_listen_port: 3100
+  grpc_listen_port: 9095
+
+common:
+  instance_addr: 0.0.0.0
+  path_prefix: /loki/data
+  replication_factor: 2
+  ring:
+    kvstore:
+      store: memberlist
+    instance_addr: 0.0.0.0
+    instance_interface_names: [ eth0 ]
+    instance_port: 9095
+
+memberlist:
+  join_members:
+  # 使用 Service Discovery
+  - loki-memberlist.istore.local:7946 # Service Discovery DNS
+  bind_addr: "0.0.0.0"
+  bind_port: 7946
+  advertise_port: 7946
+
+storage_config:
+  tsdb_shipper:
+    active_index_directory: /loki/index
+    cache_location: /loki/index_cache
+    cache_ttl: 24h
+  aws:
+    s3:
+    endpoint: s3.us-west-2.amazonaws.com
+    region: us-west-2
+
+schema_config:
+  configs:
+  - from: "2025-12-01"
+    store: tsdb # [tsdb, boltdb-shipper]
+    object_store: aws # [aws, filesystem]
+    schema: v13
+    index:
+      prefix: index_
+      period: 24h
+
+limits_config:
+  allow_structured_metadata: true # (Loki3+ 預設為 true) 
+  volume_enabled: true
+  retention_period: 90d # Compactor 依此欄位 delete old data
+  ingestion_rate_mb: 64
+  ingestion_burst_size_mb: 128
+  max_query_parallelism: 32
+
+## 確保 multi-loki instances 的情況下, 只會有一個 compactor 運行. tasks 藉由 memberlist 協調
+compactor:
+  retention_enabled: true
+  working_directory: /loki-efs/compactor
+  compaction_interval: 10m
+  delete_request_store: s3
+  shared_store: s3
+  compactor_ring:
+    kvstore:
+      store: memberlist
+
+ingester:
+  wal:
+    enabled: true
+    dir: /tmp/loki/wal
+    flush_on_shutdown: true
+  lifecycler:
+    ring:
+      replication_factor: 2
+  chunk_idle_period: 15m
+  chunk_retain_period: 30s
+  chunk_target_size: 1572864
+  max_chunk_age: 2h
+
+query_range:
+  results_cache:
+    cache:
+      embedded_cache:
+        enabled: true
+        max_size_mb: 256
+
+analytics:
+  reporting_enabled: false

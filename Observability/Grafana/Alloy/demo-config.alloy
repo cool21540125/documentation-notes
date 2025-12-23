@@ -1,0 +1,37 @@
+otelcol.receiver.otlp "tko_app" {
+	http { }
+
+	grpc { }
+
+	output {
+		logs = [otelcol.processor.attributes.default.input]
+	}
+}
+
+otelcol.processor.attributes "default" {
+	action {
+		key    = "loki.attribute.labels"
+		action = "insert"
+		value  = "event.name, event.domain"
+	}
+
+	action {
+		key    = "loki.resource.label"
+		action = "insert"
+		value  = "service.name, service.namespace"
+	}
+
+	output {
+		logs = [otelcol.exporter.loki.default.input]
+	}
+}
+
+otelcol.exporter.loki {
+	forward_to = [loki.write.default.receiver]
+}
+
+loki.write "default" {
+	endpoint {
+		url = "http://loki:3100"
+	}
+}
