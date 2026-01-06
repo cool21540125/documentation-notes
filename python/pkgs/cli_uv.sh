@@ -41,8 +41,9 @@ uv tree
 ### 進入 uv project dir 以後, 可以免除再做去 source python (直接執行, 直接使用虛擬環境)
 uv run main.py
 
-### (不是很懂)
-uv sync
+### 
+uv sync           # 等同於 npm install / yarn install
+uv sync --locked  # 等同於 npm ci / yarn
 
 ### ==================================== (從 OLD pip project 遷移到 uv project) ====================================
 uv init
