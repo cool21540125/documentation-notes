@@ -143,7 +143,7 @@ logcli series '{}' --analyze-labels
 #package_size   3              45
 #service_name   1              45
 
-### 針對 logs 偵測欄位 -- 可藉此暸解 log structure && log keys(哪些是 labels, 哪些是 metadata) ----- NOTE: 我不懂
+### 針對 logs 偵測欄位(Parsed field) -- 可藉此暸解 log structure && log keys(哪些是 labels, 哪些是 metadata)
 logcli detected-fields --since 24h '{service_name="Delivery World"}'
 #2025/06/09 16:44:54 http://localhost:3100/loki/api/v1/detected_fields?end=1749487494641600282&limit=100&line_limit=1000&query=%7Bservice_name%3D%22Delivery+World%22%7D&start=1749401094641600282&step=10s
 #label: city             type: string            cardinality: 15

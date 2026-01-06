@@ -1,5 +1,5 @@
-- https://www.robustperception.io/life-of-a-label/
-- https://www.robustperception.io/relabel_configs-vs-metric_relabel_configs/
+- [Life of a Label](https://www.robustperception.io/life-of-a-label/)
+- [relabel_configs vs metric_relabel_configs](https://www.robustperception.io/relabel_configs-vs-metric_relabel_configs/)
 - https://crossoverjie.top/2023/03/13/metrics/relabel_configs_%20metric_relabel_configs/
 
 

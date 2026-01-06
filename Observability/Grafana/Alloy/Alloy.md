@@ -27,3 +27,14 @@
 #    Arguments 則由 Key = value 組成
 # arg2 與 arg3 都是動態參照的寫法
 ```
+```conf
+otelcol.exporter.loki "default" {
+  forward_to = [loki.write.ec2_standalone.receiver]
+}
+
+loki.write "ec2_standalone" {
+	endpoint {
+		url = "http://loki.ob.ec2.istore:3100/loki/api/v1/push"
+	}
+}
+```

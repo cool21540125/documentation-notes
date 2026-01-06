@@ -1,3 +1,5 @@
+# PromQL
+
 - PromQL expression 查詢以後的查詢結果, 只會有底下這些的 types:
   - instant vector
     - ex: `http_requests_total{job="api"}`, 則可得到底下這些:
@@ -15,7 +17,12 @@
 
 # Useful
 
-- `topk(20, count by (__name__, job)({__name__=~".+"}))` : 取得前 20 大的 Timeseries metric
+```
+// 取得前 30 大的 Timeseries metric (衡量 Cost)
+topk(30, count by (__name__, job)({__name__=~".+"}))
+
+// 
+```
 
 # Prometheus itself
 

@@ -1,6 +1,14 @@
 # 疑難排解
 
-- telnet 進去以後卡住, 鍵盤輸入「ctrl ]」
+```bash
+## telnet 以後卡住
+#Escape character is '^]'.
+
+## 鍵盤輸入 
+# Ctrl ]
+# 然後 quit
+
+```
 
 # telnet 使用
 
@@ -9,6 +17,4 @@
 telnet giftshopgw.systex.com 443
 GET / HTTP/1.1
 Host: giftshopgw.systex.com
-
-
 ```

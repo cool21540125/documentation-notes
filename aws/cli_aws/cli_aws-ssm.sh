@@ -53,7 +53,7 @@ aws ssm get-parameters-by-path \
 ### ==================================================== 查詢 SSM Parameter ====================================================
 
 ## 取得 Parameter Store 上頭的 Alloy Config
-PARAMETER_STORE_PARA_NAME=
+PARAMETER_STORE_PARA_NAME=/ob/alloy/takeorder/takeorderApi
 aws ssm get-parameter \
   --name $PARAMETER_STORE_PARA_NAME \
   --query 'Parameter.Value' --output text
