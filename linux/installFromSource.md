@@ -14,7 +14,7 @@
 
 ### 法2. 尊重生命, 選離 xcode -- 直接抓 binary -----------------
 terraform version
-#Terraform v1.3.6
+#Terraform v1.14.4
 #on darwin_amd64
 
 

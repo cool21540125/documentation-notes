@@ -21,6 +21,10 @@ Host ec2
     Hostname     22.22.22.22
     User         USER
     Port         22
+    ## 二選一
+    ProxyJump jms
+    # 或
     ProxyCommand ssh -q -W %h:%p jms
+    ## 二選一
     IdentityFile ~/.ssh/id_rsa
 ```
