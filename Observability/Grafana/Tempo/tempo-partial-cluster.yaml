@@ -1,0 +1,29 @@
+### ============================================ K8s 部署 Tempo - 配置 memberlist 的情境 ============================================
+---
+ring:
+  kvstore:
+    store: memberlist
+
+## 用於 microservices deployment, 要讓 cluster gossip 找得到彼此, 否則每台 Node 都會各自成 cluster, 而沒共享 ring
+memberlist:
+  abort_if_cluster_join_fails: false
+  join_members:
+  - tempo-gossip-ring.tempo.svc.cluster.local:7946
+
+### ============================================ VM 部署 Tempo - 配置 memberlist 的情境 ============================================
+---
+ring:
+  kvstore:
+    store: memberlist
+
+memberlist:
+  abort_if_cluster_join_fails: false
+  join_members:
+  - tempo-1:7946
+  - tempo-2:7946
+  - tempo-3:7946
+
+### ============================================  ============================================
+---
+
+

@@ -1,3 +1,8 @@
+# OpenTelemetry Useful
+
+- OpenTelemetry Collector 視覺化配置
+  - https://www.otelbin.io/
+
 # OpenTelemetry, OTel/o11y
 
 - otlp
@@ -9,11 +14,6 @@
 
 - OpenTelemetry 的 Sementic Conventions, 用於實作 Otel 回應屬性常見的 Keys
   - https://opentelemetry.io/docs/specs/semconv/
-- OpenTelemetry Collector 視覺化配置
-  - https://www.otelbin.io/
-
-![OTel](./img/OTel.jpg)
-
 
 # OpenTelemetry - 核心元件
 
@@ -32,7 +32,7 @@
 - Processor 的配置重點, 需要做底下考量:
   - 增加 telemetry quality : 欄位屬性新增及轉換 / 新舊版本整合的欄位轉換
   - 基於 compliance 及 governance : 把不同的 attributes 送到不同 backend
-  - 降低成本 : 移除無用的 telemetry / tail-based sampling(不是很懂)
+  - 降低成本 : 移除無用的 telemetry / tail-based sampling
   - 安全性 : 移除機敏資訊
   - 自訂 telemetry 流動方式 : batch / retry / memory limit
 
@@ -45,26 +45,43 @@
 - [OpenTelemetry 官網的各種 Environment variables](https://opentelemetry.io/docs/languages/sdk-configuration/otlp-exporter/)
 
 ```bash
-export OTEL_METRICS_EXPORTER="none"  # [none, otlp, console] OTel signals 發送到哪邊
-export OTEL_LOGS_EXPORTER="none"     # [none, otlp, console] OTel signals 發送到哪邊
-export OTEL_TRACES_EXPORTER="otlp"   # [none, otlp, console] OTel signals 發送到哪邊
 
-### 設定 OTel 環境變數, 要我們的 OTel App 直接將 signal 傳給 OTel Collector
-export OTEL_COLLECTOR_HOST=localhost
+export OTEL_EXPORTER_OTLP_ENDPOINT="http://my_otel_collector_endpoint/"
 
-export OTEL_EXPORTER_OTLP_INSECURE=true  # 使用 http 而非 https
+export OTEL_TRACES_EXPORTER="otlp"
 
-## 打算把 App signals 傳送到 OTel Collector 的 gRPC/HTTP (告知 OTel Collector 的 Endpoint)
-export OTEL_EXPORTER_OTLP_ENDPOINT="YOUR_OTEL_COLLECTOR_HOST:4317"  # gRPC 的 OTel Collector 端點
-export OTEL_EXPORTER_OTLP_ENDPOINT="YOUR_OTEL_COLLECTOR_HOST:4318"  # http 的 OTel Collector 端點
+export OTEL_METRICS_EXPORTER="otlp"
 
-##
-export OTEL_EXPORTER_OTLP_PROTOCOL="http/protobuf"  # (default)
-export OTEL_EXPORTER_OTLP_PROTOCOL="http/json"      # 
-export OTEL_EXPORTER_OTLP_PROTOCOL="grpc"           # 
+export OTEL_LOGS_EXPORTER="otlp"
 
-export OTEL_EXPORTER_OTLP_TRACES_ENDPOINT="localhost:4317"  # gRPC 的 OTel Collector 端點
-export OTEL_EXPORTER_OTLP_METRICS_ENDPOINT="localhost:4317"  # gRPC 的 OTel Collector 端點
-export OTEL_EXPORTER_OTLP_LOGS_ENDPOINT="localhost:4317"  # gRPC 的 OTel Collector 端點
+export OTEL_NODE_RESOURCE_DETECTORS="env,host,os"
+
+export OTEL_RESOURCE_ATTRIBUTES="service.name=<name>,service.namespace=<namespace>,deployment.environment=<environment>"
+
+export NODE_OPTIONS="--require @opentelemetry/auto-instrumentations-node/register"
 
 ```
+
+# OpenTelemetry 重要名詞解釋
+
+- 釐清 Tempo - Exemplar / Metrics / Trace
+  - 用考試來舉例
+    - Metric   - 班級成績摘要, 包含了全班平均, 最高, 最低, 中位數, ...
+    - Exemplar - 其中一份考卷的成績, 考生姓名, 作答結果, 以及 traceID (用來追蹤這份考卷作答過程)
+    - Trace    - 該份考卷作答的完整過程, 從考生進入教室, 作答, 交卷離開
+  - 用餐廳來舉例
+    - Metric   - 每天營收報表, 營業時間摘要, 來客數, ...
+    - Exemplar - 當天發票紀錄其中一筆, 可以對應到 clientID, paymentID, orderID, traceID(用來看該筆消費全部過程)
+    - Trace    - 其中一位客人進門, 點餐, 上菜, 用餐, 結帳, 離開 所有過程
+- 釐清 OtelCollector 階段 - Sampler / SpanProcessor / Exporter
+  - Sampler       - 決定哪些 Span 要被記錄與後送, 是在 建立 Span 當下 做決策
+  - SpanProcessor - 負責 對已經決定要記錄的 Span 做處理. ex: batch / buffer / to exporter / ...
+  - Exporter      - 把處理好的 Spans 送到 Collector / LTM / AMP / ...
+- 釐清 Metrics 相關名詞 - Meter / Instrument / Measurement / Data Point / Metric
+  - 速記方式:
+    - Meter 建立 Instrument
+    - Instrument 紀錄 Measurement
+    - Measurement 聚成 Data points
+    - Data points 彙成 Metric
+  - 管理員（Meter）發給你儀器(Instrument), 每次紀錄寫一張小紙條(Measurement), 一堆小紙條統整成報告(Data point), 報告都投到一個大資料夾(Metric), 讓主管要看什麼就快翻什麼
+
