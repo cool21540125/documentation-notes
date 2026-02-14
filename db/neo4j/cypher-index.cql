@@ -14,20 +14,22 @@
 // 
 // 
 // ==================================== index 相關查詢 ====================================
-SHOW INDEXES
 
 //
+SHOW INDEXES;
+SHOW INDEXES YIELD *;  // 列出所有欄位
+
 SHOW INDEXES YIELD name, state, type, populationPercent AS pop100
-RETURN name, state, type, pop100
+RETURN name, state, type, pop100;
 
 
 // ==================================== 1. Create INDEX - Range index ====================================
 
-CREATE INDEX __node_range_index_name                         FOR (n:Person) ON (n.surname)
-CREATE INDEX __rel_range_index_name                          FOR ()-[r:KNOWS]-() ON (r.since)
-CREATE INDEX __composite_range_node_index_name               FOR (n:Person) ON (n.age, n.country)
-CREATE INDEX __composite_range_rel_index_name                FOR ()-[r:PURCHASED]-() ON (r.date, r.amount)
-CREATE INDEX __node_range_index_name           IF NOT EXISTS FOR (n:Person) ON (n.surname)
+CREATE INDEX __node_range_index_name                         FOR (n:Person) ON (n.surname);
+CREATE INDEX __rel_range_index_name                          FOR ()-[r:KNOWS]-() ON (r.since);
+CREATE INDEX __composite_range_node_index_name               FOR (n:Person) ON (n.age, n.country);
+CREATE INDEX __composite_range_rel_index_name                FOR ()-[r:PURCHASED]-() ON (r.date, r.amount);
+CREATE INDEX __node_range_index_name           IF NOT EXISTS FOR (n:Person) ON (n.surname);
 
 // 除了上述以外, 仍有 Create a range index using a parameter, 不過無法在 Web Console 裡頭使用 
 

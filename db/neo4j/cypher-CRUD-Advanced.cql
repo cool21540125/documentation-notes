@@ -27,8 +27,11 @@ RETURN station.name AS callingPoint
 
 // ==================================== APOC library ====================================
 
+//
 // dynamically merge relationships
 // 將其中一個 property 利用 AOPC library 建構出一個 Label 並且建立必要關聯 (ex: ACTED_IN_1995), 可用來加速業務邏輯的查詢效能
+// NOTE: Neo4j DB instance 需要安裝 `APOC` plugin
+//
 MATCH (n:Actor)-[r:ACTED_IN]->(m:Movie)
 CALL apoc.merge.relationship(n, 
                              'ACTED_IN_' + left(m.released, 4),
