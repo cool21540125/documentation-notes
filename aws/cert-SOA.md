@@ -69,32 +69,34 @@
     - 為了在 Error 時能看到 log, 需要 disable rollback on failure
 - CloudFormation EC2 的 UserData 相關:
     - `/var/log/cloud-init-output.log`
-        - 可以視為是 在 Linux 底下直接執行的 Terminal 結果
-        - EC2 的 UserData (`Fn::Base64`) 的 log
-    - `/var/log/cloud-init.log`
+        - 此為 EC2 Linux 初始化時, 執行 UserData 的 Terminal 輸出內容
+        	- CFN 使用 `Fn::Base64`
     - `/var/log/cfn-init.log`
-        - 可以視為是 `/var/log/cfn-init-cmd.log` 的 精簡版 log
         - EC2 執行完 UserData 以後, 跑 `cfn-init` 來向 CloudFormation query 已取得 init data
-    - `/var/log/cfn-init-cmd.log`
-        - 可以視為是 `/var/log/cfn-init.log` 的 完整版 log
-
+    - `/var/log/cfn-init.log` v.s. `/var/log/cfn-init-output.log`
+        - `/var/log/cfn-init.log`        : 有點類似 Ansible Playbook 安裝/配置過程產生的 log - by using `cfn-init`
+        - `/var/log/cfn-init-output.log` : 純 ShellScript 執行過程輸出的 log
+    - `/var/log/cloud-init.log`
+    - 藉由 CFN 裡頭, 可在 UserData 階段安裝 `aws-cfn-bootstrap` 套件, 便可使用 `/opt/aws/bin/cfn-init xxx` 做初始化(配置方式很像 Ansible Playbook)
+        - 會訪問自己的 `Metadata.AWS::CloudFormation::Init:`
+    - 然而由於 `cfn-init` 執行結果無法清楚得知, 因此可在藉由 `cfn-signal` 來讓 CloudFormation 得知 EC2 初始化後的結果
+        - 會多一層 WaitCondition, 可以設定等待時間, 在此一段時間內, 可以進去查看 logs 找出錯誤原因
+        - 如果為了要排查錯誤, 務必在 CloudFormation 出錯的階段不要讓 EC2 terminate
 
 ```yaml
 # CloudFormation 的 EC2 - User Data 用法
 Resources:
-    MyInstance:
-        Type: AWS::EC2::Instance
-        Properties:
-            # Pass~~
-            UserData:
-                Fn::Base64: |
-                    #!/bin/bash -xe
-                    yum update -y
-                    echo "User Data 需要這樣寫~~"
-    
-    MyInstance2:
-        Type: AWS::EC2::Instance
-        # Pass~~
+	MyInstance:
+		Type: AWS::EC2::Instance
+		Properties:
+			UserData:
+				Fn::Base64: |
+					#!/bin/bash -xe
+					yum update -y
+					echo "User Data 需要這樣寫~~"
+	MyInstance2:
+		Type: AWS::EC2::Instance
+		# Pass~~
 ```
 
 

@@ -131,9 +131,14 @@ https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/instance-purchasing-options.
       - 一個 AZ 裏頭最多只能有 7 台 EC2 Instances (using Spread)
         - 因此如果超過 7 台 EC2, 則會座落於 Same Region but cross AZ
     - 為了極小化 failure risk
-- User Data
-  - 初始化建機器以後所做的 init script, 相關的 log 紀錄在 `/var/log/cloud-init-output.log`
-    - 上面這個, 如果是在 EC2 Console 建立的時候不曉得會不會有 log.... 但如果使用 CloudFormation 的 User Data, 能找到上述 log
+- EC2 初始化階段產生的 Logs
+  - AWS 用來 設定網路/掛載Volume/建立User/執行UserData 等等, 會將這些 logs 寫入到 `/var/log/cloud-init.log`
+    - 這與 CFN 無直接關聯; 但不管用任何方式建立 EC2 的時候, 都會產生這份 log
+  - 使用 CFN 建立 EC2 在初始化階段, 藉由 **User Data / UserData** 作為初始化腳本進行必要安裝時
+    - CFN 需要使用 `Fn::Base64` 將初始化安裝的腳本做 Encode, 會把 logs 寫入到 `/var/log/cloud-init-output.log`
+    - CFN 的 helper script `cn-init` 的執行紀錄(也就是 `AWS::CloudFormation::Init`), 會將 logs 寫到 `/var/log/cfn-init.log`
+    - 
+
 
 ## EC2 Hibernate
 

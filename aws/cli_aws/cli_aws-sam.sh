@@ -35,6 +35,11 @@ sam sync --stack-name $StackName --watch
 # --watch 會直接更新 API Gateway && StepFunction && Lambda (很像 dev server --reload)
 #   並非會動態更新 all Resources, 因此可能造成 CloudFormation drift
 
+### 僅改 Code (無需變更 infra, 超快速)
+sam sync --code  # 僅變更 code changes 的部分
+sam sync --code --resource AWS::Serverless::Function  # 變更所有 LambdaFN & deps
+sam sync --code --resource-id __AwsResourceLogicId__  # 僅變更特定 LambdaFn Logic ID
+
 ### host API Gateway locally
 sam local start-api
 # 跑在 Container(讓子彈飛一會兒...)

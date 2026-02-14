@@ -135,6 +135,10 @@
   - The number of messages in the queue that are delayed and not available for reading immediately.
 - ApproximateNumberOfMessagesVisible
   - SQS 裡頭有多少個 Messages
+- NumberOfMessagesSent
+  - 發送到特定 SQS Queue 的 message 數量. 但若 SQS Queue 因為任務失敗, 而將 message 丟到另一個 DLQ, 則不會計算進來
+- NumberOfMessagesReceived
+  - 發送到特定 SQS Queue 的 message 數量
 
 # 操作
 

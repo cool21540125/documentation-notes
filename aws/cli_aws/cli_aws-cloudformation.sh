@@ -43,7 +43,6 @@ aws cloudformation deploy \
   --template-file "template-out.yaml" \
   --stack-name "cf-0213" \
   --capabilities CAPABILITY_IAM
-# 如果 CloudFormation 裡頭會動到 IAM, 則需要給 --capabilities CAPABILITY_IAM
 # 會依照 CloudFormation Template 建立相關的 AWS Resources && 它的 "AWS::IAM::Role"
 
 ### 驗證本地撰寫的 CloudFormation Template

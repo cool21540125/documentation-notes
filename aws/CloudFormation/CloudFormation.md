@@ -24,6 +24,12 @@
 
 - CloudFormation - StackSets
   - 可以 **Cross Account** 及 **Cross Region** 做一鍵 Create/Update/Delete Stacks
+  - Admin account 及 Target account
+    - 如果並非在同一個 AWS Org 底下的話
+      - 需要自行實作 Role / assumeRole Policy, 許可 admin account 去 assume target account 的 Role 來執行 CloudFormation
+    - 如果在同一個 AWS Org 底下
+      - Org 需勾選 `enable all features`
+      - StackSets 需要 `enable trusted access` with AWS Org
 - 如果想對 CloudFormaion 裡頭的 Resources 做個別限制, ex:
   - 禁止在此 CloudFormation stack 裡頭新增 xxx, 修改 EC2, 針對 RDS 做 xxx
   - 可參考 Prevent Update to Stack Resources 或是 **Stack Policy**
@@ -38,7 +44,18 @@
     - `AutoScalingRollingUpdate`
       - 在原有 ASG 裡頭, 藉由 min 及 max, 滾動更新其相關的 EC2 Instances
     - `AutoScalingScheduleAction`
-- CloudFormation 跨帳號存取, 參考 [StackSet](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/what-is-cfnstacksets.html)
+- cfn-hup
+  - 如果需要再不重啟 EC2 的情況下, 定期(default 15 mins) 檢查 CFN Metadata 變動, 並且套用更新, 則再來關注 `cfn-hup`
+    - 因為 CloudFormation 建立 EC2 以後, UserData 只會跑第一次, 可藉由 `cfn-hup` 的方式變更 Metadata, 再搭配 `cfn-init` 的方式強制重跑 UserData
+  - cfn-hup 啟用時會跑一個 Daemon, 會參考 `/etc/cfn/cfn-hup.conf` 及 `/etc/cfn/hooks.d/cfn-auto-reloader.conf`
+- CloudFormation Capabilities (CFN Capabilities / CFN Capability)
+  - CAPABILITY_IAM         : CFN 建立/修改 過程中如果要建立 Role/Policy, 若未指定名稱, 則由 CloudFormation 自動生成
+  - CAPABILITY_NAMED_IAM   : CFN 建立/修改 過程中如果要建立 Role/Policy, 並且指定名稱, 則必須使用 CAPABILITY_NAMED_IAM (此權限大於 CAPABILITY_IAM, 因此即使用這個, 沒指定 RoleName 也不會噴錯)
+  - CAPABILITY_AUTO_EXPAND : 用於 Macros 及 AWS SAM Template, 這類 Template 需機過 Transform 為標準 CFN 格式
+  - 若上述權限沒搞好, AWS CloudFormation 會噴出 `InsufficientCapabilitiesException`
+- CloudFormation - Custom Resources
+  - 如果東西不是在 AWS, 甚至是 Self-Hosted, 也可藉由這個來做 IaC
+  - CFN Template 需使用 `Type: AWS::CloudFormation::CustomResource` OR `Type: Custom::__MyCustomResourceTypeName__`(recommended) 來建立 Custom Resource
 
 # CloudFormation - 重要留意
 
