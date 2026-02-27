@@ -28,12 +28,19 @@ uv pip install -r pyproject.toml
 # 上下兩者差異, 在於
 uv pip install -r pyproject.toml --all-extras
 
-### 安裝套件
+### 安裝/升級 套件
 uv add $PKG
 uv add "mcp[cli]" httpx # 範例
 # 等同於 pip install $PKG (但會同時同步 dependencies 到 pyproject.yaml)
 # 並且會生成 uv.lock
 uv remove $PKG
+
+## 升級套件
+uv lock --upgrade-package XXX
+uv sync
+# 相較於 npm/yarn, 必須分兩個步驟
+#  1. 更新 uv.lock 到指定版本
+#  2. 安裝到環境
 
 ### 查看整個專案的依賴結構
 uv tree
