@@ -66,4 +66,10 @@ uv tool list
 
 uv tool upgrade --all
 
+### ==================================== uv dev Group ====================================
+
+## 加入到 dev Group (等同於 devDependencies)
+uv add --dev pytest
+uv add --dev pytest-mock
+
 ### ====================================

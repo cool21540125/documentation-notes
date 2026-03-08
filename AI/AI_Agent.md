@@ -3,16 +3,16 @@
 與 agent 溝通時, 務必永遠留意到:
 
 - context
-- tools
 - model
 - prompt
+- tools
+- flow
 
 
-# RAG 架構錯誤流程設計
+# RAG 架構 - 例外處理實作範例
 
 ```python
-def get_reply(user_query: str):
-  query = user_query
+def get_reply(query: str):
   try:
     # Try full RAG pipeline
     return rag_pipeline(query)
