@@ -18,7 +18,7 @@ uv init .  # 此時專案底下便有了: README.md / pyproject.toml / .python-v
 ### 2. 然後確認 .python-version 裡頭的版本
 
 ### 3. 建立 .venv
-uv venv
+uv venv --python 3.14
 
 
 ## --------------------------------------------------------------------------------------

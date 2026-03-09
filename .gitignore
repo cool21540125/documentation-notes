@@ -31,3 +31,4 @@ secret*
 !SecretManager.md
 
 **/charts/*.tgz
+**/settings.local.json
