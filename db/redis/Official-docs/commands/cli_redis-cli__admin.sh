@@ -5,9 +5,6 @@ exit 0
 # =====================================================================================================
 # Redis Cluster
 # =====================================================================================================
-redis-cli help
-
-redis-cli --help
 
 redis-cli --cluster help
 
@@ -43,15 +40,15 @@ redis-cli -c -p 6381 cluster info
 redis-cli -c -p 6381 cluster nodes
 
 ### Check
-docker exec jinli_redis6379 redis-cli -c cluster info | grep 'cluster_my_epoch\|cluster_state'
-docker exec jinli_redis6380 redis-cli -c -p 6380 cluster info | grep 'cluster_my_epoch\|cluster_state'
+docker exec redis6379 redis-cli -c cluster info | grep 'cluster_my_epoch\|cluster_state'
+docker exec redis6380 redis-cli -c -p 6380 cluster info | grep 'cluster_my_epoch\|cluster_state'
 
-redis-cli -a 883K6Ec@N=pkbD9k --cluster check 127.0.0.1:6379
+redis-cli -a "__REDIS_AUTO_PASSWORD__" --cluster check 127.0.0.1:6379
 
 redis-cli -c
 # -c, --cluster
 
-AUTH 883K6Ec@N=pkbD9k
+AUTH "__REDIS_AUTO_PASSWORD__"
 
 cluster nodes
 

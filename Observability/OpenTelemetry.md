@@ -46,17 +46,27 @@
 
 ```bash
 
+## 此為 Resource Service Name
+export OTEL_SERVICE_NAME="my-service-name"
+
+## 此為 Resource atributes. 使用 `,` 分隔 k=v
+export OTEL_RESOURCE_ATTRIBUTES="service.name=<name>,service.namespace=<namespace>,deployment.environment=<environment>"
+
+## Collector 接收端位置
+# https://opentelemetry.io/docs/languages/sdk-configuration/otlp-exporter/#endpoint-configuration
 export OTEL_EXPORTER_OTLP_ENDPOINT="http://my_otel_collector_endpoint/"
+export OTEL_EXPORTER_OTLP_LOGS_ENDPOINT="http://my_otel_collector_endpoint__only_for_logs/"
+export OTEL_EXPORTER_OTLP_TRACES_ENDPOINT="http://my_otel_collector_endpoint__only_for_traces/"
+export OTEL_EXPORTER_OTLP_METRICS_ENDPOINT="http://my_otel_collector_endpoint__only_for_metrics/"
+# export OTEL_EXPORTER_OTLP_PROFILES_ENDPOINT="" # ERROR: 202602 其實目前沒這東西
 
-export OTEL_TRACES_EXPORTER="otlp"
-
-export OTEL_METRICS_EXPORTER="otlp"
-
+## 設定 logs/spans/metrics 傳送的協定. otlp/jaeger/...
 export OTEL_LOGS_EXPORTER="otlp"
+export OTEL_TRACES_EXPORTER="otlp"
+export OTEL_METRICS_EXPORTER="otlp"
+export OTEL_PROFILES_EXPORTER="otlp"
 
 export OTEL_NODE_RESOURCE_DETECTORS="env,host,os"
-
-export OTEL_RESOURCE_ATTRIBUTES="service.name=<name>,service.namespace=<namespace>,deployment.environment=<environment>"
 
 export NODE_OPTIONS="--require @opentelemetry/auto-instrumentations-node/register"
 

@@ -114,6 +114,15 @@ sudo usermod -aG docker $USER
 docker version
 ```
 
+# Install curl
+
+```bash
+curl
+#Unable to locate package curl
+
+apt update && apt install -y curl
+```
+
 # Install kubectl
 
 ```bash

@@ -27,7 +27,10 @@ alias dl='docker logs -f'
 alias dip4='docker inspect --format="{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}"'
 alias dienv='docker inspect --format="{{json .Config.Env}}"'
 
-### k8s 懶人指令 ------------
+## Using AI
+alias ccc='git commit -m "$(claude -p "Look at the staged git changes and create a summarizing git commit title. Only respond with the title and no affirmation.")"'
+alias ccg='git commit -m "$(git diff --cached | gemini --prompt "Look at the staged git changes and create a summarizing git commit title. Only respond with the title and no affirmation.")"'
+
 alias k='kubectl'
 
 
