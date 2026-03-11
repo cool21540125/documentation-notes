@@ -1,3 +1,10 @@
+# AWS IAM Useful
+
+- [AWS Policy Simulator](https://policysim.aws.amazon.com/home/index.jsp?#)
+
+---
+
+# AWS IAM
 - [AWS global condition context keys](https://docs.aws.amazon.com/IAM/latest/UserGuide/reference_policies_condition-keys.html)
 
 ```mermaid
