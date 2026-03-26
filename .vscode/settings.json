@@ -10,4 +10,5 @@
     // "**/.terraform": true,
     "**/.terraform.lock.hcl": true,
   },
+  "azureTerraform.checkTerraformCmd": false,
 }

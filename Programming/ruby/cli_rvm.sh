@@ -6,6 +6,9 @@ exit 0
 rvm --version
 #rvm 1.29.12 (latest) by Michal Papis, Piotr Kuczynski, Wayne E. Seguin [https://rvm.io]
 
+rvm get head    # 將 RVM 升級到最新版
+rvm get stable  # 將 RVM 升級到最新穩定版
+
 ### 列出目前的可安裝版本
 rvm list known
 
