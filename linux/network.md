@@ -316,39 +316,6 @@ IP4.DNS[1]:                             168.95.1.1
 IP6.GATEWAY:                            --
 ```
 
-
-## nc
-
-任意啟動 TCP/UDP 封包的 port 連線
-
-- `nc` 可用來檢測服務, 可直接連到某個 port 進行溝通; 另外還可啟動一個 port 來等待別人連線
-
-```sh
-$# nc [-u] [IP|host] [port]     # -u: 使用 UDP
-$# nc -l [IP|host] [port]       # -l: 啟用一個 port 來監聽連線
-
-$# yum install -y nc
-
-### Terminal 1
-$# nc -l localhost 22222
-
-### Terminal 2
-$# netstat -tulnp | grep nc
-Proto Recv-Q Send-Q Local Address   Foreign Address   State       PID/Program name
-tcp6  0      0      ::1:22222       :::*              LISTEN      31911/nc
-# 僅節錄部分
-
-$# ss -tulnp | grep nc
-Netid  State      Recv-Q Send-Q Local Address:Port               Peer Address:Port
-tcp    LISTEN     0      10      ::1:22222                :::*                   users:(("nc",pid=31911,fd=3))
-# 僅節錄部分
-
-$# nc localhost 22222
-hi~
-# ↑ 此時, Terminal 1 也會出現該訊息, 兩者可開始溝通了
-```
-
-
 # 其他
 
 - ifup, ifdown : 只能針對 `/etc/sysconfig/network-scripts/` 內的 `ifcfg-ethXX` 進行動作
