@@ -17,4 +17,3 @@ CALL db.schema.relTypeProperties()
 
 // SHOW all Labels
 CALL db.labels()
-
