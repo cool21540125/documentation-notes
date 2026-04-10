@@ -1,6 +1,7 @@
+#!/bin/bash
+exit 0
+# ---------------------------------------------------
 
-
-```bash
 ### 生成 key
 ssh-keygen -b 4096 -C "$SSH_KEY_裡頭的結尾名稱" -f "$產出的SSH_KEY檔名" -P "$使用此SSH_KEY的passphrase" 
 # -t [rsa|tsa] : 加密演算法
@@ -22,4 +23,3 @@ ssh-keygen -p -N "" -m $要修改成哪種Key_Format -f $要修改的PrivateKey
 #    -m RFC4716
 #    -m PKCS8
 #    -m PEM
-```

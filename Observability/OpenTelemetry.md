@@ -95,3 +95,6 @@ export NODE_OPTIONS="--require @opentelemetry/auto-instrumentations-node/registe
     - Data points 彙成 Metric
   - 管理員（Meter）發給你儀器(Instrument), 每次紀錄寫一張小紙條(Measurement), 一堆小紙條統整成報告(Data point), 報告都投到一個大資料夾(Metric), 讓主管要看什麼就快翻什麼
 
+## Otel LogRecord
+
+OTel 定義了 LogRecord 資料結構, 裡面的結構固定. 其中 2 個內建欄位為: `TraceId` 和 `SpanId`
