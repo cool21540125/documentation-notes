@@ -8,6 +8,11 @@ GPT-4            | 1.8T       | 3.6TB | Reasoning
 
 https://huggingface.co/sentence-transformers/all-MiniLM-L6-v2
 
+- 知名開源 LLM:
+  - LLaMA
+  - Mistral
+  - Gemma
+
 --------------------------------------------------------------------
 
 ```bash

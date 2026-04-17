@@ -8,6 +8,25 @@
 - tools
 - flow
 
+## AI 近年來演進 ~ 2026Q2
+
+- Prompt Engineering
+  - 模型有沒有聽懂
+- Context Engineering
+  - 模型有沒有拿到正確訊息
+- Harness Engineering
+  - 模型能不能持續交付有品質的產出
+
+> LangChain 工程師給了一個定義:
+> 
+> Agent = Harness + Model
+> 
+> Harness = Agent - Model
+ 
+- Agent 團隊內部一位很優秀的人員
+- Harness 團隊的工作流程及業務邏輯
+- Model 很優秀的人, 但不熟團隊運作
+
 
 # RAG 架構 - 例外處理實作範例
 
