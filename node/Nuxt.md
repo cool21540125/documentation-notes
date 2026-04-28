@@ -1,11 +1,14 @@
 # nuxt
 
 - nuxt 的 Server 使用 `Nitro`
+  - Nitro 被用來與 Nuxt 搭配, 作為 `渲染伺服器引擎`
   - 可以把 Nitro 的功能, 視為是等同於 Django 的 render template 的功能
     - 只不過 Nitro 的 template 是整個 Vue Element Tree
     - Nitro 透過 SSR 生成 html, 再由 Browser 的 Vue 接手成 SPA
-  - Nitro 被用來與 Nuxt 搭配, 作為 `渲染伺服器引擎`
-  
+- Nuxt 裡有 2 個執行環境
+  - Server side 跑 Node/Nitro
+  - Client side 跑在 browser
+- Nuxt 的 logging tool 為 consola
 
 # nuxt.config.ts
 

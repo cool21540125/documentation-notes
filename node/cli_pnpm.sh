@@ -35,16 +35,24 @@ pnpm --version
 #
 # -------------------------------- CICD 可能遇到的問題 --------------------------------
 
-### 適合在未上線新專案使用? (林北就是啥都要用最新的就是了)
+## 適合在未上線新專案使用? (林北就是啥都要用最新的就是了)
 pnpm update
 # 等同於 npm update
 # 等同於 yarn upgrade
 
-### 安裝依賴套件 - 適合用來在 Development 環境使用? (我要的東西不要給我改版本, 至於間接依賴的東西的版本你自己看著辦)
+## 安裝依賴套件 - 適合用來在 Development 環境使用? (我要的東西不要給我改版本, 至於間接依賴的東西的版本你自己看著辦)
 pnpm install
 # (非常可能會異動到 pnpm-lock.yaml)
 
-### 只更新 pnpm-lock.yaml, 不安裝套件到 node_modules
+## 只更新 pnpm-lock.yaml, 不安裝套件到 node_modules
 pnpm i --lockfile-only
 # 執行後只會異動 pnpm-lock.yaml, node_modules/ 完全不動
 # 適合情境: 修改了 package.json 之後, 想先單獨更新並 commit lockfile 供 reviewer 審查, 再另行執行安裝
+
+## 移除套件
+pnpm remove @PACKAGE_NAME
+# 等同於 npm uninstall @PACKAGE_NAME
+# ex: pnpm remove @grpc/grpc-js
+
+
+## 
