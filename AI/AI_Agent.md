@@ -84,3 +84,11 @@ subgraph "Container Orchestration"
   end
 end
 ```
+
+## Good Prompt usage to create AGENTS.md & CLAUDE.md
+
+```
+連結為一套名為「Karpathy Skills」的開發規範。請從以下網址取得檔案：https://raw.githubusercontent.com/forrestchang/andrej-karpathy-skills/refs/heads/main/CLAUDE.md
+這份 CLAUDE.md 包含四大核心原則（先思考後動手、簡約優先、精確異動、目標導向執行），旨在優化你處理程式碼的方式。
+請注意，切勿覆蓋現有的 CLAUDE.md (or AGENTS.md or GEMINI.md) 檔案(視 Model 預設會載入哪個為主)。若檔案已存在，請將這四項原則合併進去——請以新增區塊的方式處理，不得刪除或改動既有內容。若專案中尚未建立 CLAUDE.md/AGENTS.md/GEMINI.md，請直接將檔案存入專案根目錄。完成後，請重新讀取檔案並向我確認目前已生效的原則。 最後，請針對如何將這套規範完美整合至我們的開發流程中提出建議。
+```
