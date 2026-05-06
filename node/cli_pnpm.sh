@@ -27,11 +27,12 @@ pnpm --version
 #      $ pnpm install
 #    旨在告知 pnpm, 安裝的時候, 請依照 package.json 的指定版本, 然後去「更新」 pnpm-lock.yaml 的套件版本
 #    最後再依照 pnpm-lock.yaml 上頭所說的版本來做安裝依賴
-#    然而因為加上了 `--frozen-lockfile`, 導致了「不能去更新 pnpm-lock.yaml 」因而引發錯誤
+#    然而因為加上了 `--frozen-lockfile`, 有可能會因為「不能去更新 pnpm-lock.yaml 」因而引發錯誤
+#    此時的解法, 你在本地端執行 `pnpm install` 來更新 pnpm-lock.yaml, 然後 commit 上去, 讓 CI 系統在安裝的時候就不會再去更新 lockfile 了
 #
 # 結論:
 #    於 CI 系統當中, `pnpm install` 等同於 `pnpm install --frozen-lockfile`
-#    若需要關閉此行為, 可加上旗標: --no-frozen-lockfile
+#    (不建議這樣幹) 若需要關閉此行為, 可加上旗標: --no-frozen-lockfile, 或者 直接在 CI 系統裡面設定環境變數: `CI=false`
 #
 # -------------------------------- CICD 可能遇到的問題 --------------------------------
 
