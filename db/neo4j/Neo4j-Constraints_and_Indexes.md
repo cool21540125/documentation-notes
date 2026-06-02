@@ -1,0 +1,21 @@
+# Neo4j 的 Constraints 及 Indexes
+
+- 若 Graph 空空的沒資料, 初始化資料的標準作業流程:
+    - Create Constraints
+    - Load data -- 使用 `Merge`
+    - Create Indexes
+- Neo4j 的 Constraints
+    - 一句話理解 Constraint 在 Neo4j 的用途: 用來約束 property value 必須 exist OR unique
+    - Neo4j 的 Constraints 其實背後就是 Index. 或者說, 可以把 Constraint 理解成 資料規則+索引
+    - Constraints 類型:
+        - 理解上, 其實區分成底下種類:
+            - Uniqueness
+            - Existence
+            - Node key - Unique & Exist
+        - 實際上, Neo4j 提供了底下的類型 (但並非全部都可使用):
+            - Property uniqueness constraints
+                - 這東西說穿了就是 RDB 的 unique, 但不同的是, Neo4j 的 Uniqueness constraint 可以是 NULL (無此 property). ex:
+                    - 假設 Book.ISBN 設定了 Unique, 那麼 `(b1:Book {ISBN: null})` 與 `(b1:Book)` 兩者都是合格的, 並且相同意思.
+            - (僅 Enterprise Edition 能使用) Property existence constraints
+            - (僅 Enterprise Edition 能使用) Property type constraints
+            - (僅 Enterprise Edition 能使用) Key constraints

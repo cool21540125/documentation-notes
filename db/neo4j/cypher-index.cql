@@ -3,7 +3,7 @@
 // 
 // Neo4j 的 index 有 2 種分類:
 //   - Search-performance indexes, 有底下型態:
-//       - 1. Range indexes        : (default index) 適用於 most types of predicates
+//       - 1. Range indexes        : (default index) 適用於 most types of predicates. 可作用於 Nodes & Properties
 //       - 2. Text indexes         : 對於 STRING value 做 `CONTAINS` && `ENDS WITH` 查詢具備最佳化
 //       - 3. Point indexes        : 對於 POINT value 做 distance || within bounding boxes 過濾具備最佳化
 //       - 4. Token lookup indexes : (僅適用於 Node Label || Relationship 做優化)
@@ -23,7 +23,8 @@ SHOW INDEXES YIELD name, state, type, populationPercent AS pop100
 RETURN name, state, type, pop100;
 
 
-// ==================================== 1. Create INDEX - Range index ====================================
+// ==================================== 1. Range index ====================================
+// 
 
 CREATE INDEX __node_range_index_name                         FOR (n:Person) ON (n.surname);
 CREATE INDEX __rel_range_index_name                          FOR ()-[r:KNOWS]-() ON (r.since);
@@ -33,11 +34,19 @@ CREATE INDEX __node_range_index_name           IF NOT EXISTS FOR (n:Person) ON (
 
 // 除了上述以外, 仍有 Create a range index using a parameter, 不過無法在 Web Console 裡頭使用 
 
-// ==================================== 2. Create INDEX - Text index ====================================
-// ==================================== 3. Create INDEX - Point index ====================================
-// ==================================== 4. Create INDEX - Token lookup index ====================================
-// ==================================== 5. Create INDEX - Full-text index ====================================
-// ==================================== 6. Create INDEX - Vector index ====================================
+// ==================================== 2. Text index ====================================
+// 用來快速查找 Node 及 Relationship 的 string properties
+
+// ==================================== 3. Point index ====================================
+// 具體應用像是經緯度
+
+// ==================================== 4. Token lookup index ====================================
+// 用來快速查找 Node labels 及 Relationship types
+
+// ==================================== 5. Full-text index ====================================
+// 用來快速查找 Node 及 Relationship 的 1~N 個 string properties, 且支援全文搜尋(Lucene query)
+
+// ==================================== 6. Vector index ====================================
 
 // ********** Delete index **********
 DROP INDEX index_name IF EXISTS;
