@@ -56,4 +56,26 @@ pnpm remove @PACKAGE_NAME
 # ex: pnpm remove @grpc/grpc-js
 
 
-## 
+## -------------------------------- 起始一個空白專案 --------------------------------
+
+pnpm init # Create package.json ONLY
+
+vim package.json  #WARNING: 必要修復步驟(不知道是不是 pnpm 的 bug), 需要把 package.json 裡頭的 packageManager.version 改成精確版本(去除 `^`)
+pnpm add -D typescript tsx @types/node
+
+# WARNING 若發生 [ERR_PNPM_IGNORED_BUILDS] Ignored build scripts: esbuild .... 跑底下這個....
+pnpm approve-builds
+
+# WARNING: 如果有使用到 node 內建的 process, Buffer 等 global variables, 則需要修改 tsconfig.json 的 compilerOptions.types, 加入 "node"
+
+pnpm exec tsc --init
+# 或者, typescript 已經放進 package.json 的 devDependencies 的話, 可直接使用:
+pnpm tsc --init
+
+
+## 常用 - 用來讀取 .env
+pnpm add dotenv
+# 後續 debug 時: `tsx --env-file=.env index.ts`, 把這放到 package.json 的 script.dev 之類的裡頭, 就可以直接 `pnpm run dev` 來啟動開發環境了
+
+
+## --------------------------------  --------------------------------
