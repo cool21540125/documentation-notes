@@ -18,6 +18,28 @@ find . -name '*' \
     | wc -l
 ```
 
+## 代碼依賴視覺化
+
+```
+## Globally install
+npm i -g gitnexus
+
+## Project Analyze
+gitnexus analyze
+
+## Project Server
+gitnexus serve
+
+## Frontend UI
+git clone https://github.com/abhigyanpatwari/gitnexus.git
+cd gitnexus/gitnexus-shared && npm install && npm run build
+cd ../gitnexus-web && npm install
+npm run dev
+# Then in another terminal, start the backend the frontend connects to:
+npx gitnexus@latest serve
+# 訪問 http://localhost:5173/
+```
+
 ## Interesting URLs
 
 - [隨機用戶產生器](https://randomuser.me/api/)
