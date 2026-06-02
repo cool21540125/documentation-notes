@@ -1,0 +1,89 @@
+# Pi Agent
+
+## pi core modules
+
+* `pi-ui`           : UI
+* `pi-ai`           : model
+* `pi-agent-core`   : state & tool
+* `pi-coding-agent` : CLI
+
+## pi session management
+
+* `/tree`
+* `/fork`
+* `/clone`
+
+## pi extensions
+
+```ts
+ctx.ui (select, confirm, input, notify)
+```
+
+## Events - Lifecycle Overview
+
+```
+pi starts
+  │
+  ├─► session_start { reason: "startup" }
+  └─► resources_discover { reason: "startup" }
+      │
+      ▼
+user sends prompt ─────────────────────────────────────────┐
+  │                                                        │
+  ├─► (extension commands checked first, bypass if found)  │
+  ├─► input (can intercept, transform, or handle)          │
+  ├─► (skill/template expansion if not handled)            │
+  ├─► before_agent_start (can inject message, modify system prompt)
+  ├─► agent_start                                          │
+  ├─► message_start / message_update / message_end         │
+  │                                                        │
+  │   ┌─── turn (repeats while LLM calls tools) ───┐       │
+  │   │                                            │       │
+  │   ├─► turn_start                               │       │
+  │   ├─► context (can modify messages)            │       │
+  │   ├─► before_provider_request (can inspect or replace payload)
+  │   ├─► after_provider_response (status + headers, before stream consume)
+  │   │                                            │       │
+  │   │   LLM responds, may call tools:            │       │
+  │   │     ├─► tool_execution_start               │       │
+  │   │     ├─► tool_call (can block)              │       │
+  │   │     ├─► tool_execution_update              │       │
+  │   │     ├─► tool_result (can modify)           │       │
+  │   │     └─► tool_execution_end                 │       │
+  │   │                                            │       │
+  │   └─► turn_end                                 │       │
+  │                                                        │
+  └─► agent_end                                            │
+                                                           │
+user sends another prompt ◄────────────────────────────────┘
+
+/new (new session) or /resume (switch session)
+  ├─► session_before_switch (can cancel)
+  ├─► session_shutdown
+  ├─► session_start { reason: "new" | "resume", previousSessionFile? }
+  └─► resources_discover { reason: "startup" }
+
+/fork or /clone
+  ├─► session_before_fork (can cancel)
+  ├─► session_shutdown
+  ├─► session_start { reason: "fork", previousSessionFile }
+  └─► resources_discover { reason: "startup" }
+
+/compact or auto-compaction
+  ├─► session_before_compact (can cancel or customize)
+  └─► session_compact
+
+/tree navigation
+  ├─► session_before_tree (can cancel or customize)
+  └─► session_tree
+
+/model or Ctrl+P (model selection/cycling)
+  ├─► thinking_level_select (if model change changes/clamps thinking level)
+  └─► model_select
+
+thinking level changes (settings, keybinding, pi.setThinkingLevel())
+  └─► thinking_level_select
+
+exit (Ctrl+C, Ctrl+D, SIGHUP, SIGTERM)
+  └─► session_shutdown
+```
