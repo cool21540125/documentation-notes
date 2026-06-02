@@ -2,27 +2,27 @@
 
 ALB Pricing - 由 3 個部分組成 (以 2024/10 的 `us-west-2` 為範例):
 
-1. 固定運行費用: `$.0225/hr`, 等同於 `$16.2/月`
-2. LCU 費用: `$.008/LCU-hour`, 等同於 `$5.76/LCU-月`. 以下 4 個 LCU 取最大者, 作為 LCU 計費方式:
+- 固定運行費用: `$0.0225/hr`, 等同於 `$16.2/月`
+- LCU 費用: `$0.008/LCU-hour`, 等同於 `$5.76/LCU-月`. LCU 的計算方式, 將底下 4 個 LCU 取最大者, 作為 LCU 計費方式:
+    - 每個 LCU 每秒提供 25 個 New Connections
+    - 每個 LCU 每分鐘提供 3000 個 Active Connections
+    - 每個 LCU 每小時，對於不同資源提供不同的 bandwidth
+        - EC2, Container, IP - 每小時 1GB
+        - Lambda - 每小時 0.4GB
+    - 每個 LCU 每秒鐘提供 1000 個 rule evaluations （前 10 個 processed rules 免費）
+        - `Rule evaluations = 每秒請求數 *（ALB rules 數量- 10)`
+- mTLS 費用: `0.0063/hr` (ALB 做 Client Side 的證書認證)
+    - 收費方式還會區分是否為 **Mutual TLS(稱之為 mTLS)** 
+    
+NOTE: 底下說明皆忽略 mTLS 的計費方式
 
-收費方式還會區分是否為 **Mutual TLS(稱之為 mTLS)** (底下說明皆忽略 mTLS 的計費方式)
-
-- 每個 LCU 每秒提供 25 個 New Connections
-- 每個 LCU 每分鐘提供 3000 個 Active Connections
-- 每個 LCU 每小時，對於不同資源提供不同的 bandwidth
-  - EC2, Container, IP - 每小時 1GB
-  - Lambda - 每小時 0.4GB
-- 每個 LCU 每秒鐘提供 1000 個 rule evaluations （前 10 個 processed rules 免費）
-  - `Rule evaluations = 每秒請求數 *（ALB rules 數量- 10`
-
-3. mTLS 費用: `.0063/hr` (ALB 做 Client Side 的證書認證)
 
 # ALB Pricing - Example 1
 
 ## 假設情境:
 
 - Server 每秒收到 1 new connection, 並且每個 connection 持續 2 分鐘 (持續 120 秒)
-  - 也就是說, 理論上每秒鐘最多同時有 120 個 active connections
+    - 也就是說, 理論上每秒鐘最多同時有 120 個 active connections
 - 平均每個 Client 每秒發送 5 requests, Request + Response 總計為 300 KB/sec
 - ALB 上頭有 60 Rules
 
@@ -46,7 +46,7 @@ ALB Pricing - 由 3 個部分組成 (以 2024/10 的 `us-west-2` 為範例):
     - `5*(60-10) = 250` 個 Rule Evaluations
     - LCU 消耗數：250/1000= `0.25 LCU`
 
-上述 LCU 取最大者, `1.08 * .008 * 24 * 30 = 6.2208 美元`
+上述 LCU 取最大者, `1.08 * 0.008 * 24 * 30 = 6.2208 美元`
 
 因此, 每月 ALB 花費為: `16.2 + 6.2208 = 22.4208 美元`
 
@@ -78,7 +78,7 @@ ALB Pricing - 由 3 個部分組成 (以 2024/10 的 `us-west-2` 為範例):
     - `4*(20-10)` = 250 18 Rule Evaluations
     - LCU 消耗數: 250/1000= `0.25 LCU`
 
-上述 LCU 取最大者, `6 * .008 * 24 * 30 = 34.56 美元`
+上述 LCU 取最大者, `6 * 0.008 * 24 * 30 = 34.56 美元`
 
 因此, 每個月 ALB 花費為: `16.2 + 34.56 = 50.76 美元`
 
