@@ -50,3 +50,18 @@ chmod +x /etc/tuned/nothp_profile/tuned.conf
 
 tuned-adm profile nothp_profile
 ```
+
+
+## profiling
+
+> allocs: A sampling of all past memory allocations.
+
+> heap: A sampling of memory allocations of live objects. You can specify the gc GET parameter to run GC before taking the heap.
+
+> profile: CPU profile. You can specifiy the duration in the seconds GET parameter. After you get hte profile file, use the go tool pprof command to investigate the profile.
+
+> trace: A trace of execution of the current program. You can specify the duration in the seconds GET parameter. After you get the trace file, use the go tool trace command to investigate the trace.
+
+> threadcreate: Stack traces that led to the creation of new OS threads.
+
+> block: Stack traces that led to blocking on synchronization
