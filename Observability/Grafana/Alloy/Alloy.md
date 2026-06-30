@@ -12,7 +12,7 @@
   - Loki pipeline
   - OTel pipeline
 
-# Alloy Configuration
+## Alloy Configuration
 
 ```conf
 ### 寫法
@@ -38,3 +38,13 @@ loki.write "ec2_standalone" {
 	}
 }
 ```
+
+## Alloy ports
+
+ports | Protocol  | Service / Component
+----- | --------- | --------------------------------------
+12345 | TCP(HTTP) | Alloy Web UI, API, and debug metrics
+7946  | TCP/UDP   | Alloy cluster memberlist gossip
+4317  | TCP       | OTLP gRPC receiver
+4318  | TCP(HTTP) | OTLP HTTP receiver
+8888  | TCP       | Default collector metrics endpoint (OpenTelemetry engine)
