@@ -1,33 +1,35 @@
 #!/bin/bash
 exit 0
 #
+# nc, Netcat 為 Linux/Unix 的網路瑞士刀. 可用來讀寫 TCP or UDP 網路連線, 測試網路連線, 掃描 ports, 資料傳輸
+#
+#
 # 用來檢測服務, 可直接連到某個 port 進行溝通; 另外還可啟動一個 port 來等待別人連線
 #
-#   $ nc [-u] [IP|host] [port]     # -u: 使用 UDP
-#   $ nc -l [IP|host] [port]       # -l: 啟用一個 port 來監聽連線
+# -l : 啟用一個 port 來監聽連線
+# -u : 使用 UDP (預設為 TCP)
+# -v : 列出詳細執行過程
+# -w : 設定 timeout 秒數
+# -z : 僅掃描 port 是否開放, 不發送任何資料
+#
 # ---------------------------------------------------------------------------------------------------------------------
 
 ### ---------------------------------- Basic usage ----------------------------------
 nc -z 127.0.0.1 7687 && echo "port open" || echo "port closed"
 # 等同於做 telnet...
 
+## 掃描特定 port
+nc -zv 127.0.0.1 8000         # 掃單一 port
+nc -zv 127.0.0.1 20000-30000  # 掃範圍 ports
 
-### ---------------------------------- 多個 Terminal 之間的玩法 ----------------------------------
+
+### ---------------------------------- 2 個 Terminal 之間的玩法 (nc 只能 2 個人玩) ----------------------------------
 ## ------------ Terminal 1 ------------
 nc -l localhost 22222
+# 開 Server 的概念
 
-## ------------ Terminal 2 ------------
-netstat -tulnp | grep nc
-#Proto Recv-Q Send-Q Local Address   Foreign Address   State       PID/Program name
-#tcp6  0      0      ::1:22222       :::*              LISTEN      31911/nc
-#...(僅節錄部分)...
-
-ss -tulnp | grep nc
-#Netid  State      Recv-Q Send-Q Local Address:Port               Peer Address:Port
-#tcp    LISTEN     0      10      ::1:22222                :::*                   users:(("nc",pid=31911,fd=3))
-#...(僅節錄部分)...
-
-hi~
-# ↑ 此時, Terminal 1 也會出現該訊息, 兩者可開始溝通了
+## ------------ Terminal 2 - 用於發送 ------------
+nc localhost 22222
+# 作為 client 連接 Server
 
 ### ----------------------------------  ----------------------------------

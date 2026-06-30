@@ -10,6 +10,9 @@ exit 0
 # uv 和 poetry 相比的話, 差異在: uv 是一個 CLI 工具, 而 poetry 是一個完整的 Python package 管理器
 # ------------------------------------------------------------------------
 
+## ==== 升級 uv ====
+uv self update  # 需要確認怎麼安裝的
+
 ### 1. 使用 uv 起始一個專案
 uv init .  # 此時專案底下便有了: README.md / pyproject.toml / .python-version / uv.lock
 #uv init $PROJECT_NAME --app
@@ -25,7 +28,7 @@ uv venv --python 3.14
 
 ### 依照 pyproject.toml 安裝套件
 uv pip install -r pyproject.toml
-# 上下兩者差異, 在於
+# 除了安裝 [project.dependencies] 以外, 還會安裝 [project.optional-dependencies] 的依賴
 uv pip install -r pyproject.toml --all-extras
 
 ### 安裝/升級 套件
@@ -37,6 +40,7 @@ uv remove $PKG
 
 ## 升級套件
 uv lock --upgrade-package XXX
+
 uv sync
 # 相較於 npm/yarn, 必須分兩個步驟
 #  1. 更新 uv.lock 到指定版本
@@ -49,7 +53,7 @@ uv tree
 uv run main.py
 
 ### 
-uv sync           # 等同於 npm install / yarn install
+uv sync           # 等同於 npm install / yarn install ; 但同時這動作也會建立虛擬環境
 uv sync --locked  # 等同於 npm ci / yarn
 
 ### ==================================== (從 OLD pip project 遷移到 uv project) ====================================

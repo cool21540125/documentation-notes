@@ -82,6 +82,10 @@ go tool cover -html=c.out
 ### Benchmark 測試 (我不懂)
 go test -bench=. -bench
 
+go test -bench=. -benchtime=3s ./xxx/
+
+go test -bench=. -benchtime=3s -cpuprofile=cpu.out ./pkg/xxx/... > new.txt
+
 # ========================================== go build ==========================================
 
 ### go build Terraform
@@ -89,3 +93,18 @@ go build -ldflags "-w -s -X 'github.com/hashicorp/terraform/version.dev=no'" -o 
 # 縮小二進位檔案, 可使用 go build -ldflags "-w -s"
 # -w 去除 DWARF 偵錯資訊. 副作用: 可能會導致 panic 拋出 & stack trace 沒有檔案名稱及行號
 # -s 去除符號資訊. 副作用: 無法使用 gdb 偵錯
+
+
+# ========================================== go tool -- pprof ==========================================
+#
+# Golang 的效能評估工具 - `go tool pprof` - 用來找出效能瓶頸
+#
+# $ go tool pprof  # CLI tool for analyzing profile data with interactive exploration (用來分析那些使用了 "runtime/pprof" 套件所生成的 Profile file )
+# 
+#  Packages:
+#      "runtime/pprof"     # Package for collecting runtime profiling data in your applications
+#      _ "net/http/pprof"  # 用來自動將 nttp handlers 提供 profiling data
+#
+
+## 啟用 Web 介面查看 profiling file
+go tool pprof -http:28080 cpu.out

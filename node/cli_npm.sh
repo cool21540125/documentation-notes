@@ -9,7 +9,7 @@ exit 0
 ### -------------------------------- CICD 環境使用 npm 安裝套件的議題 --------------------------------
 # npm 不會自動偵測 CI 環境, 行為與 yarn & pnpm 不同
 #
-# 於 CI 系統當中, 建議明確使用:
+# IMPORTANT: 於 CI 系統當中, 建議明確使用:
 #    $ npm ci
 #
 
@@ -29,6 +29,8 @@ npm install
 npm ci
 # 1. 依照 package-lock.json 安裝套件
 
+### ======================================== 其他 - 套件更新 ========================================
+
 ### ======================================== npm 安裝套件 - 其他細節 ========================================
 
 ### npm v5.0.0 以後
@@ -41,7 +43,8 @@ npm install xxx
 
 ### 安裝 development 套件, 放入 package.json 裡頭的 devDependencies (不需要在 Production 環境使用的東西)
 npm install --save-dev xxx
-# 等同於 npm install -D xxx
+npm install -D xxx
+# 兩者相同
 # ex: 發時使用的套件 / UI 輔助工具 / 測試套件 / 等等與 Production 無關的套件
 
 ### (用途不清楚) 會把套件更新到 package.json 的 optionalDependencies
