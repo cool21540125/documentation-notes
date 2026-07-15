@@ -12,15 +12,13 @@
 - 結合使用 User Pools 及 Identity Pools 的概念示意圖:
     ```mermaid
     flowchart LR
-    subgraph AWS
-        direction LR
-        up["CUP, Cognito User pool"]
-        ip["CIP, Cognito Identity pool"]
+        APP["APP"]
+        up["CUP<br/>Cognito User pool"]
+        ip["CIP<br/>Cognito Identity pool"]
         rr["AWS Resources"]
-    end
-    APP <-- 1. authentication && JWT token --> up;
-    APP <-- 2. JWT token && creds --> ip;
-    APP <-- 3. creds && resources --> rr
+        APP -->|1. auth & JWT| up
+        APP -->|2. JWT & creds| ip
+        ip -->|3. creds| rr
     ```
 
 
@@ -30,11 +28,16 @@
 
 ```mermaid
 flowchart LR
-    up["CUP, Cognito User pool"] -.- db["Serverless DB"]
-    up -.- IdP;
-    subgraph IdP["Federation through 3rd Identity Provider(IdP)"]
-        Google; FB; SAML; OpenID
+    up["CUP<br/>Cognito User pool"]
+    db["Serverless DB"]
+    subgraph IdP["Federation through 3rd Identity Provider"]
+        Google["Google"]
+        FB["Facebook"]
+        SAML["SAML"]
+        OpenID["OpenID"]
     end
+    up -.->|connect| db
+    up -.->|integrate| IdP
 ```
 
 ---
@@ -45,18 +48,15 @@ flowchart LR
 
 ```mermaid
 flowchart LR
-
-cup["Cognito User Pools"]
-subgraph UserDevices
-    direction LR
-    m["Mobile"]
-    w["WebApp"]
-end
-
-UserDevices -- "1. InitiateAuth (SRP)" --> cup;
-cup -- "2. Challenge" --> UserDevices;
-UserDevices -- "3. RespondToAuthChallenge" --> cup;
-cup -- "4. Cognito Tokens" --> UserDevices;
+    cup["Cognito User Pools"]
+    subgraph devices["User Devices"]
+        mobile["Mobile"]
+        webapp["WebApp"]
+    end
+    devices -->|1. InitiateAuth SRP| cup
+    cup -->|2. Challenge| devices
+    devices -->|3. RespondToAuthChallenge| cup
+    cup -->|4. Cognito Tokens| devices
 ```
 
 上圖的詳細時序如下
@@ -84,21 +84,25 @@ sequenceDiagram
 
 ```mermaid
 flowchart LR
-
-cup["CUP, Cognito User Pools"]
-api["API Gateway"]
-APP <-- 1. auth & JWT Token --> cup;
-APP <-- 2. JWT Token && REST API --> api;
-cup <-- 3. Evaluate Token --> api;
-api <-- 4. access --> backend;
+    APP["APP"]
+    cup["CUP<br/>Cognito User Pools"]
+    api["API Gateway"]
+    backend["Backend"]
+    APP -->|1. auth & JWT| cup
+    APP -->|2. JWT & REST API| api
+    cup -->|3. Evaluate Token| api
+    api -->|4. access| backend
 ```
 
 ```mermaid
 flowchart LR
-
-Client --> ALB;
-ALB -- 1. authenticate --> cup["Cognito User Pools"]
-ALB -- 2. access --> tg["Target Group"]
+    client["Client"]
+    alb["ALB"]
+    cup["Cognito User Pools"]
+    tg["Target Group"]
+    client --> alb
+    alb -->|1. authenticate| cup
+    alb -->|2. access| tg
 ```
 
 
@@ -112,25 +116,26 @@ ALB -- 2. access --> tg["Target Group"]
 
 ```mermaid
 flowchart TB
-
-co["Cognito Federated Identity"]
-
-subgraph extIdP["External IdP"]
-    direction TB
-    Google
-    Apple
-    FB
-    SAML
-    OpenID
-end
-
-APP["APP \n YOU"] -- 1. login --> extIdP
-extIdP -- 2. token --> APP
-APP -- 3. token --> co
-co <-- 4. verify token --> extIdP
-co <-- "5. temp creds\n(temporary AWS credentials)" --> STS
-co -- 6. temp creds --> APP
-APP -- 7. access --> aws["AWS Resources"]
+    app["APP<br/>YOU"]
+    subgraph extIdP["External IdP"]
+        google["Google"]
+        apple["Apple"]
+        fb["Facebook"]
+        saml["SAML"]
+        openid["OpenID"]
+    end
+    co["Cognito Federated<br/>Identity"]
+    sts["STS"]
+    aws["AWS Resources"]
+    
+    app -->|1. login| extIdP
+    extIdP -->|2. token| app
+    app -->|3. token| co
+    co -->|4. verify token| extIdP
+    co -->|5. temp creds| sts
+    sts -->|temp credentials| co
+    co -->|6. temp creds| app
+    app -->|7. access| aws
 ```
 
 

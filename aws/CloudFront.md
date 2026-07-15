@@ -119,6 +119,18 @@ ss -- "Cross Region Replication(if S3)" --> aa;
 
 ------
 
+# Cache policy
+
+* CachingDisabled
+* CachingOptimized
+* CachingOptimizedForUncompressedObjects
+* Elemental-MediaPackage
+* UseOriginCacheControlHeaders
+    * Cache Key 由 URL path 決定, 不鳥 Query string
+* UseOriginCacheControlHeaders-QueryStrings
+    * Cache Key 由 URL path + Query string 決定
+* wp-json-anon-cache
+
 
 # details
 
