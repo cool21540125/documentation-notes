@@ -78,3 +78,30 @@ gpg --export-secret-key -a easy >priv-easy.asc
 gpg --delete-secret-keys ExampleKeyUid
 gpg --delete-keys ExampleKeyUid
 gpg --delete-secret-and-public-key ExampleKeyUid
+
+
+# =============================== 洋蔥路由瀏覽器 ===============================
+
+## 2026/07/05 - https://support.torproject.org/zh-TW/tor-browser/getting-started/verifying-tor-browser/#macos
+
+gpg --auto-key-locate nodefault,wkd --locate-keys torbrowser@torproject.org
+#gpg: key 4E2C6E8793298290: public key "Tor Browser Developers (signing key) <torbrowser@torproject.org>" imported
+#gpg: Total number processed: 1
+#gpg:               imported: 1
+#pub   rsa4096 2014-12-15 [C] [expires: 2027-07-15]
+#      EF6E286DDA85EA2A4BA7DE684E2C6E8793298290    <----- NOTE: 這個!!
+#uid           [ unknown] Tor Browser Developers (signing key) <torbrowser@torproject.org>
+#sub   rsa4096 2024-07-15 [S] [expires: 2026-10-26]
+# ---
+# 簡單地說, gpg 使用 wkd 取得該網站的 Public Key, 會匯入到本地 keyring
+# * gpg 使用 WKD (Web Key Directory) 機制, 去自動抓取指定身份的 Public Key
+#     * nodefault, 關閉預設查找方式(通常是 keyserver)
+#         * 改用 WKD 方式查找
+#             * WKD 原理:GPG 會依據 email 的網域, (a.k.a. toproject.org), 推斷出 URL, 向該網域發 HTTPS 請求抓 Public Key. 前提是該網域架設了 WKD 服務
+#     * 而不需要透過傳統 keyserver(keyserver 有被污染或不可靠的風險). 抓到金鑰後, 通常接著用它驗證下載檔案的 .asc 簽章
+# ---
+
+##
+gpg --output ./tor.keyring --export 0xEF6E286DDA85EA2A4BA7DE684E2C6E8793298290
+#(沒有輸出資訊)
+# 將已經匯入本地的 Public Key

@@ -40,10 +40,10 @@
   - ops 建 PV, dev 用 PVC
 - Persistent Volume
   - 依照 accessModes 可以區分成底下這些:
-    - ReadWriteOnce
-    - ReadOnlyMany
-    - ReadWriteMany
-    - ReadWriteOncePod
+    - ReadWriteOnce -- 只能由單一 Node RW
+    - ReadOnlyMany -- 可由多 Nodes Read
+    - ReadWriteMany -- 可由多 Nodes RW
+    - ReadWriteOncePod -- 僅允許單一 Pod RW
   - PV 可以有 2 種 provisioned ways:
     - Static
     - Dynamic
